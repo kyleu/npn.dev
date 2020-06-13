@@ -1,0 +1,25 @@
+<%: func SchemaDetail(sch *schema.Schema, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title"><%= sch.Key %></h3>
+      <p><%=v sch %></p>
+    </div>
+
+    <% SchemaPathList(sch.Paths, ctx, _buffer) %>
+    <% SchemaErrorList(sch.Errors, ctx, _buffer) %>
+    <% SchemaEnumList(sch.Key, sch.Enums, ctx, _buffer) %>
+    <% SchemaModelList(sch.Key, sch.Models, ctx, _buffer) %>
+    <% SchemaUnionList(sch.Key, sch.Unions, ctx, _buffer) %>
+    <% SchemaServiceList(sch.Key, sch.Services, ctx, _buffer) %>
+
+    <div class="uk-card uk-card-body uk-margin-top">
+      <h3 class="uk-card-title">JSON</h3>
+      <pre><%= util.ToJSON(sch, ctx.Logger) %></pre>
+    </div>
+  </div>
+</div>
+<% } %>

@@ -1,0 +1,38 @@
+<%: func SchemaSaveForm(sch *schema.Schema, rsp interface{}, origin schema.Origin, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title"><%= sch.Key %></h3>
+      <hr />
+      <label for="<%= util.KeyTitle %>-input">Save as</label>
+      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeySchema + `.save`, `t`, origin.Key) %>" method="post">
+        <input type="hidden" name="key" value="<%= sch.Key %>" />
+        <input type="hidden" name="original" value="<%= sch.Title %>" />
+        <div class="uk-inline uk-display-block">
+          <button type="submit" class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: plus" title="save schema"></button>
+          <input class="uk-input" type="text" id="<%= util.KeyTitle %>-input" name="<%= util.KeyTitle %>" placeholder="<%= util.Title(util.KeyTitle) %>" value="<%= util.FilenameOf(sch.Title) %>" />
+        </div>
+      </form>
+    </div>
+
+    <% SchemaPathList(sch.Paths, ctx, _buffer) %>
+    <% SchemaErrorList(sch.Errors, ctx, _buffer) %>
+    <% SchemaEnumList(sch.Key, sch.Enums, ctx, _buffer) %>
+    <% SchemaModelList(sch.Key, sch.Models, ctx, _buffer) %>
+    <% SchemaUnionList(sch.Key, sch.Unions, ctx, _buffer) %>
+    <% SchemaServiceList(sch.Key, sch.Services, ctx, _buffer) %>
+
+    <div class="uk-card uk-card-body uk-margin-top">
+      <h3 class="uk-card-title">JSON</h3>
+      <% if rsp == nil { %>
+        <p>No response available</p>
+      <% } else { %>
+        <pre><%= util.ToJSON(rsp, ctx.Logger) %></pre>
+      <% } %>
+    </div>
+  </div>
+</div>
+<% } %>

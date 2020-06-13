@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "jsx": "react",
+    "jsxFactory": "JSX",
+    "listFiles": false,
+    "module": "none",
+    "noImplicitAny": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
+    "outFile": "../web/assets/npn.js",
+    "preserveWatchOutput": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "sourceRoot": "/admin/src/client/src/",
+    "strict": true,
+    "target": "ES6"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts"
+  ]
+}

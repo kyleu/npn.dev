@@ -1,0 +1,27 @@
+<%: func ProfileColors(key string, title string, current string, buffer *bytes.Buffer) %>
+<input id="<%= key %>-color" name="<%= key %>Color" type="hidden" value="<%= current %>" />
+<div class="uk-margin">
+  <label class="uk-form-label">
+    <% if key == "link" { %>
+    <a class="<%= current %>-fg profile-link" href="" onclick="return false;"><%= title %></a> Color
+    <% } else { %>
+    <%= title %> Color
+    <% } %>
+  </label>
+  <div class="uk-form-controls">
+    <div class="uk-flex uk-flex-wrap">
+      <% for _, c := range util.AllColors { %>
+      <%
+        cls := ""
+        if current == c {
+          cls = "active "
+        }
+        onClick := "profile.set" + title + "Color(this, '" + c + "');"
+      %>
+      <div class="swatch <%= key %>_swatch <%= cls %><%= c %>-bg uk-text-center" title="<%= c %>" onclick="<%= onClick %>">
+        <div class="icon" data-uk-icon="icon: check"></div>
+      </div>
+      <% } %>
+    </div>
+  </div>
+</div>

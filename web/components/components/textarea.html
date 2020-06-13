@@ -1,0 +1,5 @@
+<%: func Textarea(p web.InputParams, buffer *bytes.Buffer) %>
+<div class="textarea-emoji">
+  <div class="picker-toggle"><span class="uk-icon" data-uk-icon="happy"></span></div>
+  <textarea id="<%= p.ID %>" class="uk-textarea <%= p.Cls %>" name="<%= p.Name %>" placeholder="<%= p.Placeholder %>"><%= p.Value %></textarea>
+</div>

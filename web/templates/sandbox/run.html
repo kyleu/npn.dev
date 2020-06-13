@@ -1,0 +1,25 @@
+<%: func SandboxRun(sb *sandbox.Sandbox, html string, json string, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title"><%= sb.Title %></h3>
+      <div class="uk-margin-top">
+        <% if sb.Key == "testbed" { %>
+          <% SandboxTestbed(ctx, _buffer) %>
+        <% } else { %>
+          <%== html %>
+        <% } %>
+      </div>
+    </div>
+    <div class="uk-card uk-card-body uk-margin-top">
+      <h3 class="uk-card-title">Response</h3>
+      <div class="uk-margin-top">
+        <pre><%= json %></pre>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>

@@ -1,0 +1,24 @@
+<%: func errorStack(ed *util.ErrorDetail, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+
+<% if ed.StackTrace != nil { %>
+  <div class="uk-margin-top">
+    <div class="uk-card uk-card-body">
+      <table class="uk-table uk-table-divider">
+        <tbody>
+        <% for _, f := range util.TraceDetail(ed.StackTrace) { %>
+        <tr>
+          <td>
+            <% if strings.Contains(f.Key, util.AppName) { %>
+            <div class="error-key error-owned"><%= f.Key %></div>
+            <% } else { %>
+            <div class="error-key"><%= f.Key %></div>
+            <% } %>
+            <div class="error-location"><%= f.Loc %></div>
+          </td>
+        </tr>
+        <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% } %>

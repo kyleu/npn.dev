@@ -1,0 +1,16 @@
+.emoji-picker, .emoji-picker__search {
+  border-radius: 0 !important;
+}
+
+.emoji-picker__search-icon {
+  top: 5px !important;
+}
+
+.textarea-emoji {
+  position: relative;
+  .picker-toggle {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+  }
+}

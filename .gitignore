@@ -1,0 +1,11 @@
+/.vscode
+/.idea
+/data/liquibase
+/build
+/data
+/project
+/tmp
+/vendor
+/gen
+node_modules
+/.npn

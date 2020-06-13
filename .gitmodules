@@ -1,0 +1,3 @@
+[submodule "web/stylesheets/vendor/uikit"]
+	path = web/stylesheets/vendor/uikit
+	url = git@github.com:uikit/uikit.git

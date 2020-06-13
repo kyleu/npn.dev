@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<% Head(ctx, _buffer) %>
+<%@ head { %><% } %>
+</head>
+<body class="<%= ctx.Profile.Theme.CSS %>">
+<%@ nav { %><% } %>
+<div id="<%= util.KeyContent %>" data-uk-height-viewport="expand: true">
+<% Flash(ctx, _buffer) %>
+<%@ body { %><% } %>
+</div>
+<% InitDom(ctx, _buffer) %>
+</body>
+</html>

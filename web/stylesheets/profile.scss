@@ -1,0 +1,50 @@
+.swatch {
+  width: 32px;
+  height: 32px;
+  margin: 0 6px;
+  cursor: pointer;
+  border: 1px solid #666;
+  color: #fff;
+
+  &.light {
+    border: 1px solid #ddd;
+    color: #000;
+  }
+
+  &.active {
+    .icon {
+      color: inherit;
+    }
+  }
+
+  .icon {
+    margin-top: 6px;
+    color: transparent;
+  }
+}
+
+.signin-icon {
+  display: block;
+  float: left;
+  margin-top: 2px;
+  margin-right: 6px;
+}
+
+.profile-image {
+  float: left;
+  width: 32px;
+  height: 32px;
+  margin-top: -3px;
+  margin-right: 6px;
+}
+
+.profile-icon {
+  margin: 6px 0 0 6px;
+}
+
+.profile-picture-choice {
+  float: left;
+  height: 64px;
+  width: 64px;
+  margin-right: 16px;
+}

@@ -1,0 +1,15 @@
+<%: func SchemaModelList(sch string, models schema.Models, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<% if len(models) > 0 { %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <h3 class="uk-card-title">Models</h3>
+  <table class="uk-table uk-table-divider">
+    <tbody>
+      <% for _, m := range models { %>
+        <tr>
+          <td><a class="theme" href="<%= ctx.Route(util.KeySchema + `.model`, util.KeyKey, sch, `m`, m.Key) %>"><%= m.Key %></a></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>

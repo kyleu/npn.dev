@@ -1,0 +1,41 @@
+<%: func Profile(ref string, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-grid-match uk-grid-small" data-uk-grid>
+      <div class="uk-width-1-1@m">
+        <div id="profile-card" class="uk-card uk-card-body">
+          <h3 class="uk-card-title">Profile</h3>
+          <form class="uk-form-horizontal" action="<%= ctx.Route(`profile.save`) %>" method="post">
+            <input type="hidden" name="ref" value="<%= ref %>" />
+            <div class="uk-margin">
+              <label class="uk-form-label">Theme</label>
+              <% for _, t := range util.AllThemes { %>
+              <div class="uk-form-controls uk-form-controls-text">
+                <label for="theme-<%= t.String() %>">
+                  <% if t == ctx.Profile.Theme { %>
+                  <input class="uk-radio" id="theme-<%= t.String() %>" name="<%= util.KeyTheme %>" type="radio" onchange="if (this.checked) { window.style.setTheme(this.value); }" value="<%= t.String() %>" checked="checked" />
+                  <% } else { %>
+                  <input class="uk-radio" id="theme-<%= t.String() %>" name="<%= util.KeyTheme %>" type="radio" onchange="if (this.checked) { window.style.setTheme(this.value); }" value="<%= t.String() %>" />
+                  <% } %>
+                  <%= t.String() %>
+                </label>
+              </div>
+              <% } %>
+            </div>
+
+            <% ProfileColors("nav", "Nav", ctx.Profile.NavColor, _buffer) %>
+            <% ProfileColors("link", "Link", ctx.Profile.LinkColor, _buffer) %>
+
+            <div class="uk-margin-top">
+              <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>

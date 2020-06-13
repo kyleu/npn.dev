@@ -1,0 +1,6 @@
+<%: func breadcrumbDisplay(ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove" href="<%= ctx.Route(`home`) %>"><%= util.AppName %></a>
+<% for _, b := range ctx.Breadcrumbs { %>
+<span class="uk-navbar-item" style="padding: 0 8px;"> / </span>
+<a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove" href="<%= b.Path %>"><%= b.Title %></a>
+<% } %>

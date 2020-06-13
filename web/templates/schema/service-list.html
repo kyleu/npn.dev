@@ -1,0 +1,15 @@
+<%: func SchemaServiceList(sch string, services schema.Services, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<% if len(services) > 0 { %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <h3 class="uk-card-title">Services</h3>
+  <table class="uk-table uk-table-divider">
+    <tbody>
+      <% for _, svc := range services { %>
+        <tr>
+          <td><a class="theme" href="<%= ctx.Route(util.KeySchema + `.service`, util.KeyKey, sch, `s`, svc.Key) %>"><%= svc.Key %></a></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>

@@ -1,0 +1,25 @@
+<%: func Index(ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title">
+        <span class="right">
+          <a class="theme uk-icon-button uk-margin-left" data-uk-icon="question" href="<%= ctx.Route(`about`) %>" title="about <%= util.AppName %>"></a>
+        </span>
+        <%= util.AppName %>
+      </h3>
+      <p>Coming soon!</p>
+    </div>
+    <div class="uk-card uk-card-body uk-margin-top">
+      <h3 class="uk-card-title">Random Link</h3>
+      <ul class="uk-list uk-list-divider">
+        <li><a class="theme" href="<%= ctx.Route(util.KeySchema) %>"><%= util.PluralTitle(util.KeySchema) %></a></li>
+        <li><a class="theme" href="<%= ctx.Route(util.KeySandbox) %>"><%= util.PluralTitle(util.KeySandbox) %></a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<% } %>
