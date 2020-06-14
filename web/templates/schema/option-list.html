@@ -1,0 +1,24 @@
+<%: func SchemaOptionList(opts schema.Options, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<% if len(opts) > 0 { %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <h3 class="uk-card-title">Options</h3>
+  <table class="uk-table uk-table-divider">
+    <thead>
+      <tr>
+        <th>Type</th>
+        <th>Key</th>
+        <th>Value</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for _, opt := range opts { %>
+        <tr>
+          <td><%= opt.T %></td>
+          <td><%= opt.K %></td>
+          <td><%= opt.V %></td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+<% } %>

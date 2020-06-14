@@ -30,12 +30,16 @@ func BuildRouter(app *config.AppInfo) (*mux.Router, error) {
 	profile.Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.ProfileSave))).Name(n(util.KeyProfile, "save"))
 	r.Path(p(util.KeyProfile, "theme", "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProfileTheme))).Name(n(util.KeyProfile, util.KeyTheme))
 
+	// DataSource
+	dsn := r.Path(p(util.KeyDataSource)).Subrouter()
+	dsn.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.DataSourceList))).Name(n(util.KeyDataSource))
+	r.Path(p(util.KeyDataSource, "{t}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.DataSourceDetail))).Name(n(util.KeyDataSource, "detail"))
+	r.Path(p(util.KeyDataSource, "{t}")).Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.DataSourceSave))).Name(n(util.KeyDataSource, "save"))
+
 	// Schema
 	schema := r.Path(p(util.KeySchema)).Subrouter()
 	schema.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaList))).Name(n(util.KeySchema))
-	r.Path(p(util.KeySchema, "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaDetail))).Name(n(util.KeySchema, "view"))
-	r.Path(p(util.KeySchema, "{t}", "save")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaForm))).Name(n(util.KeySchema, "form"))
-	r.Path(p(util.KeySchema, "{t}", "save")).Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaSave))).Name(n(util.KeySchema, "save"))
+	r.Path(p(util.KeySchema, "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaDetail))).Name(n(util.KeySchema, "detail"))
 	r.Path(p(util.KeySchema, "{key}", util.KeyEnum, "{e}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaEnumDetail))).Name(n(util.KeySchema, util.KeyEnum))
 	r.Path(p(util.KeySchema, "{key}", util.KeyModel, "{m}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaModelDetail))).Name(n(util.KeySchema, util.KeyModel))
 	r.Path(p(util.KeySchema, "{key}", util.KeyUnion, "{u}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaUnionDetail))).Name(n(util.KeySchema, util.KeyUnion))

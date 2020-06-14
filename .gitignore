@@ -1,8 +1,7 @@
 /.vscode
 /.idea
-/data/liquibase
-/build
 /data
+/build
 /project
 /tmp
 /vendor

@@ -1,4 +1,4 @@
-<%: func SchemaList(schemata []string, avail []schema.DataSource, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func SchemaList(schemata []string, ctx *web.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
@@ -13,41 +13,11 @@
           <tbody>
             <% for _, s := range schemata { %>
               <tr>
-                <td><a class="theme" href="<%= ctx.Route(util.KeySchema + `.view`, `key`, s) %>"><%= s %></a></td>
+                <td><a class="theme" href="<%= ctx.Route(util.KeySchema + `.detail`, `key`, s) %>"><%= s %></a></td>
               </tr>
             <% } %>
           </tbody>
         </table>
-      <% } %>
-    </div>
-
-    <div class="uk-card uk-card-body uk-margin-top">
-      <h3 class="uk-card-title">Available</h3>
-      <% if len(avail) == 0 { %>
-      <div>No available <%= util.PluralTitle(util.KeySchema) %> </div>
-      <% } else { %>
-      <table class="uk-table uk-table-divider">
-        <thead>
-        <tr>
-          <th>Key</th>
-          <th>Paths</th>
-          <th>Origin</th>
-        </tr>
-        </thead>
-        <tbody>
-        <% for _, s := range avail { %>
-        <tr>
-          <td><a class="theme" href="<%= ctx.Route(util.KeySchema + `.form`, `t`, s.Origin.Key) %>?key=<%= url.QueryEscape(s.Key) %>"><%= s.Key %></a></td>
-          <td>
-            <% for _, p := range s.Paths { %>
-            <div><%= p %></div>
-            <% } %>
-          </td>
-          <td><%= s.Origin.String() %></td>
-        </tr>
-        <% } %>
-        </tbody>
-      </table>
       <% } %>
     </div>
   </div>

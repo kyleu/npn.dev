@@ -10,7 +10,9 @@
     </div>
 
     <% SchemaPathList(sch.Paths, ctx, _buffer) %>
+    <% SchemaOptionList(sch.Options, ctx, _buffer) %>
     <% SchemaErrorList(sch.Errors, ctx, _buffer) %>
+
     <% SchemaEnumList(sch.Key, sch.Enums, ctx, _buffer) %>
     <% SchemaModelList(sch.Key, sch.Models, ctx, _buffer) %>
     <% SchemaUnionList(sch.Key, sch.Unions, ctx, _buffer) %>

@@ -1,4 +1,4 @@
-<%: func SchemaSaveForm(sch *schema.Schema, rsp interface{}, origin schema.Origin, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func DataSourceDetail(sch *schema.Schema, rsp interface{}, origin schema.Origin, ctx *web.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
@@ -8,7 +8,7 @@
       <h3 class="uk-card-title"><%= sch.Key %></h3>
       <hr />
       <label for="<%= util.KeyTitle %>-input">Save as</label>
-      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeySchema + `.save`, `t`, origin.Key) %>" method="post">
+      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeyDataSource + `.save`, `t`, origin.Key) %>" method="post">
         <input type="hidden" name="key" value="<%= sch.Key %>" />
         <input type="hidden" name="original" value="<%= sch.Title %>" />
         <div class="uk-inline uk-display-block">
@@ -19,7 +19,9 @@
     </div>
 
     <% SchemaPathList(sch.Paths, ctx, _buffer) %>
+    <% SchemaOptionList(sch.Options, ctx, _buffer) %>
     <% SchemaErrorList(sch.Errors, ctx, _buffer) %>
+
     <% SchemaEnumList(sch.Key, sch.Enums, ctx, _buffer) %>
     <% SchemaModelList(sch.Key, sch.Models, ctx, _buffer) %>
     <% SchemaUnionList(sch.Key, sch.Unions, ctx, _buffer) %>

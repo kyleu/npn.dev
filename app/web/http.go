@@ -19,6 +19,10 @@ type Breadcrumb struct {
 	Title string
 }
 
+func BreadcrumbSelf(title string) Breadcrumb {
+	return Breadcrumb{Path: "", Title: title}
+}
+
 type Breadcrumbs []Breadcrumb
 
 func BreadcrumbsSimple(path string, title string) Breadcrumbs {

@@ -10,7 +10,7 @@ func MapFromPairs(x ...interface{}) (map[interface{}]interface{}, error) {
 		return nil, errors.New(fmt.Sprintf("observed [%v] args, need an even number", len(x)))
 	}
 	ret := make(map[interface{}]interface{}, len(x) / 2)
-	for i := 0; i < len(x); i += 2 {
+	for i := 0; i < len(x)-1; i += 2 {
 		k := x[i]
 		v := x[i + 1]
 		ret[k] = v

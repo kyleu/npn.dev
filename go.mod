@@ -11,6 +11,7 @@ require (
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/sessions v1.2.0
+	github.com/graph-gophers/graphql-go v0.0.0-20200309224638-dae41bde9ef9
 	github.com/mattn/go-runewidth v0.0.8 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.2
 	github.com/mitchellh/mapstructure v1.1.2

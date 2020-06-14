@@ -19,7 +19,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 func About(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		ctx.Title = "About " + util.AppName
-		ctx.Breadcrumbs = web.BreadcrumbsSimple(ctx.Route(util.KeyAbout), util.KeyAbout)
+		ctx.Breadcrumbs = web.Breadcrumbs{web.BreadcrumbSelf(util.KeyAbout)}
 		return act.T(templates.StaticAbout(ctx, w))
 	})
 }

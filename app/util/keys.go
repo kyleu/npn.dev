@@ -6,6 +6,7 @@ const (
 	KeyAbout      = "about"
 	KeyCreated    = "created"
 	KeyContent    = "content"
+	KeyDataSource = "dsn"
 	KeyEnum       = "enum"
 	KeyError      = "error"
 	KeyID         = "id"
@@ -44,6 +45,8 @@ func Title(k string) string {
 		return k
 	}
 	switch k {
+	case KeyDataSource:
+		return "DataSource"
 	case KeyID:
 		return "ID"
 	case KeyIdx:
@@ -53,7 +56,16 @@ func Title(k string) string {
 }
 
 func PluralTitle(k string) string {
-	return Title(Plural(k))
+	switch k {
+	case KeyDataSource:
+		return "DataSources"
+	case KeyID:
+		return "IDs"
+	case KeyIdx:
+		return "Indexes"
+	default:
+		return Title(Plural(k))
+	}
 }
 
 func WithID(k string) string {

@@ -18,7 +18,7 @@ import (
 func Profile(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		ctx.Title = "User Profile"
-		ctx.Breadcrumbs = web.BreadcrumbsSimple(ctx.Route(util.KeyProfile), util.KeyProfile)
+		ctx.Breadcrumbs = web.Breadcrumbs{web.BreadcrumbSelf(util.KeyProfile)}
 		ref := r.Header.Get("Referer")
 		return act.T(templates.Profile(ref, ctx, w))
 	})
