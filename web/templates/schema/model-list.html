@@ -7,6 +7,7 @@
       <% for _, m := range models { %>
         <tr>
           <td><a class="theme" href="<%= ctx.Route(util.KeySchema + `.model`, util.KeyKey, sch, `m`, m.Key) %>"><%= m.Key %></a></td>
+          <td class="uk-text-right"><%= m.Type.String() %></td>
         </tr>
       <% } %>
     </tbody>

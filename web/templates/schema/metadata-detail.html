@@ -1,0 +1,21 @@
+<%: func SchemaMetadataDetail(md *schema.Metadata, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <h3 class="uk-card-title">Metadata</h3>
+  <p>Origin: <%= md.Origin.String() %></p>
+
+  <% if len(md.Description) > 0 { %>
+    <p><%= md.Description %></p>
+  <% } %>
+
+  <% if len(md.Comments) > 0 { %>
+    <ul class="uk-list uk-list-divider">
+      <% for _, comment := range md.Comments { %>
+        <li><%= comment %></li>
+      <% } %>
+    </ul>
+  <% } %>
+
+  <% if len(md.Source) > 0 { %>
+    <p>Source: <%= md.Source %><% if md.Line > 0 { %>:<%=v md.Line %>:<%=v md.Column %><% } %></p>
+  <% } %>
+</div>

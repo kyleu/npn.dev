@@ -5,9 +5,12 @@
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
-      <h3 class="uk-card-title"><%= sch.Key %></h3>
-      <p><%=v sch %></p>
+      <div class="right"><a class="theme" href="<%= ctx.Route(util.KeySchema + `.refresh`, util.KeyKey, sch.Key) %>" data-uk-icon="icon: refresh" title="Refresh schema from paths"></a></div>
+      <h3 class="uk-card-title"><%= sch.Title %></h3>
     </div>
+
+    <% SchemaValidationList(sch.Validate(), ctx, _buffer) %>
+    <% SchemaMetadataDetail(sch.Metadata, ctx, _buffer) %>
 
     <% SchemaPathList(sch.Paths, ctx, _buffer) %>
     <% SchemaOptionList(sch.Options, ctx, _buffer) %>
@@ -16,12 +19,6 @@
     <% SchemaEnumList(sch.Key, sch.Enums, ctx, _buffer) %>
     <% SchemaModelList(sch.Key, sch.Models, ctx, _buffer) %>
     <% SchemaUnionList(sch.Key, sch.Unions, ctx, _buffer) %>
-    <% SchemaServiceList(sch.Key, sch.Services, ctx, _buffer) %>
-
-    <div class="uk-card uk-card-body uk-margin-top">
-      <h3 class="uk-card-title">JSON</h3>
-      <pre><%= util.ToJSON(sch, ctx.Logger) %></pre>
-    </div>
   </div>
 </div>
 <% } %>

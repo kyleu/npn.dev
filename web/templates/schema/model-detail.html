@@ -6,8 +6,53 @@
   <div class="uk-container">
     <div class="uk-card uk-card-body">
       <h3 class="uk-card-title"><%= m.Key %></h3>
-      <p><%=v m %></p>
     </div>
+
+    <% SchemaMetadataDetail(m.Metadata, ctx, _buffer) %>
+
+    <% if len(m.Fields) > 0 { %>
+      <div class="uk-card uk-card-body uk-margin-top">
+        <h3 class="uk-card-title">Fields</h3>
+        <table class="uk-table uk-table-divider">
+          <thead>
+          <tr>
+            <th>Key</th>
+            <th>Type</th>
+            <th>Signature</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% for _, f := range m.Fields { %>
+            <tr>
+              <td><%= f.Key %></td>
+              <td><%= f.Type.Key() %></td>
+              <td><%= f.Type.String() %></td>
+            </tr>
+          <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <% if len(m.Interfaces) > 0 { %>
+      <div class="uk-card uk-card-body uk-margin-top">
+        <h3 class="uk-card-title">Interfaces</h3>
+        <table class="uk-table uk-table-divider">
+          <thead>
+          <tr>
+            <th>Key</th>
+          </tr>
+          </thead>
+          <tbody>
+          <% for _, iface := range m.Interfaces { %>
+            <tr>
+              <td><%= iface %></td>
+            </tr>
+          <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
 
     <div class="uk-card uk-card-body uk-margin-top">
       <h3 class="uk-card-title">JSON</h3>

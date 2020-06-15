@@ -9,7 +9,6 @@ import (
 	"github.com/kyleu/npn/app/web/form"
 	"github.com/kyleu/npn/gen/templates"
 	"net/http"
-	"net/url"
 )
 
 func DataSourceList(w http.ResponseWriter, r *http.Request) {
@@ -27,8 +26,8 @@ func DataSourceDetail(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		origin := schema.OriginFromString(mux.Vars(r)["t"])
 		key := r.URL.Query().Get(util.KeyKey)
-		ctx.Breadcrumbs = dsnBreadcrumbs(ctx, "?key=" + url.QueryEscape(key), util.FilenameOf(key))
-		sch, rsp, err := ctx.App.Parsers.Load(origin.Key, key)
+		ctx.Breadcrumbs = dsnBreadcrumbs(ctx, "", util.FilenameOf(key))
+		sch, rsp, err := ctx.App.Parsers.Load(origin.Key, []string{key})
 		if err != nil {
 			return act.EResp(err, "unable to calculate schema")
 		}
@@ -44,7 +43,7 @@ func DataSourceSave(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return act.EResp(err, "invalid form")
 		}
-		sch, _, err := ctx.App.Parsers.Load(origin.Key, frm.Original)
+		sch, _, err := ctx.App.Parsers.Load(origin.Key, []string{frm.Original})
 		if err != nil {
 			return act.EResp(err, "unable to calculate schema")
 		}
@@ -52,7 +51,7 @@ func DataSourceSave(w http.ResponseWriter, r *http.Request) {
 		sch.Title = frm.Title
 		err = ctx.App.Files.SaveSchema(sch, true)
 		if err != nil {
-			return act.EResp(err, "unablle to save schema")
+			return act.EResp(err, "unable to save schema")
 		}
 		msg := "Schema saved"
 		redir := ctx.Route(util.KeySchema + ".detail", util.KeyKey, sch.Key)

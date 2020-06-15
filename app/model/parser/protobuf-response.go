@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"github.com/emicklei/proto"
 	"github.com/kyleu/npn/app/model/schema"
+	"github.com/kyleu/npn/app/model/schema/schematypes"
 	"github.com/kyleu/npn/app/util"
 	"path"
 	"path/filepath"
-	"strings"
-	"text/scanner"
 )
 
 type ProtobufResponse struct {
@@ -18,12 +17,12 @@ type ProtobufResponse struct {
 	Schema   *schema.Schema `json:"schema"`
 }
 
-func NewProtobufResponse(key string) *ProtobufResponse {
-	md := schema.Metadata{Comments: nil, Origin: schema.OriginProtobuf, Source: util.FilenameOf(key)}
+func NewProtobufResponse(paths []string) *ProtobufResponse {
+	md := schema.Metadata{Comments: nil, Origin: schema.OriginProtobuf, Source: paths[0]}
 	return &ProtobufResponse{
-		RootFile: key,
+		RootFile: paths[0],
 		Data:     make([]interface{}, 0),
-		Schema:   schema.NewSchema(key, []string{key}, &md),
+		Schema:   schema.NewSchema(paths[0], paths, &md),
 	}
 }
 
@@ -66,13 +65,13 @@ func (s *ProtobufResponse) addEnum(en *proto.Enum) error {
 
 func (s *ProtobufResponse) addMessage(msg *proto.Message) error {
 	md := getProtobufMetadata(msg.Position, msg.Comment)
-	model := &schema.Model{Key: msg.Name, Fields: nil, Metadata: md}
+	model := &schema.Model{Key: msg.Name, Type: schema.ModelTypeStruct, Fields: nil, Metadata: md}
 	for _, el := range msg.Elements {
 		switch f := el.(type) {
 		case *proto.NormalField:
 			md := getProtobufMetadata(f.Position, f.Comment, f.InlineComment)
-			t := getProtoType(f.Type, f.Repeated, f.Options)
-			err := model.AddField(&schema.Field{Key: f.Name, Type: t, Optional: f.Optional, Metadata: md})
+			typ := getProtobufType(f.Type, f.Optional, f.Repeated, f.Options)
+			err := model.AddField(&schema.Field{Key: f.Name, Type: typ, Metadata: md})
 			if err != nil {
 				return errors.Wrap(err, "can't add field")
 			}
@@ -81,7 +80,8 @@ func (s *ProtobufResponse) addMessage(msg *proto.Message) error {
 			if err != nil {
 				return errors.Wrap(err, "can't register union")
 			}
-			err = model.AddField(&schema.Field{Key: f.Name, Type: oo.Key, Metadata: md})
+			typ := schematypes.Wrap(schematypes.Unknown{X: oo.Key})
+			err = model.AddField(&schema.Field{Key: f.Name, Type: typ, Metadata: md})
 			if err != nil {
 				return errors.Wrap(err, "can't add field")
 			}
@@ -98,8 +98,8 @@ func (s *ProtobufResponse) addOneOf(oo *proto.Oneof) (*schema.Union, error) {
 		switch f := el.(type) {
 		case *proto.OneOfField:
 			md := getProtobufMetadata(f.Position, f.Comment, f.InlineComment)
-			t := getProtoType(f.Type, false, f.Options)
-			v = append(v, &schema.Field{Key: f.Name, Type: t, Optional: false, Metadata: md})
+			typ := getProtobufType(f.Type, false, false, f.Options)
+			v = append(v, &schema.Field{Key: f.Name, Type: typ, Metadata: md})
 		default:
 			return nil, errors.New(fmt.Sprintf("can't add union field of type [%T]", el))
 		}
@@ -115,46 +115,20 @@ func (s *ProtobufResponse) addOneOf(oo *proto.Oneof) (*schema.Union, error) {
 
 func (s *ProtobufResponse) addService(svc *proto.Service) error {
 	md := getProtobufMetadata(svc.Position, svc.Comment)
-	methods := make([]*schema.Method, 0)
+	methods := make([]*schema.Field, 0)
 	for _, el := range svc.Elements {
 		switch f := el.(type) {
 		case *proto.RPC:
+			typ := schematypes.Method{
+				Args: schematypes.Arguments{{Key: "arg", Type: getTypeForProtobufName(f.RequestType)}},
+				Ret:  getTypeForProtobufName(f.ReturnsType),
+			}
 			md := getProtobufMetadata(f.Position, f.Comment, f.InlineComment)
-			args := schema.Fields{{Key: "arg", Type: f.RequestType}}
-			methods = append(methods, &schema.Method{Key: f.Name, Args: args, Ret: f.ReturnsType, Metadata: md})
+			methods = append(methods, &schema.Field{Key: f.Name, Type: schematypes.Wrap(typ), Metadata: md})
 		default:
 			return errors.New(fmt.Sprintf("can't add service field of type [%T]", el))
 		}
 	}
 
-	return s.Schema.AddService(&schema.Service{Key: svc.Name, Methods: methods, Metadata: md})
-}
-
-func getProtobufMetadata(pos scanner.Position, comments ...*proto.Comment) *schema.Metadata {
-	cmt := make([]string, 0)
-	for _, cs := range comments {
-		if cs != nil {
-			for _, l := range cs.Lines {
-				l = strings.TrimSpace(l)
-				cmt = append(cmt, l)
-			}
-		}
-	}
-	return &schema.Metadata{
-		Comments: cmt,
-		Origin:   schema.OriginProtobuf,
-		Source:   util.FilenameOf(pos.Filename),
-		Line:     pos.Line,
-		Column:   pos.Column - 1,
-	}
-}
-
-func getProtoType(t string, repeated bool, options []*proto.Option) string {
-	for _, opt := range options {
-		println(fmt.Sprintf("option [%v] provided for proto type", opt))
-	}
-	if repeated {
-		return "List[" + t + "]"
-	}
-	return t
+	return s.Schema.AddModel(&schema.Model{Key: svc.Name, Type: schema.ModelTypeService, Fields: methods, Metadata: md})
 }

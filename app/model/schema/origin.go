@@ -4,16 +4,18 @@ import "encoding/json"
 
 type Origin struct {
 	Key         string `json:"key"`
-	T       string `json:"t"`
+	T           string `json:"t"`
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-var OriginGraphQL = Origin{Key: "graphql", T: "graphql", Title: "GraphQL", Description: "GraphQL schema and queries"}
-var OriginProtobuf = Origin{Key: "protobuf", T: "protobuf", Title: "Protobuf", Description: "File describing proto3 definitions"}
-var OriginIntelliJ = Origin{Key: "intellij", T: "database", Title: "Database", Description: "Database system and supporting queries"}
-var OriginLiquibase = Origin{Key: "liquibase", T: "database", Title: "Database", Description: "Database system and supporting queries"}
-var OriginUnknown = Origin{Key: "unknown", T: "unknown", Title: "Unknown", Description: "Not quite sure what this is"}
+var (
+	OriginGraphQL = Origin{Key: "graphql", T: "graphql", Title: "GraphQL", Description: "GraphQL schema and queries"}
+	OriginProtobuf = Origin{Key: "protobuf", T: "protobuf", Title: "Protobuf", Description: "File describing proto3 definitions"}
+	OriginIntelliJ = Origin{Key: "intellij", T: "database", Title: "Database", Description: "Database system and supporting queries"}
+	OriginLiquibase = Origin{Key: "liquibase", T: "database", Title: "Database", Description: "Database system and supporting queries"}
+	OriginUnknown = Origin{Key: "unknown", T: "unknown", Title: "Unknown", Description: "Not quite sure what this is"}
+)
 
 var AllOrigins = []Origin{OriginGraphQL, OriginProtobuf, OriginIntelliJ, OriginLiquibase}
 

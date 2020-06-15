@@ -1,10 +1,11 @@
 package schema
 
+import "github.com/kyleu/npn/app/model/schema/schematypes"
+
 type Field struct {
-	Key string `json:"key"`
-	Type string `json:"type"`
-	Optional bool `json:"optional,omitempty"`
-	Metadata *Metadata `json:"metadata,omitempty"`
+	Key      string              `json:"key"`
+	Type     schematypes.Wrapped `json:"type"`
+	Metadata *Metadata           `json:"metadata,omitempty"`
 }
 
 type Fields []*Field

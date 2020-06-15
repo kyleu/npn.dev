@@ -2,7 +2,6 @@ package parser
 
 import (
 	"github.com/kyleu/npn/app/model/schema"
-	"github.com/kyleu/npn/app/util"
 )
 
 type GraphQLResponse struct {
@@ -11,11 +10,11 @@ type GraphQLResponse struct {
 	Schema   *schema.Schema `json:"schema"`
 }
 
-func NewGraphQLResponse(key string) *GraphQLResponse {
-	md := schema.Metadata{Comments: nil, Origin: schema.OriginGraphQL, Source: util.FilenameOf(key)}
+func NewGraphQLResponse(paths []string) *GraphQLResponse {
+	md := schema.Metadata{Comments: nil, Origin: schema.OriginGraphQL, Source: paths[0]}
 	return &GraphQLResponse{
-		RootFile: key,
+		RootFile: paths[0],
 		Data:     make([]interface{}, 0),
-		Schema:   schema.NewSchema(key, []string{key}, &md),
+		Schema:   schema.NewSchema(paths[0], paths, &md),
 	}
 }

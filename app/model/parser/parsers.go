@@ -15,10 +15,9 @@ type Parsers struct {
 	Liquibase LiquibaseParser
 }
 
-
 func NewParsers(logger logur.Logger) *Parsers {
 	logFor := func(s string) logur.Logger {
-		return logur.WithFields(logger, map[string]interface{}{util.KeyService: "intellij"})
+		return logur.WithFields(logger, map[string]interface{}{util.KeyService: s})
 	}
 	return &Parsers{
 		GraphQL: GraphQLParser{Key: schema.OriginGraphQL.Key, logger: logFor(schema.OriginGraphQL.Key)},
@@ -52,33 +51,43 @@ func (p *Parsers) Detect(root string) ([]schema.DataSource, error){
 	return ret, nil
 }
 
-func (p *Parsers) Load(t string, key string) (*schema.Schema, interface{}, error) {
+func (p *Parsers) Load(t string, paths []string) (*schema.Schema, interface{}, error) {
 	switch t {
 	case p.GraphQL.Key:
-		x, err := p.GraphQL.ParseSchemaFile(key)
+		x, err := p.GraphQL.ParseSchemaFile(paths)
 		if err != nil {
 			return nil, x, err
 		}
 		return x.Schema, x, nil
 	case p.Protobuf.Key:
-		x, err := p.Protobuf.ParseProtobufFile(key)
+		x, err := p.Protobuf.ParseProtobufFile(paths)
 		if err != nil {
 			return nil, x, err
 		}
 		return x.Schema, x, nil
 	case p.IntelliJ.Key:
-		x, err := p.IntelliJ.ParseDataSourceXML(key)
+		x, err := p.IntelliJ.ParseDataSourceXML(paths)
 		if err != nil {
 			return nil, x, err
 		}
-		return x.Schema()
+		return x.Schema, x, nil
 	case p.Liquibase.Key:
-		x, err := p.Liquibase.ParseChangeLogXML(key)
+		x, err := p.Liquibase.ParseChangeLogXML(paths)
 		if err != nil {
 			return nil, x, err
 		}
-		return x.Schema()
+		return x.Schema, x, nil
 	default:
 		return nil, nil, errors.New("invalid type [" + t + "]")
 	}
+}
+
+func (p *Parsers) Refresh(sch *schema.Schema) (*schema.Schema, error) {
+	newSchema, _, err :=  p.Load(sch.Metadata.Origin.Key, sch.Paths)
+	if err != nil {
+		return nil, err
+	}
+	newSchema.Key = sch.Key
+	newSchema.Title = sch.Title
+	return newSchema, nil
 }

@@ -8,20 +8,32 @@ import (
 	"strings"
 )
 
-func (r *IntelliJResponse) extract(x IntelliJResult, e xml.StartElement, d *xml.Decoder) error {
-	err := d.DecodeElement(x, &e)
+func (p *IntelliJParser) ParseDataSourceXML(paths []string) (*IntelliJResponse, error) {
+	rsp, err := p.parse(paths, NewIntelliJResponse(paths))
 	if err != nil {
-		return errors.Wrap(err, "Error decoding ["+e.Name.Local+"] item")
+		return nil, err
 	}
-	r.Data = append(r.Data, x)
-	bp, _ := r.ByParent[x.ParentID()]
-	bp = append(bp, x)
-	r.ByParent[x.ParentID()] = bp
-	return nil
+	err = rsp.resolve()
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to resolve IntelliJ XML")
+	}
+	return rsp, nil
 }
 
-func (p *IntelliJParser) ParseDataSourceXML(path string) (*IntelliJResponse, error) {
-	res := NewIntelliJResponse()
+func (p *IntelliJParser) parse(paths []string, ret *IntelliJResponse) (*IntelliJResponse, error) {
+	rsp := ret
+	var err error
+	for _, pth := range paths {
+		rsp, err = p.parsePath(pth, rsp)
+		if err != nil {
+			return nil, errors.Wrap(err, "error parsing intelliJ")
+		}
+	}
+	return rsp, nil
+}
+
+
+func (p *IntelliJParser) parsePath(path string, res *IntelliJResponse) (*IntelliJResponse, error) {
 	unhandled := make(map[string]bool)
 	onStart := func(e xml.StartElement, d *xml.Decoder) error {
 		var err error

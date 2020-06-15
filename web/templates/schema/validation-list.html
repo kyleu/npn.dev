@@ -1,0 +1,19 @@
+<%: func SchemaValidationList(res schema.ValidationResult, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<% if len(res.Messages) > 0 { %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <h3 class="uk-card-title">Validation Results</h3>
+  <ul class="uk-list uk-list-divider">
+    <% for _, r := range res.Messages { %>
+      <% if r.Level == schema.LevelInfo { %>
+        <li>Info: <%=v r.Msg %></li>
+      <% } else if r.Level == schema.LevelWarn { %>
+        <li>Warn: <%=v r.Msg %></li>
+      <% } else if r.Level == schema.LevelError { %>
+        <li>Error: <%=v r.Msg %></li>
+      <% } else { %>
+        <li><%=v r.Level %>: <%=v r.Msg %></li>
+      <% } %>
+    <% } %>
+  </ul>
+</div>
+<% } %>

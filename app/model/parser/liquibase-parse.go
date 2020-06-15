@@ -1,13 +1,29 @@
 package parser
 
 import (
+	"emperror.dev/errors"
 	"encoding/xml"
 	"sort"
 	"strings"
 )
 
-func (p *LiquibaseParser) ParseChangeLogXML(path string) (*LiquibaseResponse, error) {
-	res := NewLiquibaseResponse()
+func (p *LiquibaseParser) ParseChangeLogXML(paths []string) (*LiquibaseResponse, error) {
+	return p.parse(paths, NewLiquibaseResponse(paths))
+}
+
+func (p *LiquibaseParser) parse(paths []string, ret *LiquibaseResponse) (*LiquibaseResponse, error) {
+	rsp := ret
+	var err error
+	for _, pth := range paths {
+		rsp, err = p.parsePath(pth, rsp)
+		if err != nil {
+			return nil, errors.Wrap(err, "error parsing liquibase")
+		}
+	}
+	return rsp, nil
+}
+
+func (p *LiquibaseParser) parsePath(path string, res *LiquibaseResponse) (*LiquibaseResponse, error) {
 	unhandled := make(map[string]bool)
 	onStart := func(e xml.StartElement, d *xml.Decoder) error {
 		var err error

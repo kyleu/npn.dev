@@ -9,6 +9,8 @@
       <p><%=v u %></p>
     </div>
 
+    <% SchemaMetadataDetail(u.Metadata, ctx, _buffer) %>
+
     <div class="uk-card uk-card-body uk-margin-top">
       <h3 class="uk-card-title">JSON</h3>
       <pre><%= util.ToJSON(u, ctx.Logger) %></pre>

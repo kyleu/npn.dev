@@ -14,7 +14,6 @@ type Schema struct {
 	Enums       Enums     `json:"enums,omitempty"`
 	Models      Models    `json:"models,omitempty"`
 	Unions      Unions    `json:"unions,omitempty"`
-	Services    Services  `json:"services,omitempty"`
 	Errors      []string  `json:"errors,omitempty"`
 	Metadata    *Metadata `json:"metadata,omitempty"`
 }
@@ -71,10 +70,6 @@ func (s *Schema) AddUnion(u *Union) error {
 	return nil
 }
 
-func (s *Schema) AddService(svc *Service) error {
-	if s.Enums.Get(svc.Key) != nil {
-		return errors.New("service [" + svc.Key + "] already exists")
-	}
-	s.Services = append(s.Services, svc)
-	return nil
+func (s *Schema) Validate() ValidationResult {
+	return validateSchema(s)
 }
