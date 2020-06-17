@@ -1,19 +1,27 @@
-<%: func SchemaValidationList(res schema.ValidationResult, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func SchemaValidationList(res *schema.ValidationResult, ctx *web.RequestContext, buffer *bytes.Buffer) %>
 <% if len(res.Messages) > 0 { %>
 <div class="uk-card uk-card-body uk-margin-top">
   <h3 class="uk-card-title">Validation Results</h3>
-  <ul class="uk-list uk-list-divider">
+  <table class="uk-table uk-table-divider">
+    <tbody>
     <% for _, r := range res.Messages { %>
-      <% if r.Level == schema.LevelInfo { %>
-        <li>Info: <%=v r.Msg %></li>
-      <% } else if r.Level == schema.LevelWarn { %>
-        <li>Warn: <%=v r.Msg %></li>
-      <% } else if r.Level == schema.LevelError { %>
-        <li>Error: <%=v r.Msg %></li>
-      <% } else { %>
-        <li><%=v r.Level %>: <%=v r.Msg %></li>
-      <% } %>
+      <%
+        var color = ""
+        if r.Level == schema.LevelInfo {
+          color = "green-fg"
+        } else if r.Level == schema.LevelWarn {
+          color = "yellow-fg"
+        } else if r.Level == schema.LevelError {
+          color = "red-fg"
+        }
+      %>
+      <tr>
+        <td class="uk-table-shrink uk-text-nowrap <%= color %>"><%= r.Category %></td>
+        <td class="uk-table-shrink uk-text-nowrap <%= color %>"><%=v r.ModelKey %></td>
+        <td class="<%= color %>"><%=v r.Msg %></td>
+      </tr>
     <% } %>
-  </ul>
+    </tbody>
+  </table>
 </div>
 <% } %>

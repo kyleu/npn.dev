@@ -9,6 +9,7 @@ const (
 	KeyDataSource = "dsn"
 	KeyEnum       = "enum"
 	KeyError      = "error"
+	KeyField      = "field"
 	KeyID         = "id"
 	KeyIdx        = "idx"
 	KeyKey        = "key"
@@ -22,7 +23,6 @@ const (
 	KeyStatus     = "status"
 	KeyTheme      = "theme"
 	KeyTitle      = "title"
-	KeyUnion      = "union"
 	KeyUser       = "user"
 )
 

@@ -3,18 +3,22 @@ package schema
 import (
 	"emperror.dev/errors"
 	"encoding/json"
+	"github.com/kyleu/npn/app/util"
+	"strings"
 )
 
 type ModelType struct {
 	Key string
 }
 
+var ModelTypeEnum = ModelType{Key: "enum"}
 var ModelTypeInput = ModelType{Key: "input"}
 var ModelTypeStruct = ModelType{Key: "struct"}
 var ModelTypeInterface = ModelType{Key: "interface"}
 var ModelTypeService = ModelType{Key: "service"}
+var ModelTypeUnion = ModelType{Key: "union"}
 
-var AllModelTypes = []ModelType{ModelTypeInput, ModelTypeStruct, ModelTypeInterface, ModelTypeService}
+var AllModelTypes = []ModelType{ModelTypeEnum, ModelTypeInput, ModelTypeStruct, ModelTypeInterface, ModelTypeService, ModelTypeUnion}
 
 func modelTypeFromString(s string) ModelType {
 	for _, t := range AllModelTypes {
@@ -44,10 +48,18 @@ func (t *ModelType) UnmarshalJSON(data []byte) error {
 
 type Model struct {
 	Key        string    `json:"key"`
+	Pkg        []string  `json:"pkg"`
 	Type       ModelType `json:"type"`
 	Interfaces []string  `json:"interfaces,omitempty"`
 	Fields     Fields    `json:"fields"`
 	Metadata   *Metadata `json:"metadata,omitempty"`
+}
+
+func (m *Model) ID() string {
+	if len(m.Pkg) == 0 {
+		return m.Key
+	}
+	return strings.Join(append(m.Pkg, m.Key), ".")
 }
 
 func (m *Model) AddField(f *Field) error {
@@ -60,9 +72,9 @@ func (m *Model) AddField(f *Field) error {
 
 type Models []*Model
 
-func (s Models) Get(key string) *Model {
+func (s Models) Get(pkg []string, key string) *Model {
 	for _, x := range s {
-		if x.Key == key {
+		if util.StringArraysEqual(x.Pkg, pkg) && x.Key == key {
 			return x
 		}
 	}

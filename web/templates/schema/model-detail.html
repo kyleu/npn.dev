@@ -5,9 +5,12 @@
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
+      <div class="right"><a class="theme" href="<%= ctx.Route(util.KeySchema + `.refresh`, util.KeyKey, sch.Key) %>" data-uk-icon="icon: refresh" title="Refresh schema from paths"></a></div>
       <h3 class="uk-card-title"><%= m.Key %></h3>
+      <%= strings.Join(m.Pkg, ".") %>
     </div>
 
+    <% SchemaValidationList(sch.ValidateModel(m), ctx, _buffer) %>
     <% SchemaMetadataDetail(m.Metadata, ctx, _buffer) %>
 
     <% if len(m.Fields) > 0 { %>
@@ -17,15 +20,13 @@
           <thead>
           <tr>
             <th>Key</th>
-            <th>Type</th>
             <th>Signature</th>
           </tr>
           </thead>
           <tbody>
           <% for _, f := range m.Fields { %>
             <tr>
-              <td><%= f.Key %></td>
-              <td><%= f.Type.Key() %></td>
+              <td class="uk-table-shrink uk-text-nowrap"><%= f.Key %></td>
               <td><%= f.Type.String() %></td>
             </tr>
           <% } %>

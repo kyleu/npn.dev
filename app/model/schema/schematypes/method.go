@@ -1,6 +1,7 @@
 package schematypes
 
 import (
+	"fmt"
 	"strings"
 )
 
@@ -10,7 +11,7 @@ type Argument struct {
 }
 
 func (a Argument) String() string {
-	return a.Key + ": " + a.Type.String()
+	return fmt.Sprintf("%v %v", a.Key, a.Type.String())
 }
 
 type Arguments []Argument
@@ -29,7 +30,7 @@ func (t Method) Key() string {
 func (t Method) String() string {
 	argStrings := make([]string, 0, len(t.Args))
 	for _, arg := range t.Args {
-		argStrings = append(argStrings, arg.Key + ": " + arg.Type.String())
+		argStrings = append(argStrings, arg.String())
 	}
-	return "(" + strings.Join(argStrings, ", ") + ")" + ": " + t.Ret.String()
+	return fmt.Sprintf("func (%v) %v", strings.Join(argStrings, ", "), t.Ret.String())
 }

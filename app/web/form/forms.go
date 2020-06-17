@@ -25,7 +25,7 @@ type ConnectionForm struct {
 }
 
 type SchemaSaveForm struct {
-	Original string `mapstructure:"original"`
+	Path     string `mapstructure:"path"`
 	Key      string `mapstructure:"key"`
 	Title    string `mapstructure:"title"`
 }

@@ -43,7 +43,7 @@ func DataSourceSave(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return act.EResp(err, "invalid form")
 		}
-		sch, _, err := ctx.App.Parsers.Load(origin.Key, []string{frm.Original})
+		sch, _, err := ctx.App.Parsers.Load(origin.Key, []string{frm.Path})
 		if err != nil {
 			return act.EResp(err, "unable to calculate schema")
 		}

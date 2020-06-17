@@ -8,6 +8,10 @@ type Field struct {
 	Metadata *Metadata           `json:"metadata,omitempty"`
 }
 
+func (f Field) String() string {
+	return f.Key + " " + f.Type.String()
+}
+
 type Fields []*Field
 
 func (s Fields) Get(key string) *Field {

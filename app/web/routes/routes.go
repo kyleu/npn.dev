@@ -41,9 +41,7 @@ func BuildRouter(app *config.AppInfo) (*mux.Router, error) {
 	schema.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaList))).Name(n(util.KeySchema))
 	r.Path(p(util.KeySchema, "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaDetail))).Name(n(util.KeySchema, "detail"))
 	r.Path(p(util.KeySchema, "{key}", "refresh")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaRefresh))).Name(n(util.KeySchema, "refresh"))
-	r.Path(p(util.KeySchema, "{key}", util.KeyEnum, "{e}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaEnumDetail))).Name(n(util.KeySchema, util.KeyEnum))
 	r.Path(p(util.KeySchema, "{key}", util.KeyModel, "{m}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaModelDetail))).Name(n(util.KeySchema, util.KeyModel))
-	r.Path(p(util.KeySchema, "{key}", util.KeyUnion, "{u}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaUnionDetail))).Name(n(util.KeySchema, util.KeyUnion))
 
 	// Sandbox
 	r.Path(p(util.KeySandbox)).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SandboxList))).Name(n(util.KeySandbox))

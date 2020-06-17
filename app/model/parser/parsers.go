@@ -2,28 +2,31 @@ package parser
 
 import (
 	"emperror.dev/errors"
+	"github.com/kyleu/npn/app/model/parser/graphql"
+	parseintellij "github.com/kyleu/npn/app/model/parser/intellij"
+	parsejsonschema "github.com/kyleu/npn/app/model/parser/jsonschema"
+	"github.com/kyleu/npn/app/model/parser/liquibase"
+	"github.com/kyleu/npn/app/model/parser/protobuf"
 	"github.com/kyleu/npn/app/model/schema"
-	"github.com/kyleu/npn/app/util"
 	"logur.dev/logur"
 	"sort"
 )
 
 type Parsers struct {
-	GraphQL   GraphQLParser
-	Protobuf  ProtobufParser
-	IntelliJ  IntelliJParser
-	Liquibase LiquibaseParser
+	GraphQL   *parsegraphql.GraphQLParser
+	Protobuf  *parseprotobuf.ProtobufParser
+	IntelliJ  *parseintellij.IntelliJParser
+	Liquibase *parseliquibase.LiquibaseParser
+	JSONSchema *parsejsonschema.JSONSchemaParser
 }
 
 func NewParsers(logger logur.Logger) *Parsers {
-	logFor := func(s string) logur.Logger {
-		return logur.WithFields(logger, map[string]interface{}{util.KeyService: s})
-	}
 	return &Parsers{
-		GraphQL: GraphQLParser{Key: schema.OriginGraphQL.Key, logger: logFor(schema.OriginGraphQL.Key)},
-		Protobuf: ProtobufParser{Key: schema.OriginProtobuf.Key, logger: logFor(schema.OriginProtobuf.Key)},
-		IntelliJ: IntelliJParser{Key: schema.OriginIntelliJ.Key, logger: logFor(schema.OriginIntelliJ.Key)},
-		Liquibase: LiquibaseParser{Key: schema.OriginLiquibase.Key, logger: logFor(schema.OriginLiquibase.Key)},
+		GraphQL:   parsegraphql.NewParser(logger),
+		Protobuf:  parseprotobuf.NewParser(logger),
+		IntelliJ:  parseintellij.NewParser(logger),
+		Liquibase: parseliquibase.NewParser(logger),
+		JSONSchema: parsejsonschema.NewParser(logger),
 	}
 }
 
@@ -44,7 +47,11 @@ func (p *Parsers) Detect(root string) ([]schema.DataSource, error){
 	if err != nil {
 		return nil, err
 	}
-	ret := append(gq, append(pb, append(ij, lb...)...)...)
+	js, err := p.JSONSchema.Detect(root)
+	if err != nil {
+		return nil, err
+	}
+	ret := append(gq, append(pb, append(ij, append(lb, js...)...)...)...)
 	sort.SliceStable(ret, func(i int, j int) bool {
 		return ret[i].Key < ret[j].Key
 	})
@@ -77,8 +84,14 @@ func (p *Parsers) Load(t string, paths []string) (*schema.Schema, interface{}, e
 			return nil, x, err
 		}
 		return x.Schema, x, nil
+	case p.JSONSchema.Key:
+		x, err := p.JSONSchema.ParseJSONSchemaFile(paths)
+		if err != nil {
+			return nil, x, err
+		}
+		return x.Schema, x, nil
 	default:
-		return nil, nil, errors.New("invalid type [" + t + "]")
+		return nil, nil, errors.New("invalid parser type [" + t + "]")
 	}
 }
 

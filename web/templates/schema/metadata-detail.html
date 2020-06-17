@@ -1,4 +1,5 @@
 <%: func SchemaMetadataDetail(md *schema.Metadata, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<% if md != nil { %>
 <div class="uk-card uk-card-body uk-margin-top">
   <h3 class="uk-card-title">Metadata</h3>
   <p>Origin: <%= md.Origin.String() %></p>
@@ -19,3 +20,4 @@
     <p>Source: <%= md.Source %><% if md.Line > 0 { %>:<%=v md.Line %>:<%=v md.Column %><% } %></p>
   <% } %>
 </div>
+<% } %>

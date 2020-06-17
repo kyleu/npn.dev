@@ -1,5 +1,7 @@
 package schematypes
 
+import "fmt"
+
 const KeyList = "list"
 
 type List struct {
@@ -11,5 +13,5 @@ func (l List) Key() string {
 }
 
 func (l List) String() string {
-	return "[]" + l.T.String()
+	return fmt.Sprintf("[]%v", l.T.String())
 }

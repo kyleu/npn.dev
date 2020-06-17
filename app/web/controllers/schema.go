@@ -53,22 +53,6 @@ func SchemaRefresh(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func SchemaEnumDetail(w http.ResponseWriter, r *http.Request) {
-	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
-		sch, err := schemaFromRequest(ctx, r)
-		if err != nil {
-			return act.EResp(err)
-		}
-		e := mux.Vars(r)["e"]
-		en := sch.Enums.Get(e)
-		if en == nil {
-			return act.EResp(err, "cannot load enum [" + e + "]")
-		}
-		ctx.Title = en.Key
-		return act.T(templates.SchemaEnumDetail(sch, en, ctx, w))
-	})
-}
-
 func SchemaModelDetail(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		sch, err := schemaFromRequest(ctx, r)
@@ -76,28 +60,14 @@ func SchemaModelDetail(w http.ResponseWriter, r *http.Request) {
 			return act.EResp(err)
 		}
 		m := mux.Vars(r)["m"]
-		model := sch.Models.Get(m)
+		pkg, key := util.SplitPackage(m)
+		model := sch.Models.Get(pkg, key)
 		if model == nil {
-			return act.EResp(err, "cannot load model [" + m + "]")
+			return act.EResp(errors.New("cannot load model [" + m + "]"))
 		}
-		ctx.Title = util.PluralTitle(util.KeySchema)
+		ctx.Title = model.Key
+		ctx.Breadcrumbs = schemaBreadcrumbs(ctx, ctx.Route(util.KeySchema + ".detail", util.KeyKey, sch.Key), sch.Key, "", model.Key)
 		return act.T(templates.SchemaModelDetail(sch, model, ctx, w))
-	})
-}
-
-func SchemaUnionDetail(w http.ResponseWriter, r *http.Request) {
-	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
-		sch, err := schemaFromRequest(ctx, r)
-		if err != nil {
-			return act.EResp(err)
-		}
-		u := mux.Vars(r)["u"]
-		union := sch.Unions.Get(u)
-		if union == nil {
-			return act.EResp(err, "cannot load union [" + u + "]")
-		}
-		ctx.Title = util.PluralTitle(util.KeySchema)
-		return act.T(templates.SchemaUnionDetail(sch, union, ctx, w))
 	})
 }
 

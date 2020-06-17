@@ -6,16 +6,14 @@ import (
 )
 
 type Schema struct {
-	Key         string    `json:"key"`
-	Title       string    `json:"title"`
-	Paths       Paths     `json:"paths"`
-	Options     Options   `json:"options,omitempty"`
-	Scalars     Scalars   `json:"scalars,omitempty"`
-	Enums       Enums     `json:"enums,omitempty"`
-	Models      Models    `json:"models,omitempty"`
-	Unions      Unions    `json:"unions,omitempty"`
-	Errors      []string  `json:"errors,omitempty"`
-	Metadata    *Metadata `json:"metadata,omitempty"`
+	Key      string    `json:"key"`
+	Title    string    `json:"title"`
+	Paths    Paths     `json:"paths"`
+	Options  Options   `json:"options,omitempty"`
+	Scalars  Scalars   `json:"scalars,omitempty"`
+	Models   Models    `json:"models,omitempty"`
+	Errors   []string  `json:"errors,omitempty"`
+	Metadata *Metadata `json:"metadata,omitempty"`
 }
 
 func NewSchema(title string, paths []string, md *Metadata) *Schema {
@@ -39,37 +37,26 @@ func (s *Schema) AddOption(opt *Option) error {
 }
 
 func (s *Schema) AddScalar(sc *Scalar) error {
-	if s.Scalars.Get(sc.Key) != nil {
+	if s.Scalars.Get(sc.Pkg, sc.Key) != nil {
 		return errors.New("scalar [" + sc.Key + "] already exists")
 	}
 	s.Scalars = append(s.Scalars, sc)
 	return nil
 }
 
-func (s *Schema) AddEnum(e *Enum) error {
-	if s.Enums.Get(e.Key) != nil {
-		return errors.New("enum [" + e.Key + "] already exists")
-	}
-	s.Enums = append(s.Enums, e)
-	return nil
-}
-
 func (s *Schema) AddModel(m *Model) error {
-	if s.Models.Get(m.Key) != nil {
+	if s.Models.Get(m.Pkg, m.Key) != nil {
 		return errors.New("model [" + m.Key + "] already exists")
 	}
 	s.Models = append(s.Models, m)
 	return nil
 }
 
-func (s *Schema) AddUnion(u *Union) error {
-	if s.Unions.Get(u.Key) != nil {
-		return errors.New("union [" + u.Key + "] already exists")
-	}
-	s.Unions = append(s.Unions, u)
-	return nil
+func (s *Schema) Validate() *ValidationResult {
+	return validateSchema(s)
 }
 
-func (s *Schema) Validate() ValidationResult {
-	return validateSchema(s)
+func (s *Schema) ValidateModel(model *Model) *ValidationResult {
+	r := &ValidationResult{Schema: s.Key}
+	return validateModel(r, s, model)
 }

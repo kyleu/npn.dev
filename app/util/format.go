@@ -31,3 +31,10 @@ func OxfordComma(names []string, clause string) string {
 	}
 	return ret
 }
+
+func SplitPackage(s string) ([]string, string) {
+	sp := strings.Split(s, ".")
+	pkg := sp[0:len(sp) - 1]
+	n := sp[len(sp) - 1]
+	return pkg, n
+}

@@ -11,5 +11,5 @@ func (e Error) Key() string {
 }
 
 func (e Error) String() string {
-	return "error(`" + e.Message + "`)"
+	return "error[" + e.Message + "]"
 }

@@ -1,9 +1,12 @@
 package schematypes
 
+import "strings"
+
 const KeyReference = "reference"
 
 type Reference struct {
-	T string `json:"t"`
+	Pkg []string `json:"pkg,omitempty"`
+	T   string `json:"t"`
 }
 
 func (u Reference) Key() string {
@@ -11,5 +14,8 @@ func (u Reference) Key() string {
 }
 
 func (u Reference) String() string {
-	return u.T
+	if len(u.Pkg) == 0 {
+		return u.T
+	}
+	return strings.Join(append(u.Pkg, u.T), ".")
 }
