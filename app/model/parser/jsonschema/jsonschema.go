@@ -1,16 +1,20 @@
 package parsejsonschema
 
 import (
-	"fmt"
+	"path"
+	"strings"
+
+	"emperror.dev/errors"
+
+	parseutil "github.com/kyleu/npn/app/model/parser/util"
 	"github.com/kyleu/npn/app/model/schema"
 	"github.com/kyleu/npn/app/util"
 	"logur.dev/logur"
-	"path"
 )
 
 type JSONSchemaParser struct {
-	Key     string
-	logger  logur.Logger
+	Key    string
+	logger logur.Logger
 }
 
 func NewParser(logger logur.Logger) *JSONSchemaParser {
@@ -18,21 +22,25 @@ func NewParser(logger logur.Logger) *JSONSchemaParser {
 	return &JSONSchemaParser{Key: schema.OriginJSONSchema.Key, logger: logger}
 }
 
+func (p *JSONSchemaParser) Type() schema.Origin {
+	return schema.OriginJSONSchema
+}
+
 func (p *JSONSchemaParser) Detect(root string) ([]schema.DataSource, error) {
-	fs, err := util.GetMatchingFiles(path.Join(root, "data", "jsonschema"), "*.json")
+	fs, err := parseutil.GetMatchingFiles(path.Join(root, "data", "jsonschema"), "*.json")
 	if err != nil {
 		return nil, err
 	}
 	ret := make([]schema.DataSource, 0, len(fs))
 	for _, f := range fs {
-		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Origin: schema.OriginJSONSchema})
+		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Type: schema.OriginJSONSchema})
 	}
 	return ret, nil
 }
 
-func (p *JSONSchemaParser) log(rsp *JSONSchemaResponse, err error) {
-	if err != nil {
-		rsp.Schema.Errors = append(rsp.Schema.Errors, err.Error())
-		p.logger.Error(fmt.Sprintf("unable to parse JSON schema: %+v", err))
+func (p *JSONSchemaParser) IsValid(firstChars string) error {
+	if !strings.Contains(firstChars, "{") {
+		return errors.New("not JSON")
 	}
+	return nil
 }

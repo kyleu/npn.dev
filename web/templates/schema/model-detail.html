@@ -7,7 +7,7 @@
     <div class="uk-card uk-card-body">
       <div class="right"><a class="theme" href="<%= ctx.Route(util.KeySchema + `.refresh`, util.KeyKey, sch.Key) %>" data-uk-icon="icon: refresh" title="Refresh schema from paths"></a></div>
       <h3 class="uk-card-title"><%= m.Key %></h3>
-      <%= strings.Join(m.Pkg, ".") %>
+      <%= m.Type.String() %><% if len(m.Pkg) > 0 { %><%= m.Pkg.String() %><% } %>
     </div>
 
     <% SchemaValidationList(sch.ValidateModel(m), ctx, _buffer) %>
@@ -18,18 +18,50 @@
         <h3 class="uk-card-title">Fields</h3>
         <table class="uk-table uk-table-divider">
           <thead>
-          <tr>
-            <th>Key</th>
-            <th>Signature</th>
-          </tr>
+            <tr>
+              <th>Key</th>
+              <% if m.Type != schema.ModelTypeEnum { %>
+              <th>Signature</th>
+              <% } %>
+              <th>Description</th>
+            </tr>
           </thead>
           <tbody>
-          <% for _, f := range m.Fields { %>
+            <% for _, f := range m.Fields { %>
+              <tr>
+                <td class="uk-table-shrink uk-text-nowrap"><%= f.Key %></td>
+                <% if m.Type != schema.ModelTypeEnum { %>
+                <td><%= f.Type.String() %></td>
+                <% } %>
+                <td><%= f.Metadata.Description %></td>
+              </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <% if len(m.Indexes) > 0 { %>
+      <div class="uk-card uk-card-body uk-margin-top">
+        <h3 class="uk-card-title">Indexes</h3>
+        <table class="uk-table uk-table-divider">
+          <thead>
             <tr>
-              <td class="uk-table-shrink uk-text-nowrap"><%= f.Key %></td>
-              <td><%= f.Type.String() %></td>
+              <th>Key</th>
+              <th>Fields</th>
+              <th>Unique</th>
+              <th>PK</th>
             </tr>
-          <% } %>
+          </thead>
+          <tbody>
+            <% for _, i := range m.Indexes { %>
+              <tr>
+                <td class="uk-table-shrink uk-text-nowrap"><%= i.Key %></td>
+                <td><%= strings.Join(i.Fields, ", ") %></td>
+                <td class="uk-table-shrink uk-text-nowrap"><% components.Boolean(i.Unique, "", "", _buffer) %></td>
+                <td class="uk-table-shrink uk-text-nowrap"><% components.Boolean(i.Primary, "", "", _buffer) %></td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>
@@ -40,16 +72,16 @@
         <h3 class="uk-card-title">Interfaces</h3>
         <table class="uk-table uk-table-divider">
           <thead>
-          <tr>
-            <th>Key</th>
-          </tr>
+            <tr>
+              <th>Key</th>
+            </tr>
           </thead>
           <tbody>
-          <% for _, iface := range m.Interfaces { %>
-            <tr>
-              <td><%= iface %></td>
-            </tr>
-          <% } %>
+            <% for _, iface := range m.Interfaces { %>
+              <tr>
+                <td><%= iface %></td>
+              </tr>
+            <% } %>
           </tbody>
         </table>
       </div>

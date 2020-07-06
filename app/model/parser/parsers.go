@@ -1,102 +1,93 @@
 package parser
 
 import (
-	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/model/parser/graphql"
+	"sort"
+
+	parsegraphql "github.com/kyleu/npn/app/model/parser/graphql"
 	parseintellij "github.com/kyleu/npn/app/model/parser/intellij"
 	parsejsonschema "github.com/kyleu/npn/app/model/parser/jsonschema"
-	"github.com/kyleu/npn/app/model/parser/liquibase"
-	"github.com/kyleu/npn/app/model/parser/protobuf"
+	parseprotobuf "github.com/kyleu/npn/app/model/parser/protobuf"
+	parseutil "github.com/kyleu/npn/app/model/parser/util"
 	"github.com/kyleu/npn/app/model/schema"
 	"logur.dev/logur"
-	"sort"
 )
 
+type Parser interface {
+	Type() schema.Origin
+	Detect(root string) ([]schema.DataSource, error)
+	IsValid(firstChars string) error
+	Parse(paths []string) (*parseutil.ParseResponse, error)
+}
+
 type Parsers struct {
-	GraphQL   *parsegraphql.GraphQLParser
-	Protobuf  *parseprotobuf.ProtobufParser
-	IntelliJ  *parseintellij.IntelliJParser
-	Liquibase *parseliquibase.LiquibaseParser
+	GraphQL    *parsegraphql.GraphQLParser
+	Protobuf   *parseprotobuf.ProtobufParser
+	IntelliJ   *parseintellij.IntelliJParser
 	JSONSchema *parsejsonschema.JSONSchemaParser
 }
 
 func NewParsers(logger logur.Logger) *Parsers {
 	return &Parsers{
-		GraphQL:   parsegraphql.NewParser(logger),
-		Protobuf:  parseprotobuf.NewParser(logger),
-		IntelliJ:  parseintellij.NewParser(logger),
-		Liquibase: parseliquibase.NewParser(logger),
+		GraphQL:    parsegraphql.NewParser(logger),
+		Protobuf:   parseprotobuf.NewParser(logger),
+		IntelliJ:   parseintellij.NewParser(logger),
 		JSONSchema: parsejsonschema.NewParser(logger),
 	}
 }
 
-func (p *Parsers) Detect(root string) ([]schema.DataSource, error){
-	gq, err := p.GraphQL.Detect(root)
-	if err != nil {
-		return nil, err
+func (p *Parsers) Detect(root string) ([]schema.DataSource, error) {
+	ret := make([]schema.DataSource, 0)
+	for _, parser := range p.all() {
+		x, err := parser.Detect(root)
+		if err != nil {
+			return nil, err
+		}
+		ret = append(ret, x...)
 	}
-	pb, err := p.Protobuf.Detect(root)
-	if err != nil {
-		return nil, err
-	}
-	ij, err := p.IntelliJ.Detect(root)
-	if err != nil {
-		return nil, err
-	}
-	lb, err := p.Liquibase.Detect(root)
-	if err != nil {
-		return nil, err
-	}
-	js, err := p.JSONSchema.Detect(root)
-	if err != nil {
-		return nil, err
-	}
-	ret := append(gq, append(pb, append(ij, append(lb, js...)...)...)...)
 	sort.SliceStable(ret, func(i int, j int) bool {
 		return ret[i].Key < ret[j].Key
 	})
 	return ret, nil
 }
 
-func (p *Parsers) Load(t string, paths []string) (*schema.Schema, interface{}, error) {
-	switch t {
-	case p.GraphQL.Key:
-		x, err := p.GraphQL.ParseSchemaFile(paths)
-		if err != nil {
-			return nil, x, err
-		}
-		return x.Schema, x, nil
-	case p.Protobuf.Key:
-		x, err := p.Protobuf.ParseProtobufFile(paths)
-		if err != nil {
-			return nil, x, err
-		}
-		return x.Schema, x, nil
-	case p.IntelliJ.Key:
-		x, err := p.IntelliJ.ParseDataSourceXML(paths)
-		if err != nil {
-			return nil, x, err
-		}
-		return x.Schema, x, nil
-	case p.Liquibase.Key:
-		x, err := p.Liquibase.ParseChangeLogXML(paths)
-		if err != nil {
-			return nil, x, err
-		}
-		return x.Schema, x, nil
-	case p.JSONSchema.Key:
-		x, err := p.JSONSchema.ParseJSONSchemaFile(paths)
-		if err != nil {
-			return nil, x, err
-		}
-		return x.Schema, x, nil
-	default:
-		return nil, nil, errors.New("invalid parser type [" + t + "]")
+func (p *Parsers) IsValid(path string) (schema.Origin, error) {
+	firstK, err := parseutil.ReadFirstK(path)
+	if err != nil {
+		return schema.OriginUnknown, err
 	}
+	for _, parser := range p.all() {
+		v := parser.IsValid(firstK)
+		if v == nil {
+			return parser.Type(), nil
+		}
+	}
+	return schema.OriginUnknown, nil
+}
+
+func (p *Parsers) all() []Parser {
+	return []Parser{p.GraphQL, p.Protobuf, p.IntelliJ, p.JSONSchema}
+}
+
+func (p *Parsers) fromType(t schema.Origin) Parser {
+	for _, parser := range p.all() {
+		if t == parser.Type() {
+			return parser
+		}
+	}
+	return nil
+}
+
+func (p *Parsers) Load(t schema.Origin, paths []string) (*schema.Schema, interface{}, error) {
+	x, err := p.fromType(t).Parse(paths)
+	if err != nil {
+		return nil, x, err
+	}
+	return x.Schema, x, nil
 }
 
 func (p *Parsers) Refresh(sch *schema.Schema) (*schema.Schema, error) {
-	newSchema, _, err :=  p.Load(sch.Metadata.Origin.Key, sch.Paths)
+	t := sch.Metadata.Origin
+	newSchema, _, err := p.Load(t, sch.Paths)
 	if err != nil {
 		return nil, err
 	}

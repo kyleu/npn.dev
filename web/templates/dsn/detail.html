@@ -1,4 +1,4 @@
-<%: func DataSourceDetail(sch *schema.Schema, rsp interface{}, origin schema.Origin, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func DataSourceDetail(sch *schema.Schema, rsp interface{}, t schema.Origin, ctx *web.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
@@ -8,22 +8,17 @@
       <h3 class="uk-card-title"><%= sch.Key %></h3>
       <hr />
       <label for="<%= util.KeyTitle %>-input">Save as</label>
-      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeyDataSource + `.save`, `t`, origin.Key) %>" method="post">
+      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeyDataSource + `.save`, `t`, t.Key) %>" method="post">
         <input type="hidden" name="key" value="<%= sch.Key %>" />
         <input type="hidden" name="path" value="<%= sch.Paths[0] %>" />
         <div class="uk-inline uk-display-block">
           <button type="submit" class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: plus" title="save schema"></button>
-          <input class="uk-input" type="text" id="<%= util.KeyTitle %>-input" name="<%= util.KeyTitle %>" placeholder="<%= util.Title(util.KeyTitle) %>" value="<%= util.FilenameOf(sch.Title) %>" />
+          <input class="uk-input" type="text" id="<%= util.KeyTitle %>-input" name="<%= util.KeyTitle %>" placeholder="<%= util.Title(util.KeyTitle) %>" value="<%= parseutil.FilenameOf(sch.Title) %>" />
         </div>
       </form>
     </div>
 
-    <% SchemaValidationList(sch.Validate(), ctx, _buffer) %>
-    <% SchemaPathList(sch.Paths, ctx, _buffer) %>
-    <% SchemaOptionList(sch.Options, ctx, _buffer) %>
-    <% SchemaErrorList(sch.Errors, ctx, _buffer) %>
-
-    <% SchemaModelList(sch.Key, sch.Models, ctx, _buffer) %>
+    <% SchemaComponents(sch, ctx, _buffer) %>
 
     <div class="uk-card uk-card-body uk-margin-top">
       <h3 class="uk-card-title">JSON</h3>

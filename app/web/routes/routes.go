@@ -30,6 +30,11 @@ func BuildRouter(app *config.AppInfo) (*mux.Router, error) {
 	profile.Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.ProfileSave))).Name(n(util.KeyProfile, "save"))
 	r.Path(p(util.KeyProfile, "theme", "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProfileTheme))).Name(n(util.KeyProfile, util.KeyTheme))
 
+	// File System
+	file := r.Path(p(util.KeyFile)).Subrouter()
+	file.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.FileRoot))).Name(n(util.KeyFile, "root"))
+	r.PathPrefix("/" + util.KeyFile + "/").Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.FilePath))).Name(n(util.KeyFile))
+
 	// DataSource
 	dsn := r.Path(p(util.KeyDataSource)).Subrouter()
 	dsn.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.DataSourceList))).Name(n(util.KeyDataSource))
@@ -43,17 +48,37 @@ func BuildRouter(app *config.AppInfo) (*mux.Router, error) {
 	r.Path(p(util.KeySchema, "{key}", "refresh")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaRefresh))).Name(n(util.KeySchema, "refresh"))
 	r.Path(p(util.KeySchema, "{key}", util.KeyModel, "{m}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SchemaModelDetail))).Name(n(util.KeySchema, util.KeyModel))
 
+	// Project
+	project := r.Path(p(util.KeyProject)).Subrouter()
+	project.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectList))).Name(n(util.KeyProject))
+	r.Path(p(util.KeyProject, "new")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectNew))).Name(n(util.KeyProject, "new"))
+	r.Path(p(util.KeyProject, "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectDetail))).Name(n(util.KeyProject, "detail"))
+	r.Path(p(util.KeyProject, "{key}", "edit")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectEdit))).Name(n(util.KeyProject, "edit"))
+	r.Path(p(util.KeyProject, "{key}", "edit")).Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectSave))).Name(n(util.KeyProject, "save"))
+	r.Path(p(util.KeyProject, "{key}", "{task}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskRun))).Name(n(util.KeyProject, util.KeyTask))
+	r.Path(p(util.KeyProject, "{key}", "{task}", "add")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskAdd))).Name(n(util.KeyProject, util.KeyTask, "add"))
+	r.Path(p(util.KeyProject, "{key}", "{task}", "edit")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskEdit))).Name(n(util.KeyProject, util.KeyTask, "edit"))
+	r.Path(p(util.KeyProject, "{key}", "{task}")).Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskSave))).Name(n(util.KeyProject, util.KeyTask, "save"))
+
 	// Sandbox
-	r.Path(p(util.KeySandbox)).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SandboxList))).Name(n(util.KeySandbox))
+	sandbox := r.Path(p(util.KeySandbox)).Subrouter()
+	sandbox.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SandboxList))).Name(n(util.KeySandbox))
 	r.Path(p(util.KeySandbox, "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SandboxRun))).Name(n(util.KeySandbox, "run"))
 
+	// Routes
+	routes := r.Path(p(util.KeyRoutes)).Subrouter()
+	routes.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.RouteList))).Name(n(util.KeyRoutes))
+	r.Path(p("sitemap.xml")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SitemapXML))).Name(n("sitemap"))
+	r.Path(p(util.KeyModules)).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ModuleList))).Name(n(util.KeyModules))
+
 	// About
-	r.Path(p(util.KeyAbout)).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.About))).Name(n(util.KeyAbout))
+	about := r.Path(p(util.KeyAbout)).Subrouter()
+	about.Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.About))).Name(n(util.KeyAbout))
 
 	// Assets
+	_ = r.Path(p("assets")).Subrouter()
 	r.Path(p("favicon.ico")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.Favicon))).Name(n("favicon"))
 	r.Path(p("robots.txt")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.RobotsTxt))).Name(n("robots"))
-	r.Path(p("sitemap.xml")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.SitemapXML))).Name(n("sitemap"))
 	r.PathPrefix(p("assets")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.Static))).Name(n("assets"))
 
 	r.PathPrefix("").Handler(addContext(r, app, http.HandlerFunc(controllers.NotFound)))

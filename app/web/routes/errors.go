@@ -29,7 +29,8 @@ func addContext(router *mux.Router, info *config.AppInfo, next http.Handler) htt
 func internalServerError(router *mux.Router, info *config.AppInfo, w http.ResponseWriter, r *http.Request) {
 	defer lastChanceError(w)
 
-	if err := recover(); err != nil {
+	err := recover()
+	if err != nil {
 		st := http.StatusInternalServerError
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -53,8 +54,9 @@ func internalServerError(router *mux.Router, info *config.AppInfo, w http.Respon
 }
 
 func lastChanceError(w io.Writer) {
-	if err := recover(); err != nil {
-		println(fmt.Sprintf("unhandled last-chance error while processing error handler: %+v", err))
+	err := recover()
+	if err != nil {
+		fmt.Println(fmt.Sprintf("unhandled last-chance error while processing error handler: %+v", err))
 		_, _ = w.Write([]byte("Internal Server Error"))
 	}
 }

@@ -49,7 +49,18 @@ var dom;
     }
     dom.initDom = initDom;
     function els(selector, context) {
-        return UIkit.util.$$(selector, context);
+        let result;
+        if (context) {
+            result = context.querySelectorAll(selector);
+        }
+        else {
+            result = document.querySelectorAll(selector);
+        }
+        const ret = [];
+        result.forEach(v => {
+            ret.push(v);
+        });
+        return ret;
     }
     dom.els = els;
     function opt(selector, context) {
@@ -105,6 +116,12 @@ var dom;
         return el;
     }
     dom.setText = setText;
+    function switchElements(el, tgt) {
+        setDisplay(el, false);
+        setDisplay(tgt, true);
+        return false;
+    }
+    dom.switchElements = switchElements;
     function clear(el) {
         return setHTML(el, "");
     }
@@ -286,10 +303,11 @@ var style;
 var drop;
 (function (drop) {
     function wire() {
-        UIkit.util.on(".drop", "show", onDropOpen);
-        UIkit.util.on(".drop", "beforehide", onDropBeforeHide);
-        UIkit.util.on(".drop", "hide", onDropHide);
-        events.register("export");
+        dom.els(".drop").forEach(el => {
+            el.addEventListener("show", onDropOpen);
+            el.addEventListener("beforehide", onDropBeforeHide);
+            el.addEventListener("hide", onDropHide);
+        });
     }
     drop.wire = wire;
     function onDropOpen(e) {
@@ -360,17 +378,15 @@ var modal;
 (function (modal) {
     let activeParam;
     function wire() {
-        UIkit.util.on(".modal", "show", onModalOpen);
-        UIkit.util.on(".modal", "hide", onModalHide);
-        events.register("welcome");
+        dom.els(".modal").forEach(el => {
+            el.addEventListener("show", onModalOpen);
+            el.addEventListener("hide", onModalHide);
+        });
     }
     modal.wire = wire;
     function open(key, param) {
         activeParam = param;
-        const m = UIkit.modal(`#modal-${key}`);
-        if (!m) {
-            console.warn(`no modal available with key [${key}]`);
-        }
+        const m = notify.modal(`#modal-${key}`);
         m.show();
         return false;
     }
@@ -380,7 +396,7 @@ var modal;
     }
     modal.openSoon = openSoon;
     function hide(key) {
-        const m = UIkit.modal(`#modal-${key}`);
+        const m = notify.modal(`#modal-${key}`);
         const el = m.$el;
         if (el.classList.contains("uk-open")) {
             m.hide();
@@ -423,11 +439,11 @@ var modal;
 var tags;
 (function (tags) {
     function wire() {
-        UIkit.util.on(".tag-editor", "moved", onTagEditorUpdate);
-        UIkit.util.on(".tag-editor", "added", onTagEditorUpdate);
-        UIkit.util.on(".tag-editor", "removed", onTagEditorUpdate);
-        events.register("choices");
-        events.register("categories");
+        dom.els(".tag-editor").forEach(el => {
+            el.addEventListener("moved", onTagEditorUpdate);
+            el.addEventListener("added", onTagEditorUpdate);
+            el.addEventListener("removed", onTagEditorUpdate);
+        });
     }
     tags.wire = wire;
     function removeTag(el) {
@@ -655,5 +671,17 @@ var notify;
         UIkit.notification(msg, { status: status ? "success" : "danger", pos: "top-right" });
     }
     notify_1.notify = notify;
+    function confirm(msg, f) {
+        UIkit.modal.confirm(msg).then(f);
+    }
+    notify_1.confirm = confirm;
+    function modal(key) {
+        const m = UIkit.modal(key);
+        if (!m) {
+            console.warn(`no modal available with key [${key}]`);
+        }
+        return m;
+    }
+    notify_1.modal = modal;
 })(notify || (notify = {}));
 //# sourceMappingURL=npn.js.map

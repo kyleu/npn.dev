@@ -3,22 +3,28 @@ package schema
 import (
 	"emperror.dev/errors"
 	"encoding/json"
+	"github.com/iancoleman/strcase"
 	"github.com/kyleu/npn/app/util"
-	"strings"
 )
 
 type ModelType struct {
-	Key string
+	Key    string
+	Title  string
+	Plural string
 }
 
-var ModelTypeEnum = ModelType{Key: "enum"}
-var ModelTypeInput = ModelType{Key: "input"}
-var ModelTypeStruct = ModelType{Key: "struct"}
-var ModelTypeInterface = ModelType{Key: "interface"}
-var ModelTypeService = ModelType{Key: "service"}
-var ModelTypeUnion = ModelType{Key: "union"}
+var ModelTypeEnum = ModelType{Key: "enum", Title: "Enum", Plural: "Enums"}
+var ModelTypeInput = ModelType{Key: "input", Title: "Input", Plural: "Inputs"}
+var ModelTypeStruct = ModelType{Key: "struct", Title: "Struct", Plural: "Structs"}
+var ModelTypeInterface = ModelType{Key: "interface", Title: "Interface", Plural: "Interfaces"}
+var ModelTypeService = ModelType{Key: "service", Title: "Service", Plural: "Services"}
+var ModelTypeUnion = ModelType{Key: "union", Title: "Union", Plural: "Unions"}
+var ModelTypeIntersection = ModelType{Key: "intersection", Title: "Intersection", Plural: "Intersections"}
 
-var AllModelTypes = []ModelType{ModelTypeEnum, ModelTypeInput, ModelTypeStruct, ModelTypeInterface, ModelTypeService, ModelTypeUnion}
+var AllModelTypes = []ModelType{
+	ModelTypeEnum, ModelTypeInput, ModelTypeStruct,
+	ModelTypeInterface, ModelTypeService, ModelTypeUnion, ModelTypeIntersection,
+}
 
 func modelTypeFromString(s string) ModelType {
 	for _, t := range AllModelTypes {
@@ -39,7 +45,8 @@ func (t *ModelType) MarshalJSON() ([]byte, error) {
 
 func (t *ModelType) UnmarshalJSON(data []byte) error {
 	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
+	err := json.Unmarshal(data, &s)
+	if err != nil {
 		return err
 	}
 	*t = modelTypeFromString(s)
@@ -47,22 +54,35 @@ func (t *ModelType) UnmarshalJSON(data []byte) error {
 }
 
 type Model struct {
-	Key        string    `json:"key"`
-	Pkg        []string  `json:"pkg"`
-	Type       ModelType `json:"type"`
-	Interfaces []string  `json:"interfaces,omitempty"`
-	Fields     Fields    `json:"fields"`
-	Metadata   *Metadata `json:"metadata,omitempty"`
+	Key         string    `json:"key"`
+	Pkg         util.Pkg  `json:"pkg,omitempty"`
+	Type        ModelType `json:"type"`
+	Interfaces  []string  `json:"interfaces,omitempty"`
+	Fields      Fields    `json:"fields,omitempty"`
+	Indexes     Indexes   `json:"indexes,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Metadata    *Metadata `json:"metadata,omitempty"`
 }
 
 func (m *Model) ID() string {
 	if len(m.Pkg) == 0 {
 		return m.Key
 	}
-	return strings.Join(append(m.Pkg, m.Key), ".")
+	return m.Pkg.StringWith(m.Key)
+}
+
+func (m *Model) ClassName(nr *util.NameRegistry) string {
+	return nr.Replace(strcase.ToCamel(m.Key))
+}
+
+func (m *Model) PropName(nr *util.NameRegistry) string {
+	return nr.Replace(strcase.ToLowerCamel(m.Key))
 }
 
 func (m *Model) AddField(f *Field) error {
+	if f == nil {
+		return errors.New("nil field")
+	}
 	if m.Fields.Get(f.Key) != nil {
 		return errors.New("field [" + f.Key + "] already exists")
 	}
@@ -70,13 +90,52 @@ func (m *Model) AddField(f *Field) error {
 	return nil
 }
 
+func (m *Model) AddIndex(i *Index) error {
+	if i == nil {
+		return errors.New("nil index")
+	}
+	if m.Fields.Get(i.Key) != nil {
+		return errors.New("index [" + i.Key + "] already exists")
+	}
+	m.Indexes = append(m.Indexes, i)
+	return nil
+}
+
 type Models []*Model
 
-func (s Models) Get(pkg []string, key string) *Model {
-	for _, x := range s {
+func (m Models) Get(pkg util.Pkg, key string) *Model {
+	for _, x := range m {
 		if util.StringArraysEqual(x.Pkg, pkg) && x.Key == key {
 			return x
 		}
 	}
 	return nil
+}
+
+func (m Models) HasField() bool {
+	for _, model := range m {
+		if len(model.Fields) > 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func (m Models) HasIndex() bool {
+	for _, model := range m {
+		if len(model.Indexes) > 0 {
+			return true
+		}
+	}
+	return false
+}
+
+func (m Models) ByType(t ModelType) Models {
+	ret := Models{}
+	for _, x := range m {
+		if x.Type == t {
+			ret = append(ret, x)
+		}
+	}
+	return ret
 }

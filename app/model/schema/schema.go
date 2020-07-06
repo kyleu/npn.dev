@@ -5,22 +5,38 @@ import (
 	"github.com/kyleu/npn/app/util"
 )
 
-type Schema struct {
-	Key      string    `json:"key"`
-	Title    string    `json:"title"`
-	Paths    Paths     `json:"paths"`
-	Options  Options   `json:"options,omitempty"`
-	Scalars  Scalars   `json:"scalars,omitempty"`
-	Models   Models    `json:"models,omitempty"`
-	Errors   []string  `json:"errors,omitempty"`
-	Metadata *Metadata `json:"metadata,omitempty"`
+type Summary struct {
+	Key         string    `json:"key"`
+	Title       string    `json:"title"`
+	Paths       Paths     `json:"paths"`
+	Description string    `json:"description,omitempty"`
+	Metadata    *Metadata `json:"metadata,omitempty"`
 }
+
+type Summaries []*Summary
+
+type Schema struct {
+	Key         string    `json:"key"`
+	Title       string    `json:"title"`
+	Paths       Paths     `json:"paths"`
+	Options     Options   `json:"options,omitempty"`
+	Scalars     Scalars   `json:"scalars,omitempty"`
+	Models      Models    `json:"models,omitempty"`
+	Errors      []string  `json:"errors,omitempty"`
+	Description string    `json:"description,omitempty"`
+	Metadata    *Metadata `json:"metadata,omitempty"`
+}
+
+type Schemata []*Schema
 
 func NewSchema(title string, paths []string, md *Metadata) *Schema {
 	return &Schema{Key: util.Slugify(title), Title: title, Paths: paths, Metadata: md}
 }
 
 func (s *Schema) AddPath(path string) bool {
+	if path == "" {
+		return false
+	}
 	if s.Paths.Exists(path) {
 		return false
 	}
@@ -29,6 +45,9 @@ func (s *Schema) AddPath(path string) bool {
 }
 
 func (s *Schema) AddOption(opt *Option) error {
+	if opt == nil {
+		return errors.New("nil opt")
+	}
 	if s.Options.Get(opt.T, opt.K) != nil {
 		return errors.New("option [" + opt.T + ":" + opt.K + "] already exists")
 	}
@@ -37,6 +56,9 @@ func (s *Schema) AddOption(opt *Option) error {
 }
 
 func (s *Schema) AddScalar(sc *Scalar) error {
+	if sc == nil {
+		return errors.New("nil scalar")
+	}
 	if s.Scalars.Get(sc.Pkg, sc.Key) != nil {
 		return errors.New("scalar [" + sc.Key + "] already exists")
 	}
@@ -45,6 +67,9 @@ func (s *Schema) AddScalar(sc *Scalar) error {
 }
 
 func (s *Schema) AddModel(m *Model) error {
+	if m == nil {
+		return errors.New("nil model")
+	}
 	if s.Models.Get(m.Pkg, m.Key) != nil {
 		return errors.New("model [" + m.Key + "] already exists")
 	}

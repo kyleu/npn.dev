@@ -67,12 +67,12 @@ func RespondJSON(w http.ResponseWriter, filename string, body interface{}, logge
 }
 
 func RespondMIME(filename string, mime string, ext string, ba []byte, w http.ResponseWriter) (string, error) {
-	w.Header().Set("Content-Type", mime + "; charset=UTF-8")
+	w.Header().Set("Content-Type", mime+"; charset=UTF-8")
 	if len(filename) > 0 {
-		if !strings.HasSuffix(filename, "." + ext) {
+		if !strings.HasSuffix(filename, "."+ext) {
 			filename = filename + "." + ext
 		}
-		w.Header().Set("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+		w.Header().Set("Content-Disposition", "attachment; filename=\""+filename+"\"")
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	if len(ba) == 0 {

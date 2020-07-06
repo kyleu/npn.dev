@@ -1,17 +1,20 @@
 package schema
 
-import "github.com/kyleu/npn/app/util"
+import (
+	"github.com/kyleu/npn/app/util"
+)
 
 type Scalar struct {
-	Pkg      []string    `json:"pkg"`
-	Key      string    `json:"key"`
-	Type     string    `json:"type"`
-	Metadata *Metadata `json:"metadata"`
+	Pkg         util.Pkg  `json:"pkg,omitempty"`
+	Key         string    `json:"key"`
+	Type        string    `json:"type"`
+	Description string    `json:"description,omitempty"`
+	Metadata    *Metadata `json:"metadata,omitempty"`
 }
 
 type Scalars []*Scalar
 
-func (s Scalars) Get(pkg []string, key string) *Scalar {
+func (s Scalars) Get(pkg util.Pkg, key string) *Scalar {
 	for _, x := range s {
 		if util.StringArraysEqual(x.Pkg, pkg) && x.Key == key {
 			return x

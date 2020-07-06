@@ -1,5 +1,10 @@
 package schematypes
 
+import (
+	"github.com/kyleu/npn/app/model/output"
+	"github.com/kyleu/npn/app/util"
+)
+
 const KeyError = "error"
 
 type Error struct {
@@ -11,5 +16,9 @@ func (e Error) Key() string {
 }
 
 func (e Error) String() string {
-	return "error[" + e.Message + "]"
+	return "error(" + e.Message + ")"
+}
+
+func (t Error) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	return nr.Get(nil, t.Key(), src).String()
 }

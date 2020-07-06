@@ -1,13 +1,14 @@
 package parseutil
 
 import (
-	"emperror.dev/errors"
 	"encoding/xml"
 	"fmt"
 	"io"
-	"logur.dev/logur"
 	"os"
 	"strings"
+
+	"emperror.dev/errors"
+	"logur.dev/logur"
 )
 
 func ParseXML(path string, onStart func(xml.StartElement, *xml.Decoder) error) error {
@@ -26,8 +27,8 @@ func ParseXML(path string, onStart func(xml.StartElement, *xml.Decoder) error) e
 			return errors.Wrap(err, "error decoding XML token: %+v")
 		}
 
-		switch e := tok.(type) {
-		case xml.StartElement:
+		e, ok := tok.(xml.StartElement)
+		if ok {
 			err = onStart(e, d)
 			if err != nil {
 				return err

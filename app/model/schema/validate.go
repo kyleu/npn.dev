@@ -39,7 +39,7 @@ func validateModel(r *ValidationResult, s *Schema, m *Model) *ValidationResult {
 	encountered := map[string]bool{}
 	for _, f := range m.Fields {
 		if encountered[f.Key] {
-			r.log(m.Type.Key, m.Key, m.Type.String() + " ["+m.Key+"] field ["+f.Key+"] appears twice", LevelError)
+			r.log(m.Type.Key, m.Key, m.Type.String()+" ["+m.Key+"] field ["+f.Key+"] appears twice", LevelError)
 		}
 		encountered[f.Key] = true
 	}
@@ -63,7 +63,7 @@ func validateType(r *ValidationResult, s *Schema, mType string, mKey string, fKe
 		validateType(r, s, mType, mKey, fKey, t.T)
 	case schematypes.Reference:
 		if s.Models.Get(t.Pkg, t.T) == nil && s.Scalars.Get(t.Pkg, t.T) == nil {
-			r.log(mType, mKey, "field ["+fKey+"] has reference to unknown type ["+t.T+"]", LevelWarn)
+			r.log(mType, mKey, "field ["+fKey+"] has reference to unknown type ["+t.Pkg.String()+"::"+t.T+"]", LevelWarn)
 		}
 	}
 	return r

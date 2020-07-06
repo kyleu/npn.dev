@@ -3,12 +3,13 @@ package parsegraphql
 import (
 	"emperror.dev/errors"
 	"github.com/graph-gophers/graphql-go/introspection"
+	parseutil "github.com/kyleu/npn/app/model/parser/util"
 	"github.com/kyleu/npn/app/model/schema"
 	"github.com/kyleu/npn/app/model/schema/schematypes"
 	"logur.dev/logur"
 )
 
-func parseGraphQLType(ret *GraphQLResponse, t *introspection.Type, logger logur.Logger) error {
+func parseGraphQLType(ret *parseutil.ParseResponse, t *introspection.Type, logger logur.Logger) error {
 	key := *t.Name()
 	md := getGraphQLMetadata(t.Description())
 	switch t.Kind() {
@@ -54,7 +55,7 @@ func getGraphQLInterfaces(t *introspection.Type) []string {
 }
 
 func getGraphQLFields(t *introspection.Type, logger logur.Logger) schema.Fields {
-	gqlFields := t.Fields(nil)
+	gqlFields := t.Fields(gqlArgs)
 	if gqlFields == nil {
 		return nil
 	}
@@ -65,9 +66,21 @@ func getGraphQLFields(t *introspection.Type, logger logur.Logger) schema.Fields 
 	return fields
 }
 
+func getGraphQLInputFields(t *introspection.Type, logger logur.Logger) schema.Fields {
+	gqlFields := t.InputFields()
+	if gqlFields == nil {
+		return nil
+	}
+	var fields schema.Fields
+	for _, field := range *gqlFields {
+		fields = append(fields, &schema.Field{Key: field.Name(), Type: getGraphQLType(field.Type(), nil, logger)})
+	}
+	return fields
+}
+
 func getGraphQLType(t *introspection.Type, args []*introspection.InputValue, logger logur.Logger) schematypes.Wrapped {
 	if t == nil {
-		return schematypes.Wrap(schematypes.Nil{})
+		return schematypes.NilWrapped
 	}
 	if t.Name() != nil {
 		if len(args) > 0 {
@@ -82,7 +95,7 @@ func getGraphQLType(t *introspection.Type, args []*introspection.InputValue, log
 		typ := schematypes.List{T: getGraphQLType(t.OfType(), nil, logger)}
 		return schematypes.Wrap(typ)
 	default:
-		return schematypes.Wrap(schematypes.Option{T: schematypes.Wrap(schematypes.Reference{T: t.Kind()})})
+		return schematypes.OptionWrapped(schematypes.Reference{T: t.Kind()})
 	}
 }
 

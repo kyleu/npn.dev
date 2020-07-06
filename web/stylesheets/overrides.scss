@@ -134,3 +134,13 @@ pre {
   vertical-align: top;
   text-transform: none;
 }
+
+// Cards
+.uk-card-default {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+// Em
+em, .uk-light em {
+  color: #999;
+}

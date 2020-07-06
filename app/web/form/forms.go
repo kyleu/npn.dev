@@ -25,9 +25,16 @@ type ConnectionForm struct {
 }
 
 type SchemaSaveForm struct {
-	Path     string `mapstructure:"path"`
-	Key      string `mapstructure:"key"`
-	Title    string `mapstructure:"title"`
+	Path  string `mapstructure:"path"`
+	Key   string `mapstructure:"key"`
+	Title string `mapstructure:"title"`
+}
+
+type ProjectSaveForm struct {
+	Title  string `mapstructure:"title"`
+	Schema string `mapstructure:"schema"`
+	Path   string `mapstructure:"path"`
+	Pkg    string `mapstructure:"pkg"`
 }
 
 func Decode(r *http.Request, tgt interface{}, logger logur.Logger) error {
@@ -42,12 +49,14 @@ func Decode(r *http.Request, tgt interface{}, logger logur.Logger) error {
 		return errors.Wrap(err, fmt.Sprintf("unable to parse [%T] form", tgt))
 	}
 
-	if logger != nil {
-		if len(md.Unused) > 0 {
-			msg := fmt.Sprintf("parsed [%T] form with unused keys [%v]", tgt, strings.Join(md.Unused, ", "))
-			logger.Warn(msg)
-			bytes, _ := json.Marshal(tgt)
+	if len(md.Unused) > 0 {
+		msg := fmt.Sprintf("parsed [%T] form with unused keys [%v]", tgt, strings.Join(md.Unused, ", "))
+		logger.Warn(msg)
+		bytes, _ := json.Marshal(tgt)
+		if logger != nil {
 			logger.Warn(string(bytes))
+		} else {
+			fmt.Println(string(bytes))
 		}
 	}
 	return nil

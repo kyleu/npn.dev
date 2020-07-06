@@ -9,14 +9,7 @@
       <h3 class="uk-card-title"><%= sch.Title %></h3>
     </div>
 
-    <% SchemaValidationList(sch.Validate(), ctx, _buffer) %>
-    <% SchemaMetadataDetail(sch.Metadata, ctx, _buffer) %>
-
-    <% SchemaPathList(sch.Paths, ctx, _buffer) %>
-    <% SchemaOptionList(sch.Options, ctx, _buffer) %>
-    <% SchemaErrorList(sch.Errors, ctx, _buffer) %>
-
-    <% SchemaModelList(sch.Key, sch.Models, ctx, _buffer) %>
+    <% SchemaComponents(sch, ctx, _buffer) %>
   </div>
 </div>
 <% } %>

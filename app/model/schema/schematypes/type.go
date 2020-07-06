@@ -2,11 +2,15 @@ package schematypes
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/util"
+
+	"github.com/kyleu/npn/app/model/output"
 )
 
 type Type interface {
 	Key() string
 	fmt.Stringer
+	StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string
 }
 
 type Wrapped struct {
@@ -28,4 +32,8 @@ func (w Wrapped) Key() string {
 
 func (w Wrapped) String() string {
 	return w.V.String()
+}
+
+func (w Wrapped) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	return w.V.StringFor(ft, nr, src)
 }

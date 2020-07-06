@@ -1,12 +1,13 @@
 package schematypes
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
+
+	"emperror.dev/errors"
 )
 
 type wrappedUnmarshal struct {
-	K string `json:"k"`
+	K string          `json:"k"`
 	T json.RawMessage `json:"t"`
 }
 
@@ -70,6 +71,10 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 		tgt := Method{}
 		err = json.Unmarshal(wu.T, &tgt)
 		t = tgt
+	case KeyNil:
+		tgt := Nil{}
+		err = json.Unmarshal(wu.T, &tgt)
+		t = tgt
 	case KeyOption:
 		tgt := Option{}
 		err = json.Unmarshal(wu.T, &tgt)
@@ -114,7 +119,7 @@ func (w *Wrapped) UnmarshalJSON(data []byte) error {
 		t = Unknown{X: "unmarshal:" + wu.K}
 	}
 	if err != nil {
-		return errors.Wrap(err, "unable to unmarshal wrapped field of type [" + wu.K + "]")
+		return errors.Wrap(err, "unable to unmarshal wrapped field of type ["+wu.K+"]")
 	}
 	if t == nil {
 		return errors.New("nil type returned from unmarshal")

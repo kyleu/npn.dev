@@ -1,0 +1,51 @@
+<%: func ProjectForm(project *project.Project, availableSchemata schema.Summaries, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeyProject + `.save`, util.KeyKey, project.Key) %>" method="post">
+        <div>
+          <label class="uk-form-label" for="form-title">Title</label>
+          <div class="uk-form-controls">
+            <input class="uk-input" id="form-title" name="title" type="text" placeholder="Title" value="<%= project.Title %>">
+          </div>
+        </div>
+        <div class="uk-margin-top">
+          <label class="uk-form-label" for="form-path">Path</label>
+          <div class="uk-form-controls">
+            <input class="uk-input" id="form-path" name="path" type="text" placeholder="Root Path" value="<%= project.RootPath %>">
+          </div>
+        </div>
+        <div class="uk-margin-top">
+          <label class="uk-form-label" for="form-pkg">Package</label>
+          <div class="uk-form-controls">
+            <input class="uk-input" id="form-pkg" name="pkg" type="text" placeholder="Package" value="<%= project.RootPkg.String() %>">
+          </div>
+        </div>
+        <div class="uk-margin-top">
+          <label class="uk-form-label">Schemata</label>
+          <div class="uk-form-controls">
+            <% for _, sch := range availableSchemata { %>
+              <div class="uk-margin-small-top">
+                <label>
+                  <% if project.HasSchema(sch.Key) { %>
+                    <input class="uk-checkbox" name="schema" type="checkbox" value="<%= sch.Key %>" checked>
+                  <% } else { %>
+                    <input class="uk-checkbox" name="schema" type="checkbox" value="<%= sch.Key %>">
+                  <% } %>
+                  <%= sch.Title %>
+                </label>
+              </div>
+            <% } %>
+          </div>
+        </div>
+        <div class="uk-margin-top">
+          <button type="submit" class="right uk-button uk-button-default">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>

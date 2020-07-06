@@ -1,6 +1,11 @@
 package schema
 
-import "github.com/kyleu/npn/app/model/schema/schematypes"
+import (
+	"github.com/kyleu/npn/app/model/output"
+	"github.com/kyleu/npn/app/model/schema/schematypes"
+	"github.com/iancoleman/strcase"
+	"github.com/kyleu/npn/app/util"
+)
 
 type Field struct {
 	Key      string              `json:"key"`
@@ -8,8 +13,24 @@ type Field struct {
 	Metadata *Metadata           `json:"metadata,omitempty"`
 }
 
-func (f Field) String() string {
+func (f *Field) String() string {
 	return f.Key + " " + f.Type.String()
+}
+
+func (f *Field) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	extra := ""
+	if ft == output.FileTypeGo {
+		extra = " `json:\"" + f.PropName(nr) + "\"`"
+	}
+	return f.ClassName(nr) + " " + f.Type.StringFor(ft, nr, src) + extra
+}
+
+func (f *Field) ClassName(nr *util.NameRegistry) string {
+	return nr.Replace(strcase.ToCamel(f.Key))
+}
+
+func (f *Field) PropName(nr *util.NameRegistry) string {
+	return nr.Replace(strcase.ToLowerCamel(f.Key))
 }
 
 type Fields []*Field

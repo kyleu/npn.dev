@@ -33,7 +33,7 @@ golangci-lint run \
   -E gofmt \
   -E goimports \
   -E golint \
-  -E gomnd \
+  -D gomnd \
   -E gomodguard \
   -E goprintffuncname \
   -D gosec \

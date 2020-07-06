@@ -1,5 +1,10 @@
 package schematypes
 
+import (
+	"github.com/kyleu/npn/app/model/output"
+	"github.com/kyleu/npn/app/util"
+)
+
 const KeyUnknown = "unknown"
 
 type Unknown struct {
@@ -11,5 +16,9 @@ func (t Unknown) Key() string {
 }
 
 func (t Unknown) String() string {
-	return t.Key() + ":" + t.X
+	return t.Key() + "(" + t.X + ")"
+}
+
+func (t Unknown) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	return nr.Get(nil, t.Key(), src).String()
 }

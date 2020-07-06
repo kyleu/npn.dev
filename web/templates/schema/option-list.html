@@ -1,7 +1,7 @@
 <%: func SchemaOptionList(opts schema.Options, ctx *web.RequestContext, buffer *bytes.Buffer) %>
 <% if len(opts) > 0 { %>
 <div class="uk-card uk-card-body uk-margin-top">
-  <h3 class="uk-card-title">Options</h3>
+  <h3 class="uk-card-title"><%=v len(opts) %> Options</h3>
   <table class="uk-table uk-table-divider">
     <thead>
       <tr>

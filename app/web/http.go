@@ -1,10 +1,12 @@
 package web
 
 import (
-	"emperror.dev/errors"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
+
+	"emperror.dev/errors"
 
 	"github.com/gorilla/mux"
 	"logur.dev/logur"
@@ -62,18 +64,35 @@ func ParseFlash(s string) (string, string) {
 	}
 }
 
+var re *regexp.Regexp
+
+func PathParams(s string) []string {
+	if re == nil {
+		re = regexp.MustCompile("{([^}]*)}")
+	}
+
+	matches := re.FindAll([]byte(s), -1)
+
+	ret := make([]string, 0, len(matches))
+	for _, m := range matches {
+		ret = append(ret, string(m))
+	}
+
+	return ret
+}
+
 func Route(routes *mux.Router, logger logur.Logger, act string, pairs ...string) string {
 	route := routes.Get(act)
 	if route == nil {
 		msg := "cannot find route at path [" + act + "]"
 		logger.Warn(fmt.Sprintf("%v: %+v", msg, errors.New(msg)))
-		return "/routenotfound"
+		return "/route/notfound/" + act
 	}
 	u, err := route.URL(pairs...)
 	if err != nil {
 		msg := "cannot bind route at path [" + act + "]"
 		logger.Warn(fmt.Sprintf("%v: %+v", msg, errors.New(msg)))
-		return "/routeerror"
+		return "/route/error/" + act
 	}
 	return u.Path
 }

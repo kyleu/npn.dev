@@ -1,38 +1,64 @@
 package parsegraphql
 
 import (
-	"fmt"
+	"path"
+	"strings"
+
+	"emperror.dev/errors"
+
+	parseutil "github.com/kyleu/npn/app/model/parser/util"
 	"github.com/kyleu/npn/app/model/schema"
 	"github.com/kyleu/npn/app/util"
 	"logur.dev/logur"
-	"path"
 )
 
+var gqlArgs = &struct{ IncludeDeprecated bool }{IncludeDeprecated: false}
+
 type GraphQLParser struct {
-	Key     string
-	logger  logur.Logger
+	logger logur.Logger
 }
 
 func NewParser(logger logur.Logger) *GraphQLParser {
 	logger = logur.WithFields(logger, map[string]interface{}{util.KeyService: schema.OriginGraphQL.Key})
-	return &GraphQLParser{Key: schema.OriginGraphQL.Key, logger: logger}
+	return &GraphQLParser{logger: logger}
+}
+
+func (p *GraphQLParser) Type() schema.Origin {
+	return schema.OriginGraphQL
 }
 
 func (p *GraphQLParser) Detect(root string) ([]schema.DataSource, error) {
-	fs, err := util.GetMatchingFiles(path.Join(root, "data", "graphql"), "*.graphql")
+	var ret []schema.DataSource
+
+	gql, err := parseutil.GetMatchingFiles(path.Join(root, "data", "graphql"), "*.graphql")
 	if err != nil {
 		return nil, err
 	}
-	ret := make([]schema.DataSource, 0, len(fs))
-	for _, f := range fs {
-		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Origin: schema.OriginGraphQL})
+	for _, f := range gql {
+		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Type: schema.OriginGraphQL})
 	}
+
+	json, err := parseutil.GetMatchingFiles(path.Join(root, "data", "graphql"), "*.json")
+	if err != nil {
+		return nil, err
+	}
+	for _, f := range json {
+		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Type: schema.OriginGraphQL})
+	}
+
 	return ret, nil
 }
 
-func (p *GraphQLParser) log(rsp *GraphQLResponse, err error) {
-	if err != nil {
-		rsp.Schema.Errors = append(rsp.Schema.Errors, err.Error())
-		p.logger.Error(fmt.Sprintf("unable to parse GraphQL: %+v", err))
+func (p *GraphQLParser) IsValid(firstChars string) error {
+	hasKeyword := false
+	for _, x := range []string{"scalar", "enum", "type", "input"} {
+		if strings.Contains(firstChars, x) {
+			hasKeyword = true
+			break
+		}
 	}
+	if !hasKeyword {
+		return errors.New("not GraphQL")
+	}
+	return nil
 }

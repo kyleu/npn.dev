@@ -1,0 +1,28 @@
+<%: func ModulesList(ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <% bi := util.ExtractModules() %>
+    <div class="uk-card uk-card-body">
+      <table class="uk-table uk-table-divider uk-table-small">
+        <thead>
+          <tr>
+            <th><%= util.Title(util.KeyName) %></th>
+            <th>Version</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for _, m := range bi.Deps { %>
+          <tr>
+            <td><a target="_blank" class="theme" href="https://<%= m.Path %>"><%= m.Path %></a></td>
+            <td title="<%= m.Sum %>"><%= m.Version %></td>
+          </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% } %>

@@ -5,13 +5,13 @@ namespace tags {
 
   export function renderItem() {
     return <span class="item">
-      <span class="value" onclick="tags.editTag(this.parentElement);"></span>
-      <span class="editor"></span>
-      <span class="close" data-uk-icon="icon: close; ratio: 0.6;" onclick="tags.removeTag(this);"></span>
+      <span class="value" onclick="tags.editTag(this.parentElement);"/>
+      <span class="editor"/>
+      <span class="close" data-uk-icon="icon: close; ratio: 0.6;" onclick="tags.removeTag(this);"/>
     </span>;
   }
 
-  export function renderTagsView(a: ReadonlyArray<string>) {
+  export function renderTagsView(a: readonly string[]) {
     return <div class="tag-view">
       {a.map(s => <span class="item">{s}</span>)}
       <div class="clear"/>

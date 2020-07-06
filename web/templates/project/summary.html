@@ -1,0 +1,6 @@
+<%: func ProjectSummary(project *project.Project, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-card uk-card-body">
+  <div class="right"><a class="theme" href="<%= ctx.Route(util.KeyProject + `.edit`, util.KeyKey, project.Key) %>" data-uk-icon="icon: file-edit" title="Edit project"></a></div>
+  <h3 class="uk-card-title"><%= project.Title %></h3>
+  <div><%= project.RootPkg.String() %></div>
+</div>

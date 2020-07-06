@@ -2,12 +2,15 @@ package parseprotobuf
 
 import (
 	"fmt"
-	"github.com/emicklei/proto"
-	"github.com/kyleu/npn/app/model/schema"
-	"github.com/kyleu/npn/app/model/schema/schematypes"
-	"github.com/kyleu/npn/app/util"
 	"strings"
 	"text/scanner"
+
+	"github.com/kyleu/npn/app/util"
+
+	"github.com/emicklei/proto"
+	parseutil "github.com/kyleu/npn/app/model/parser/util"
+	"github.com/kyleu/npn/app/model/schema"
+	"github.com/kyleu/npn/app/model/schema/schematypes"
 )
 
 func getProtobufMetadata(pos scanner.Position, comments ...*proto.Comment) *schema.Metadata {
@@ -23,25 +26,23 @@ func getProtobufMetadata(pos scanner.Position, comments ...*proto.Comment) *sche
 	return &schema.Metadata{
 		Comments: cmt,
 		Origin:   schema.OriginProtobuf,
-		Source:   util.FilenameOf(pos.Filename),
+		Source:   parseutil.FilenameOf(pos.Filename),
 		Line:     pos.Line,
 		Column:   pos.Column - 1,
 	}
 }
 
-func getProtobufType(currPkg []string, t string, optional bool, repeated bool, options []*proto.Option) schematypes.Wrapped {
-	var ret schematypes.Type
+func getProtobufType(currPkg util.Pkg, t string, optional bool, repeated bool, options []*proto.Option) schematypes.Wrapped {
 	for _, opt := range options {
 		panic(fmt.Sprintf("option [%v] provided for proto type", opt))
 	}
 	if optional {
-		ret = schematypes.Option{T: getProtobufType(currPkg, t, false, repeated, options)}
-	} else if repeated {
-		ret = schematypes.List{T: getProtobufType(currPkg, t, optional, false, options)}
-	} else {
-		ret = getTypeForProtobufName(currPkg, t)
+		return schematypes.OptionWrapped(getProtobufType(currPkg, t, false, repeated, options))
 	}
-	return schematypes.Wrap(ret)
+	if repeated {
+		return schematypes.Wrap(schematypes.List{T: getProtobufType(currPkg, t, optional, false, options)})
+	}
+	return getTypeForProtobufName(currPkg, t)
 }
 
 func getTypeForProtobufName(currPkg []string, name string) schematypes.Wrapped {

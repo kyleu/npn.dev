@@ -1,14 +1,17 @@
 package parseutil
 
 import (
-	"github.com/kyleu/npn/app/model/schema/schematypes"
 	"strconv"
 	"strings"
+
+	"github.com/kyleu/npn/app/util"
+
+	"github.com/kyleu/npn/app/model/schema/schematypes"
 )
 
-func ParseDatabaseType(t string, optional bool) schematypes.Wrapped {
+func ParseDatabaseType(pkg util.Pkg, t string, optional bool) schematypes.Wrapped {
 	if optional {
-		return schematypes.Wrap(schematypes.Option{T: schematypes.Wrap(ParseDatabaseType(t, false))})
+		return schematypes.OptionWrapped(ParseDatabaseType(pkg, t, false))
 	}
 
 	tIndex := strings.Index(t, "|")
@@ -19,12 +22,12 @@ func ParseDatabaseType(t string, optional bool) schematypes.Wrapped {
 	args := ""
 	parenIndex := strings.Index(t, "(")
 	if parenIndex > -1 {
-		args = t[parenIndex + 1:len(t) - 1]
+		args = t[parenIndex+1 : len(t)-1]
 		t = t[0:parenIndex]
 	}
 	bracketIndex := strings.Index(t, "[]")
 	if bracketIndex > -1 {
-		return schematypes.Wrap(schematypes.List{T: ParseDatabaseType(t[0:bracketIndex], false)})
+		return schematypes.Wrap(schematypes.List{T: ParseDatabaseType(pkg, t[0:bracketIndex], false)})
 	}
 
 	var ret schematypes.Type
@@ -44,7 +47,7 @@ func ParseDatabaseType(t string, optional bool) schematypes.Wrapped {
 		ret = schematypes.Int{}
 	case "json":
 		ret = schematypes.JSON{}
-	case "text", "varchar", "bpchar":
+	case "text", "varchar", "_varchar", "bpchar":
 		maxLength := int64(0)
 		if len(args) > 0 {
 			maxLength, _ = strconv.ParseInt(args, 10, 64)
@@ -68,10 +71,10 @@ func ParseDatabaseType(t string, optional bool) schematypes.Wrapped {
 	case "bytea":
 		ret = schematypes.List{T: schematypes.Wrap(schematypes.Byte{})}
 	case "hstore":
-		ret = schematypes.Map{K: schematypes.Wrap(schematypes.String{}), V: schematypes.Wrap(schematypes.String{})}
+		ret = schematypes.Map{K: schematypes.StringWrapped, V: schematypes.StringWrapped}
 
 	default:
-		ret = schematypes.Error{Message: "invalid-" + t}
+		ret = schematypes.Reference{Pkg: pkg, T: t}
 	}
 
 	return schematypes.Wrap(ret)

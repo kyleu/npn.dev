@@ -1,6 +1,2 @@
-<%: func Boolean(b bool, trueTitle string, falseTitle string, buffer *bytes.Buffer) %>
-<% if b { %>
-<div class="icon" title="<%= trueTitle %>" data-uk-icon="icon: check"></div>
-<% } else { %>
-<div class="icon" title="<%= falseTitle %>" data-uk-icon="icon: close"></div>
-<% } %>
+<%: func JSON(t interface{}, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<pre><%= util.ToJSON(t, ctx.Logger) %></pre>

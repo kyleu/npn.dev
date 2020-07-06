@@ -15,7 +15,7 @@ type ijDatabase struct {
 	ID        int    `xml:"id,attr"`
 	Parent    int    `xml:"parent,attr"`
 	Name      string `xml:"name,attr"`
-	ObjectId  string
+	ObjectID  string `xml:"ObjectId"`
 	Comment   string
 	Owner     string
 	Intro     int `xml:"IntrospectionStateNumber"`
@@ -27,26 +27,11 @@ func (ij *ijDatabase) ParentID() int {
 	return ij.Parent
 }
 
-type ijRole struct {
-	ID         int    `xml:"id,attr"`
-	Parent     int    `xml:"parent,attr"`
-	Name       string `xml:"name,attr"`
-	ObjectId   string
-	SuperRole  int
-	CreateDB   int
-	CreateRole int
-	CanLogin   int
-}
-
-func (ij *ijRole) ParentID() int {
-	return ij.Parent
-}
-
 type ijSchema struct {
 	ID          int    `xml:"id,attr"`
 	Parent      int    `xml:"parent,attr"`
 	Name        string `xml:"name,attr"`
-	ObjectId    string
+	ObjectID    string `xml:"ObjectId"`
 	Comment     string
 	StateNumber int
 	Owner       string
@@ -58,27 +43,11 @@ func (ij *ijSchema) ParentID() int {
 	return ij.Parent
 }
 
-type ijExtension struct {
-	ID               int    `xml:"id,attr"`
-	Parent           int    `xml:"parent,attr"`
-	Name             string `xml:"name,attr"`
-	ObjectId         string
-	Comment          string
-	StateNumber      int
-	Version          float64
-	SchemaID         int `xml:"SchemaId"`
-	AvailableUpdates string
-}
-
-func (ij *ijExtension) ParentID() int {
-	return ij.Parent
-}
-
 type ijSequence struct {
 	ID               int    `xml:"id,attr"`
 	Parent           int    `xml:"parent,attr"`
 	Name             string `xml:"name,attr"`
-	ObjectId         string
+	ObjectID         string `xml:"ObjectId"`
 	Owner            string
 	StateNumber      int
 	SequenceIdentity string
@@ -94,10 +63,11 @@ type ijObjectType struct {
 	ID          int    `xml:"id,attr"`
 	Parent      int    `xml:"parent,attr"`
 	Name        string `xml:"name,attr"`
-	ObjectId    string
+	ObjectID    string `xml:"ObjectId"`
 	Owner       string
 	StateNumber int
 	SubKind     string
+	Labels      string
 	Definition  string
 	SubCategory string
 }
@@ -110,7 +80,7 @@ type ijTable struct {
 	ID          int    `xml:"id,attr"`
 	Parent      int    `xml:"parent,attr"`
 	Name        string `xml:"name,attr"`
-	ObjectId    string
+	ObjectID    string `xml:"ObjectId"`
 	Owner       string
 	StateNumber int
 }
@@ -128,7 +98,7 @@ type ijColumn struct {
 	NotNull           int
 	StateNumber       int
 	DefaultExpression string
-	TypeId            int
+	TypeID            int `xml:"TypeId"`
 }
 
 func (ij *ijColumn) ParentID() int {
@@ -139,7 +109,7 @@ type ijIndex struct {
 	ID          int    `xml:"id,attr"`
 	Parent      int    `xml:"parent,attr"`
 	Name        string `xml:"name,attr"`
-	ObjectId    string
+	ObjectID    string `xml:"ObjectId"`
 	StateNumber int
 	ColNames    string
 	Unique      int
@@ -154,7 +124,7 @@ type ijKey struct {
 	ID                  int    `xml:"id,attr"`
 	Parent              int    `xml:"parent,attr"`
 	Name                string `xml:"name,attr"`
-	ObjectId            string
+	ObjectID            string `xml:"ObjectId"`
 	StateNumber         int
 	ColNames            string
 	Primary             int
@@ -169,10 +139,10 @@ type ijForeignKey struct {
 	ID              int    `xml:"id,attr"`
 	Parent          int    `xml:"parent,attr"`
 	Name            string `xml:"name,attr"`
-	ObjectId        string
+	ObjectID        string `xml:"ObjectId"`
 	StateNumber     int
 	ColNames        string
-	RefTableId      string
+	RefTableID      string `xml:"RefTableId"`
 	RefColPositions string
 	RefTableName    string
 	RefKeyName      string

@@ -2,10 +2,14 @@ package cli
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/model/data"
-	"github.com/kyleu/npn/app/model/parser"
 	"net/http"
 	"os"
+
+	"github.com/kyleu/npn/app/model/project"
+	"github.com/kyleu/npn/app/model/schema"
+
+	"github.com/kyleu/npn/app/model/data"
+	"github.com/kyleu/npn/app/model/parser"
 
 	"github.com/kyleu/npn/app/web/routes"
 
@@ -27,23 +31,22 @@ func InitApp(version string, commitHash string) (*config.AppInfo, error) {
 	errorHandler := logur.New(logger)
 	defer emperror.HandleRecover(errorHandler)
 
-	ai, err := initAppInfo(logger, version, commitHash)
-	if err != nil {
-		return nil, err
-	}
+	ai := initAppInfo(logger, version, commitHash)
 
 	return ai, nil
 }
 
-func initAppInfo(logger log.Logger, version string, commitHash string) (*config.AppInfo, error) {
+func initAppInfo(logger log.Logger, version string, commitHash string) *config.AppInfo {
 	return &config.AppInfo{
 		Debug:    verbose,
 		Parsers:  parser.NewParsers(logger),
 		Files:    data.NewFileLoader(logger),
+		Schemata: schema.NewCache(logger),
+		Projects: project.NewCache(logger),
 		Version:  version,
 		Commit:   commitHash,
 		Logger:   logger,
-	}, nil
+	}
 }
 
 func MakeServer(info *config.AppInfo, address string, port uint16) error {

@@ -1,18 +1,19 @@
 package util
 
 import (
-	"emperror.dev/errors"
 	"fmt"
+
+	"emperror.dev/errors"
 )
 
 func MapFromPairs(x ...interface{}) (map[interface{}]interface{}, error) {
-	if len(x) % 2 != 0 {
+	if len(x)%2 != 0 {
 		return nil, errors.New(fmt.Sprintf("observed [%v] args, need an even number", len(x)))
 	}
-	ret := make(map[interface{}]interface{}, len(x) / 2)
+	ret := make(map[interface{}]interface{}, len(x)/2)
 	for i := 0; i < len(x)-1; i += 2 {
 		k := x[i]
-		v := x[i + 1]
+		v := x[i+1]
 		ret[k] = v
 	}
 	return ret, nil

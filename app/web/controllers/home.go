@@ -23,3 +23,19 @@ func About(w http.ResponseWriter, r *http.Request) {
 		return act.T(templates.StaticAbout(ctx, w))
 	})
 }
+
+func RouteList(w http.ResponseWriter, r *http.Request) {
+	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
+		ctx.Title = util.Title(util.KeyRoutes)
+		ctx.Breadcrumbs = web.Breadcrumbs{web.BreadcrumbSelf(util.KeyRoutes)}
+		return act.T(templates.RoutesList(ctx, w))
+	})
+}
+
+func ModuleList(w http.ResponseWriter, r *http.Request) {
+	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
+		ctx.Title = util.Title(util.KeyModules)
+		ctx.Breadcrumbs = web.Breadcrumbs{web.BreadcrumbSelf(util.KeyModules)}
+		return act.T(templates.ModulesList(ctx, w))
+	})
+}

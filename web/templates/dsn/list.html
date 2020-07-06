@@ -7,28 +7,22 @@
     <div class="uk-card uk-card-body uk-margin-top">
       <h3 class="uk-card-title">Available input sources</h3>
       <% if len(avail) == 0 { %>
-      <div>No available <%= util.PluralTitle(util.KeySchema) %> </div>
+      <div>No available <%= util.Plural(util.KeySchema) %> </div>
       <% } else { %>
       <table class="uk-table uk-table-divider">
         <thead>
-        <tr>
-          <th>Key</th>
-          <th>Paths</th>
-          <th>Origin</th>
-        </tr>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+          </tr>
         </thead>
         <tbody>
-        <% for _, s := range avail { %>
-        <tr>
-          <td><a class="theme" href="<%= ctx.Route(util.KeyDataSource + `.detail`, `t`, s.Origin.Key) %>?key=<%= url.QueryEscape(s.Key) %>"><%= s.Key %></a></td>
-          <td>
-            <% for _, p := range s.Paths { %>
-            <div><%= p %></div>
-            <% } %>
-          </td>
-          <td><%= s.Origin.String() %></td>
-        </tr>
-        <% } %>
+          <% for _, s := range avail { %>
+            <tr>
+              <td><a class="theme" href="<%= ctx.Route(util.KeyDataSource + `.detail`, `t`, s.Type.Key) %>?key=<%= url.QueryEscape(s.Key) %>"><%= s.Key %></a></td>
+              <td><%= s.Type.String() %></td>
+            </tr>
+          <% } %>
         </tbody>
       </table>
       <% } %>

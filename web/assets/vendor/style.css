@@ -12393,6 +12393,14 @@ pre {
   text-transform: none;
 }
 
+.uk-card-default {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+em, .uk-light em, .uk-section-primary:not(.uk-preserve-color) em, .uk-section-secondary:not(.uk-preserve-color) em, .uk-tile-primary:not(.uk-preserve-color) em, .uk-tile-secondary:not(.uk-preserve-color) em, .uk-card-primary.uk-card-body em, .uk-card-primary > :not([class*=uk-card-media]) em, .uk-card-secondary.uk-card-body em, .uk-card-secondary > :not([class*=uk-card-media]) em, .uk-overlay-primary em, .uk-offcanvas-bar em {
+  color: #999;
+}
+
 .right {
   float: right;
 }

@@ -1,0 +1,41 @@
+<%: func RoutesList(ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <table class="uk-table uk-table-divider uk-table-small">
+        <thead>
+          <tr>
+            <th><%= util.Title(util.KeyName) %></th>
+            <th>Methods</th>
+            <th>Path</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% for _, r := range util.ExtractRoutes(ctx.Routes) { %>
+            <% if len(r.Methods) == 0 { %>
+            <tr>
+              <th colspan="3"><div class="uk-margin-top"><%= strings.TrimPrefix(r.Path, "/") %></div></th>
+            </tr>
+            <% } else { %>
+            <tr>
+              <td><%= r.Name %></td>
+              <td><%= r.Methods %></td>
+              <td>
+              <% if strings.Contains(r.Methods, "GET") && len(web.PathParams(r.Path)) == 0 { %>
+                <a class="theme" href="<%= r.Path %>"><%= r.Path %></a>
+              <% } else { %>
+                <%= r.Path %>
+              <% } %>
+              </td>
+            </tr>
+            <% } %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% } %>

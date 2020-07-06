@@ -1,11 +1,10 @@
 namespace tags {
   export function wire() {
-    UIkit.util.on(".tag-editor", "moved", onTagEditorUpdate);
-    UIkit.util.on(".tag-editor", "added", onTagEditorUpdate);
-    UIkit.util.on(".tag-editor", "removed", onTagEditorUpdate);
-
-    events.register("choices");
-    events.register("categories");
+    dom.els(".tag-editor").forEach(el => {
+      el.addEventListener("moved", onTagEditorUpdate);
+      el.addEventListener("added", onTagEditorUpdate);
+      el.addEventListener("removed", onTagEditorUpdate);
+    });
   }
 
   export function removeTag(el: HTMLElement) {

@@ -1,0 +1,40 @@
+<%: func TaskForm(p *project.Project, t *project.Task, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeyProject + `.` + util.KeyTask + `.save`, util.KeyKey, p.Key, util.KeyTask, t.Key) %>" method="post">
+        <div>
+          <label class="uk-form-label" for="form-taskKey">Key</label>
+          <div class="uk-form-controls">
+            <%
+              taskKey := ""
+              if t.Key != "new" {
+                taskKey = t.Key
+              }
+            %>
+            <input class="uk-input" id="form-taskKey" name="taskKey" type="text" placeholder="Task Key" value="<%= taskKey %>">
+          </div>
+        </div>
+        <% taskDef := task.FromString(t.T) %>
+        <% for _, opt := range taskDef.Options() { %>
+          <div class="uk-margin-top">
+            <label class="uk-form-label" for="form-opt-<%= opt.Key %>"><%= opt.Key %></label>
+            <div class="uk-form-controls">
+              <%
+                curr := t.Options.GetString(opt.Key)
+              %>
+              <input class="uk-input" id="form-opt-<%= opt.Key %>" name="opt-<%= opt.Key %>" type="text" placeholder="<%= opt.Key %>" value="<%= curr %>">
+            </div>
+          </div>
+        <% } %>
+        <div class="uk-margin-top">
+          <button type="submit" class="right uk-button uk-button-default">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>

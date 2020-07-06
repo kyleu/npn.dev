@@ -1,14 +1,16 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
+	parseutil "github.com/kyleu/npn/app/model/parser/util"
 	"github.com/kyleu/npn/app/model/schema"
 	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/app/web"
 	"github.com/kyleu/npn/app/web/act"
 	"github.com/kyleu/npn/app/web/form"
 	"github.com/kyleu/npn/gen/templates"
-	"net/http"
 )
 
 func DataSourceList(w http.ResponseWriter, r *http.Request) {
@@ -24,37 +26,37 @@ func DataSourceList(w http.ResponseWriter, r *http.Request) {
 
 func DataSourceDetail(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
-		origin := schema.OriginFromString(mux.Vars(r)["t"])
+		t := schema.OriginFromString(mux.Vars(r)["t"])
 		key := r.URL.Query().Get(util.KeyKey)
-		ctx.Breadcrumbs = dsnBreadcrumbs(ctx, "", util.FilenameOf(key))
-		sch, rsp, err := ctx.App.Parsers.Load(origin.Key, []string{key})
+		ctx.Breadcrumbs = dsnBreadcrumbs(ctx, "", parseutil.FilenameOf(key))
+		sch, rsp, err := ctx.App.Parsers.Load(t, []string{key})
 		if err != nil {
 			return act.EResp(err, "unable to calculate schema")
 		}
-		return act.T(templates.DataSourceDetail(sch, rsp, origin, ctx, w))
+		return act.T(templates.DataSourceDetail(sch, rsp, t, ctx, w))
 	})
 }
 
 func DataSourceSave(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
-		origin := schema.OriginFromString(mux.Vars(r)["t"])
+		t := schema.OriginFromString(mux.Vars(r)["t"])
 		frm := &form.SchemaSaveForm{}
 		err := form.Decode(r, frm, ctx.Logger)
 		if err != nil {
 			return act.EResp(err, "invalid form")
 		}
-		sch, _, err := ctx.App.Parsers.Load(origin.Key, []string{frm.Path})
+		sch, _, err := ctx.App.Parsers.Load(t, []string{frm.Path})
 		if err != nil {
 			return act.EResp(err, "unable to calculate schema")
 		}
 		sch.Key = util.Slugify(frm.Title)
 		sch.Title = frm.Title
-		err = ctx.App.Files.SaveSchema(sch, true)
+		err = ctx.App.Schemata.Save(sch, true)
 		if err != nil {
 			return act.EResp(err, "unable to save schema")
 		}
 		msg := "Schema saved"
-		redir := ctx.Route(util.KeySchema + ".detail", util.KeyKey, sch.Key)
+		redir := ctx.Route(util.KeySchema+".detail", util.KeyKey, sch.Key)
 		return act.FlashAndRedir(true, msg, redir, w, r, ctx)
 	})
 }

@@ -1,53 +1,51 @@
 package parseprotobuf
 
 import (
-	"emperror.dev/errors"
 	"fmt"
+	"path"
+	"path/filepath"
+	"strings"
+
+	parseutil "github.com/kyleu/npn/app/model/parser/util"
+
+	"emperror.dev/errors"
 	"github.com/emicklei/proto"
 	"github.com/kyleu/npn/app/model/schema"
 	"github.com/kyleu/npn/app/model/schema/schematypes"
 	"github.com/kyleu/npn/app/util"
-	"path"
-	"path/filepath"
-	"strings"
 )
 
 type ProtobufResponse struct {
-	RootFile string         `json:"root"`
-	Data     []interface{}  `json:"data"`
-	Schema   *schema.Schema `json:"schema"`
-	currPkg  []string
+	Rsp      *parseutil.ParseResponse
+	rootFile string
+	currPkg  util.Pkg
 }
 
 func NewProtobufResponse(paths []string) *ProtobufResponse {
 	md := schema.Metadata{Comments: nil, Origin: schema.OriginProtobuf, Source: paths[0]}
-	return &ProtobufResponse{
-		RootFile: paths[0],
-		Data:     make([]interface{}, 0),
-		Schema:   schema.NewSchema(paths[0], paths, &md),
-	}
+	return &ProtobufResponse{Rsp: parseutil.NewParseResponse(paths, md)}
 }
 
 func (s *ProtobufResponse) addPackage(pkg *proto.Package) error {
 	md := getProtobufMetadata(pkg.Position, pkg.Comment, pkg.InlineComment)
 	ret, err := util.StringKeyMapFromPairs("t", "package", "name", pkg.Name, "metadata", md)
-	s.Data = append(s.Data, ret)
+	s.Rsp.Data = append(s.Rsp.Data, ret)
 	s.currPkg = strings.Split(pkg.Name, ".")
 	return err
 }
 
-func (s *ProtobufResponse) addImport(imp *proto.Import) (bool, error) {
+func (s *ProtobufResponse) addImport(imp *proto.Import) bool {
 	md := getProtobufMetadata(imp.Position, imp.Comment, imp.InlineComment)
 	ret, _ := util.StringKeyMapFromPairs("t", "import", "kind", imp.Kind, "filename", imp.Filename, "metadata", md)
-	s.Data = append(s.Data, ret)
-	p := path.Join(filepath.Dir(s.RootFile), imp.Filename)
-	return s.Schema.AddPath(p), nil
+	s.Rsp.Data = append(s.Rsp.Data, ret)
+	p := path.Join(filepath.Dir(s.rootFile), imp.Filename)
+	return s.Rsp.Schema.AddPath(p)
 }
 
 func (s *ProtobufResponse) addOption(opt *proto.Option) error {
 	md := getProtobufMetadata(opt.Position, opt.Comment, opt.InlineComment)
 	ret, err := util.StringKeyMapFromPairs("t", "option", "name", opt.Name, "value", opt.Constant.Source, "metadata", md)
-	s.Data = append(s.Data, ret)
+	s.Rsp.Data = append(s.Rsp.Data, ret)
 	return err
 }
 
@@ -63,7 +61,7 @@ func (s *ProtobufResponse) addEnum(en *proto.Enum) error {
 			return errors.New(fmt.Sprintf("can't add enum field of type [%T]", v))
 		}
 	}
-	return s.Schema.AddModel(&schema.Model{Key: en.Name, Pkg: s.currPkg, Type: schema.ModelTypeEnum, Fields: vals, Metadata: md})
+	return s.Rsp.Schema.AddModel(&schema.Model{Key: en.Name, Pkg: s.currPkg, Type: schema.ModelTypeEnum, Fields: vals, Metadata: md})
 }
 
 func (s *ProtobufResponse) addMessage(msg *proto.Message) error {
@@ -83,7 +81,7 @@ func (s *ProtobufResponse) addMessage(msg *proto.Message) error {
 			if err != nil {
 				return errors.Wrap(err, "can't register union")
 			}
-			typ := schematypes.Wrap(schematypes.Reference{Pkg: s.currPkg, T: oo.Key})
+			typ := schematypes.ReferenceWrapped(s.currPkg, oo.Key)
 			err = model.AddField(&schema.Field{Key: f.Name, Type: typ, Metadata: md})
 			if err != nil {
 				return errors.Wrap(err, "can't add field")
@@ -92,11 +90,11 @@ func (s *ProtobufResponse) addMessage(msg *proto.Message) error {
 			return errors.New(fmt.Sprintf("can't add message field of type [%T]", el))
 		}
 	}
-	return s.Schema.AddModel(model)
+	return s.Rsp.Schema.AddModel(model)
 }
 
 func (s *ProtobufResponse) addOneOf(oo *proto.Oneof) (*schema.Model, error) {
-	v := make([]*schema.Field, 0, len(oo.Elements))
+	v := make(schema.Fields, 0, len(oo.Elements))
 	for _, el := range oo.Elements {
 		switch f := el.(type) {
 		case *proto.OneOfField:
@@ -109,7 +107,7 @@ func (s *ProtobufResponse) addOneOf(oo *proto.Oneof) (*schema.Model, error) {
 	}
 	md := getProtobufMetadata(oo.Position, oo.Comment)
 	u := &schema.Model{Key: oo.Name, Pkg: s.currPkg, Type: schema.ModelTypeUnion, Fields: v, Metadata: md}
-	err := s.Schema.AddModel(u)
+	err := s.Rsp.Schema.AddModel(u)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +116,7 @@ func (s *ProtobufResponse) addOneOf(oo *proto.Oneof) (*schema.Model, error) {
 
 func (s *ProtobufResponse) addService(svc *proto.Service) error {
 	md := getProtobufMetadata(svc.Position, svc.Comment)
-	methods := make([]*schema.Field, 0)
+	methods := make(schema.Fields, 0)
 	for _, el := range svc.Elements {
 		switch f := el.(type) {
 		case *proto.RPC:
@@ -133,5 +131,5 @@ func (s *ProtobufResponse) addService(svc *proto.Service) error {
 		}
 	}
 
-	return s.Schema.AddModel(&schema.Model{Key: svc.Name, Pkg: s.currPkg, Type: schema.ModelTypeService, Fields: methods, Metadata: md})
+	return s.Rsp.Schema.AddModel(&schema.Model{Key: svc.Name, Pkg: s.currPkg, Type: schema.ModelTypeService, Fields: methods, Metadata: md})
 }

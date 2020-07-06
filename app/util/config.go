@@ -5,6 +5,6 @@ const AppName = "npn"
 type key int
 
 const (
-	RoutesKey  key = iota
-	InfoKey    key = iota
+	RoutesKey key = iota
+	InfoKey   key = iota
 )

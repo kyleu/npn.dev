@@ -4,21 +4,20 @@ import "encoding/json"
 
 type Origin struct {
 	Key         string `json:"key"`
-	T           string `json:"t"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	Title       string `json:"title,omitempty"`
+	Icon        string `json:"icon,omitempty"`
+	Description string `json:"description,omitempty"`
 }
 
 var (
-	OriginGraphQL = Origin{Key: "graphql", T: "graphql", Title: "GraphQL", Description: "GraphQL schema and queries"}
-	OriginProtobuf = Origin{Key: "protobuf", T: "protobuf", Title: "Protobuf", Description: "File describing proto3 definitions"}
-	OriginIntelliJ = Origin{Key: "intellij", T: "database", Title: "Database", Description: "Database system from an IntelliJ data source"}
-	OriginLiquibase = Origin{Key: "liquibase", T: "database", Title: "Database", Description: "Database system from a Liquibase changelog"}
-	OriginJSONSchema = Origin{Key: "jsonschema", T: "jsonschema", Title: "JSONSchema", Description: "JSON Schema definition files"}
-	OriginUnknown = Origin{Key: "unknown", T: "unknown", Title: "Unknown", Description: "Not quite sure what this is"}
+	OriginGraphQL    = Origin{Key: "graphql", Title: "GraphQL", Icon: "social", Description: "GraphQL schema and queries"}
+	OriginProtobuf   = Origin{Key: "protobuf", Title: "Protobuf", Icon: "move", Description: "File describing proto3 definitions"}
+	OriginDatabase   = Origin{Key: "database", Title: "Database", Icon: "database", Description: "Database system from an IntelliJ data source"}
+	OriginJSONSchema = Origin{Key: "jsonschema", Title: "JSONSchema", Icon: "location", Description: "JSON Schema definition files"}
+	OriginUnknown    = Origin{Key: "unknown", Title: "Unknown", Icon: "question", Description: "Not quite sure what this is"}
 )
 
-var AllOrigins = []Origin{OriginGraphQL, OriginProtobuf, OriginIntelliJ, OriginLiquibase, OriginJSONSchema}
+var AllOrigins = []Origin{OriginGraphQL, OriginProtobuf, OriginDatabase, OriginJSONSchema}
 
 func OriginFromString(s string) Origin {
 	for _, t := range AllOrigins {
@@ -39,7 +38,8 @@ func (t *Origin) MarshalJSON() ([]byte, error) {
 
 func (t *Origin) UnmarshalJSON(data []byte) error {
 	var s string
-	if err := json.Unmarshal(data, &s); err != nil {
+	err := json.Unmarshal(data, &s)
+	if err != nil {
 		return err
 	}
 	*t = OriginFromString(s)

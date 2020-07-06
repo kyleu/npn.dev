@@ -1,6 +1,8 @@
 /.vscode
 /.idea
 /data
+/out
+/projects
 /build
 /project
 /tmp

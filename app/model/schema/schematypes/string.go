@@ -1,10 +1,17 @@
 package schematypes
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/kyleu/npn/app/util"
+
+	"github.com/kyleu/npn/app/model/output"
+)
 
 const KeyString = "string"
+
 type String struct {
-	MaxLength int `json:"maxLength,omitempty"`
+	MaxLength int    `json:"maxLength,omitempty"`
+	Pattern   string `json:"pattern,omitempty"`
 }
 
 func (s String) Key() string {
@@ -16,4 +23,8 @@ func (s String) String() string {
 		return fmt.Sprintf("%v(%v)", s.Key(), s.MaxLength)
 	}
 	return s.Key()
+}
+
+func (t String) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	return nr.Get(nil, t.Key(), src).String()
 }

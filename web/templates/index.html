@@ -14,11 +14,18 @@
       <p>Coming soon!</p>
     </div>
     <div class="uk-card uk-card-body uk-margin-top">
-      <h3 class="uk-card-title">Random Link</h3>
       <ul class="uk-list uk-list-divider">
-        <li><a class="theme" href="<%= ctx.Route(util.KeyDataSource) %>"><%= util.PluralTitle(util.KeyDataSource) %></a></li>
+        <li><a class="theme" href="<%= ctx.Route(util.KeyFile + `.root`) %>">File System</a></li>
+        <li><a class="theme" href="<%= ctx.Route(util.KeyDataSource) %>">Data Sources</a></li>
         <li><a class="theme" href="<%= ctx.Route(util.KeySchema) %>"><%= util.PluralTitle(util.KeySchema) %></a></li>
+        <li><a class="theme" href="<%= ctx.Route(util.KeyProject) %>"><%= util.PluralTitle(util.KeyProject) %></a></li>
+      </ul>
+    </div>
+    <div class="uk-card uk-card-body uk-margin-top">
+      <ul class="uk-list uk-list-divider">
         <li><a class="theme" href="<%= ctx.Route(util.KeySandbox) %>"><%= util.PluralTitle(util.KeySandbox) %></a></li>
+        <li><a class="theme" href="<%= ctx.Route(util.KeyRoutes) %>">Routes</a></li>
+        <li><a class="theme" href="<%= ctx.Route(util.KeyModules) %>">Modules</a></li>
       </ul>
     </div>
   </div>

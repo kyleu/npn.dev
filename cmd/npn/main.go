@@ -17,7 +17,8 @@ var (
 func main() {
 	cmd := cli.Configure(version, commitHash)
 
-	if err := cmd.Execute(); err != nil {
+	err := cmd.Execute()
+	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}

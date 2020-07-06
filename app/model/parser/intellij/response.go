@@ -1,12 +1,16 @@
 package parseintellij
 
 import (
-	"emperror.dev/errors"
 	"encoding/xml"
 	"fmt"
+	"strings"
+
+	"github.com/kyleu/npn/app/model/schema/schematypes"
+	"github.com/kyleu/npn/app/util"
+
+	"emperror.dev/errors"
 	parseutil "github.com/kyleu/npn/app/model/parser/util"
 	"github.com/kyleu/npn/app/model/schema"
-	"strings"
 )
 
 type IntelliJResult interface {
@@ -14,23 +18,16 @@ type IntelliJResult interface {
 }
 
 type IntelliJResponse struct {
-	RootFile string `json:"root"`
-	DBType   string
-	DBFamily string
-	Data     []IntelliJResult
+	Rsp      *parseutil.ParseResponse
 	ByParent map[int][]IntelliJResult
-	Schema   *schema.Schema `json:"schema"`
-	state    map[string]string
+	state    util.Pkg
 }
 
 func NewIntelliJResponse(paths []string) *IntelliJResponse {
-	md := schema.Metadata{Comments: nil, Origin: schema.OriginIntelliJ, Source: paths[0]}
+	md := schema.Metadata{Comments: nil, Origin: schema.OriginDatabase, Source: paths[0]}
 	return &IntelliJResponse{
-		RootFile: paths[0],
-		Data:     make([]IntelliJResult, 0),
+		Rsp:      parseutil.NewParseResponse(paths, md),
 		ByParent: make(map[int][]IntelliJResult),
-		Schema:   schema.NewSchema(paths[0], paths, &md),
-		state:    make(map[string]string),
 	}
 }
 
@@ -39,36 +36,18 @@ func (r *IntelliJResponse) extract(x IntelliJResult, e xml.StartElement, d *xml.
 	if err != nil {
 		return errors.Wrap(err, "Error decoding ["+e.Name.Local+"] item")
 	}
-	r.Data = append(r.Data, x)
-	bp, _ := r.ByParent[x.ParentID()]
+	r.Rsp.Data = append(r.Rsp.Data, x)
+	bp := r.ByParent[x.ParentID()]
 	bp = append(bp, x)
 	r.ByParent[x.ParentID()] = bp
-	return nil
-}
-
-func (r *IntelliJResponse) resolve() error {
-	children, ok := r.ByParent[1]
-	if !ok {
-		return errors.New("no children for root")
-	}
-	for _, child := range children {
-		err := r.resolveChild(child)
-		if err != nil {
-			return err
-		}
-	}
 	return nil
 }
 
 func (r *IntelliJResponse) resolveChild(child IntelliJResult) error {
 	var err error
 	switch c := child.(type) {
-	case *ijRole:
-		// noop: err = parseRole(r, c)
 	case *ijDatabase:
 		err = parseDatabase(r, c)
-	case *ijExtension:
-		err = parseExtension(r, c)
 	case *ijSchema:
 		err = parseSchema(r, c)
 	case *ijObjectType:
@@ -84,13 +63,9 @@ func (r *IntelliJResponse) resolveChild(child IntelliJResult) error {
 	case *ijForeignKey:
 		err = parseForeignKey(r, c)
 	case *ijSequence:
-		err = parseSequence(r, c)
+		parseSequence(r, c)
 	default:
-		stateStrings := make([]string, 0, len(r.state))
-		for k, v := range r.state {
-			stateStrings = append(stateStrings, k+": "+v)
-		}
-		err = errors.New(fmt.Sprintf("cannot resolve child of type [%T] (state: [%v])", child, strings.Join(stateStrings, ", ")))
+		err = errors.New(fmt.Sprintf("cannot resolve child of type [%T] (state: [%v])", child, strings.Join(r.state, ", ")))
 	}
 	return err
 }
@@ -108,76 +83,89 @@ func (r *IntelliJResponse) resolveChildren(parentID int) error {
 }
 
 func parseDatabase(r *IntelliJResponse, ij *ijDatabase) error {
-	r.state["database"] = ij.Name
+	r.state = r.state.Push(ij.Name)
 	err := r.resolveChildren(ij.ID)
-	delete(r.state, "database")
-	return err
-}
-
-func parseExtension(r *IntelliJResponse, ij *ijExtension) error {
-	r.state["extension"] = ij.Name
-	err := r.resolveChildren(ij.ID)
-	delete(r.state, "extension")
+	r.state = r.state.Shift()
 	return err
 }
 
 func parseSchema(r *IntelliJResponse, ij *ijSchema) error {
-	r.state["schema"] = ij.Name
+	r.state = r.state.Push(ij.Name)
 	err := r.resolveChildren(ij.ID)
-	delete(r.state, "schema")
+	r.state = r.state.Shift()
 	return err
 }
 
 func parseObjectType(r *IntelliJResponse, ij *ijObjectType) error {
-	r.state["objectType"] = ij.Name
-	err := r.resolveChildren(ij.ID)
-	delete(r.state, "objectType")
-	return err
+	switch ij.SubKind {
+	case "enum":
+		labels := strings.Split(ij.Labels, "\n")
+		for i, label := range labels {
+			labels[i] = strings.TrimSpace(label)
+		}
+		fields := make(schema.Fields, 0, len(labels))
+		for _, label := range labels {
+			fields = append(fields, &schema.Field{
+				Key:      label,
+				Type:     schematypes.Wrap(schematypes.EnumValue{}),
+				Metadata: nil,
+			})
+		}
+		model := &schema.Model{Pkg: r.state, Key: ij.Name, Fields: fields, Type: schema.ModelTypeEnum}
+		return r.Rsp.Schema.AddModel(model)
+	default:
+		return nil
+	}
 }
 
 func parseTable(r *IntelliJResponse, ij *ijTable) error {
-	r.state["table"] = ij.Name
-	err := r.Schema.AddModel(&schema.Model{Key: ij.Name, Type: schema.ModelTypeStruct})
+	m := &schema.Model{Pkg: r.state, Key: ij.Name, Type: schema.ModelTypeStruct}
+	err := r.Rsp.Schema.AddModel(m)
 	if err != nil {
 		return err
 	}
+	r.state = r.state.Push(ij.Name)
 	err = r.resolveChildren(ij.ID)
-	delete(r.state, "table")
+	r.state = r.state.Shift()
 	return err
 }
 
 func parseColumn(r *IntelliJResponse, ij *ijColumn) error {
-	table := r.Schema.Models.Get(nil, r.state["table"])
+	table := r.Rsp.Schema.Models.Get(r.state.Shift(), r.state.Last())
 	if table == nil {
-		return errors.New("no table found with key [" + r.state["table"] + "]")
+		return errors.New("no table found with key [" + r.state.String() + "]")
 	}
-	t := parseutil.ParseDatabaseType(ij.DataType, ij.NotNull == 0)
+	t := parseutil.ParseDatabaseType(r.state.Shift(), ij.DataType, ij.NotNull == 0)
 	err := table.AddField(&schema.Field{Key: ij.Name, Type: t})
 	return err
 }
 
 func parseIndex(r *IntelliJResponse, ij *ijIndex) error {
-	r.state["index"] = ij.Name
-	err := r.resolveChildren(ij.ID)
-	delete(r.state, "index")
-	return err
+	table := r.Rsp.Schema.Models.Get(r.state.Shift(), r.state.Last())
+	if table == nil {
+		return errors.New("no table found with key [" + r.state.String() + "]")
+	}
+	names := strings.Split(ij.ColNames, "\n")
+	for idx, name := range names {
+		names[idx] = strings.TrimSpace(name)
+	}
+	return table.AddIndex(&schema.Index{Key: ij.Name, Fields: names, Unique: ij.Unique != 0, Primary: ij.Primary != 0})
 }
 
 func parseKey(r *IntelliJResponse, ij *ijKey) error {
-	r.state["key"] = ij.Name
+	r.state = r.state.Push(ij.Name)
 	err := r.resolveChildren(ij.ID)
-	delete(r.state, "key")
+	r.state = r.state.Shift()
 	return err
 }
 
 func parseForeignKey(r *IntelliJResponse, ij *ijForeignKey) error {
-	r.state["foreignKey"] = ij.Name
+	r.state = r.state.Push(ij.Name)
 	err := r.resolveChildren(ij.ID)
-	delete(r.state, "foreignKey")
+	r.state = r.state.Shift()
 	return err
 }
 
-func parseSequence(r *IntelliJResponse, c *ijSequence) error {
-	r.Data = append(r.Data, c)
-	return nil
+func parseSequence(r *IntelliJResponse, c *ijSequence) {
+	r.Rsp.Data = append(r.Rsp.Data, c)
 }

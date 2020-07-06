@@ -4,7 +4,7 @@ type Option struct {
 	T        string    `json:"t"`
 	K        string    `json:"k"`
 	V        string    `json:"v"`
-	Metadata *Metadata `json:"metadata"`
+	Metadata *Metadata `json:"metadata,omitempty"`
 }
 
 type Options []*Option
