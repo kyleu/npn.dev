@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/kyleu/npn/app/model/sandbox"
@@ -36,7 +37,8 @@ func SandboxRun(w http.ResponseWriter, r *http.Request) {
 		bc := web.BreadcrumbsSimple(ctx.Route(util.KeySandbox), util.KeySandbox)
 		bc = append(bc, web.BreadcrumbSelf(key))
 		ctx.Breadcrumbs = bc
+		t := fmt.Sprintf("%T", rsp)
 
-		return act.T(templates.SandboxRun(sb, content, util.ToJSON(rsp, ctx.Logger), ctx, w))
+		return act.T(templates.SandboxRun(sb, t, content, util.ToJSON(rsp, ctx.Logger), ctx, w))
 	})
 }
