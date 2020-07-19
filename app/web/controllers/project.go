@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/kyleu/npn/app/model/project"
+	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/web/form"
 
 	"github.com/gorilla/mux"

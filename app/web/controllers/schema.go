@@ -6,7 +6,7 @@ import (
 
 	"emperror.dev/errors"
 	"github.com/gorilla/mux"
-	"github.com/kyleu/npn/app/model/schema"
+	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/app/web"
 	"github.com/kyleu/npn/app/web/act"

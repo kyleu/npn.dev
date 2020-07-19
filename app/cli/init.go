@@ -5,11 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/kyleu/npn/app/model/project"
-	"github.com/kyleu/npn/app/model/schema"
+	"github.com/kyleu/npn/app/project"
+	"github.com/kyleu/npn/app/schema"
 
-	"github.com/kyleu/npn/app/model/data"
-	"github.com/kyleu/npn/app/model/parser"
+	"github.com/kyleu/npn/app/parser"
 
 	"github.com/kyleu/npn/app/web/routes"
 
@@ -40,7 +39,7 @@ func initAppInfo(logger log.Logger, version string, commitHash string) *config.A
 	return &config.AppInfo{
 		Debug:    verbose,
 		Parsers:  parser.NewParsers(logger),
-		Files:    data.NewFileLoader(logger),
+		Files:    util.NewFileLoader(logger),
 		Schemata: schema.NewCache(logger),
 		Projects: project.NewCache(logger),
 		Version:  version,

@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	parseutil "github.com/kyleu/npn/app/model/parser/util"
-	"github.com/kyleu/npn/app/model/schema"
+	parseutil "github.com/kyleu/npn/app/parser/util"
+	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/app/web"
 	"github.com/kyleu/npn/app/web/act"

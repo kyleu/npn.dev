@@ -5,18 +5,17 @@ import (
 	"time"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/model/data"
-	"github.com/kyleu/npn/app/model/parser"
-	"github.com/kyleu/npn/app/model/project"
-	"github.com/kyleu/npn/app/model/schema"
-	"github.com/kyleu/npn/app/model/task"
+	"github.com/kyleu/npn/app/parser"
+	"github.com/kyleu/npn/app/project"
+	"github.com/kyleu/npn/app/schema"
+	"github.com/kyleu/npn/app/task"
 	"logur.dev/logur"
 )
 
 type AppInfo struct {
 	Debug    bool
 	Parsers  *parser.Parsers
-	Files    *data.FileLoader
+	Files    *util.FileLoader
 	Schemata *schema.Cache
 	Projects *project.Cache
 	Version  string

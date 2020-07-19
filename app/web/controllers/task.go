@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"github.com/kyleu/npn/app/model/task"
+	"github.com/kyleu/npn/app/task"
 	"net/http"
 
-	"github.com/kyleu/npn/app/model/project"
+	"github.com/kyleu/npn/app/project"
 
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app/util"
@@ -34,31 +34,59 @@ func TaskAdd(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return act.EResp(err)
 		}
-		t = &project.Task{Key: "new", T: t.Key, Options: nil}
-		return act.T(templates.TaskForm(p, t, ctx, w))
+		td := &project.TaskDefinition{Key: "new", T: t.Key, Options: nil}
+		return act.T(templates.TaskForm(p, td, ctx, w))
 	})
 }
 
 func TaskEdit(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
-		p, t, err := loadTask(r, ctx)
+		p, td, err := loadTask(r, ctx)
 		if err != nil {
 			return act.EResp(err)
 		}
-		return act.T(templates.TaskForm(p, t, ctx, w))
+		return act.T(templates.TaskForm(p, td, ctx, w))
 	})
 }
 
 func TaskSave(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		projectKey := mux.Vars(r)[util.KeyKey]
-		// taskKey := mux.Vars(r)[util.KeyTask]
+		p, err := ctx.App.Projects.Load(projectKey)
+		if err != nil || p == nil {
+			return act.EResp(err)
+		}
+
+		_ = r.ParseForm()
+		taskType := r.Form["taskType"][0]
+		originalTaskKey := r.Form["originalTaskKey"][0]
+		newTaskKey := r.Form["newTaskKey"][0]
+
+		println(originalTaskKey + " / " + newTaskKey)
+
+		var originalTask *project.TaskDefinition
+		if len(originalTaskKey) == 0 || originalTaskKey == "new" {
+			originalTask = &project.TaskDefinition{}
+		} else {
+			originalTask = p.Tasks.Get(originalTaskKey)
+		}
+		newTask := originalTask.Clone()
+		newTask.Key = newTaskKey
+		newTask.T = taskType
+
+		p.Tasks = p.Tasks.Plus(originalTaskKey, newTask)
+
+		err = ctx.App.Projects.Save(p.Key, p, true)
+		if err != nil {
+			return act.EResp(err, "cannot save project")
+		}
+
 		redir := ctx.Route(util.KeyProject+".detail", util.KeyKey, projectKey)
 		return act.FlashAndRedir(true, "Saved task", redir, w, r, ctx)
 	})
 }
 
-func loadTask(r *http.Request, ctx *web.RequestContext) (*project.Project, *project.Task, error) {
+func loadTask(r *http.Request, ctx *web.RequestContext) (*project.Project, *project.TaskDefinition, error) {
 	projectKey := mux.Vars(r)[util.KeyKey]
 	taskKey := mux.Vars(r)[util.KeyTask]
 
@@ -69,7 +97,7 @@ func loadTask(r *http.Request, ctx *web.RequestContext) (*project.Project, *proj
 
 	t := p.Tasks.Get(taskKey)
 	if t == nil {
-		t = &project.Task{Key: taskKey, T: taskKey}
+		t = &project.TaskDefinition{Key: taskKey, T: taskKey}
 	}
 	ctx.Breadcrumbs = projectBreadcrumbs(ctx, ctx.Route(util.KeyProject+".detail", util.KeyKey, projectKey), projectKey, "", t.Key)
 

@@ -37,7 +37,13 @@
           <li>no tasks</li>
         <% } %>
         <% for _, task := range project.Tasks { %>
-          <li><a class="theme" href="<%= ctx.Route(util.KeyProject + `.task.edit`, util.KeyKey, project.Key, util.KeyTask, task.Key) %>"><%= task.Key %></a></li>
+          <li>
+            <div class="right">
+              <em><%= task.T %></em>
+              <a class="theme" href="<%= ctx.Route(util.KeyProject + `.task.edit`, util.KeyKey, project.Key, util.KeyTask, task.Key) %>" data-uk-icon="icon: file-edit" title="Edit task"></a>
+            </div>
+            <a class="theme" href="<%= ctx.Route(util.KeyProject + `.task`, util.KeyKey, project.Key, util.KeyTask, task.Key) %>"><%= task.Key %></a>
+          </li>
         <% } %>
       </ul>
     </div>

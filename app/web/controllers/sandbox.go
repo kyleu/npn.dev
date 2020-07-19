@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/kyleu/npn/app/model/sandbox"
+	"github.com/kyleu/npn/app/sandbox"
 	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/app/web"
 	"github.com/kyleu/npn/app/web/act"
