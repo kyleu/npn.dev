@@ -11,25 +11,6 @@ import (
 	"logur.dev/logur"
 )
 
-type ProfileForm struct {
-	Theme     string `mapstructure:"theme"`
-	LinkColor string `mapstructure:"linkColor"`
-	NavColor  string `mapstructure:"navColor"`
-	Ref       string `mapstructure:"ref"`
-}
-
-type ConnectionForm struct {
-	Svc   string `mapstructure:"svc"`
-	Cmd   string `mapstructure:"cmd"`
-	Param string `mapstructure:"param"`
-}
-
-type SchemaSaveForm struct {
-	Path  string `mapstructure:"path"`
-	Key   string `mapstructure:"key"`
-	Title string `mapstructure:"title"`
-}
-
 type ProjectSaveForm struct {
 	Title     string `mapstructure:"title"`
 	Schema    string `mapstructure:"schema"`

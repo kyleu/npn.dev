@@ -1,4 +1,4 @@
-package query
+package npndatabase
 
 import (
 	"strings"
@@ -22,5 +22,6 @@ func (s ParamSet) String() string {
 	for _, p := range s {
 		ret = append(ret, p.String())
 	}
+
 	return strings.Join(ret, ", ")
 }

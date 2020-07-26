@@ -1,8 +1,4 @@
-package query
-
-import (
-	"github.com/fevo-tech/charybdis/app/util"
-)
+package npndatabase
 
 type Ordering struct {
 	Column string `json:"column"`
@@ -18,5 +14,5 @@ func (o Ordering) String() string {
 
 type Orderings []*Ordering
 
-var DefaultCreatedOrdering = Orderings{{Column: util.KeyCreated, Asc: false}}
+var DefaultCreatedOrdering = Orderings{{Column: "created", Asc: false}}
 var NoOrdering = Orderings{}

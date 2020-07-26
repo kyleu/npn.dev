@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
 	"net/http"
 
 	"github.com/kyleu/npn/app/sandbox"
@@ -17,7 +18,7 @@ import (
 func SandboxList(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		ctx.Title = util.PluralTitle(util.KeySandbox)
-		ctx.Breadcrumbs = web.Breadcrumbs{web.BreadcrumbSelf(util.KeySandbox)}
+		ctx.Breadcrumbs = npnweb.Breadcrumbs{npnweb.BreadcrumbSelf(util.KeySandbox)}
 		return act.T(templates.SandboxList(sandbox.AllSandboxes, ctx, w))
 	})
 }
@@ -35,8 +36,8 @@ func SandboxRun(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ctx.Title = sb.Title + " Sandbox"
-		bc := web.BreadcrumbsSimple(ctx.Route(util.KeySandbox), util.KeySandbox)
-		bc = append(bc, web.BreadcrumbSelf(key))
+		bc := npnweb.BreadcrumbsSimple(ctx.Route(util.KeySandbox), util.KeySandbox)
+		bc = append(bc, npnweb.BreadcrumbSelf(key))
 		ctx.Breadcrumbs = bc
 		t := fmt.Sprintf("%T", rsp)
 

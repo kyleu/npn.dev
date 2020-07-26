@@ -17,14 +17,6 @@ func GetMatchingFiles(root string, pattern string) ([]string, error) {
 	return filepath.Glob(d)
 }
 
-func FilenameOf(fn string) string {
-	idx := strings.LastIndex(fn, "/")
-	if idx > -1 {
-		fn = fn[idx+1:]
-	}
-	return fn
-}
-
 func ReadFirstK(path string) (string, error) {
 	f, err := os.Open(path)
 	if err != nil {

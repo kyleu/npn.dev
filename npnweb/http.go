@@ -1,17 +1,14 @@
-package web
+package npnweb
 
 import (
 	"fmt"
 	"os"
-	"regexp"
 	"strings"
 
 	"emperror.dev/errors"
 
 	"github.com/gorilla/mux"
 	"logur.dev/logur"
-
-	"github.com/kyleu/npn/app/util"
 
 	"github.com/gorilla/sessions"
 )
@@ -41,9 +38,7 @@ var sessionKey = func() string {
 	return x
 }()
 
-var store = sessions.NewCookieStore([]byte(sessionKey))
-
-const sessionName = util.AppName + "-session"
+var Store = sessions.NewCookieStore([]byte(sessionKey))
 
 func ParseFlash(s string) (string, string) {
 	split := strings.SplitN(s, ":", 2)
@@ -51,34 +46,17 @@ func ParseFlash(s string) (string, string) {
 	content := split[1]
 
 	switch severity {
-	case util.KeyStatus:
+	case "status":
 		return "uk-alert-primary", content
 	case "success":
 		return "uk-alert-success", content
 	case "warning":
 		return "uk-alert-warning", content
-	case util.KeyError:
+	case "error":
 		return "uk-alert-danger", content
 	default:
 		return "", content
 	}
-}
-
-var re *regexp.Regexp
-
-func PathParams(s string) []string {
-	if re == nil {
-		re = regexp.MustCompile("{([^}]*)}")
-	}
-
-	matches := re.FindAll([]byte(s), -1)
-
-	ret := make([]string, 0, len(matches))
-	for _, m := range matches {
-		ret = append(ret, string(m))
-	}
-
-	return ret
 }
 
 func Route(routes *mux.Router, logger logur.Logger, act string, pairs ...string) string {

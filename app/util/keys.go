@@ -7,7 +7,6 @@ import (
 
 const (
 	KeyAbout      = "about"
-	KeyCreated    = "created"
 	KeyContent    = "content"
 	KeyDataSource = "dsn"
 	KeyError      = "error"
@@ -20,7 +19,6 @@ const (
 	KeyName       = "name"
 	KeyProfile    = "profile"
 	KeyProject    = "project"
-	KeyRole       = "role"
 	KeyRoutes     = "routes"
 	KeySandbox    = "sandbox"
 	KeySchema     = "schema"
@@ -29,7 +27,6 @@ const (
 	KeyTask       = "task"
 	KeyTheme      = "theme"
 	KeyTitle      = "title"
-	KeyUser       = "user"
 )
 
 func Plural(s string) string {

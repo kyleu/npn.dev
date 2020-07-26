@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
 	"io"
 	"net/http"
 
@@ -21,8 +22,8 @@ import (
 func addContext(router *mux.Router, info *config.AppInfo, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer internalServerError(router, info, w, r)
-		ctx := context.WithValue(r.Context(), util.RoutesKey, router)
-		ctx = context.WithValue(ctx, util.InfoKey, info)
+		ctx := context.WithValue(r.Context(), npncore.RoutesKey, router)
+		ctx = context.WithValue(ctx, npncore.InfoKey, info)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -37,12 +38,12 @@ func internalServerError(router *mux.Router, info *config.AppInfo, w http.Respon
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.WriteHeader(st)
 
-		rc := context.WithValue(r.Context(), util.RoutesKey, router)
-		rc = context.WithValue(rc, util.InfoKey, info)
+		rc := context.WithValue(r.Context(), npncore.RoutesKey, router)
+		rc = context.WithValue(rc, npncore.InfoKey, info)
 		ctx := web.ExtractContext(w, r.WithContext(rc))
 
 		ctx.Title = "Server Error"
-		ctx.Breadcrumbs = web.BreadcrumbsSimple(r.URL.Path, util.KeyError)
+		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple(r.URL.Path, util.KeyError)
 
 		e, ok := err.(error)
 		if !ok {

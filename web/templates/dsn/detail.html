@@ -13,7 +13,7 @@
         <input type="hidden" name="path" value="<%= sch.Paths[0] %>" />
         <div class="uk-inline uk-display-block">
           <button type="submit" class="uk-form-icon uk-form-icon-flip" data-uk-icon="icon: plus" title="save schema"></button>
-          <input class="uk-input" type="text" id="<%= util.KeyTitle %>-input" name="<%= util.KeyTitle %>" placeholder="<%= util.Title(util.KeyTitle) %>" value="<%= parseutil.FilenameOf(sch.Title) %>" />
+          <input class="uk-input" type="text" id="<%= util.KeyTitle %>-input" name="<%= util.KeyTitle %>" placeholder="<%= util.Title(util.KeyTitle) %>" value="<%= npncore.FilenameOf(sch.Title) %>" />
         </div>
       </form>
     </div>

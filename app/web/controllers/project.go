@@ -3,6 +3,7 @@ package controllers
 import (
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
 	"net/http"
 	"strings"
 
@@ -96,10 +97,10 @@ func ProjectDetail(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func projectBreadcrumbs(ctx *web.RequestContext, pairs ...string) web.Breadcrumbs {
-	bc := web.BreadcrumbsSimple(ctx.Route(util.KeyProject), util.KeyProject)
+func projectBreadcrumbs(ctx *web.RequestContext, pairs ...string) npnweb.Breadcrumbs {
+	bc := npnweb.BreadcrumbsSimple(ctx.Route(util.KeyProject), util.KeyProject)
 	for i := 0; i < len(pairs)-1; i += 2 {
-		bc = append(bc, web.BreadcrumbsSimple(pairs[i], pairs[i+1])...)
+		bc = append(bc, npnweb.BreadcrumbsSimple(pairs[i], pairs[i+1])...)
 	}
 	return bc
 }

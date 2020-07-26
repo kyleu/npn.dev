@@ -1,8 +1,8 @@
-<%: func TableHeader(section string, key string, title string, params *query.Params, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func TableHeader(section string, key string, title string, params *npndatabase.Params, ctx *web.RequestContext, buffer *bytes.Buffer) %>
 <% if params == nil { %>
-  <% params = &query.Params{Key: section} %>
+  <% params = &npndatabase.Params{Key: section} %>
   <th class="uk-transition-toggle uk-text-nowrap">
-    <a class="theme" href="?<%= params.Clone(&query.Ordering{Column: key, Asc: true}).ToQueryString(ctx.Request) %>">
+    <a class="theme" href="?<%= params.Clone(&npndatabase.Ordering{Column: key, Asc: true}).ToQueryString(ctx.Request) %>">
       <%= title %> <span class="uk-transition-fade" data-uk-icon="icon: chevron-down"></span>
     </a>
   </th>
@@ -10,19 +10,19 @@
   <% o := params.GetOrdering(key) %>
   <% if o == nil { %>
     <th class="uk-transition-toggle uk-text-nowrap">
-      <a class="theme" href="?<%= params.Clone(&query.Ordering{Column: key, Asc: true}).ToQueryString(ctx.Request) %>">
+      <a class="theme" href="?<%= params.Clone(&npndatabase.Ordering{Column: key, Asc: true}).ToQueryString(ctx.Request) %>">
         <%= title %> <span class="uk-transition-fade" data-uk-icon="icon: chevron-down"></span>
       </a>
     </th>
   <% } else if o.Asc { %>
     <th class=" uk-text-nowrap">
-      <a class="theme" href="?<%= params.Clone(&query.Ordering{Column: key, Asc: false}).ToQueryString(ctx.Request) %>">
+      <a class="theme" href="?<%= params.Clone(&npndatabase.Ordering{Column: key, Asc: false}).ToQueryString(ctx.Request) %>">
         <%= title %> <span data-uk-icon="icon: chevron-down"></span>
       </a>
     </th>
   <% } else { %>
     <th class=" uk-text-nowrap">
-      <a class="theme" href="?<%= params.Clone(&query.Ordering{Column: key, Asc: true}).ToQueryString(ctx.Request) %>">
+      <a class="theme" href="?<%= params.Clone(&npndatabase.Ordering{Column: key, Asc: true}).ToQueryString(ctx.Request) %>">
         <%= title %>
         <span data-uk-icon="icon: chevron-up"></span>
       </a>

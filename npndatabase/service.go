@@ -5,7 +5,7 @@ import (
 	"strings"
 
 	"github.com/jmoiron/sqlx"
-	"github.com/fevo-tech/charybdis/app/util"
+	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
 
@@ -29,11 +29,11 @@ func (s *Service) StartTransaction() (*sqlx.Tx, error) {
 
 
 func errMessage(t string, q string, values []interface{}) string {
-	return fmt.Sprintf("error running %v sql [%v] with values [%v]", t, strings.TrimSpace(q), util.ValueStrings(values))
+	return fmt.Sprintf("error running %v sql [%v] with values [%v]", t, strings.TrimSpace(q), npncore.ValueStrings(values))
 }
 
 func logQuery(s *Service, msg string, q string, values []interface{}) {
-	s.logger.Debug(fmt.Sprintf("%v {\n  SQL: %v\n  Values: %v\n}", msg, strings.TrimSpace(q), util.ValueStrings(values)))
+	s.logger.Debug(fmt.Sprintf("%v {\n  SQL: %v\n  Values: %v\n}", msg, strings.TrimSpace(q), npncore.ValueStrings(values)))
 }
 
 func (s *Service) Indexes(tableName string) ([]*Index, error) {

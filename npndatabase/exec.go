@@ -6,7 +6,7 @@ import (
 
 	"emperror.dev/errors"
 	"github.com/jmoiron/sqlx"
-	"github.com/fevo-tech/charybdis/app/util"
+	"github.com/kyleu/npn/npncore"
 )
 
 func (s *Service) Insert(q string, tx *sqlx.Tx, values ...interface{}) error {
@@ -34,7 +34,7 @@ func (s *Service) Update(q string, tx *sqlx.Tx, expected int, values ...interfac
 	}
 	if expected > -1 && aff != expected {
 		msg := "expected [%v] updated row(s), but [%v] records affected from sql [%v] with values [%s]"
-		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, util.ValueStrings(values)))
+		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, npncore.ValueStrings(values)))
 	}
 	return aff, nil
 }
@@ -54,7 +54,7 @@ func (s *Service) Delete(q string, tx *sqlx.Tx, expected int, values ...interfac
 	}
 	if expected > -1 && aff != expected {
 		msg := "expected [%v] deleted row(s), but [%v] records affected from sql [%v] with values [%s]"
-		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, util.ValueStrings(values)))
+		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, npncore.ValueStrings(values)))
 	}
 	return aff, err
 }
@@ -77,7 +77,7 @@ func (s *Service) Exec(q string, tx *sqlx.Tx, expected int, values ...interface{
 	}
 	if expected > -1 && aff != expected {
 		msg := "expected [%v] exec row(s), but [%v] records affected from sql [%v] with values [%s]"
-		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, util.ValueStrings(values)))
+		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, npncore.ValueStrings(values)))
 	}
 	return aff, nil
 }

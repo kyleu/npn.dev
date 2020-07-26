@@ -24,7 +24,7 @@
               <td><%= r.Name %></td>
               <td><%= r.Methods %></td>
               <td>
-              <% if strings.Contains(r.Methods, "GET") && len(web.PathParams(r.Path)) == 0 { %>
+              <% if strings.Contains(r.Methods, "GET") && len(npncore.PathParams(r.Path)) == 0 { %>
                 <a class="theme" href="<%= r.Path %>"><%= r.Path %></a>
               <% } else { %>
                 <%= r.Path %>

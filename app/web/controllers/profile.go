@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
+	"github.com/kyleu/npn/npnweb"
 	"logur.dev/logur"
 	"net/http"
 	"strings"
@@ -18,10 +19,17 @@ import (
 	"github.com/kyleu/npn/gen/templates"
 )
 
+type ProfileForm struct {
+	Theme     string `mapstructure:"theme"`
+	LinkColor string `mapstructure:"linkColor"`
+	NavColor  string `mapstructure:"navColor"`
+	Ref       string `mapstructure:"ref"`
+}
+
 func Profile(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		ctx.Title = "User Profile"
-		ctx.Breadcrumbs = web.Breadcrumbs{web.BreadcrumbSelf(util.KeyProfile)}
+		ctx.Breadcrumbs = npnweb.Breadcrumbs{npnweb.BreadcrumbSelf(util.KeyProfile)}
 		ref := r.Header.Get("Referer")
 		return act.T(templates.Profile(ref, ctx, w))
 	})
@@ -29,7 +37,7 @@ func Profile(w http.ResponseWriter, r *http.Request) {
 
 func ProfileSave(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
-		prof := &form.ProfileForm{}
+		prof := &ProfileForm{}
 		err := form.Decode(r, prof, ctx.Logger)
 		if err != nil {
 			return act.EResp(err)

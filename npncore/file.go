@@ -2,7 +2,6 @@ package npncore
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/util"
 	"io/ioutil"
 	"os"
 	"path"
@@ -18,8 +17,16 @@ type FileLoader struct {
 	logger logur.Logger
 }
 
+func FilenameOf(fn string) string {
+	idx := strings.LastIndex(fn, "/")
+	if idx > -1 {
+		fn = fn[idx+1:]
+	}
+	return fn
+}
+
 func NewFileLoader(logger logur.Logger) *FileLoader {
-	return &FileLoader{root: "." + util.AppName, logger: logger}
+	return &FileLoader{root: "." + AppName, logger: logger}
 }
 
 func (f *FileLoader) getPath(ss ...string) string {

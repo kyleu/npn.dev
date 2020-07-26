@@ -18,12 +18,13 @@ import (
 	"emperror.dev/handler/logur"
 	"github.com/gorilla/handlers"
 	"github.com/kyleu/npn/app/config"
-	"github.com/kyleu/npn/app/util"
 	log "logur.dev/logur"
 )
 
 func InitApp(version string, commitHash string) (*config.AppInfo, error) {
 	_ = os.Setenv("TZ", "UTC")
+
+	npncore.AppName = "npn"
 
 	logger := initLogging(verbose)
 	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": version, "commit": commitHash})
@@ -58,7 +59,7 @@ func MakeServer(info *config.AppInfo, address string, port uint16) error {
 	if info.Debug {
 		msg += " (verbose)"
 	}
-	info.Logger.Info(fmt.Sprintf(msg, util.AppName, address, port))
+	info.Logger.Info(fmt.Sprintf(msg, npncore.AppName, address, port))
 	err = http.ListenAndServe(fmt.Sprintf("%v:%v", address, port), handlers.CORS()(r))
 	return errors.Wrap(err, "unable to run http server")
 }

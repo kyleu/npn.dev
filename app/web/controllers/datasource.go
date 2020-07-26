@@ -2,10 +2,10 @@ package controllers
 
 import (
 	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	parseutil "github.com/kyleu/npn/app/parser/util"
 	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/app/web"
@@ -13,6 +13,12 @@ import (
 	"github.com/kyleu/npn/app/web/form"
 	"github.com/kyleu/npn/gen/templates"
 )
+
+type SchemaSaveForm struct {
+	Path  string `mapstructure:"path"`
+	Key   string `mapstructure:"key"`
+	Title string `mapstructure:"title"`
+}
 
 func DataSourceList(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
@@ -29,7 +35,7 @@ func DataSourceDetail(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		t := schema.OriginFromString(mux.Vars(r)["t"])
 		key := r.URL.Query().Get(util.KeyKey)
-		ctx.Breadcrumbs = dsnBreadcrumbs(ctx, "", parseutil.FilenameOf(key))
+		ctx.Breadcrumbs = dsnBreadcrumbs(ctx, "", npncore.FilenameOf(key))
 		sch, rsp, err := ctx.App.Parsers.Load(t, []string{key})
 		if err != nil {
 			return act.EResp(err, "unable to calculate schema")
@@ -41,7 +47,7 @@ func DataSourceDetail(w http.ResponseWriter, r *http.Request) {
 func DataSourceSave(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		t := schema.OriginFromString(mux.Vars(r)["t"])
-		frm := &form.SchemaSaveForm{}
+		frm := &SchemaSaveForm{}
 		err := form.Decode(r, frm, ctx.Logger)
 		if err != nil {
 			return act.EResp(err, "invalid form")
@@ -62,10 +68,10 @@ func DataSourceSave(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func dsnBreadcrumbs(ctx *web.RequestContext, pairs ...string) web.Breadcrumbs {
-	bc := web.BreadcrumbsSimple(ctx.Route(util.KeyDataSource), util.KeyDataSource)
+func dsnBreadcrumbs(ctx *web.RequestContext, pairs ...string) npnweb.Breadcrumbs {
+	bc := npnweb.BreadcrumbsSimple(ctx.Route(util.KeyDataSource), util.KeyDataSource)
 	for i := 0; i < len(pairs)-1; i += 2 {
-		bc = append(bc, web.BreadcrumbsSimple(pairs[i], pairs[i+1])...)
+		bc = append(bc, npnweb.BreadcrumbsSimple(pairs[i], pairs[i+1])...)
 	}
 	return bc
 }

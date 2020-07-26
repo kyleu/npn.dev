@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"emperror.dev/errors"
+	"github.com/kyleu/npn/app/config"
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/task"
@@ -23,7 +24,7 @@ func TaskRun(w http.ResponseWriter, r *http.Request) {
 			return act.EResp(err)
 		}
 		tsk := task.FromString(t.T)
-		tr := ctx.App.RunTask(tsk, p.Key, t.Options)
+		tr := run(ctx.App, tsk, p.Key, t.Options)
 		return act.T(templates.TaskResults(tr, ctx, w))
 	})
 }
@@ -89,7 +90,7 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 		}
 
 		redir := ctx.Route(util.KeyProject+".detail", util.KeyKey, p.Key)
-		return act.FlashAndRedir(true, "Deleted task [" + td.Key + "]", redir, w, r, ctx)
+		return act.FlashAndRedir(true, "Deleted task ["+td.Key+"]", redir, w, r, ctx)
 	})
 }
 
@@ -158,4 +159,22 @@ func loadTask(r *http.Request, ctx *web.RequestContext) (*project.Project, *proj
 	ctx.Breadcrumbs = projectBreadcrumbs(ctx, ctx.Route(util.KeyProject+".detail", util.KeyKey, p.Key), p.Key, "", t.Key)
 
 	return p, t, nil
+}
+
+func run(a *config.AppInfo, t task.Task, projectKey string, options npncore.Entries) task.Results {
+	proj, err := a.Projects.Load(projectKey)
+	if err != nil {
+		err = errors.Wrap(err, "cannot load project ["+projectKey+"]")
+		return task.ErrorResults(t, proj, options, err)
+	}
+	var schemata schema.Schemata
+	for _, schemaKey := range proj.SchemaKeys {
+		sch, err := a.Schemata.Load(schemaKey)
+		if err != nil {
+			err = errors.Wrap(err, "cannot load schema ["+schemaKey+"] for project ["+proj.Key+"]")
+			return task.ErrorResults(t, proj, options, err)
+		}
+		schemata = append(schemata, sch)
+	}
+	return task.RunTask(proj, schemata, t, options, a.Logger)
 }

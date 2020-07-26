@@ -2,7 +2,7 @@ package cli
 
 import (
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/util"
+	"github.com/kyleu/npn/npncore"
 	"github.com/spf13/cobra"
 )
 
@@ -14,8 +14,8 @@ var port uint16
 // Configure configures a root command.
 func Configure(version string, commitHash string) cobra.Command {
 	rootCmd := cobra.Command{
-		Use:   util.AppName,
-		Short: "Command line interface for " + util.AppName,
+		Use:   npncore.AppName,
+		Short: "Command line interface for " + npncore.AppName,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			info, err := InitApp(version, commitHash)
 			if err != nil {

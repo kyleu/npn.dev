@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npnweb"
 	"net/http"
 
 	"emperror.dev/errors"
@@ -75,10 +76,10 @@ func SchemaModelDetail(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func schemaBreadcrumbs(ctx *web.RequestContext, pairs ...string) web.Breadcrumbs {
-	bc := web.BreadcrumbsSimple(ctx.Route(util.KeySchema), util.KeySchema)
+func schemaBreadcrumbs(ctx *web.RequestContext, pairs ...string) npnweb.Breadcrumbs {
+	bc := npnweb.BreadcrumbsSimple(ctx.Route(util.KeySchema), util.KeySchema)
 	for i := 0; i < len(pairs)-1; i += 2 {
-		bc = append(bc, web.BreadcrumbsSimple(pairs[i], pairs[i+1])...)
+		bc = append(bc, npnweb.BreadcrumbsSimple(pairs[i], pairs[i+1])...)
 	}
 	return bc
 }

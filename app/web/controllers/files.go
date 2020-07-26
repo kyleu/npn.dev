@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/kyleu/npn/npnweb"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -15,7 +16,7 @@ import (
 func FileRoot(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		ctx.Title = util.PluralTitle(util.KeyFile)
-		ctx.Breadcrumbs = web.BreadcrumbsSimple("", util.KeyFile)
+		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple("", util.KeyFile)
 		files, err := ioutil.ReadDir(".")
 		if err != nil {
 			return act.EResp(err, "cannot read path [.]")
@@ -52,11 +53,11 @@ func FilePath(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func fileBreadcrumbs(ctx *web.RequestContext, paths ...string) web.Breadcrumbs {
+func fileBreadcrumbs(ctx *web.RequestContext, paths ...string) npnweb.Breadcrumbs {
 	route := ctx.Route(util.KeyFile + ".root")
-	bc := web.BreadcrumbsSimple(route, util.KeyFile)
+	bc := npnweb.BreadcrumbsSimple(route, util.KeyFile)
 	for pathIdx, path := range paths {
-		bc = append(bc, web.BreadcrumbsSimple(route+strings.Join(paths[0:pathIdx+1], "/"), path)...)
+		bc = append(bc, npnweb.BreadcrumbsSimple(route+strings.Join(paths[0:pathIdx+1], "/"), path)...)
 	}
 	return bc
 }

@@ -1,6 +1,6 @@
-package util
+package npncore
 
-const AppName = "npn"
+var AppName = "FIXME"
 
 type key int
 

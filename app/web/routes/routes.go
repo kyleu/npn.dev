@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"github.com/kyleu/npn/npnweb"
 	"net/http"
 	"strings"
 
@@ -15,7 +16,7 @@ import (
 )
 
 func BuildRouter(app *config.AppInfo) (*mux.Router, error) {
-	initMime()
+	npnweb.InitMime()
 
 	r := mux.NewRouter()
 	r.Use(ocmux.Middleware())

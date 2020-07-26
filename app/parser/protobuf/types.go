@@ -2,13 +2,13 @@ package parseprotobuf
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"strings"
 	"text/scanner"
 
 	"github.com/kyleu/npn/app/util"
 
 	"github.com/emicklei/proto"
-	parseutil "github.com/kyleu/npn/app/parser/util"
 	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/schema/schematypes"
 )
@@ -26,7 +26,7 @@ func getProtobufMetadata(pos scanner.Position, comments ...*proto.Comment) *sche
 	return &schema.Metadata{
 		Comments: cmt,
 		Origin:   schema.OriginProtobuf,
-		Source:   parseutil.FilenameOf(pos.Filename),
+		Source:   npncore.FilenameOf(pos.Filename),
 		Line:     pos.Line,
 		Column:   pos.Column - 1,
 	}

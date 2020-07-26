@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
+	"github.com/kyleu/npn/npnweb"
 	"net/http"
 	"net/url"
 
-	"github.com/kyleu/npn/app/config"
-	"github.com/kyleu/npn/app/util"
-
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
+	"github.com/kyleu/npn/app/config"
 	"logur.dev/logur"
 )
 
@@ -22,27 +21,27 @@ type RequestContext struct {
 	Routes      *mux.Router
 	Request     *url.URL
 	Title       string
-	Breadcrumbs Breadcrumbs
+	Breadcrumbs npnweb.Breadcrumbs
 	Flashes     []string
 	Session     *sessions.Session
 }
 
 func (r *RequestContext) Route(act string, pairs ...string) string {
-	return Route(r.Routes, r.Logger, act, pairs...)
+	return npnweb.Route(r.Routes, r.Logger, act, pairs...)
 }
 
 func ExtractContext(w http.ResponseWriter, r *http.Request) *RequestContext {
-	ai, ok := r.Context().Value(util.InfoKey).(*config.AppInfo)
+	ai, ok := r.Context().Value(npncore.InfoKey).(*config.AppInfo)
 	if !ok {
 		ai.Logger.Warn("cannot load AppInfo")
 	}
-	routes, ok := r.Context().Value(util.RoutesKey).(*mux.Router)
+	routes, ok := r.Context().Value(npncore.RoutesKey).(*mux.Router)
 	if !ok {
 		ai.Logger.Warn("cannot load Router")
 	}
-	session, err := store.Get(r, sessionName)
+	session, err := npnweb.Store.Get(r, npncore.AppName + "-session")
 	if err != nil {
-		session = sessions.NewSession(store, sessionName)
+		session = sessions.NewSession(npnweb.Store, npncore.AppName + "-session")
 	}
 
 	logger := logur.WithFields(ai.Logger, map[string]interface{}{"path": r.URL.Path, "method": r.Method})
@@ -63,7 +62,7 @@ func ExtractContext(w http.ResponseWriter, r *http.Request) *RequestContext {
 		Profile:     prof,
 		Routes:      routes,
 		Request:     r.URL,
-		Title:       util.AppName,
+		Title:       npncore.AppName,
 		Breadcrumbs: nil,
 		Flashes:     flashes,
 		Session:     session,
