@@ -2,7 +2,7 @@ package schema
 
 import (
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/util"
+	"github.com/kyleu/npn/npncore"
 )
 
 type Summary struct {
@@ -30,7 +30,7 @@ type Schema struct {
 type Schemata []*Schema
 
 func NewSchema(title string, paths []string, md *Metadata) *Schema {
-	return &Schema{Key: util.Slugify(title), Title: title, Paths: paths, Metadata: md}
+	return &Schema{Key: npncore.Slugify(title), Title: title, Paths: paths, Metadata: md}
 }
 
 func (s *Schema) AddPath(path string) bool {

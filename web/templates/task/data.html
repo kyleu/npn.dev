@@ -1,0 +1,19 @@
+<%: func TaskData(data interface{}, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<% switch t := data.(type) {
+case npncore.Data:
+  for _, v := range t {
+    TaskData(v, ctx, buffer)
+  }
+case task.FileResults:
+  TaskOutput(t, ctx, buffer)
+case []interface{}:
+  for _, x := range t {
+    TaskData(x, ctx, buffer)
+  }
+case string:
+  if len(t) > 0 {
+    %><pre><%= t %></pre><%
+  }
+default:
+  components.JSON(t, ctx, buffer)
+} %>

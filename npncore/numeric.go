@@ -1,4 +1,4 @@
-package util
+package npncore
 
 import (
 	"golang.org/x/text/language"

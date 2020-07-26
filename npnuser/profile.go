@@ -1,8 +1,7 @@
-package util
+package npnuser
 
 import (
 	"encoding/json"
-
 	"golang.org/x/text/language"
 )
 

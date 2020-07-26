@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnuser"
+	"logur.dev/logur"
 	"net/http"
 	"strings"
 
@@ -32,11 +35,11 @@ func ProfileSave(w http.ResponseWriter, r *http.Request) {
 			return act.EResp(err)
 		}
 
-		ctx.Profile.Theme = util.ThemeFromString(prof.Theme)
+		ctx.Profile.Theme = npnuser.ThemeFromString(prof.Theme)
 		ctx.Profile.NavColor = prof.NavColor
 		ctx.Profile.LinkColor = prof.LinkColor
 
-		err = ctx.App.Files.SaveProfile(ctx.Profile)
+		err = SaveProfile(ctx.App.Files, ctx.Profile, ctx.Logger)
 		if err != nil {
 			return act.EResp(err, "unable to save profile")
 		}
@@ -51,12 +54,16 @@ func ProfileSave(w http.ResponseWriter, r *http.Request) {
 func ProfileTheme(w http.ResponseWriter, r *http.Request) {
 	act.Act(w, r, func(ctx *web.RequestContext) (string, error) {
 		key := mux.Vars(r)[util.KeyKey]
-		theme := util.ThemeFromString(key)
+		theme := npnuser.ThemeFromString(key)
 		ctx.Profile.Theme = theme
-		err := ctx.App.Files.SaveProfile(ctx.Profile)
+		err := SaveProfile(ctx.App.Files, ctx.Profile, ctx.Logger)
 		if err != nil {
 			return act.EResp(err, "can't save profile")
 		}
 		return "", nil
 	})
+}
+
+func SaveProfile(f *npncore.FileLoader, p *npnuser.UserProfile, logger logur.Logger) error {
+	return f.WriteFile("profile.json", npncore.ToJSON(p, logger), true)
 }

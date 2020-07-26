@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 
 	"github.com/kyleu/npn/app/sandbox"
@@ -26,7 +27,7 @@ func SandboxRun(w http.ResponseWriter, r *http.Request) {
 		key := mux.Vars(r)[util.KeyKey]
 		sb := sandbox.FromString(key)
 		if sb == nil {
-			return "", util.IDError(util.KeySandbox, key)
+			return "", npncore.IDError(util.KeySandbox, key)
 		}
 		content, rsp, err := sb.Resolve(ctx)
 		if err != nil {
@@ -39,6 +40,6 @@ func SandboxRun(w http.ResponseWriter, r *http.Request) {
 		ctx.Breadcrumbs = bc
 		t := fmt.Sprintf("%T", rsp)
 
-		return act.T(templates.SandboxRun(sb, t, content, util.ToJSON(rsp, ctx.Logger), ctx, w))
+		return act.T(templates.SandboxRun(sb, t, content, npncore.ToJSON(rsp, ctx.Logger), ctx, w))
 	})
 }

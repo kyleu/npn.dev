@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/iancoleman/strcase"
 	"github.com/kyleu/npn/app/util"
+	"reflect"
 )
 
 type ModelType struct {
@@ -105,7 +106,7 @@ type Models []*Model
 
 func (m Models) Get(pkg util.Pkg, key string) *Model {
 	for _, x := range m {
-		if util.StringArraysEqual(x.Pkg, pkg) && x.Key == key {
+		if reflect.DeepEqual(x.Pkg, pkg) && x.Key == key {
 			return x
 		}
 	}

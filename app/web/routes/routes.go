@@ -55,10 +55,12 @@ func BuildRouter(app *config.AppInfo) (*mux.Router, error) {
 	r.Path(p(util.KeyProject, "{key}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectDetail))).Name(n(util.KeyProject, "detail"))
 	r.Path(p(util.KeyProject, "{key}", "edit")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectEdit))).Name(n(util.KeyProject, "edit"))
 	r.Path(p(util.KeyProject, "{key}", "edit")).Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.ProjectSave))).Name(n(util.KeyProject, "save"))
+	r.Path(p(util.KeyProject, "{key}", "all")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskRunAll))).Name(n(util.KeyProject, util.KeyTask, "all"))
 	r.Path(p(util.KeyProject, "{key}", "{task}")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskRun))).Name(n(util.KeyProject, util.KeyTask))
 	r.Path(p(util.KeyProject, "{key}", "{task}", "add")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskAdd))).Name(n(util.KeyProject, util.KeyTask, "add"))
 	r.Path(p(util.KeyProject, "{key}", "{task}", "edit")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskEdit))).Name(n(util.KeyProject, util.KeyTask, "edit"))
-	r.Path(p(util.KeyProject, "{key}", "{task}")).Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskSave))).Name(n(util.KeyProject, util.KeyTask, "save"))
+	r.Path(p(util.KeyProject, "{key}", "{task}", "delete")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskDelete))).Name(n(util.KeyProject, util.KeyTask, "delete"))
+	r.Path(p(util.KeyProject, "{key}", "task")).Methods(http.MethodPost).Handler(addContext(r, app, http.HandlerFunc(controllers.TaskSave))).Name(n(util.KeyProject, util.KeyTask, "save"))
 
 	// Sandbox
 	sandbox := r.Path(p(util.KeySandbox)).Subrouter()

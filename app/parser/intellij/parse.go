@@ -2,6 +2,7 @@ package parseintellij
 
 import (
 	"encoding/xml"
+	"github.com/kyleu/npn/npncore"
 	"sort"
 	"strings"
 
@@ -41,7 +42,7 @@ func (p *IntelliJParser) parsePath(path string, res *IntelliJResponse) (*Intelli
 		switch e.Name.Local {
 		case "dataSource":
 			res.Rsp.Schema.Title = p.attrValue(e, util.KeyName)
-			res.Rsp.Schema.Key = util.Slugify(res.Rsp.Schema.Title)
+			res.Rsp.Schema.Key = npncore.Slugify(res.Rsp.Schema.Title)
 		case "database-model":
 			// res.DBType = p.attrValue(e, "dbms")
 			// res.DBFamily = p.attrValue(e, "family-id")

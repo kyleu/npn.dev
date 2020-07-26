@@ -1,4 +1,4 @@
-package util
+package npnuser
 
 import (
 	"encoding/json"

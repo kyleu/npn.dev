@@ -1,20 +1,37 @@
 package task
 
 import (
-	"github.com/kyleu/npn/app/output"
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
+	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
+	"time"
 )
 
 type Result struct {
 	Task     Task             `json:"task"`
 	Project  *project.Project `json:"project"`
-	Options  util.Entries     `json:"options,omitempty"`
-	Data     interface{}      `json:"data,omitempty"`
-	Output   []*output.File   `json:"output,omitempty"`
+	Options  npncore.Entries  `json:"options,omitempty"`
+	Data     npncore.Data     `json:"data,omitempty"`
+	Messages []string         `json:"messages,omitempty"`
 	Duration int              `json:"duration,omitempty"`
+}
+
+func NewResult(task Task, project *project.Project, options npncore.Entries, msgs ...string) *Result {
+	return &Result{Task: task, Project: project, Options: options, Data: make(npncore.Data), Messages: msgs}
+}
+
+type Results []*Result
+
+func NewResults(task Task, project *project.Project, options npncore.Entries, msgs ...string) Results {
+	return Results{NewResult(task, project, options, msgs...)}
+}
+
+func ErrorResults(task Task, project *project.Project, options npncore.Entries, err error) Results {
+	msgs := []string{"Error: " + err.Error()}
+	d := npncore.Data{"data": err.Error()}
+	res := Result{Task: task, Project: project, Options: options, Data: d, Messages: msgs}
+	return Results{&res}
 }
 
 type AvailableOption struct {
@@ -29,10 +46,10 @@ type Task interface {
 	Title() string
 	Description() string
 	Options() AvailableOptions
-	Run(project *project.Project, schemata schema.Schemata, options util.Entries, logger logur.Logger) (*Result, error)
+	Run(project *project.Project, schemata schema.Schemata, options npncore.Entries, logger logur.Logger) Results
 }
 
-var AllTasks = []Task{&Export{}, &Decorate{}, &Build{}, &Run{}, &Full{}}
+var AllTasks = []Task{&Bootstrap{}, &Export{}, &Decorate{}, &Build{}, &RunProject{}}
 
 func FromString(key string) Task {
 	for _, t := range AllTasks {
@@ -41,4 +58,14 @@ func FromString(key string) Task {
 		}
 	}
 	return nil
+}
+
+func RunTask(proj *project.Project, schemata schema.Schemata, t Task, options npncore.Entries, logger logur.Logger) Results {
+	startNanos := time.Now().UnixNano()
+	r := t.Run(proj, schemata, options, logger)
+	if len(r) > 0 {
+		delta := (time.Now().UnixNano() - startNanos) / int64(time.Microsecond)
+		r[0].Duration = int(delta)
+	}
+	return r
 }

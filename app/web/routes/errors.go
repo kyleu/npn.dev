@@ -3,6 +3,7 @@ package routes
 import (
 	"context"
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"io"
 	"net/http"
 
@@ -48,7 +49,7 @@ func internalServerError(router *mux.Router, info *config.AppInfo, w http.Respon
 			e = errors.New(fmt.Sprintf("err [%v] is of type [%T]", err, err))
 		}
 
-		_, _ = components.InternalServerError(util.GetErrorDetail(e), r, ctx, w)
+		_, _ = components.InternalServerError(npncore.GetErrorDetail(e), r, ctx, w)
 		ctx.Logger.Warn(fmt.Sprintf("[%v %v] returned [%d]: %+v", r.Method, r.URL.Path, st, e))
 	}
 }

@@ -2,6 +2,7 @@ package parseprotobuf
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"path"
 	"path/filepath"
 	"strings"
@@ -28,7 +29,7 @@ func NewProtobufResponse(paths []string) *ProtobufResponse {
 
 func (s *ProtobufResponse) addPackage(pkg *proto.Package) error {
 	md := getProtobufMetadata(pkg.Position, pkg.Comment, pkg.InlineComment)
-	ret, err := util.StringKeyMapFromPairs("t", "package", "name", pkg.Name, "metadata", md)
+	ret, err := npncore.StringKeyMapFromPairs("t", "package", "name", pkg.Name, "metadata", md)
 	s.Rsp.Data = append(s.Rsp.Data, ret)
 	s.currPkg = strings.Split(pkg.Name, ".")
 	return err
@@ -36,7 +37,7 @@ func (s *ProtobufResponse) addPackage(pkg *proto.Package) error {
 
 func (s *ProtobufResponse) addImport(imp *proto.Import) bool {
 	md := getProtobufMetadata(imp.Position, imp.Comment, imp.InlineComment)
-	ret, _ := util.StringKeyMapFromPairs("t", "import", "kind", imp.Kind, "filename", imp.Filename, "metadata", md)
+	ret, _ := npncore.StringKeyMapFromPairs("t", "import", "kind", imp.Kind, "filename", imp.Filename, "metadata", md)
 	s.Rsp.Data = append(s.Rsp.Data, ret)
 	p := path.Join(filepath.Dir(s.rootFile), imp.Filename)
 	return s.Rsp.Schema.AddPath(p)
@@ -44,7 +45,7 @@ func (s *ProtobufResponse) addImport(imp *proto.Import) bool {
 
 func (s *ProtobufResponse) addOption(opt *proto.Option) error {
 	md := getProtobufMetadata(opt.Position, opt.Comment, opt.InlineComment)
-	ret, err := util.StringKeyMapFromPairs("t", "option", "name", opt.Name, "value", opt.Constant.Source, "metadata", md)
+	ret, err := npncore.StringKeyMapFromPairs("t", "option", "name", opt.Name, "value", opt.Constant.Source, "metadata", md)
 	s.Rsp.Data = append(s.Rsp.Data, ret)
 	return err
 }

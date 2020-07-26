@@ -2,6 +2,7 @@ package act
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 	"strings"
 	"time"
@@ -38,7 +39,7 @@ func Act(w http.ResponseWriter, r *http.Request, f func(*web.RequestContext) (st
 		if IsContentTypeJSON(GetContentType(r)) {
 			_, _ = RespondJSON(w, "", errorResult{Status: util.KeyError, Message: err.Error()}, ctx.Logger)
 		} else {
-			_, _ = components.InternalServerError(util.GetErrorDetail(err), r, ctx, w)
+			_, _ = components.InternalServerError(npncore.GetErrorDetail(err), r, ctx, w)
 		}
 	}
 	if redir != "" {
@@ -63,7 +64,7 @@ func EResp(err error, msgs ...string) (string, error) {
 }
 
 func RespondJSON(w http.ResponseWriter, filename string, body interface{}, logger logur.Logger) (string, error) {
-	return RespondMIME(filename, "application/json", "pdf", util.ToJSONBytes(body, logger), w)
+	return RespondMIME(filename, "application/json", "pdf", npncore.ToJSONBytes(body, logger), w)
 }
 
 func RespondMIME(filename string, mime string, ext string, ba []byte, w http.ResponseWriter) (string, error) {
@@ -84,7 +85,7 @@ func RespondMIME(filename string, mime string, ext string, ba []byte, w http.Res
 
 func logComplete(startNanos int64, ctx *web.RequestContext, status int, r *http.Request) {
 	delta := (time.Now().UnixNano() - startNanos) / int64(time.Microsecond)
-	ms := util.MicrosToMillis(language.AmericanEnglish, int(delta))
+	ms := npncore.MicrosToMillis(language.AmericanEnglish, int(delta))
 	args := map[string]interface{}{"elapsed": delta, util.KeyStatus: status}
 	msg := fmt.Sprintf("[%v %v] returned [%v] in [%v]", r.Method, r.URL.Path, status, ms)
 	ctx.Logger.Debug(msg, args)

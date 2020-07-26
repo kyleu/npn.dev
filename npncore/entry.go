@@ -1,4 +1,9 @@
-package util
+package npncore
+
+import (
+	"fmt"
+	"strings"
+)
 
 type Entry struct {
 	K string
@@ -21,4 +26,12 @@ func (e Entries) Clone() Entries {
 		ret = append(ret, en)
 	}
 	return ret
+}
+
+func (e Entries) String() string {
+	ret := make([]string, 0, len(e))
+	for _, p := range e {
+		ret = append(ret, fmt.Sprintf("%v: %v", p.K, p.V))
+	}
+	return strings.Join(ret, ", ")
 }

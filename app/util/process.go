@@ -51,7 +51,7 @@ func RunProcessSimple(cmd string, path string, logger logur.Logger) (string, err
 	var buf bytes.Buffer
 	err := RunProcess(cmd, path, logger, nil, &buf, &buf)
 	if err != nil {
-		return "", err
+		return "", errors.Wrap(err, fmt.Sprintf("error running [%v], output: [%v]", cmd, buf.String()))
 	}
 	return buf.String(), nil
 }

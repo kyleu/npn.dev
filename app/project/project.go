@@ -2,6 +2,7 @@ package project
 
 import (
 	"github.com/kyleu/npn/app/util"
+	"github.com/kyleu/npn/npncore"
 )
 
 type Summary struct {
@@ -14,9 +15,9 @@ type Summary struct {
 type Summaries []*Summary
 
 type TaskDefinition struct {
-	Key     string       `json:"key"`
-	T       string       `json:"t"`
-	Options util.Entries `json:"options"`
+	Key     string          `json:"key"`
+	T       string          `json:"t"`
+	Options npncore.Entries `json:"options"`
 }
 
 func (d *TaskDefinition) Clone() *TaskDefinition {
@@ -34,17 +35,29 @@ func (t TaskDefinitions) Get(key string) *TaskDefinition {
 	return nil
 }
 
-func (t TaskDefinitions) Plus(origKey string, dst *TaskDefinition) TaskDefinitions {
-	ret := t
+func (t TaskDefinitions) Replacing(origKey string, dst *TaskDefinition) TaskDefinitions {
+	ret := make(TaskDefinitions, 0, len(t))
 	matched := false
-	for idx, _ := range ret {
-		if origKey == dst.Key {
+	for _, orig := range t {
+		if orig.Key == origKey {
 			matched = true
-			ret[idx] = dst
+			ret = append(ret, dst)
+		} else {
+			ret = append(ret, orig)
 		}
 	}
 	if !matched {
-		ret = append(t, dst)
+		ret = append(ret, dst)
+	}
+	return ret
+}
+
+func (t TaskDefinitions) Without(key string) TaskDefinitions {
+	ret := make(TaskDefinitions, 0, len(t))
+	for _, orig := range t {
+		if orig.Key != key {
+			ret = append(ret, orig)
+		}
 	}
 	return ret
 }
@@ -56,6 +69,7 @@ type Project struct {
 	RootPath    string          `json:"rootPath,omitempty"`
 	RootPkg     util.Pkg        `json:"rootPkg,omitempty"`
 	Description string          `json:"description,omitempty"`
+	Prototype   string          `json:"prototype,omitempty"`
 	SchemaKeys  []string        `json:"schemaKeys,omitempty"`
 	Tasks       TaskDefinitions `json:"tasks,omitempty"`
 }

@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 	"os"
 
@@ -39,9 +40,9 @@ func initAppInfo(logger log.Logger, version string, commitHash string) *config.A
 	return &config.AppInfo{
 		Debug:    verbose,
 		Parsers:  parser.NewParsers(logger),
-		Files:    util.NewFileLoader(logger),
-		Schemata: schema.NewCache(logger),
-		Projects: project.NewCache(logger),
+		Files:    npncore.NewFileLoader(logger),
+		Schemata: schema.NewService(logger),
+		Projects: project.NewService(logger),
 		Version:  version,
 		Commit:   commitHash,
 		Logger:   logger,

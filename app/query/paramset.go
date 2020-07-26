@@ -22,6 +22,5 @@ func (s ParamSet) String() string {
 	for _, p := range s {
 		ret = append(ret, p.String())
 	}
-
 	return strings.Join(ret, ", ")
 }

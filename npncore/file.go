@@ -1,7 +1,8 @@
-package util
+package npncore
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/util"
 	"io/ioutil"
 	"os"
 	"path"
@@ -18,21 +19,7 @@ type FileLoader struct {
 }
 
 func NewFileLoader(logger logur.Logger) *FileLoader {
-	return &FileLoader{root: "." + AppName, logger: logger}
-}
-
-func (f *FileLoader) LoadProfile() (*UserProfile, error) {
-	content, err := f.ReadFile("profile.json")
-	if err != nil {
-		return NewUserProfile(), nil
-	}
-	tgt := &UserProfile{}
-	FromJSON([]byte(content), tgt, f.logger)
-	return tgt, nil
-}
-
-func (f *FileLoader) SaveProfile(p *UserProfile) error {
-	return f.WriteFile("profile.json", ToJSON(p, f.logger), true)
+	return &FileLoader{root: "." + util.AppName, logger: logger}
 }
 
 func (f *FileLoader) getPath(ss ...string) string {

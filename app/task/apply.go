@@ -11,16 +11,32 @@ import (
 	"github.com/kyleu/npn/app/output"
 )
 
-type OutputResult struct {
+type FileResult struct {
 	File    *output.File
 	Message string
 	Written bool
 	Error   error
 }
-type OutputResults []OutputResult
+type FileResults []*FileResult
 
-func (r Result) applyOutput(files []*output.File, dest string) (OutputResults, error) {
-	var ret OutputResults
+func (fr FileResults) WrittenCount() int {
+	y := 0
+	for _, f := range fr {
+		if f.Written { y++ }
+	}
+	return y
+}
+
+func (fr FileResults) SkippedCount() int {
+	n := 0
+	for _, f := range fr {
+		if !f.Written { n++ }
+	}
+	return n
+}
+
+func (r Result) applyOutput(files []*output.File, dest string) (FileResults, error) {
+	var ret FileResults
 
 	f, err := os.Open(dest)
 	if err != nil || f == nil {
@@ -30,7 +46,7 @@ func (r Result) applyOutput(files []*output.File, dest string) (OutputResults, e
 	for _, file := range files {
 		dir := path.Join(dest, file.Pkg.ToPath())
 		lines := file.Render()
-		data := []byte(strings.Join(lines, "\n"))
+		data := strings.Join(lines, "\n")
 
 		fn := path.Join(dir, file.Filename)
 
@@ -41,29 +57,27 @@ func (r Result) applyOutput(files []*output.File, dest string) (OutputResults, e
 				return nil, errors.Wrap(err, "unable to create directories for ["+fn+"]")
 			}
 		}
-		var curr []byte
+		curr := ""
 		if currFile != nil {
-			curr, err = ioutil.ReadFile(fn)
+			b, err := ioutil.ReadFile(fn)
 			if err != nil {
 				return nil, errors.Wrap(err, "unable to read original file ["+fn+"]")
 			}
+			curr = string(b)
 		}
 
-		if len(data) == len(curr) && string(data) == string(curr) {
-			ret = append(ret, OutputResult{File: file, Message: "skipped [" + fn + "]"})
+		if len(data) == len(curr) && data == curr {
+			ret = append(ret, &FileResult{File: file, Message: "skipped [" + fn + "]"})
 		} else {
-			err = ioutil.WriteFile(fn, data, 0644)
+			err = ioutil.WriteFile(fn, []byte(data), 0644)
 			if err != nil {
 				return nil, errors.Wrap(err, "unable to write output to ["+fn+"]")
 			}
 
-			msg := fmt.Sprintf("wrote [%v] bytes to [%v]", len(data), fn)
-			ret = append(ret, OutputResult{File: file, Message: msg})
+			msg := fmt.Sprintf("wrote [%v/%v] bytes to [%v]", len(data), len(curr), fn)
+			ret = append(ret, &FileResult{File: file, Message: msg, Written: true})
 		}
 	}
-
-	msg := fmt.Sprintf("applied [%v] files to [%v]", len(files), dest)
-	ret = append(ret, OutputResult{File: nil, Message: msg})
 
 	return ret, nil
 }

@@ -2,6 +2,8 @@ package web
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnuser"
 	"net/http"
 	"net/url"
 
@@ -16,7 +18,7 @@ import (
 type RequestContext struct {
 	App         *config.AppInfo
 	Logger      logur.Logger
-	Profile     *util.UserProfile
+	Profile     *npnuser.UserProfile
 	Routes      *mux.Router
 	Request     *url.URL
 	Title       string
@@ -45,7 +47,7 @@ func ExtractContext(w http.ResponseWriter, r *http.Request) *RequestContext {
 
 	logger := logur.WithFields(ai.Logger, map[string]interface{}{"path": r.URL.Path, "method": r.Method})
 
-	prof, err := ai.Files.LoadProfile()
+	prof, err := loadProfile(ai.Files)
 	if err != nil {
 		logger.Warn(fmt.Sprintf("unable to load profile: %+v", err))
 	}
@@ -67,3 +69,14 @@ func ExtractContext(w http.ResponseWriter, r *http.Request) *RequestContext {
 		Session:     session,
 	}
 }
+
+func loadProfile(f *npncore.FileLoader) (*npnuser.UserProfile, error) {
+	content, err := f.ReadFile("profile.json")
+	if err != nil {
+		return npnuser.NewUserProfile(), nil
+	}
+	tgt := &npnuser.UserProfile{}
+	npncore.FromJSON([]byte(content), tgt, nil)
+	return tgt, nil
+}
+

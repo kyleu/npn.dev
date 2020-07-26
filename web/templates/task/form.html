@@ -25,14 +25,12 @@
           <div class="uk-margin-top">
             <label class="uk-form-label" for="form-opt-<%= opt.Key %>"><%= opt.Key %></label>
             <div class="uk-form-controls">
-              <%
-                curr := td.Options.GetString(opt.Key)
-              %>
-              <input class="uk-input" id="form-opt-<%= opt.Key %>" name="opt-<%= opt.Key %>" type="text" placeholder="<%= opt.Key %>" value="<%= curr %>">
+              <input class="uk-input" id="form-opt-<%= opt.Key %>" name="opt-<%= opt.Key %>" type="text" placeholder="<%= opt.Key %>" value="<%= td.Options.GetString(opt.Key) %>">
             </div>
           </div>
         <% } %>
         <div class="uk-margin-top">
+          <a href="<%= ctx.Route(util.KeyProject + `.` + util.KeyTask + `.delete`, util.KeyKey, p.Key, util.KeyTask, td.Key) %>" class="left theme" data-uk-icon="trash" onclick="return confirm('Delete this task?')"></a>
           <button type="submit" class="right uk-button uk-button-default">Save</button>
         </div>
       </form>

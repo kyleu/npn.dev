@@ -4,38 +4,39 @@ import (
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/util"
+	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
 
 var KeyRun = "run"
 
-type Run struct {
+type RunProject struct {
 }
 
-func (t *Run) Key() string {
+func (t *RunProject) Key() string {
 	return KeyRun
 }
 
-func (t *Run) Title() string {
-	return "Run"
+func (t *RunProject) Title() string {
+	return "RunProject"
 }
 
-func (t *Run) Description() string {
+func (t *RunProject) Description() string {
 	return "Runs the project"
 }
 
-func (t *Run) Options() AvailableOptions {
+func (t *RunProject) Options() AvailableOptions {
 	return nil
 }
 
-func (t *Run) Run(project *project.Project, schemata schema.Schemata, options util.Entries, logger logur.Logger) (*Result, error) {
+func (t *RunProject) Run(project *project.Project, schemata schema.Schemata, options npncore.Entries, logger logur.Logger) Results {
 	parsed, err := util.Template("build/{{.Key}}", project)
 	if err != nil {
-		return nil, err
+		return ErrorResults(t, project, options, err)
 	}
 	out, err := util.RunProcessSimple(parsed, project.RootPath, logger)
 	if err != nil {
-		return nil, err
+		return ErrorResults(t, project, options, err)
 	}
-	return &Result{Task: t, Project: project, Data: out}, nil
+	return NewResults(t, project, nil, out)
 }

@@ -2,9 +2,9 @@ package query
 
 import (
 	"fmt"
+	"github.com/iancoleman/strcase"
+	"github.com/kyleu/npn/npncore"
 	"strings"
-
-	"github.com/kyleu/npn/app/util"
 
 	"logur.dev/logur"
 )
@@ -40,7 +40,7 @@ func (p *Params) OrderByString() string {
 		if !o.Asc {
 			dir = " desc"
 		}
-		snake := util.ToSnakeCase(o.Column)
+		snake := strings.ToLower(strcase.ToSnake(o.Column))
 		ret = append(ret, snake+dir)
 	}
 
@@ -69,7 +69,7 @@ func (p *Params) Filtered(logger logur.Logger) *Params {
 				allowed = append(allowed, o)
 			} else {
 				msg := "no column [%v] for [%v] available in allowed columns [%v]"
-				logger.Warn(fmt.Sprintf(msg, o.Column, p.Key, util.OxfordComma(available, "and")))
+				logger.Warn(fmt.Sprintf(msg, o.Column, p.Key, npncore.OxfordComma(available, "and")))
 			}
 		}
 

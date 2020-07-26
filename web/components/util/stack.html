@@ -1,11 +1,11 @@
-<%: func errorStack(ed *util.ErrorDetail, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func errorStack(ed *npncore.ErrorDetail, ctx *web.RequestContext, buffer *bytes.Buffer) %>
 
 <% if ed.StackTrace != nil { %>
   <div class="uk-margin-top">
     <div class="uk-card uk-card-body">
       <table class="uk-table uk-table-divider">
         <tbody>
-        <% for _, f := range util.TraceDetail(ed.StackTrace) { %>
+        <% for _, f := range npncore.TraceDetail(ed.StackTrace) { %>
         <tr>
           <td>
             <% if strings.Contains(f.Key, util.AppName) { %>

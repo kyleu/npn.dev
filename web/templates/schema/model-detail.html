@@ -31,9 +31,11 @@
               <tr>
                 <td class="uk-table-shrink uk-text-nowrap"><%= f.Key %></td>
                 <% if m.Type != schema.ModelTypeEnum { %>
-                <td><%= f.Type.String() %></td>
+                  <td><%= f.Type.String() %></td>
                 <% } %>
-                <td><%= f.Metadata.Description %></td>
+                <td>
+                  <% if f.Metadata != nil { %><%= f.Metadata.Description %><% } %>
+                </td>
               </tr>
             <% } %>
           </tbody>
@@ -89,7 +91,7 @@
 
     <div class="uk-card uk-card-body uk-margin-top">
       <h3 class="uk-card-title">JSON</h3>
-      <pre><%= util.ToJSON(m, ctx.Logger) %></pre>
+      <pre><%= npncore.ToJSON(m, ctx.Logger) %></pre>
     </div>
   </div>
 </div>

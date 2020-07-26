@@ -25,6 +25,23 @@
           </div>
         </div>
         <div class="uk-margin-top">
+          <label class="uk-form-label">Prototype</label>
+          <div class="uk-form-controls">
+            <% for _, proto := range bootstrap.AllPrototypes { %>
+              <div class="uk-margin-small-top">
+                <label>
+                  <% if project.Prototype == proto.Key { %>
+                    <input class="uk-radio" name="proto" type="radio" value="<%= proto.Key %>" checked>
+                  <% } else { %>
+                    <input class="uk-radio" name="proto" type="radio" value="<%= proto.Key %>">
+                  <% } %>
+                  <%= proto.Key %>: <em><%= proto.Description %></em>
+                </label>
+              </div>
+            <% } %>
+          </div>
+        </div>
+        <div class="uk-margin-top">
           <label class="uk-form-label">Schemata</label>
           <div class="uk-form-controls">
             <% for _, sch := range availableSchemata { %>

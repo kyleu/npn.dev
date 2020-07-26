@@ -12,7 +12,7 @@
             <input type="hidden" name="ref" value="<%= ref %>" />
             <div class="uk-margin">
               <label class="uk-form-label">Theme</label>
-              <% for _, t := range util.AllThemes { %>
+              <% for _, t := range npnuser.AllThemes { %>
               <div class="uk-form-controls uk-form-controls-text">
                 <label for="theme-<%= t.String() %>">
                   <% if t == ctx.Profile.Theme { %>

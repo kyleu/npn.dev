@@ -2,6 +2,7 @@ package schema
 
 import (
 	"github.com/kyleu/npn/app/util"
+	"reflect"
 )
 
 type Scalar struct {
@@ -16,7 +17,7 @@ type Scalars []*Scalar
 
 func (s Scalars) Get(pkg util.Pkg, key string) *Scalar {
 	for _, x := range s {
-		if util.StringArraysEqual(x.Pkg, pkg) && x.Key == key {
+		if reflect.DeepEqual(x.Pkg, pkg) && x.Key == key {
 			return x
 		}
 	}

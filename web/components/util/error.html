@@ -1,4 +1,4 @@
-<%: func InternalServerError(ed *util.ErrorDetail, r *http.Request, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func InternalServerError(ed *npncore.ErrorDetail, r *http.Request, ctx *web.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>

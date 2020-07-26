@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"emperror.dev/errors"
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 	"strings"
 
@@ -61,12 +62,18 @@ func ProjectSave(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return act.EResp(err, "invalid project form")
 		}
-		newKey := util.Slugify(frm.Title)
+		newKey := npncore.Slugify(frm.Title)
 		if len(newKey) == 0 {
 			return act.EResp(errors.New("title is required"))
 		}
-		pkg := strings.Split(frm.Pkg, "||")
-		proj := &project.Project{Key: newKey, Title: frm.Title, RootPath: frm.Path, RootPkg: pkg, SchemaKeys: strings.Split(frm.Schema, "||")}
+		proj := &project.Project{
+			Key:        newKey,
+			Title:      frm.Title,
+			RootPath:   frm.Path,
+			RootPkg:    strings.Split(frm.Pkg, "||"),
+			Prototype:  frm.Prototype,
+			SchemaKeys: strings.Split(frm.Schema, "||"),
+		}
 		err = ctx.App.Projects.Save(originalKey, proj, true)
 		if err != nil {
 			return act.EResp(err, "cannot save project")

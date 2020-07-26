@@ -31,10 +31,11 @@ type SchemaSaveForm struct {
 }
 
 type ProjectSaveForm struct {
-	Title  string `mapstructure:"title"`
-	Schema string `mapstructure:"schema"`
-	Path   string `mapstructure:"path"`
-	Pkg    string `mapstructure:"pkg"`
+	Title     string `mapstructure:"title"`
+	Schema    string `mapstructure:"schema"`
+	Path      string `mapstructure:"path"`
+	Pkg       string `mapstructure:"pkg"`
+	Prototype string `mapstructure:"proto"`
 }
 
 func Decode(r *http.Request, tgt interface{}, logger logur.Logger) error {

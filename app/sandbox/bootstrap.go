@@ -3,11 +3,11 @@ package sandbox
 import (
 	"fmt"
 	"github.com/kyleu/npn/app/project"
+	"github.com/kyleu/npn/npncore"
 	"time"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/bootstrap"
-	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/app/web"
 	"golang.org/x/text/language"
 )
@@ -28,7 +28,7 @@ var Bootstrap = Sandbox{
 			p := &project.Project{
 				Key:         proto.Key,
 				Title:       proto.Key,
-				RootPath:    "./projects/" + proto.Key,
+				RootPath:    "./_projects/" + proto.Key,
 				Description: proto.Description,
 			}
 
@@ -42,7 +42,7 @@ var Bootstrap = Sandbox{
 				return "error", "verify-error", errors.Wrap(err, "can't verify ["+proto.Key+"]")
 			}
 			delta := (time.Now().UnixNano() - startNanos) / int64(time.Microsecond)
-			ms := util.MicrosToMillis(language.AmericanEnglish, int(delta))
+			ms := npncore.MicrosToMillis(language.AmericanEnglish, int(delta))
 			ret = append(ret, fmt.Sprintf("extracted and verified [%v] in [%v]", proto.Key, ms))
 		}
 

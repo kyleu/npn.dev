@@ -7,7 +7,7 @@ type Prototype struct {
 	Description string   `json:"description,omitempty"`
 	Inherit     []string `json:"inherit,omitempty"`
 	Folders     []string `json:"folders,omitempty"`
-	BuildCmds   []string `json:"buildCmd,omitempty"`
+	BuildCmds   []string `json:"buildCmds,omitempty"`
 }
 
 func (p *Prototype) MarshalJSON() ([]byte, error) {

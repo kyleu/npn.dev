@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -49,7 +50,7 @@ func DataSourceSave(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return act.EResp(err, "unable to calculate schema")
 		}
-		sch.Key = util.Slugify(frm.Title)
+		sch.Key = npncore.Slugify(frm.Title)
 		sch.Title = frm.Title
 		err = ctx.App.Schemata.Save(sch, true)
 		if err != nil {

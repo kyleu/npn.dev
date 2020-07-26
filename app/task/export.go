@@ -6,7 +6,7 @@ import (
 	"github.com/kyleu/npn/app/output"
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
+	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
 
@@ -34,7 +34,7 @@ func (t *Export) Options() AvailableOptions {
 	}
 }
 
-func (t *Export) Run(project *project.Project, schemata schema.Schemata, options util.Entries, logger logur.Logger) (*Result, error) {
+func (t *Export) Run(project *project.Project, schemata schema.Schemata, options npncore.Entries, logger logur.Logger) Results {
 	var ret []*output.File
 	nr := output.GoNameRegistry()
 	for _, sch := range schemata {
@@ -45,13 +45,13 @@ func (t *Export) Run(project *project.Project, schemata schema.Schemata, options
 		}
 	}
 
-	res := &Result{Task: t, Project: project, Output: ret}
+	res := NewResult(t, project, nil)
 
 	x, err := res.applyOutput(ret, project.RootPath)
 	if err != nil {
-		return nil, errors.Wrap(err, "error applying output")
+		return ErrorResults(t, project, options, errors.Wrap(err, "error applying output"))
 	}
-	res.Data = x
+	res.Data["output"] = x
 
-	return res, nil
+	return Results{res}
 }
