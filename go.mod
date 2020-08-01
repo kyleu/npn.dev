@@ -1,6 +1,6 @@
 module github.com/kyleu/npn
 
-go 1.13
+go 1.14
 
 require (
 	emperror.dev/emperror v0.32.0
@@ -10,7 +10,6 @@ require (
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/emicklei/proto v1.9.0
 	github.com/fatih/color v1.9.0 // indirect
-	github.com/gofrs/uuid v3.2.0+incompatible
 	github.com/gorilla/handlers v1.4.2
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/sessions v1.2.0
@@ -21,6 +20,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0
 	github.com/kyleu/npn/npncore v0.0.1
 	github.com/kyleu/npn/npndatabase v0.0.1
+	github.com/kyleu/npn/npntemplate v0.0.1
 	github.com/kyleu/npn/npnuser v0.0.1
 	github.com/kyleu/npn/npnweb v0.0.1
 	github.com/mattn/go-colorable v0.1.7 // indirect
@@ -44,6 +44,11 @@ require (
 )
 
 replace github.com/kyleu/npn/npncore => ./npncore
+
 replace github.com/kyleu/npn/npndatabase => ./npndatabase
+
 replace github.com/kyleu/npn/npnuser => ./npnuser
+
+replace github.com/kyleu/npn/npntemplate => ./npntemplate
+
 replace github.com/kyleu/npn/npnweb => ./npnweb

@@ -15,5 +15,5 @@ case string:
     %><pre><%= t %></pre><%
   }
 default:
-  components.JSON(t, ctx, buffer)
+  npntemplate.JSON(t, ctx.Logger, buffer)
 } %>

@@ -1,13 +1,13 @@
-package npndatabase
+package npncore
 
 import (
 	"fmt"
 	"strings"
 
-	"github.com/kyleu/npn/npncore"
-
 	"logur.dev/logur"
 )
+
+var allowedColumns = map[string][]string{}
 
 type Params struct {
 	Key       string
@@ -52,7 +52,7 @@ func (p *Params) OrderByString() string {
 		if !o.Asc {
 			dir = " desc"
 		}
-		snake := npncore.ToSnakeCase(o.Column)
+		snake := ToSnakeCase(o.Column)
 		ret = append(ret, snake+dir)
 	}
 
@@ -81,7 +81,7 @@ func (p *Params) Filtered(logger logur.Logger) *Params {
 				allowed = append(allowed, o)
 			} else {
 				msg := "no column [%v] for [%v] available in allowed columns [%v]"
-				logger.Warn(fmt.Sprintf(msg, o.Column, p.Key, npncore.OxfordComma(available, "and")))
+				logger.Warn(fmt.Sprintf(msg, o.Column, p.Key, OxfordComma(available, "and")))
 			}
 		}
 

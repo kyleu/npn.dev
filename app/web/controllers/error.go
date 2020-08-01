@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/web/act"
 	"github.com/kyleu/npn/npnweb"
 	"net/http"
 
@@ -11,6 +12,7 @@ import (
 )
 
 func NotFound(w http.ResponseWriter, r *http.Request) {
+	act.WriteCORS(w)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusNotFound)
 	ctx := web.ExtractContext(w, r)
@@ -18,4 +20,9 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	ctx.Breadcrumbs = npnweb.BreadcrumbsSimple(r.URL.Path, "not found")
 	ctx.Logger.Info(fmt.Sprintf("[%v %v] returned [%d]", r.Method, r.URL.Path, http.StatusNotFound))
 	_, _ = components.NotFound(r, ctx, w)
+}
+
+func Options(w http.ResponseWriter, r *http.Request) {
+	act.WriteCORS(w)
+	w.WriteHeader(http.StatusOK)
 }

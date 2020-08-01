@@ -60,8 +60,8 @@
               <tr>
                 <td class="uk-table-shrink uk-text-nowrap"><%= i.Key %></td>
                 <td><%= strings.Join(i.Fields, ", ") %></td>
-                <td class="uk-table-shrink uk-text-nowrap"><% components.Boolean(i.Unique, "", "", _buffer) %></td>
-                <td class="uk-table-shrink uk-text-nowrap"><% components.Boolean(i.Primary, "", "", _buffer) %></td>
+                <td class="uk-table-shrink uk-text-nowrap"><% npntemplate.Boolean(i.Unique, "", "", _buffer) %></td>
+                <td class="uk-table-shrink uk-text-nowrap"><% npntemplate.Boolean(i.Primary, "", "", _buffer) %></td>
               </tr>
             <% } %>
           </tbody>

@@ -13,3 +13,11 @@ echo "Building [$os $arch]..."
 env GOOS=$os GOARCH=$arch make build-release
 mkdir -p ./build/$os/$arch
 mv ./build/release/npn ./build/$os/$arch/npn
+
+arch=arm64
+os=darwin
+
+echo "Building [$os $arch]..."
+env GOOS=$os GOARCH=$arch make build-release
+mkdir -p ./build/$os/$arch
+mv ./build/release/npn ./build/$os/$arch/npn

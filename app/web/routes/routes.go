@@ -84,6 +84,7 @@ func BuildRouter(app *config.AppInfo) (*mux.Router, error) {
 	r.Path(p("robots.txt")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.RobotsTxt))).Name(n("robots"))
 	r.PathPrefix(p("assets")).Methods(http.MethodGet).Handler(addContext(r, app, http.HandlerFunc(controllers.Static))).Name(n("assets"))
 
+	r.PathPrefix("").Methods(http.MethodOptions).Handler(addContext(r, app, http.HandlerFunc(controllers.Options)))
 	r.PathPrefix("").Handler(addContext(r, app, http.HandlerFunc(controllers.NotFound)))
 
 	return r, nil

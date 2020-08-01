@@ -1,4 +1,4 @@
-package web
+package npnweb
 
 type InputParams struct {
 	ID          string

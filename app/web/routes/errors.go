@@ -22,8 +22,8 @@ import (
 func addContext(router *mux.Router, info *config.AppInfo, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer internalServerError(router, info, w, r)
-		ctx := context.WithValue(r.Context(), npncore.RoutesKey, router)
-		ctx = context.WithValue(ctx, npncore.InfoKey, info)
+		rt := context.WithValue(r.Context(), npncore.RoutesKey, router)
+		ctx := context.WithValue(rt, npncore.InfoKey, info)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

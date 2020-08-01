@@ -42,7 +42,15 @@ compile-templates:
 
 .PHONY: compile-templates-force
 compile-templates-force:
-	bin/force-templates.sh
+	echo "updating [web/components] templates"
+	rm -rf gen/components
+	hero -extensions .html -source "web/components" -pkgname components -dest gen/components
+	echo "updating [web/templates] templates"
+	rm -rf gen/templates
+	hero -extensions .html -source "web/templates" -pkgname templates -dest gen/templates
+	echo "updating [npntemplate] templates"
+	cd npntemplate && rm -rf gen
+	cd npntemplate && hero -extensions .html -source "html" -pkgname npntemplate -dest gen
 
 .PHONY: build
 build: goversion compile-templates ## Build all binaries

@@ -30,6 +30,8 @@ func Act(w http.ResponseWriter, r *http.Request, f func(*web.RequestContext) (st
 		SaveSession(w, r, ctx)
 	}
 
+	WriteCORS(w)
+
 	redir, err := f(ctx)
 	if err != nil {
 		ctx.Logger.Warn(fmt.Sprintf("error running action: %+v", err))
@@ -75,12 +77,19 @@ func RespondMIME(filename string, mime string, ext string, ba []byte, w http.Res
 		}
 		w.Header().Set("Content-Disposition", "attachment; filename=\""+filename+"\"")
 	}
-	w.Header().Set("Access-Control-Allow-Origin", "*")
+	WriteCORS(w)
 	if len(ba) == 0 {
 		return "", errors.New("no bytes available to write")
 	}
 	_, err := w.Write(ba)
 	return "", errors.Wrap(err, "cannot write to response")
+}
+
+func WriteCORS(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Headers", "*")
+	w.Header().Set("Access-Control-Allow-Method", "GET,POST,DELETE,PUT,PATCH,OPTIONS,HEAD")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Credentials", "true")
 }
 
 func logComplete(startNanos int64, ctx *web.RequestContext, status int, r *http.Request) {

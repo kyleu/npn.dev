@@ -1,4 +1,4 @@
-package npndatabase
+package npncore
 
 type Ordering struct {
 	Column string `json:"column"`

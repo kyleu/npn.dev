@@ -1,4 +1,4 @@
-package npndatabase
+package npncore
 
 import (
 	"fmt"

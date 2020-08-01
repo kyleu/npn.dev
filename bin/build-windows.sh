@@ -13,3 +13,11 @@ echo "Building [$os $arch]..."
 env GOOS=$os GOARCH=$arch make build-release
 mkdir -p ./build/$os/$arch
 mv ./build/release/npn.exe ./build/$os/$arch/npn.exe
+
+arch=arm64
+os=windows
+
+echo "Building [$os $arch]..."
+env GOOS=$os GOARCH=$arch make build-release
+mkdir -p ./build/$os/$arch
+mv ./build/release/npn.exe ./build/$os/$arch/npn.exe

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<% components.Head(ctx, _buffer) %>
+<% components.Head(ctx.App.Debug, ctx.Title, _buffer) %>
 <%@ head { %><% } %>
 </head>
 <body class="<%= ctx.Profile.Theme.CSS %>">
