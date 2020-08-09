@@ -2,6 +2,7 @@ package schematypes
 
 import (
 	"fmt"
+
 	"github.com/kyleu/npn/app/util"
 
 	"github.com/kyleu/npn/app/output"

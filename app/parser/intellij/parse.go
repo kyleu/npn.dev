@@ -2,9 +2,10 @@ package parseintellij
 
 import (
 	"encoding/xml"
-	"github.com/kyleu/npn/npncore"
 	"sort"
 	"strings"
+
+	"github.com/kyleu/npn/npncore"
 
 	"emperror.dev/errors"
 	parseutil "github.com/kyleu/npn/app/parser/util"

@@ -2,10 +2,11 @@ package npncore
 
 import (
 	"fmt"
-	"github.com/gofrs/uuid"
-	"logur.dev/logur"
 	"sort"
 	"strings"
+
+	"github.com/gofrs/uuid"
+	"logur.dev/logur"
 
 	"emperror.dev/errors"
 )

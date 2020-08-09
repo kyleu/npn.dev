@@ -1,11 +1,12 @@
 package npnweb
 
 import (
-	"emperror.dev/errors"
 	"fmt"
+	"net/http"
+
+	"emperror.dev/errors"
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/npncore"
-	"net/http"
 )
 
 func MakeServer(info AppInfo, r *mux.Router, address string, port uint16) error {
@@ -17,4 +18,3 @@ func MakeServer(info AppInfo, r *mux.Router, address string, port uint16) error 
 	err := http.ListenAndServe(fmt.Sprintf("%v:%v", address, port), r)
 	return errors.Wrap(err, "unable to run http server")
 }
-

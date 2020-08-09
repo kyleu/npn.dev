@@ -33,7 +33,7 @@ func (p Pkg) ToPath(extra ...string) string {
 }
 
 func (p Pkg) Trim(src Pkg) Pkg {
-	var ret Pkg
+	ret := make(Pkg, 0, len(p))
 	for idx, v := range p {
 		if len(src) >= idx && src[idx] == v {
 			continue
@@ -59,7 +59,7 @@ func (p Pkg) Shift() Pkg {
 }
 
 func (p Pkg) Push(name string) Pkg {
-	if strings.Index(name, "/") > -1 {
+	if strings.Contains(name, "/") {
 		return Pkg{"ERROR:contains-slash"}
 	}
 	return append(p, name)

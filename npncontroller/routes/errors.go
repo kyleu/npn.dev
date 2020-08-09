@@ -3,11 +3,12 @@ package routes
 import (
 	"context"
 	"fmt"
+	"io"
+	"net/http"
+
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 	"github.com/kyleu/npn/npnweb"
-	"io"
-	"net/http"
 
 	"emperror.dev/errors"
 	"github.com/gorilla/mux"

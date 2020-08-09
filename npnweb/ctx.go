@@ -2,11 +2,12 @@ package npnweb
 
 import (
 	"fmt"
-	"github.com/gofrs/uuid"
-	"github.com/kyleu/npn/npnservice/user"
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/gofrs/uuid"
+	"github.com/kyleu/npn/npnservice/user"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"

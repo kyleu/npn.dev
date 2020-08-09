@@ -2,10 +2,11 @@ package auth
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npndatabase"
 	"github.com/kyleu/npn/npnservice/user"
-	"strings"
 
 	"github.com/gofrs/uuid"
 	"logur.dev/logur"
@@ -16,12 +17,12 @@ type Service struct {
 	EnabledProviders Providers
 	redir            string
 	// actions          *action.Service
-	db               *npndatabase.Service
-	logger           logur.Logger
-	users            *user.Service
+	db     *npndatabase.Service
+	logger logur.Logger
+	users  *user.Service
 }
 
-func NewService(enabled bool, redir string, /* actions *action.Service, */ db *npndatabase.Service, logger logur.Logger, users *user.Service) *Service {
+func NewService(enabled bool, redir string /* actions *action.Service, */, db *npndatabase.Service, logger logur.Logger, users *user.Service) *Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyAuth})
 
 	if !strings.HasPrefix(redir, "http") {
@@ -35,9 +36,9 @@ func NewService(enabled bool, redir string, /* actions *action.Service, */ db *n
 		Enabled: enabled,
 		redir:   redir,
 		// actions: actions,
-		db:      db,
-		logger:  logger,
-		users:   users,
+		db:     db,
+		logger: logger,
+		users:  users,
 	}
 
 	for _, p := range AllProviders {

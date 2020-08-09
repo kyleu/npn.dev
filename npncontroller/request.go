@@ -1,6 +1,7 @@
 package npncontroller
 
 import (
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 	"strings"
 
@@ -31,7 +32,7 @@ func SaveSession(w http.ResponseWriter, r *http.Request, ctx *npnweb.RequestCont
 }
 
 func FlashAndRedir(success bool, msg string, redir string, w http.ResponseWriter, r *http.Request, ctx *npnweb.RequestContext) (string, error) {
-	status := "error"
+	status := npncore.KeyError
 	if success {
 		status = "success"
 	}

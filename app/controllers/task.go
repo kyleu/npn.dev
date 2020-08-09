@@ -1,6 +1,9 @@
 package controllers
 
 import (
+	"net/http"
+	"strings"
+
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/project"
@@ -9,8 +12,6 @@ import (
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
-	"net/http"
-	"strings"
 
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/gen/templates"

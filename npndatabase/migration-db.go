@@ -4,12 +4,16 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/kyleu/npn/npncore"
+
 	"emperror.dev/errors"
 )
 
-func (s *Service) ListMigrations() Migrations {
+func (s *Service) ListMigrations(params *npncore.Params) Migrations {
+	params = npncore.ParamsWithDefaultOrdering(npncore.KeyMigration, params, npncore.DefaultCreatedOrdering...)
+
 	var dtos []migrationDTO
-	q := SQLSelectSimple("*", "migration", "", "")
+	q := SQLSelect("*", npncore.KeyMigration, "", params.OrderByString(), params.Limit, params.Offset)
 	err := s.Select(&dtos, q, nil)
 
 	if err != nil {

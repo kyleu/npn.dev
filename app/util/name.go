@@ -1,9 +1,10 @@
 package util
 
 import (
+	"strings"
+
 	"github.com/iancoleman/strcase"
 	"github.com/jinzhu/inflection"
-	"strings"
 )
 
 type Name struct {

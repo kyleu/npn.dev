@@ -89,7 +89,7 @@ func (p *Project) HasSchema(key string) bool {
 }
 
 func (p *Project) ToMap() map[string]interface{} {
-	ret := make(map[string]interface{}, len(p.Options) + 7)
+	ret := make(map[string]interface{}, len(p.Options)+7)
 	ret["Key"] = p.Key
 	ret["Title"] = p.Title
 	ret["SourceURL"] = p.SourceURL

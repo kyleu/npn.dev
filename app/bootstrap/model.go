@@ -20,32 +20,32 @@ func (p *Prototype) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
-	p = PrototypeFromString(s)
+	*p = *PrototypeFromString(s)
 	return nil
 }
 
 var (
-	Unmanaged = &Prototype{
+	Unmanaged = Prototype{
 		Key:         "unmanaged",
 		Description: "simple project with no build process",
 	}
 )
 
-var GoSimple = &Prototype{
+var GoSimple = Prototype{
 	Key:         "go-simple",
 	Description: "bare-bones golang project",
 	Folders:     []string{"go/simple"},
 	BuildCmds:   []string{"goimports -w .", "make build", "build/{{.Key}}"},
 }
 
-var GoDatabase = &Prototype{
+var GoDatabase = Prototype{
 	Key:         "go-database",
 	Description: "simple golang project with database support",
 	Folders:     []string{"go/database"},
 	BuildCmds:   []string{"goimports -w .", "make build", "build/{{.Key}}"},
 }
 
-var AllPrototypes = []*Prototype{Unmanaged, GoSimple, GoDatabase}
+var AllPrototypes = []*Prototype{&Unmanaged, &GoSimple, &GoDatabase}
 
 func PrototypeFromString(s string) *Prototype {
 	for _, t := range AllPrototypes {
@@ -53,5 +53,5 @@ func PrototypeFromString(s string) *Prototype {
 			return t
 		}
 	}
-	return Unmanaged
+	return &Unmanaged
 }

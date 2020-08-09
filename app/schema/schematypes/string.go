@@ -2,6 +2,7 @@ package schematypes
 
 import (
 	"fmt"
+
 	"github.com/kyleu/npn/app/util"
 
 	"github.com/kyleu/npn/app/output"
@@ -25,6 +26,6 @@ func (s String) String() string {
 	return s.Key()
 }
 
-func (t String) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
-	return nr.Get(nil, t.Key(), src).String()
+func (s String) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	return nr.Get(nil, s.Key(), src).String()
 }

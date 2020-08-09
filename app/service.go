@@ -25,7 +25,7 @@ type Service struct {
 }
 
 func NewService(debug bool, version string, commitHash string, logger logur.Logger) *Service {
-	files := npncore.NewFileLoader("./." + npncore.AppName, logger)
+	files := npncore.NewFileLoader("./."+npncore.AppName, logger)
 	us := user.NewService(files, nil, logger)
 	au := auth.NewService(false, "", nil, logger, us)
 	return &Service{

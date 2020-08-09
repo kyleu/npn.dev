@@ -11,14 +11,14 @@ type Option struct {
 	T Wrapped `json:"t"`
 }
 
-func (l Option) Key() string {
+func (o Option) Key() string {
 	return KeyOption
 }
 
-func (l Option) String() string {
-	return "*" + l.T.String()
+func (o Option) String() string {
+	return "*" + o.T.String()
 }
 
-func (t Option) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
-	return "*" + t.T.StringFor(ft, nr, src)
+func (o Option) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	return "*" + o.T.StringFor(ft, nr, src)
 }

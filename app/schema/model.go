@@ -1,11 +1,12 @@
 package schema
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
+	"reflect"
+
+	"emperror.dev/errors"
 	"github.com/iancoleman/strcase"
 	"github.com/kyleu/npn/app/util"
-	"reflect"
 )
 
 type ModelType struct {

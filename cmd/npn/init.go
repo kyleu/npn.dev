@@ -1,6 +1,8 @@
 package main
 
 import (
+	"os"
+
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
 	"emperror.dev/handler/logur"
@@ -10,7 +12,6 @@ import (
 	"github.com/kyleu/npn/npnweb"
 	"github.com/spf13/cobra"
 	log "logur.dev/logur"
-	"os"
 )
 
 var verbose bool
@@ -25,12 +26,9 @@ func Configure(version string, commitHash string) cobra.Command {
 		Short: "Command line interface for " + npncore.AppName,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			npncore.AppKey = "npn"
-			npncore.AppName = "npn"
+			npncore.AppName = npncore.AppKey
 
-			info, err := initApp(version, commitHash)
-			if err != nil {
-				return errors.Wrap(err, "error initializing application")
-			}
+			info := initApp(version, commitHash)
 
 			r, err := controllers.BuildRouter(info)
 			if err != nil {
@@ -52,10 +50,8 @@ func Configure(version string, commitHash string) cobra.Command {
 	return rootCmd
 }
 
-func initApp(version string, commitHash string) (npnweb.AppInfo, error) {
+func initApp(version string, commitHash string) npnweb.AppInfo {
 	_ = os.Setenv("TZ", "UTC")
-
-	npncore.AppName = "npn"
 
 	logger := npncore.InitLogging(verbose)
 	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": version, "commit": commitHash})
@@ -63,7 +59,7 @@ func initApp(version string, commitHash string) (npnweb.AppInfo, error) {
 	errorHandler := logur.New(logger)
 	defer emperror.HandleRecover(errorHandler)
 
-	return app.NewService(verbose, version, commitHash, logger), nil
+	return app.NewService(verbose, version, commitHash, logger)
 }
 
 func setIcon() {

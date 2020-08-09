@@ -1,15 +1,16 @@
 package npncontroller
 
 import (
+	"io/ioutil"
+	"net/http"
+	"os"
+	"strings"
+
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/npncontroller/routes"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 	"github.com/kyleu/npn/npnweb"
-	"io/ioutil"
-	"net/http"
-	"os"
-	"strings"
 )
 
 func RoutesFile(app npnweb.AppInfo, r *mux.Router) {

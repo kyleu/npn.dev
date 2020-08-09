@@ -27,7 +27,6 @@ func (s *Service) StartTransaction() (*sqlx.Tx, error) {
 	return s.db.Beginx()
 }
 
-
 func errMessage(t string, q string, values []interface{}) string {
 	return fmt.Sprintf("error running %v sql [%v] with values [%v]", t, strings.TrimSpace(q), npncore.ValueStrings(values))
 }

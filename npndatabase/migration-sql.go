@@ -2,9 +2,10 @@ package npndatabase
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npncore"
 	"strings"
 	"time"
+
+	"github.com/kyleu/npn/npncore"
 
 	"emperror.dev/errors"
 	"golang.org/x/text/language"

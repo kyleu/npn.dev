@@ -1,11 +1,12 @@
 package bootstrap
 
 import (
+	"os"
+
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
-	"os"
 )
 
 func Verify(prototype *Prototype, cfg *project.Project, logger logur.Logger) error {

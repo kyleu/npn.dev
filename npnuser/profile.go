@@ -2,6 +2,7 @@ package npnuser
 
 import (
 	"encoding/json"
+
 	"github.com/gofrs/uuid"
 	"golang.org/x/text/language"
 )

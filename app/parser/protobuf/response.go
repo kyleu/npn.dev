@@ -2,10 +2,11 @@ package parseprotobuf
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npncore"
 	"path"
 	"path/filepath"
 	"strings"
+
+	"github.com/kyleu/npn/npncore"
 
 	parseutil "github.com/kyleu/npn/app/parser/util"
 

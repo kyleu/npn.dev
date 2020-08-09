@@ -3,9 +3,10 @@ package auth
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npndatabase"
-	"time"
 
 	"github.com/gofrs/uuid"
 )

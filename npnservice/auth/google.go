@@ -2,10 +2,11 @@ package auth
 
 import (
 	"encoding/json"
-	"github.com/kyleu/npn/npncore"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	"github.com/kyleu/npn/npncore"
 
 	"emperror.dev/errors"
 	"golang.org/x/oauth2"

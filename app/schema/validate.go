@@ -49,7 +49,7 @@ func validateModel(r *ValidationResult, s *Schema, m *Model) *ValidationResult {
 	return r
 }
 
-func validateType(r *ValidationResult, s *Schema, mType string, mKey string, fKey string, f schematypes.Type) *ValidationResult {
+func validateType(r *ValidationResult, s *Schema, mType string, mKey string, fKey string, f schematypes.Type) {
 	switch t := f.(type) {
 	case schematypes.Wrapped:
 		validateType(r, s, mType, mKey, fKey, t.V)
@@ -66,5 +66,4 @@ func validateType(r *ValidationResult, s *Schema, mType string, mKey string, fKe
 			r.log(mType, mKey, "field ["+fKey+"] has reference to unknown type ["+t.Pkg.String()+"::"+t.T+"]", LevelWarn)
 		}
 	}
-	return r
 }

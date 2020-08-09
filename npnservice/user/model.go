@@ -1,8 +1,9 @@
 package user
 
 import (
-	"github.com/kyleu/npn/npnuser"
 	"time"
+
+	"github.com/kyleu/npn/npnuser"
 
 	"github.com/gofrs/uuid"
 	"golang.org/x/text/language"

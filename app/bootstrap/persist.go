@@ -44,29 +44,31 @@ func addFolder(zw *zip.Writer, folder string, root string) error {
 	}
 
 	for _, file := range files {
-		newFilename := path.Join(folder, file.Name())
-		if file.IsDir() {
-			newRoot := path.Join(root, file.Name())
-			err = addFolder(zw, newFilename, newRoot)
-			if err != nil {
-				return err
-			}
-		} else {
-			dat, err := ioutil.ReadFile(newFilename)
-			if err != nil {
-				return errors.Wrap(err, "can't read file ["+file.Name()+"]")
-			}
-
-			// Add some files to the archive.
-			f, err := zw.Create(path.Join(root, file.Name()))
-			if err != nil {
-				return errors.Wrap(err, "can't create zip entry for ["+path.Join(root, file.Name())+"]")
-			}
-			_, err = f.Write(dat)
-			if err != nil {
-				return errors.Wrap(err, "can't write zip entry for ["+path.Join(root, file.Name())+"]")
-			}
+		err = processFile(zw, root, folder, file)
+		if err != nil {
+			return err
 		}
 	}
 	return nil
+}
+
+func processFile(zw *zip.Writer, root string, folder string, file os.FileInfo) error {
+	newFilename := path.Join(folder, file.Name())
+	if file.IsDir() {
+		newRoot := path.Join(root, file.Name())
+		err := addFolder(zw, newFilename, newRoot)
+		return err
+	}
+	dat, err := ioutil.ReadFile(newFilename)
+	if err != nil {
+		return errors.Wrap(err, "can't read file ["+file.Name()+"]")
+	}
+
+	// Add some files to the archive.
+	f, err := zw.Create(path.Join(root, file.Name()))
+	if err != nil {
+		return errors.Wrap(err, "can't create zip entry for ["+path.Join(root, file.Name())+"]")
+	}
+	_, err = f.Write(dat)
+	return errors.Wrap(err, "can't write zip entry for ["+path.Join(root, file.Name())+"]")
 }

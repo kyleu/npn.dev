@@ -2,9 +2,10 @@ package npncontroller
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 	"github.com/kyleu/npn/npnweb"
-	"net/http"
 )
 
 func NotFound(w http.ResponseWriter, r *http.Request) {

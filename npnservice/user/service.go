@@ -3,10 +3,11 @@ package user
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npndatabase"
 	"github.com/kyleu/npn/npnuser"
-	"time"
 
 	"github.com/gofrs/uuid"
 	"logur.dev/logur"

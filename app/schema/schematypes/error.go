@@ -19,6 +19,6 @@ func (e Error) String() string {
 	return "error(" + e.Message + ")"
 }
 
-func (t Error) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
-	return nr.Get(nil, t.Key(), src).String()
+func (e Error) StringFor(ft output.FileType, nr *util.NameRegistry, src util.Pkg) string {
+	return nr.Get(nil, e.Key(), src).String()
 }

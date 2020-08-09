@@ -27,20 +27,22 @@ func (p *GraphQLParser) Type() schema.Origin {
 }
 
 func (p *GraphQLParser) Detect(root string) ([]schema.DataSource, error) {
-	var ret []schema.DataSource
-
 	gql, err := parseutil.GetMatchingFiles(path.Join(root, "data", "graphql"), "*.graphql")
 	if err != nil {
 		return nil, err
-	}
-	for _, f := range gql {
-		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Type: schema.OriginGraphQL})
 	}
 
 	json, err := parseutil.GetMatchingFiles(path.Join(root, "data", "graphql"), "*.json")
 	if err != nil {
 		return nil, err
 	}
+
+	ret := make([]schema.DataSource, 0, len(gql)+len(json))
+
+	for _, f := range gql {
+		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Type: schema.OriginGraphQL})
+	}
+
 	for _, f := range json {
 		ret = append(ret, schema.DataSource{Key: f, Paths: []string{f}, Type: schema.OriginGraphQL})
 	}

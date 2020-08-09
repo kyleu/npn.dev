@@ -22,7 +22,9 @@ type FileResults []*FileResult
 func (fr FileResults) WrittenCount() int {
 	y := 0
 	for _, f := range fr {
-		if f.Written { y++ }
+		if f.Written {
+			y++
+		}
 	}
 	return y
 }
@@ -30,7 +32,9 @@ func (fr FileResults) WrittenCount() int {
 func (fr FileResults) SkippedCount() int {
 	n := 0
 	for _, f := range fr {
-		if !f.Written { n++ }
+		if !f.Written {
+			n++
+		}
 	}
 	return n
 }
