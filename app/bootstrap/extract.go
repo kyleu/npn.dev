@@ -13,8 +13,8 @@ import (
 	"path/filepath"
 
 	"emperror.dev/errors"
+	"github.com/kyleu/npn/app/assets"
 	"github.com/kyleu/npn/app/project"
-	"github.com/kyleu/npn/app/web/assets"
 )
 
 func Extract(prototype *Prototype, cfg *project.Project, logger logur.Logger) error {
@@ -40,10 +40,11 @@ func Extract(prototype *Prototype, cfg *project.Project, logger logur.Logger) er
 		return errors.Wrap(err, "can't read ["+zipFilename+"] as a zip file")
 	}
 
+	projMap := cfg.ToMap()
+
 	for _, file := range r.File {
 		fPath := path.Join(cfg.RootPath, file.Name)
 		if file.FileInfo().IsDir() {
-			// Make Folder
 			_ = os.MkdirAll(fPath, os.ModePerm)
 			continue
 		}
@@ -73,7 +74,7 @@ func Extract(prototype *Prototype, cfg *project.Project, logger logur.Logger) er
 			return err
 		}
 		out := &bytes.Buffer{}
-		err = tmpl.Execute(out, cfg)
+		err = tmpl.Execute(out, projMap)
 		if err != nil {
 			return err
 		}

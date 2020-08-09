@@ -1,0 +1,21 @@
+<%: func Head(ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<title><%= ctx.Title %></title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta property="og:title" content="<%= ctx.Title %>">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+
+<% if ctx.App.Debug() { %>
+<link rel="stylesheet" media="screen" href="/assets/vendor/style.css">
+<script src="/assets/vendor/uikit/uikit.js"></script>
+<script src="/assets/vendor/uikit/uikit-icons.js"></script>
+<script src="/assets/<%= npncore.AppKey %>.js"></script>
+<% } else { %>
+<link rel="stylesheet" media="screen" href="/assets/vendor/style.min.css")>
+<script src="/assets/vendor/uikit/uikit.min.js"></script>
+<script src="/assets/vendor/uikit/uikit-icons.min.js"></script>
+<script src="/assets/<%= npncore.AppKey %>.min.js"></script>
+<% } %>

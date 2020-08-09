@@ -20,6 +20,15 @@ func (e Entries) GetString(k string) string {
 	return ""
 }
 
+func (e Entries) GetStringArray(k string) []string {
+	for _, en := range e {
+		if en.K == k {
+			return strings.Split(en.V.(string), "||")
+		}
+	}
+	return nil
+}
+
 func (e Entries) Clone() Entries {
 	ret := make(Entries, 0, len(e))
 	for _, en := range e {

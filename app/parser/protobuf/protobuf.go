@@ -9,7 +9,6 @@ import (
 
 	parseutil "github.com/kyleu/npn/app/parser/util"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
 	"logur.dev/logur"
 )
 
@@ -19,7 +18,7 @@ type ProtobufParser struct {
 }
 
 func NewParser(logger logur.Logger) *ProtobufParser {
-	logger = logur.WithFields(logger, map[string]interface{}{util.KeyService: schema.OriginProtobuf.Key})
+	logger = logur.WithFields(logger, map[string]interface{}{"service": schema.OriginProtobuf.Key})
 	return &ProtobufParser{Key: schema.OriginProtobuf.Key, logger: logger}
 }
 

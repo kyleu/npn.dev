@@ -6,6 +6,7 @@ import (
 	"github.com/kyleu/npn/app/output"
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/schema"
+	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
@@ -30,18 +31,28 @@ func (t *Export) Description() string {
 func (t *Export) Options() AvailableOptions {
 	return AvailableOptions{
 		{Key: "schema", T: "schema"},
-		{Key: "include", T: "string", Default: "*"},
+		{Key: "include", T: "models", Default: "*"},
+		{Key: "exclude", T: "models"},
+		{Key: "package", T: "string", Desc: "package override for all exported models"},
 	}
 }
 
 func (t *Export) Run(project *project.Project, schemata schema.Schemata, options npncore.Entries, logger logur.Logger) Results {
 	var ret []*output.File
 	nr := output.GoNameRegistry()
+	schemaOpt := options.GetStringArray("schema")
+	pkgOpt := util.PkgFromString(options.GetString("package"))
 	for _, sch := range schemata {
-		for _, model := range sch.Models {
-			file := output.NewGoFile(project, model.Pkg, model.Key)
-			export.WriteGo(file, model, nr)
-			ret = append(ret, file)
+		if len(schemaOpt) == 0 || npncore.StringArrayContains(schemaOpt, sch.Key) {
+			for _, model := range sch.Models {
+				p := model.Pkg
+				if len(pkgOpt) > 0 {
+					p = pkgOpt
+				}
+				file := output.NewGoFile(p, model.Key)
+				export.WriteGo(file, model, nr)
+				ret = append(ret, file)
+			}
 		}
 	}
 

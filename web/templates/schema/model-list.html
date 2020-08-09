@@ -1,4 +1,4 @@
-<%: func SchemaModelList(sch string, models schema.Models, t schema.ModelType, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func SchemaModelList(sch string, models schema.Models, t schema.ModelType, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <% models = models.ByType(t) %>
 <% if len(models) > 0 { %>
 <div class="uk-card uk-card-body uk-margin-top">
@@ -20,7 +20,7 @@
     <tbody>
       <% for _, m := range models { %>
         <tr>
-          <td class="uk-table-shrink uk-text-nowrap"><a class="theme" href="<%= ctx.Route(util.KeySchema + `.model`, util.KeyKey, sch, `m`, m.ID()) %>"><%= m.Pkg.StringWith(m.Key) %></a></td>
+          <td class="uk-table-shrink uk-text-nowrap"><a class="theme" href="<%= ctx.Route("schema" + `.model`, npncore.KeyKey, sch, `m`, m.ID()) %>"><%= m.Pkg.StringWith(m.Key) %></a></td>
           <td class="uk-table-shrink uk-text-nowrap">
             <% if len(m.Fields) > 0 { %>
               <a class="theme" href="" onclick="return dom.switchElements(this, '#<%= m.Key %>-field-list', true);"><%=v len(m.Fields) %></a>

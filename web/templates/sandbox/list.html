@@ -1,15 +1,15 @@
-<%: func SandboxList(sandboxes sandbox.Sandboxes, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func SandboxList(sandboxes sandbox.Sandboxes, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-grid-small uk-grid-match uk-child-width-expand@s" data-uk-grid>
       <% for _, s := range sandboxes { %>
-        <% if ctx.App.Debug { %>
+        <% if ctx.App.Debug() { %>
           <div>
             <div class="uk-card uk-card-body">
-              <h3 class="uk-card-title"><a class="theme" href="<%= ctx.Route(util.KeySandbox+`.run`, util.KeyKey, s.Key) %>"><%= s.Title %></a></h3>
+              <h3 class="uk-card-title"><a class="theme" href="<%= ctx.Route(npncore.KeySandbox+`.run`, npncore.KeyKey, s.Key) %>"><%= s.Title %></a></h3>
               <p><%= s.Description %></p>
             </div>
           </div>

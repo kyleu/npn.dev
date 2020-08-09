@@ -2,6 +2,7 @@ package npnuser
 
 import (
 	"encoding/json"
+	"github.com/gofrs/uuid"
 	"golang.org/x/text/language"
 )
 
@@ -51,15 +52,22 @@ func (t *Role) UnmarshalJSON(data []byte) error {
 }
 
 type UserProfile struct {
+	UserID    uuid.UUID
+	Name      string
 	Theme     Theme
+	Role      Role
 	NavColor  string
 	LinkColor string
+	Picture   string
 	Locale    language.Tag
 }
 
-func NewUserProfile() *UserProfile {
+func NewUserProfile(userID uuid.UUID, name string) *UserProfile {
 	return &UserProfile{
+		UserID:    userID,
+		Name:      name,
 		Theme:     ThemeAuto,
+		Role:      RoleGuest,
 		NavColor:  "bluegrey",
 		LinkColor: "bluegrey",
 		Locale:    language.AmericanEnglish,
@@ -67,17 +75,25 @@ func NewUserProfile() *UserProfile {
 }
 
 type Profile struct {
-	Theme     string `json:"theme"`
-	NavColor  string `json:"navColor"`
-	LinkColor string `json:"linkColor"`
-	Locale    string `json:"locale,omitempty"`
+	UserID    uuid.UUID `json:"id"`
+	Name      string    `json:"name"`
+	Theme     string    `json:"theme"`
+	Role      string    `json:"role"`
+	NavColor  string    `json:"navColor"`
+	LinkColor string    `json:"linkColor"`
+	Picture   string    `json:"picture"`
+	Locale    string    `json:"locale,omitempty"`
 }
 
 func (p *UserProfile) ToProfile() Profile {
 	return Profile{
+		UserID:    p.UserID,
+		Name:      p.Name,
 		Theme:     p.Theme.String(),
+		Role:      p.Role.String(),
 		NavColor:  p.NavColor,
 		LinkColor: p.LinkColor,
+		Picture:   p.Picture,
 		Locale:    p.Locale.String(),
 	}
 }

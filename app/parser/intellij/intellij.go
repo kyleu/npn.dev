@@ -8,7 +8,6 @@ import (
 
 	parseutil "github.com/kyleu/npn/app/parser/util"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
 	"logur.dev/logur"
 )
 
@@ -18,7 +17,7 @@ type IntelliJParser struct {
 }
 
 func NewParser(logger logur.Logger) *IntelliJParser {
-	logger = logur.WithFields(logger, map[string]interface{}{util.KeyService: schema.OriginDatabase.Key})
+	logger = logur.WithFields(logger, map[string]interface{}{"service": schema.OriginDatabase.Key})
 	return &IntelliJParser{Key: schema.OriginDatabase.Key, logger: logger}
 }
 

@@ -1,4 +1,4 @@
-<%: func SchemaComponents(sch *schema.Schema, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func SchemaComponents(sch *schema.Schema, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <% SchemaValidationList(sch.Validate(), ctx, buffer) %>
 <% SchemaMetadataDetail(sch.Metadata, ctx, buffer) %>
 

@@ -8,7 +8,6 @@ import (
 
 	parseutil "github.com/kyleu/npn/app/parser/util"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
 	"logur.dev/logur"
 )
 
@@ -19,7 +18,7 @@ type GraphQLParser struct {
 }
 
 func NewParser(logger logur.Logger) *GraphQLParser {
-	logger = logur.WithFields(logger, map[string]interface{}{util.KeyService: schema.OriginGraphQL.Key})
+	logger = logur.WithFields(logger, map[string]interface{}{"service": schema.OriginGraphQL.Key})
 	return &GraphQLParser{logger: logger}
 }
 

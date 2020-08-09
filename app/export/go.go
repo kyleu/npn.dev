@@ -5,6 +5,7 @@ import (
 	"github.com/kyleu/npn/app/output"
 	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/util"
+	"github.com/kyleu/npn/npncore"
 	"strings"
 )
 
@@ -35,11 +36,11 @@ func writeGoEnum(file *output.File, model *schema.Model, nr *util.NameRegistry) 
 	for _, field := range model.Fields {
 		names = append(names, mcl + field.ClassName(nr))
 	}
-	file.W("var All" + util.Plural(mcl) + " = []" + mcl + "{" + strings.Join(names, ", ") + "}")
+	file.W("var All" + npncore.Plural(mcl) + " = []" + mcl + "{" + strings.Join(names, ", ") + "}")
 	file.W("")
 
 	file.W("func " + mcl + "FromString(s string) " + mcl + " {", 1)
-	file.W("for _, t := range All" + util.Plural(mcl) + " {", 1)
+	file.W("for _, t := range All" + npncore.Plural(mcl) + " {", 1)
 	file.W("if t.Key == s {", 1)
 	file.W("return t")
 	file.W("}", -1)

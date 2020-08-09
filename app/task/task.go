@@ -38,6 +38,7 @@ type AvailableOption struct {
 	Key     string `json:"key,omitempty"`
 	T       string `json:"t,omitempty"`
 	Default string `json:"default,omitempty"`
+	Desc    string `json:"desc,omitempty"`
 }
 type AvailableOptions []*AvailableOption
 

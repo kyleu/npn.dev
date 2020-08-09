@@ -1,4 +1,4 @@
-module github.com/{{.Key}}/{{.Key}}
+module github.com/{{.Org}}/{{.Key}}
 
 go 1.13
 

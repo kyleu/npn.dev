@@ -1,11 +1,11 @@
-<%: func ProjectForm(project *project.Project, availableSchemata schema.Summaries, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func ProjectForm(project *project.Project, availableSchemata schema.Summaries, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
-      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeyProject + `.save`, util.KeyKey, project.Key) %>" method="post">
+      <form class="uk-form-horizontal" action="<%= ctx.Route(`project.save`, npncore.KeyKey, project.Key) %>" method="post">
         <div>
           <label class="uk-form-label" for="form-title">Title</label>
           <div class="uk-form-controls">

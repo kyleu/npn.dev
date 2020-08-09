@@ -3,7 +3,6 @@ package task
 import (
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
@@ -30,11 +29,11 @@ func (t *RunProject) Options() AvailableOptions {
 }
 
 func (t *RunProject) Run(project *project.Project, schemata schema.Schemata, options npncore.Entries, logger logur.Logger) Results {
-	parsed, err := util.Template("build/{{.Key}}", project)
+	parsed, err := npncore.Template("build/{{.Key}}", project)
 	if err != nil {
 		return ErrorResults(t, project, options, err)
 	}
-	out, err := util.RunProcessSimple(parsed, project.RootPath, logger)
+	_, out, err := npncore.RunProcessSimple(parsed, project.RootPath, logger)
 	if err != nil {
 		return ErrorResults(t, project, options, err)
 	}

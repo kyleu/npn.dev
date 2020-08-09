@@ -4,20 +4,20 @@ import (
 	"fmt"
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
 	"time"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/bootstrap"
-	"github.com/kyleu/npn/app/web"
 	"golang.org/x/text/language"
 )
 
-var Bootstrap = Sandbox{
+var Bootstrap = Register(&Sandbox{
 	Key:         "bootstrap",
 	Title:       "Bootstrap",
 	Description: "Packages the bootstrap projects for release",
 	DevOnly:     true,
-	Resolve: func(ctx *web.RequestContext) (string, interface{}, error) {
+	Resolve: func(ctx *npnweb.RequestContext) (string, interface{}, error) {
 		err := bootstrap.PersistAll()
 		if err != nil {
 			return "error", "persist-error", err
@@ -30,6 +30,7 @@ var Bootstrap = Sandbox{
 				Title:       proto.Key,
 				RootPath:    "./_projects/" + proto.Key,
 				Description: proto.Description,
+				Options:     map[string]interface{}{},
 			}
 
 			startNanos := time.Now().UnixNano()
@@ -48,4 +49,4 @@ var Bootstrap = Sandbox{
 
 		return "OK", ret, nil
 	},
-}
+})

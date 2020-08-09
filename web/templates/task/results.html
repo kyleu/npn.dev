@@ -1,6 +1,6 @@
-<%: func TaskResults(ts task.Results, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func TaskResults(ts task.Results, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">

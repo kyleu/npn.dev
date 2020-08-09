@@ -63,15 +63,17 @@ func (t TaskDefinitions) Without(key string) TaskDefinitions {
 }
 
 type Project struct {
-	Key         string          `json:"key"`
-	Title       string          `json:"title,omitempty"`
-	SourceURL   string          `json:"sourceURL,omitempty"`
-	RootPath    string          `json:"rootPath,omitempty"`
-	RootPkg     util.Pkg        `json:"rootPkg,omitempty"`
-	Description string          `json:"description,omitempty"`
-	Prototype   string          `json:"prototype,omitempty"`
-	SchemaKeys  []string        `json:"schemaKeys,omitempty"`
-	Tasks       TaskDefinitions `json:"tasks,omitempty"`
+	Key         string                 `json:"key"`
+	Title       string                 `json:"title,omitempty"`
+	Org         string                 `json:"org,omitempty"`
+	SourceURL   string                 `json:"sourceURL,omitempty"`
+	RootPath    string                 `json:"rootPath,omitempty"`
+	RootPkg     util.Pkg               `json:"rootPkg,omitempty"`
+	Description string                 `json:"description,omitempty"`
+	Prototype   string                 `json:"prototype,omitempty"`
+	SchemaKeys  []string               `json:"schemaKeys,omitempty"`
+	Options     map[string]interface{} `json:"options,omitempty"`
+	Tasks       TaskDefinitions        `json:"tasks,omitempty"`
 }
 type Projects []*Project
 
@@ -84,4 +86,19 @@ func (p *Project) HasSchema(key string) bool {
 		}
 	}
 	return false
+}
+
+func (p *Project) ToMap() map[string]interface{} {
+	ret := make(map[string]interface{}, len(p.Options) + 7)
+	ret["Key"] = p.Key
+	ret["Title"] = p.Title
+	ret["SourceURL"] = p.SourceURL
+	ret["RootPath"] = p.RootPath
+	ret["RootPkg"] = p.RootPkg
+	ret["Description"] = p.Description
+	ret["Prototype"] = p.Prototype
+	for k, v := range p.Options {
+		ret[k] = v
+	}
+	return ret
 }

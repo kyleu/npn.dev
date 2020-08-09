@@ -1,0 +1,33 @@
+<%: func ProjectTasks(project *project.Project, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <div class="right">
+    <div class="uk-inline">
+      <a class="theme" href="<%= ctx.Route(`project.task.all`, npncore.KeyKey, project.Key) %>" data-uk-icon="icon: play" title="run all"></a>
+      <a class="theme" href="" data-uk-icon="icon: plus" title="Add task"></a>
+      <div data-uk-drop="mode: click">
+        <div class="uk-card uk-card-body">
+          <ul class="uk-list uk-list-divider">
+            <% for _, tsk := range task.AllTasks { %>
+            <li><a class="theme" href="<%= ctx.Route(`project.task.add`, npncore.KeyKey, project.Key, `task`, tsk.Key()) %>"><%= tsk.Title() %></a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h3 class="uk-card-title">Tasks</h3>
+  <ul class="uk-list uk-list-divider">
+    <% if len(project.Tasks) == 0 { %>
+    <li>no tasks</li>
+    <% } %>
+    <% for _, task := range project.Tasks { %>
+    <li>
+      <div class="right">
+        <em><%= task.T %></em>
+        <a class="theme" href="<%= ctx.Route(`project.task.edit`, npncore.KeyKey, project.Key, `task`, task.Key) %>" data-uk-icon="icon: file-edit" title="Edit task"></a>
+      </div>
+      <a class="theme" href="<%= ctx.Route(`project.task`, npncore.KeyKey, project.Key, `task`, task.Key) %>"><%= task.Key %></a>
+    </li>
+    <% } %>
+  </ul>
+</div>

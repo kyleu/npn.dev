@@ -8,7 +8,6 @@ import (
 
 	"emperror.dev/errors"
 	parseutil "github.com/kyleu/npn/app/parser/util"
-	"github.com/kyleu/npn/app/util"
 )
 
 func (p *IntelliJParser) Parse(paths []string) (*parseutil.ParseResponse, error) {
@@ -41,7 +40,7 @@ func (p *IntelliJParser) parsePath(path string, res *IntelliJResponse) (*Intelli
 		var err error
 		switch e.Name.Local {
 		case "dataSource":
-			res.Rsp.Schema.Title = p.attrValue(e, util.KeyName)
+			res.Rsp.Schema.Title = p.attrValue(e, "name")
 			res.Rsp.Schema.Key = npncore.Slugify(res.Rsp.Schema.Title)
 		case "database-model":
 			// res.DBType = p.attrValue(e, "dbms")

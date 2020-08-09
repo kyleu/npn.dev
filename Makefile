@@ -45,9 +45,6 @@ compile-templates-force:
 	echo "updating [web/components] templates"
 	rm -rf gen/components
 	hero -extensions .html -source "web/components" -pkgname components -dest gen/components
-	echo "updating [web/templates] templates"
-	rm -rf gen/templates
-	hero -extensions .html -source "web/templates" -pkgname templates -dest gen/templates
 	echo "updating [npntemplate] templates"
 	cd npntemplate && rm -rf gen
 	cd npntemplate && hero -extensions .html -source "html" -pkgname npntemplate -dest gen
@@ -63,15 +60,15 @@ endif
 
 .PHONY: build-release
 build-release: goversion compile-templates ## Build all binaries without debug information
-	@go-embed -input web/assets -output app/web/assets/assets.go
+	@go-embed -input web/assets -output app/assets/assets.go
 	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} LDFLAGS="-w ${LDFLAGS}" GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
-	@git checkout app/web/assets/assets.go
+	@git checkout app/assets/assets.go
 
 .PHONY: build-release-force
 build-release-force: goversion compile-templates-force ## Build all binaries without debug information
-	@go-embed -input web/assets -output app/web/assets/assets.go
+	@go-embed -input web/assets -output app/assets/assets.go
 	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} LDFLAGS="-w ${LDFLAGS}" GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
-	@git checkout app/web/assets/assets.go
+	@git checkout app/assets/assets.go
 
 .PHONY: build-debug
 build-debug: goversion compile-templates ## Build all binaries with remote debugging capabilities

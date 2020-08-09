@@ -1,8 +1,8 @@
 package sandbox
 
-import "github.com/kyleu/npn/app/web"
+import "github.com/kyleu/npn/npnweb"
 
-type Resolver func(ctx *web.RequestContext) (string, interface{}, error)
+type Resolver func(ctx *npnweb.RequestContext) (string, interface{}, error)
 
 type Sandbox struct {
 	Key         string   `json:"key"`
@@ -14,10 +14,19 @@ type Sandbox struct {
 
 type Sandboxes = []*Sandbox
 
-var AllSandboxes = Sandboxes{&Bootstrap, &Testbed, &Error}
+var allSandboxes = Sandboxes{&Error}
+
+func All() Sandboxes {
+	return allSandboxes
+}
+
+func Register(s *Sandbox) *Sandbox {
+	allSandboxes = append(allSandboxes, s)
+	return s
+}
 
 func FromString(s string) *Sandbox {
-	for _, t := range AllSandboxes {
+	for _, t := range allSandboxes {
 		if t.Key == s {
 			return t
 		}

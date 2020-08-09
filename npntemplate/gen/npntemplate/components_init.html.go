@@ -7,11 +7,17 @@ import (
 	"bytes"
 
 	"github.com/gofrs/uuid"
+	"github.com/kyleu/npn/npncore"
+	"github.com/shiyanhui/hero"
 )
 
 func Init(svc string, modelID uuid.UUID, buffer *bytes.Buffer) {
 	buffer.WriteString(`
-<script>window.addEventListener("load", function() { npn.init(); }, false)</script>
+<script>window.addEventListener("load", function() { `)
+	hero.EscapeHTML(npncore.AppKey, buffer)
+	buffer.WriteString(`.init('`)
+	hero.EscapeHTML(svc, buffer)
+	buffer.WriteString(`'); }, false)</script>
 `)
 
 }

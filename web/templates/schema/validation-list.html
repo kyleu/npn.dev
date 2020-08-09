@@ -1,4 +1,4 @@
-<%: func SchemaValidationList(res *schema.ValidationResult, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func SchemaValidationList(res *schema.ValidationResult, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <% if len(res.Messages) > 0 { %>
 <div class="uk-card uk-card-body uk-margin-top">
   <h3 class="uk-card-title">Validation Results</h3>

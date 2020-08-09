@@ -28,8 +28,40 @@ func ParamsWithDefaultOrdering(key string, params *Params, orderings ...*Orderin
 	return params
 }
 
-func (p *Params) Clone(orderings ...*Ordering) *Params {
+func (p *Params) CloneOrdering(orderings ...*Ordering) *Params {
 	return &Params{Key: p.Key, Orderings: orderings, Limit: p.Limit, Offset: p.Offset}
+}
+
+func (p *Params) HasNextPage(count int) bool {
+	return count > (p.Offset + p.Limit)
+}
+
+func (p *Params) NextPage() *Params {
+	limit := p.Limit
+	if limit == 0 {
+		limit = 100
+	}
+	offset := p.Offset + limit
+	if offset < 0 {
+		offset = 0
+	}
+	return &Params{Key: p.Key, Orderings: p.Orderings, Limit: p.Limit, Offset: offset}
+}
+
+func (p *Params) HasPreviousPage() bool {
+	return p.Offset > 0
+}
+
+func (p *Params) PreviousPage() *Params {
+	limit := p.Limit
+	if limit == 0 {
+		limit = 100
+	}
+	offset := p.Offset - limit
+	if offset < 0 {
+		offset = 0
+	}
+	return &Params{Key: p.Key, Orderings: p.Orderings, Limit: p.Limit, Offset: offset}
 }
 
 func (p *Params) GetOrdering(col string) *Ordering {

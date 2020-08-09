@@ -45,7 +45,13 @@ func addFolder(zw *zip.Writer, folder string, root string) error {
 
 	for _, file := range files {
 		newFilename := path.Join(folder, file.Name())
-		if !file.IsDir() {
+		if file.IsDir() {
+			newRoot := path.Join(root, file.Name())
+			err = addFolder(zw, newFilename, newRoot)
+			if err != nil {
+				return err
+			}
+		} else {
 			dat, err := ioutil.ReadFile(newFilename)
 			if err != nil {
 				return errors.Wrap(err, "can't read file ["+file.Name()+"]")
@@ -59,12 +65,6 @@ func addFolder(zw *zip.Writer, folder string, root string) error {
 			_, err = f.Write(dat)
 			if err != nil {
 				return errors.Wrap(err, "can't write zip entry for ["+path.Join(root, file.Name())+"]")
-			}
-		} else if file.IsDir() {
-			newRoot := path.Join(root, file.Name())
-			err = addFolder(zw, newFilename, newRoot)
-			if err != nil {
-				return err
 			}
 		}
 	}

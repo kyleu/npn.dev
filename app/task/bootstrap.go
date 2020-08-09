@@ -6,7 +6,6 @@ import (
 	"github.com/kyleu/npn/app/bootstrap"
 	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 	"os"
@@ -42,15 +41,15 @@ func (t *Bootstrap) Run(project *project.Project, schemata schema.Schemata, opti
 		if err != nil {
 			return ErrorResults(t, project, options, errors.Wrap(err, "can't extract ["+proto.Key+"]"))
 		}
-		_, err = util.RunProcessSimple("git init", project.RootPath, logger)
+		_, _, err = npncore.RunProcessSimple("git init", project.RootPath, logger)
 		if err != nil {
 			return ErrorResults(t, project, options, err)
 		}
-		_, err = util.RunProcessSimple("git add .", project.RootPath, logger)
+		_, _, err = npncore.RunProcessSimple("git add .", project.RootPath, logger)
 		if err != nil {
 			return ErrorResults(t, project, options, err)
 		}
-		_, err = util.RunProcessSimple("git commit -m initial_commit", project.RootPath, logger)
+		_, _, err = npncore.RunProcessSimple("git commit -m initial_commit", project.RootPath, logger)
 		if err != nil {
 			return ErrorResults(t, project, options, err)
 		}

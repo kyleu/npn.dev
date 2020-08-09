@@ -1,13 +1,13 @@
-<%: func DataSourceList(avail []schema.DataSource, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func DataSourceList(avail []schema.DataSource, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-margin-top">
       <h3 class="uk-card-title">Available input sources</h3>
       <% if len(avail) == 0 { %>
-      <div>No available <%= util.Plural(util.KeySchema) %> </div>
+      <div>No available schema</div>
       <% } else { %>
       <table class="uk-table uk-table-divider">
         <thead>
@@ -19,7 +19,7 @@
         <tbody>
           <% for _, s := range avail { %>
             <tr>
-              <td><a class="theme" href="<%= ctx.Route(util.KeyDataSource + `.detail`, `t`, s.Type.Key) %>?key=<%= url.QueryEscape(s.Key) %>"><%= s.Key %></a></td>
+              <td><a class="theme" href="<%= ctx.Route(`datasource.detail`, `t`, s.Type.Key) %>?key=<%= url.QueryEscape(s.Key) %>"><%= s.Key %></a></td>
               <td><%= s.Type.String() %></td>
             </tr>
           <% } %>

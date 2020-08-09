@@ -25,8 +25,8 @@ func FilenameOf(fn string) string {
 	return fn
 }
 
-func NewFileLoader(logger logur.Logger) *FileLoader {
-	return &FileLoader{root: "." + AppName, logger: logger}
+func NewFileLoader(root string, logger logur.Logger) *FileLoader {
+	return &FileLoader{root: root, logger: logger}
 }
 
 func (f *FileLoader) getPath(ss ...string) string {
@@ -35,6 +35,10 @@ func (f *FileLoader) getPath(ss ...string) string {
 		return s
 	}
 	return path.Join(f.root, s)
+}
+
+func (f *FileLoader) Root() string {
+	return f.root
 }
 
 func (f *FileLoader) ReadFile(path string) (string, error) {

@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-
-	"github.com/kyleu/npn/app/cli"
 )
 
 // Provisioned by ldflags
@@ -15,7 +13,7 @@ var (
 )
 
 func main() {
-	cmd := cli.Configure(version, commitHash)
+	cmd := Configure(version, commitHash)
 
 	err := cmd.Execute()
 	if err != nil {

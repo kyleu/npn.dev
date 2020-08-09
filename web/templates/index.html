@@ -1,6 +1,6 @@
-<%: func Index(ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func Index(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
@@ -15,17 +15,17 @@
     </div>
     <div class="uk-card uk-card-body uk-margin-top">
       <ul class="uk-list uk-list-divider">
-        <li><a class="theme" href="<%= ctx.Route(util.KeyFile + `.root`) %>">File System</a></li>
-        <li><a class="theme" href="<%= ctx.Route(util.KeyDataSource) %>">Data Sources</a></li>
-        <li><a class="theme" href="<%= ctx.Route(util.KeySchema) %>"><%= util.PluralTitle(util.KeySchema) %></a></li>
-        <li><a class="theme" href="<%= ctx.Route(util.KeyProject) %>"><%= util.PluralTitle(util.KeyProject) %></a></li>
+        <li><a class="theme" href="<%= ctx.Route(`file.root`) %>">File System</a></li>
+        <li><a class="theme" href="<%= ctx.Route(`datasource`) %>">Data Sources</a></li>
+        <li><a class="theme" href="<%= ctx.Route(`schema`) %>">Schema</a></li>
+        <li><a class="theme" href="<%= ctx.Route(`project`) %>">Projects</a></li>
       </ul>
     </div>
     <div class="uk-card uk-card-body uk-margin-top">
       <ul class="uk-list uk-list-divider">
-        <li><a class="theme" href="<%= ctx.Route(util.KeySandbox) %>"><%= util.PluralTitle(util.KeySandbox) %></a></li>
-        <li><a class="theme" href="<%= ctx.Route(util.KeyRoutes) %>">Routes</a></li>
-        <li><a class="theme" href="<%= ctx.Route(util.KeyModules) %>">Modules</a></li>
+        <li><a class="theme" href="<%= ctx.Route(npncore.KeySandbox) %>"><%= npncore.PluralTitle(npncore.KeySandbox) %></a></li>
+        <li><a class="theme" href="<%= ctx.Route(npncore.KeyRoutes) %>">Routes</a></li>
+        <li><a class="theme" href="<%= ctx.Route(npncore.KeyModules) %>">Modules</a></li>
       </ul>
     </div>
   </div>

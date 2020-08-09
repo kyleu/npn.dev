@@ -3,34 +3,34 @@ while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 cd "$DIR"
 
+./bin/build-client.sh
+./bin/build-css.sh
+
 ./bin/build-macos.sh
 ./bin/build-linux.sh
+./bin/build-linux-arm.sh
 ./bin/build-windows.sh
 
-mkdir -p ./build/release
+mkdir -p ./build/release/stage
 
-# Linux
-cd build/linux/amd64
-zip -r ../../release/npn.linux.zip npn
+cd build/release/stage
 
-cd ../arm64
-zip -r ../../release/npn.linux.arm64.zip npn
+# cp -R "$DIR/data" ./data
 
-# macOS
-cd ../../../
-cd build/darwin/amd64
-zip -r ../../release/npn.macos.zip npn
+cp "$DIR/build/linux/amd64/npn" ./npn
+zip -r "$DIR/build/release/npn.linux.zip" *
+rm ./npn
 
-cd ../arm64
-zip -r ../../release/npn.macos.arm64.zip npn
+cp "$DIR/build/linux/arm64/npn" ./npn
+zip -r "$DIR/build/release/npn.linux.arm.zip" *
+rm ./npn
 
-# Windows
-cd ../../../
-cd build/windows/amd64
-zip -r ../../release/npn.windows.zip npn.exe
+cp "$DIR/build/darwin/amd64/npn" ./npn
+zip -r "$DIR/build/release/npn.macos.zip" *
+rm ./npn
 
-cd ../arm64
-zip -r ../../release/npn.windows.arm64.zip npn.exe
+cp "$DIR/build/windows/amd64/npn.exe" ./npn.exe
+zip -r "$DIR/build/release/npn.windows.zip" *
+rm ./npn.exe
 
-
-cd ../../../
+rm -rf "$DIR/build/release/stage"

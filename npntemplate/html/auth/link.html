@@ -1,0 +1,20 @@
+<%: func AuthSigninLink(p *auth.Provider, current auth.Records, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<li>
+  <a class="theme profile-link uk-icon-link signin-icon" data-uk-icon="icon: <%= p.Icon %>" href="<%= ctx.Route(`auth.submit`, npncore.KeyKey, p.Key) %>"></a>
+  <a class="theme profile-link" href="<%= ctx.Route(`auth.submit`, npncore.KeyKey, p.Key) %>"><%= p.Title %></a>
+  <% for _, a := range current { %>
+    <% if a.Provider == p { %>
+      <div class="uk-article-meta auth-link">
+        <a class="profile-remove right theme" href="<%= ctx.Route(`auth.signout`, npncore.KeyID, a.ID.String()) %>" title="sign out from <%= p.Title %>">
+          <span data-uk-icon="icon: close;"></span>
+        </a>
+        <% if len(a.Picture) > 0 { %>
+          <div class="left uk-margin-small-right">
+            <a class="theme" href="<%= ctx.Route(npncore.KeyProfile + `.pic`, npncore.KeyID, a.ID.String()) %>"><img class="profile-pic uk-border-circle" alt="set profile picture" src="<%= a.Picture %>" /></a>
+          </div>
+        <% } %>
+        <div class="profile-title"><%= a.Email %></div>
+      </div>
+    <% } %>
+  <% } %>
+</li>

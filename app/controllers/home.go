@@ -1,0 +1,25 @@
+package controllers
+
+import (
+	"github.com/kyleu/npn/npncontroller"
+	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
+	"net/http"
+
+	"github.com/kyleu/npn/gen/templates"
+)
+
+func Home(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		ctx.Title = npncore.AppName
+		return npncontroller.T(templates.Index(ctx, w))
+	})
+}
+
+func About(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		ctx.Title = "About " + npncore.AppName
+		ctx.Breadcrumbs = npnweb.Breadcrumbs{npnweb.BreadcrumbSelf(npncore.KeyAbout)}
+		return npncontroller.T(templates.StaticAbout(ctx, w))
+	})
+}

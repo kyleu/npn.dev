@@ -8,7 +8,6 @@ import (
 
 	parseutil "github.com/kyleu/npn/app/parser/util"
 	"github.com/kyleu/npn/app/schema"
-	"github.com/kyleu/npn/app/util"
 	"logur.dev/logur"
 )
 
@@ -18,7 +17,7 @@ type JSONSchemaParser struct {
 }
 
 func NewParser(logger logur.Logger) *JSONSchemaParser {
-	logger = logur.WithFields(logger, map[string]interface{}{util.KeyService: schema.OriginJSONSchema.Key})
+	logger = logur.WithFields(logger, map[string]interface{}{"service": schema.OriginJSONSchema.Key})
 	return &JSONSchemaParser{Key: schema.OriginJSONSchema.Key, logger: logger}
 }
 

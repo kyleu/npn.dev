@@ -1,0 +1,12 @@
+<%: func StaticMessage(message string, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div>
+      <h1 class="uk-heading-hero"><%= message %></h1>
+    </div>
+  </div>
+</div>
+<% } %>

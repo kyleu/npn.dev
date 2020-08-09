@@ -1,15 +1,15 @@
 package sandbox
 
 import (
-	"github.com/kyleu/npn/app/web"
+	"github.com/kyleu/npn/npnweb"
 )
 
-var Testbed = Sandbox{
+var Testbed = Register(&Sandbox{
 	Key:         "testbed",
 	Title:       "Testbed",
 	Description: "This could do anything, be careful",
-	Resolve: func(ctx *web.RequestContext) (string, interface{}, error) {
+	Resolve: func(ctx *npnweb.RequestContext) (string, interface{}, error) {
 		ret := "OK"
 		return "Testbed!", ret, nil
 	},
-}
+})

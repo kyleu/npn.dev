@@ -42,3 +42,7 @@ func (s *Service) Indexes(tableName string) ([]*Index, error) {
 	err := s.db.Select(&ret, sql, tableName)
 	return ret, err
 }
+
+func ArrayToString(a []string) string {
+	return "{" + strings.Join(a, ",") + "}"
+}

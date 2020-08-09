@@ -1,53 +1,11 @@
-<%: func ProjectDetail(project *project.Project, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func ProjectDetail(project *project.Project, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <% ProjectSummary(project, ctx, _buffer) %>
-    <div class="uk-card uk-card-body uk-margin-top">
-      <h3 class="uk-card-title">Schemata</h3>
-      <ul class="uk-list uk-list-divider">
-        <% if len(project.SchemaKeys) == 0 { %>
-          <li>no schemata</li>
-        <% } %>
-        <% for _, sch := range project.SchemaKeys { %>
-          <li><a class="theme" href="<%= ctx.Route(util.KeySchema + `.detail`, util.KeyKey, sch) %>"><%= sch %></a></li>
-        <% } %>
-      </ul>
-    </div>
-    <div class="uk-card uk-card-body uk-margin-top">
-      <div class="right">
-        <div class="uk-inline">
-          <a class="theme" href="<%= ctx.Route(util.KeyProject + `.task.all`, util.KeyKey, project.Key) %>" data-uk-icon="icon: play" title="run all"></a>
-          <a class="theme" href="" data-uk-icon="icon: plus" title="Add task"></a>
-          <div data-uk-drop="mode: click">
-            <div class="uk-card uk-card-body">
-              <ul class="uk-list uk-list-divider">
-                <% for _, tsk := range task.AllTasks { %>
-                  <li><a class="theme" href="<%= ctx.Route(util.KeyProject + `.task.add`, util.KeyKey, project.Key, util.KeyTask, tsk.Key()) %>"><%= tsk.Title() %></a></li>
-                <% } %>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <h3 class="uk-card-title">Tasks</h3>
-      <ul class="uk-list uk-list-divider">
-        <% if len(project.Tasks) == 0 { %>
-          <li>no tasks</li>
-        <% } %>
-        <% for _, task := range project.Tasks { %>
-          <li>
-            <div class="right">
-              <em><%= task.T %></em>
-              <a class="theme" href="<%= ctx.Route(util.KeyProject + `.task.edit`, util.KeyKey, project.Key, util.KeyTask, task.Key) %>" data-uk-icon="icon: file-edit" title="Edit task"></a>
-            </div>
-            <a class="theme" href="<%= ctx.Route(util.KeyProject + `.task`, util.KeyKey, project.Key, util.KeyTask, task.Key) %>"><%= task.Key %></a>
-          </li>
-        <% } %>
-      </ul>
-    </div>
+    <% ProjectTasks(project, ctx, _buffer) %>
   </div>
 </div>
 <% } %>

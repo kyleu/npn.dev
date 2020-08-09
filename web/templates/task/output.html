@@ -1,4 +1,4 @@
-<%: func TaskOutput(ar task.FileResults, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func TaskOutput(ar task.FileResults, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <div class="uk-margin-top">
   [<a class="theme" href="" onclick="dom.els('.written').forEach(function(e) {dom.setDisplay(e, true)});return false;"><%= npncore.FormatInteger(ctx.Profile.Locale, ar.WrittenCount()) %></a>] files written,
   [<a class="theme" href="" onclick="dom.els('.dupe').forEach(function(e) {dom.setDisplay(e, true)});return false;"><%= npncore.FormatInteger(ctx.Profile.Locale, ar.SkippedCount()) %></a>] skipped

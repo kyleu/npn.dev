@@ -45,5 +45,4 @@ function check {
 }
 
 check "npntemplate" "npntemplate/html" "npntemplate/gen"
-check "components" "web/components" "gen/components"
 check "templates" "web/templates" "gen/templates"

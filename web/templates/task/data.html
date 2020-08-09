@@ -1,4 +1,4 @@
-<%: func TaskData(data interface{}, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func TaskData(data interface{}, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <% switch t := data.(type) {
 case npncore.Data:
   for _, v := range t {

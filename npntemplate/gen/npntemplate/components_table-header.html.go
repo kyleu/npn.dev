@@ -11,13 +11,13 @@ import (
 	"github.com/shiyanhui/hero"
 )
 
-func TableHeader(section string, key string, title string, params *npncore.Params, url *url.URL, buffer *bytes.Buffer) {
+func TableHeader(section string, key string, title string, params *npncore.Params, req *url.URL, buffer *bytes.Buffer) {
 	if params == nil {
 		params = &npncore.Params{Key: section}
 		buffer.WriteString(`
   <th class="uk-transition-toggle uk-text-nowrap">
     <a class="theme" href="?`)
-		hero.EscapeHTML(params.Clone(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(url), buffer)
+		hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(req), buffer)
 		buffer.WriteString(`">
       `)
 		hero.EscapeHTML(title, buffer)
@@ -31,7 +31,7 @@ func TableHeader(section string, key string, title string, params *npncore.Param
 			buffer.WriteString(`
     <th class="uk-transition-toggle uk-text-nowrap">
       <a class="theme" href="?`)
-			hero.EscapeHTML(params.Clone(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(url), buffer)
+			hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(req), buffer)
 			buffer.WriteString(`">
         `)
 			hero.EscapeHTML(title, buffer)
@@ -43,7 +43,7 @@ func TableHeader(section string, key string, title string, params *npncore.Param
 			buffer.WriteString(`
     <th class=" uk-text-nowrap">
       <a class="theme" href="?`)
-			hero.EscapeHTML(params.Clone(&npncore.Ordering{Column: key, Asc: false}).ToQueryString(url), buffer)
+			hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: false}).ToQueryString(req), buffer)
 			buffer.WriteString(`">
         `)
 			hero.EscapeHTML(title, buffer)
@@ -55,7 +55,7 @@ func TableHeader(section string, key string, title string, params *npncore.Param
 			buffer.WriteString(`
     <th class=" uk-text-nowrap">
       <a class="theme" href="?`)
-			hero.EscapeHTML(params.Clone(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(url), buffer)
+			hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(req), buffer)
 			buffer.WriteString(`">
         `)
 			hero.EscapeHTML(title, buffer)

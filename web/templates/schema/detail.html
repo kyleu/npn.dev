@@ -1,11 +1,11 @@
-<%: func SchemaDetail(sch *schema.Schema, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func SchemaDetail(sch *schema.Schema, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
-      <div class="right"><a class="theme" href="<%= ctx.Route(util.KeySchema + `.refresh`, util.KeyKey, sch.Key) %>" data-uk-icon="icon: refresh" title="Refresh schema from paths"></a></div>
+      <div class="right"><a class="theme" href="<%= ctx.Route("schema" + `.refresh`, npncore.KeyKey, sch.Key) %>" data-uk-icon="icon: refresh" title="Refresh schema from paths"></a></div>
       <h3 class="uk-card-title"><%= sch.Title %></h3>
     </div>
 

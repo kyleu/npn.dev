@@ -21,9 +21,8 @@ type DBParams struct {
 }
 
 func OpenDatabase(params DBParams) (*Service, error) {
-	params.Logger = logur.WithFields(params.Logger, map[string]interface{}{"svc": "config"})
+	params.Logger = logur.WithFields(params.Logger, map[string]interface{}{"svc": "database"})
 
-	// load from config
 	host := "localhost"
 	port := 5432
 	user := params.Username
@@ -35,7 +34,7 @@ func OpenDatabase(params DBParams) (*Service, error) {
 
 	db, err := sqlx.Open("pgx", url)
 	if err != nil {
-		return nil, errors.Wrap(err, "error opening config database")
+		return nil, errors.Wrap(err, "error opening database")
 	}
 
 	svc := NewService(params.Debug, db, params.Logger)

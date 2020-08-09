@@ -15,6 +15,14 @@ func ToSnakeCase(str string) string {
 	return strings.ToLower(snake)
 }
 
+func GetDomain(email string) string {
+	var idx = strings.LastIndex(email, "@")
+	if idx == -1 {
+		return email
+	}
+	return email[idx:]
+}
+
 func OxfordComma(names []string, clause string) string {
 	ret := ""
 	for idx, name := range names {
@@ -56,4 +64,12 @@ func PathParams(s string) []string {
 	}
 
 	return ret
+}
+
+func TruncateString(x interface{}, max int) string {
+	s := fmt.Sprintf("%v", x)
+	if len(s) > max {
+		return s[0:max] + "..."
+	}
+	return s
 }

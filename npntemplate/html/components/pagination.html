@@ -1,0 +1,13 @@
+<%: func Pagination(section string, count int, params *npncore.Params, req *url.URL, buffer *bytes.Buffer) %>
+<% if params != nil { %>
+  <% if params.HasNextPage(count) { %>
+    <div class="right">
+      <a class="theme" href="?<%= params.NextPage().ToQueryString(req) %>">Next page</a>
+    </div>
+  <% } %>
+  <% if params.HasPreviousPage() { %>
+    <div class="left">
+      <a class="theme" href="?<%= params.PreviousPage().ToQueryString(req) %>">Previous page</a>
+    </div>
+  <% } %>
+<% } %>

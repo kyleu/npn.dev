@@ -2,15 +2,15 @@ package sandbox
 
 import (
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/util"
-	"github.com/kyleu/npn/app/web"
+	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
 )
 
 var Error = Sandbox{
-	Key:         util.KeyError,
-	Title:       util.Title(util.KeyError),
+	Key:         npncore.KeyError,
+	Title:       npncore.Title(npncore.KeyError),
 	Description: "An example of the error page",
-	Resolve: func(ctx *web.RequestContext) (string, interface{}, error) {
+	Resolve: func(ctx *npnweb.RequestContext) (string, interface{}, error) {
 		return "", nil, errors.New("here's an intentional error")
 	},
 }

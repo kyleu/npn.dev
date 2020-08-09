@@ -1,4 +1,4 @@
-<%: func SchemaScalarList(scalars schema.Scalars, ctx *web.RequestContext, buffer *bytes.Buffer) %>
+<%: func SchemaScalarList(scalars schema.Scalars, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <% if len(scalars) > 0 { %>
 <div class="uk-card uk-card-body uk-margin-top">
   <h3 class="uk-card-title"><%=v len(scalars) %> Scalars</h3>

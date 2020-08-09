@@ -1,11 +1,11 @@
-<%: func TaskForm(p *project.Project, td *project.TaskDefinition, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func TaskForm(p *project.Project, td *project.TaskDefinition, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
-      <form class="uk-form-horizontal" action="<%= ctx.Route(util.KeyProject + `.` + util.KeyTask + `.save`, util.KeyKey, p.Key, util.KeyTask, td.Key) %>" method="post">
+      <form class="uk-form-horizontal" action="<%= ctx.Route(`project.task.save`, npncore.KeyKey, p.Key, `task`, td.Key) %>" method="post">
         <input name="taskType" type="hidden" value="<%= td.T %>">
         <div>
           <label class="uk-form-label" for="form-taskKey">Key</label>
@@ -25,12 +25,19 @@
           <div class="uk-margin-top">
             <label class="uk-form-label" for="form-opt-<%= opt.Key %>"><%= opt.Key %></label>
             <div class="uk-form-controls">
-              <input class="uk-input" id="form-opt-<%= opt.Key %>" name="opt-<%= opt.Key %>" type="text" placeholder="<%= opt.Key %>" value="<%= td.Options.GetString(opt.Key) %>">
+              <%
+                switch opt.T {
+                  case "schema":
+                    %><% TaskOptionSchema(p.SchemaKeys, opt, td.Options.GetStringArray(opt.Key), ctx, _buffer) %><%
+                  default:
+                    %><% TaskOptionString(opt, td.Options.GetString(opt.Key), ctx, _buffer) %><%
+                }
+              %>
             </div>
           </div>
         <% } %>
         <div class="uk-margin-top">
-          <a href="<%= ctx.Route(util.KeyProject + `.` + util.KeyTask + `.delete`, util.KeyKey, p.Key, util.KeyTask, td.Key) %>" class="left theme" data-uk-icon="trash" onclick="return confirm('Delete this task?')"></a>
+          <a href="<%= ctx.Route(`project.task.delete`, npncore.KeyKey, p.Key, `task`, td.Key) %>" class="left theme" data-uk-icon="trash" onclick="return confirm('Delete this task?')"></a>
           <button type="submit" class="right uk-button uk-button-default">Save</button>
         </div>
       </form>

@@ -1,0 +1,2 @@
+<%: func TaskOptionString(opt *task.AvailableOption, v string, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<input class="uk-input" id="form-opt-<%= opt.Key %>" name="opt-<%= opt.Key %>" type="text" placeholder="<%= opt.Key %>" value="<%= v %>" />

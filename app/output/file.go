@@ -6,7 +6,6 @@ import (
 	"github.com/kyleu/npn/npncore"
 	"strings"
 
-	"github.com/kyleu/npn/app/project"
 	"github.com/kyleu/npn/app/util"
 )
 
@@ -23,12 +22,9 @@ type File struct {
 	output     []line
 }
 
-func NewGoFile(p *project.Project, pkg util.Pkg, key string) *File {
+func NewGoFile(pkg util.Pkg, key string) *File {
 	if !strings.HasSuffix(key, ".go") {
 		key += ".go"
-	}
-	if p != nil {
-		pkg = append(p.RootPkg, pkg...)
 	}
 	return &File{Pkg: pkg, Filename: key, Type: FileTypeGo}
 }

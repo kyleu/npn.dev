@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<% components.Head(ctx.App.Debug, ctx.Title, _buffer) %>
+<% npntemplate.Head(ctx, _buffer) %>
 <%@ head { %><% } %>
 </head>
 <body class="<%= ctx.Profile.Theme.CSS %>">
 <%@ nav { %><% } %>
-<div id="<%= util.KeyContent %>" data-uk-height-viewport="expand: true">
-<% components.Flash(ctx, _buffer) %>
+<div id="content" data-uk-height-viewport="expand: true">
+<% npntemplate.Flash(ctx, _buffer) %>
 <%@ body { %><% } %>
 </div>
-<% components.InitDom(ctx, _buffer) %>
+<% npntemplate.InitDom(ctx, _buffer) %>
 </body>
 </html>

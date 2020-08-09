@@ -1,14 +1,14 @@
-<%: func ProjectList(projects project.Summaries, ctx *web.RequestContext, w io.Writer) (int, error) %>
+<%: func ProjectList(projects project.Summaries, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ nav { %><% components.Navbar(ctx, _buffer) %><% } %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-margin-top">
-      <div class="right"><a class="theme" href="<%= ctx.Route(util.KeyProject + `.new`) %>" data-uk-icon="icon: plus" title="New project"></a></div>
+      <div class="right"><a class="theme" href="<%= ctx.Route(`project.new`) %>" data-uk-icon="icon: plus" title="New project"></a></div>
       <h3 class="uk-card-title">Projects</h3>
       <% if len(projects) == 0 { %>
-      <div>No available <%= util.Plural(util.KeyProject) %> </div>
+      <div>No available projects</div>
       <% } else { %>
       <table class="uk-table uk-table-divider">
         <thead>
@@ -20,7 +20,7 @@
         <tbody>
         <% for _, p := range projects { %>
         <tr>
-          <td class="uk-table-shrink uk-text-nowrap"><a class="theme" href="<%= ctx.Route(util.KeyProject + `.detail`, util.KeyKey, p.Key) %>"><%= p.Key %></a></td>
+          <td class="uk-table-shrink uk-text-nowrap"><a class="theme" href="<%= ctx.Route(`project.detail`, npncore.KeyKey, p.Key) %>"><%= p.Key %></a></td>
           <td><%= p.Title %></td>
         </tr>
         <% } %>

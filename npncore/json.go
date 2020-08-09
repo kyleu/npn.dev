@@ -22,12 +22,6 @@ func ToJSONBytes(x interface{}, logger logur.Logger) []byte {
 	return b
 }
 
-func FromJSON(msg json.RawMessage, tgt interface{}, logger logur.Logger) {
-	err := json.Unmarshal(msg, tgt)
-	if err != nil {
-		if logger == nil {
-			panic(err)
-		}
-		logger.Warn(fmt.Sprintf("error unmarshalling JSON [%v]: %+v", string(msg), err))
-	}
+func FromJSON(msg json.RawMessage, tgt interface{}) error {
+	return json.Unmarshal(msg, tgt)
 }

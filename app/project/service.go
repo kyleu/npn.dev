@@ -12,8 +12,8 @@ type Service struct {
 	logger logur.Logger
 }
 
-func NewService(logger logur.Logger) *Service {
-	return &Service{files: npncore.NewFileLoader(logger), data: make(map[string]*Project), logger: logger}
+func NewService(files *npncore.FileLoader, logger logur.Logger) *Service {
+	return &Service{files: files, data: make(map[string]*Project), logger: logger}
 }
 
 func (s *Service) List() []string {
@@ -26,7 +26,10 @@ func (s *Service) Summary(key string) (*Summary, error) {
 		return nil, errors.Wrap(err, "unable to find project file with key ["+key+"]")
 	}
 	tgt := &Summary{}
-	npncore.FromJSON([]byte(content), tgt, s.logger)
+	err = npncore.FromJSON([]byte(content), tgt)
+	if err != nil {
+		return nil, err
+	}
 	return tgt, nil
 }
 
@@ -36,7 +39,10 @@ func (s *Service) Load(key string) (*Project, error) {
 		return nil, errors.Wrap(err, "unable to find project file with key ["+key+"]")
 	}
 	tgt := &Project{}
-	npncore.FromJSON([]byte(content), tgt, s.logger)
+	err = npncore.FromJSON([]byte(content), tgt)
+	if err != nil {
+		return nil, err
+	}
 	return tgt, nil
 }
 

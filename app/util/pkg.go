@@ -6,6 +6,21 @@ import (
 
 type Pkg []string
 
+func PkgFromString(s string) Pkg {
+	ret := Pkg{}
+	delim := "."
+	if strings.Contains(s, "||") {
+		delim = "||"
+	}
+	for _, x := range strings.Split(s, delim) {
+		x = strings.TrimSpace(x)
+		if len(x) > 0 {
+			ret = append(ret, x)
+		}
+	}
+	return ret
+}
+
 func (p Pkg) StringWith(extra ...string) string {
 	return strings.Join(append(p, extra...), "::")
 }

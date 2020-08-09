@@ -1,0 +1,13 @@
+<%: func StaticAbout(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title">About <%= npncore.AppName %></h3>
+      <p>Coming soon!</p>
+    </div>
+  </div>
+</div>
+<% } %>
