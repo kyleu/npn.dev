@@ -1,12 +1,8 @@
 /.vscode
 /.idea
 /_projects
-/data
-/out
 /build
-/project
 /tmp
-/vendor
 /gen
 node_modules
 /.npn

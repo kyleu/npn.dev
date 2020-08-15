@@ -12,23 +12,18 @@ import (
 	"logur.dev/logur"
 )
 
-type migrationFile struct {
+type MigrationFile struct {
 	Title string
 	F     func(*strings.Builder)
 }
 
-var initialSchemaMigrations = []migrationFile{
-	// {Title: "reset", F: func(sb *strings.Builder) { query.ResetDatabase(sb) }},
-	// {Title: "create-types", F: func(sb *strings.Builder) { query.CreateTypes(sb) }},
-	// {Title: "create-tables", F: func(sb *strings.Builder) { query.CreateTables(sb) }},
-	// {Title: "seed-data", F: func(sb *strings.Builder) { query.SeedData(sb) }},
-}
+type MigrationFiles []*MigrationFile
 
-var databaseMigrations = []migrationFile{
-	// {Title: "first-migration", F: func(sb *strings.Builder) { query.Migration1(sb) }},
-}
+var InitialSchemaMigrations = MigrationFiles{}
 
-func exec(file migrationFile, s *Service, logger logur.Logger) (string, error) {
+var DatabaseMigrations = MigrationFiles{}
+
+func exec(file *MigrationFile, s *Service, logger logur.Logger) (string, error) {
 	sb := &strings.Builder{}
 	file.F(sb)
 	sql := sb.String()

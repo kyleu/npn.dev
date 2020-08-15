@@ -7,7 +7,6 @@ import (
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/project"
-	"github.com/kyleu/npn/app/schema"
 	"github.com/kyleu/npn/app/task"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
@@ -36,14 +35,9 @@ func TaskRunAll(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(err)
 		}
 		ret := task.Results{}
-		var schemata schema.Schemata
-		for _, schemaKey := range p.SchemaKeys {
-			sch, err := app.Schemata(ctx.App).Load(schemaKey)
-			if err != nil {
-				err = errors.Wrap(err, "cannot load schema ["+schemaKey+"] for project ["+p.Key+"]")
-				return npncontroller.EResp(err)
-			}
-			schemata = append(schemata, sch)
+		schemata, err := app.Schemata(ctx.App).LoadAll(p.SchemaKeys)
+		if err != nil {
+			return npncontroller.EResp(err)
 		}
 		for _, td := range p.Tasks {
 			tsk := task.FromString(td.T)
@@ -109,7 +103,7 @@ func TaskSave(w http.ResponseWriter, r *http.Request) {
 
 		options := make(npncore.Entries, 0, len(r.Form))
 		for k, v := range r.Form {
-			if strings.HasPrefix(k, "opt-") {
+			if strings.HasPrefix(k, "opt-") && len(v[0]) > 0 {
 				options = append(options, &npncore.Entry{K: strings.TrimPrefix(k, "opt-"), V: v[0]})
 			}
 		}
@@ -165,14 +159,10 @@ func run(a npnweb.AppInfo, t task.Task, projectKey string, options npncore.Entri
 		err = errors.Wrap(err, "cannot load project ["+projectKey+"]")
 		return task.ErrorResults(t, proj, options, err)
 	}
-	var schemata schema.Schemata
-	for _, schemaKey := range proj.SchemaKeys {
-		sch, err := app.Schemata(a).Load(schemaKey)
-		if err != nil {
-			err = errors.Wrap(err, "cannot load schema ["+schemaKey+"] for project ["+proj.Key+"]")
-			return task.ErrorResults(t, proj, options, err)
-		}
-		schemata = append(schemata, sch)
+	schemata, err := app.Schemata(a).LoadAll(proj.SchemaKeys)
+	if err != nil {
+		err = errors.Wrap(err, "cannot load schema for project ["+proj.Key+"]")
+		return task.ErrorResults(t, proj, options, err)
 	}
 	return task.RunTask(proj, schemata, t, options, a.Logger())
 }

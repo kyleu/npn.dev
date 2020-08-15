@@ -1,0 +1,49 @@
+<%: func ConnectionDetail(model * npnconnection.Status, msg * npnconnection.Message, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title">Socket Connection</h3>
+      <table class="uk-table uk-table-divider uk-text-left">
+        <tbody>
+        <tr>
+          <th><%= npncore.Title(npncore.KeyID) %></th>
+          <td><%= model.ID.String() %></td>
+        </tr>
+        <tr>
+          <th>User ID</th>
+          <td><a class="theme" href="<%= ctx.Route(npnweb.AdminLink(npncore.KeyUser, npncore.KeyDetail), `id`, model.UserID.String()) %>"><%= model.UserID.String() %></a></td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="uk-card uk-card-body uk-margin-top">
+      <form class="uk-form-stacked" action="<%= ctx.Route(npnweb.AdminLink(npncore.KeyConnection, `post`)) %>" method="post">
+        <input name="<%= npncore.KeyID %>" type="hidden" value="<%=v model.ID %>" />
+        <fieldset class="uk-fieldset">
+          <div class="uk-margin-small">
+            <label class="uk-form-label" for="<%= npncore.KeySvc %>">Service</label>
+            <input class="uk-input" name="<%= npncore.KeySvc %>" type="text" value="<%= msg.Svc %>" />
+          </div>
+
+          <div class="uk-margin">
+            <label class="uk-form-label" for="cmd">Command</label>
+            <input class="uk-input" name="cmd" type="text" value="<%= msg.Cmd %>" />
+          </div>
+
+          <div class="uk-margin">
+            <label class="uk-form-label" for="param">Param</label>
+            <% Textarea(npnweb.InputParams{Name: "param", Value: npncore.ToJSON(msg.Param, ctx.Logger)}, _buffer) %>
+          </div>
+
+          <div class="uk-margin-top">
+            <button class="uk-button uk-button-default" type="submit">Send</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>

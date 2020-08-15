@@ -26,6 +26,7 @@ func RoutesProfile(app npnweb.AppInfo, r *mux.Router) {
 	profile := r.Path(routes.Path(npncore.KeyProfile)).Subrouter()
 	profile.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(Profile))).Name(routes.Name(npncore.KeyProfile))
 	profile.Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(ProfileSave))).Name(routes.Name(npncore.KeyProfile, "save"))
+	r.Path(routes.Path(npncore.KeyProfile, "pic", "{id}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProfilePic))).Name(routes.Name(npncore.KeyProfile, "pic"))
 	r.Path(routes.Path(npncore.KeyProfile, "theme", "{key}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProfileTheme))).Name(routes.Name(npncore.KeyProfile, npncore.KeyTheme))
 }
 

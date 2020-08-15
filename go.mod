@@ -17,6 +17,7 @@ require (
 	github.com/imdario/mergo v0.3.9 // indirect
 	github.com/jinzhu/inflection v1.0.0
 	github.com/jonboulle/clockwork v0.2.0 // indirect
+	github.com/kyleu/npn/npnasset v1.0.0
 	github.com/kyleu/npn/npncontroller v1.0.0
 	github.com/kyleu/npn/npncore v1.0.0
 	github.com/kyleu/npn/npnservice v1.0.0
@@ -38,11 +39,17 @@ require (
 	logur.dev/logur v0.16.2
 )
 
+replace github.com/kyleu/npn/npnasset => ./npnasset
+
 replace github.com/kyleu/npn/npncontroller => ./npncontroller
+
+replace github.com/kyleu/npn/npnconnection => ./npnconnection
 
 replace github.com/kyleu/npn/npncore => ./npncore
 
 replace github.com/kyleu/npn/npndatabase => ./npndatabase
+
+replace github.com/kyleu/npn/npngraphql => ./npngraphql
 
 replace github.com/kyleu/npn/npnservice => ./npnservice
 

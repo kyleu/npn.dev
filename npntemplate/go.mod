@@ -1,11 +1,12 @@
 module github.com/kyleu/npn/npntemplate
 
-go 1.13
+go 1.14
 
 require (
 	cloud.google.com/go v0.63.0 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/jinzhu/inflection v1.0.0 // indirect
+	github.com/kyleu/npn/npnconnection v1.0.0
 	github.com/kyleu/npn/npncore v1.0.0
 	github.com/kyleu/npn/npnservice v1.0.0
 	github.com/kyleu/npn/npnuser v1.0.0
@@ -13,6 +14,8 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	logur.dev/logur v0.16.2
 )
+
+replace github.com/kyleu/npn/npnconnection => ../npnconnection
 
 replace github.com/kyleu/npn/npncore => ../npncore
 

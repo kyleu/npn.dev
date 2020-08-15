@@ -29,18 +29,24 @@ func Head(ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 `)
 	if ctx.App.Debug() {
 		buffer.WriteString(`
-<link rel="stylesheet" media="screen" href="/assets/vendor/style.css">
-<script src="/assets/vendor/uikit/uikit.js"></script>
-<script src="/assets/vendor/uikit/uikit-icons.js"></script>
+<link rel="stylesheet" media="screen" href="/vendor/uikit/uikit.css">
+<link rel="stylesheet" media="screen" href="/assets/`)
+		hero.EscapeHTML(npncore.AppKey, buffer)
+		buffer.WriteString(`.css">
+<script src="/vendor/uikit/uikit.js"></script>
+<script src="/vendor/uikit/uikit-icons.js"></script>
 <script src="/assets/`)
 		hero.EscapeHTML(npncore.AppKey, buffer)
 		buffer.WriteString(`.js"></script>
 `)
 	} else {
 		buffer.WriteString(`
-<link rel="stylesheet" media="screen" href="/assets/vendor/style.min.css")>
-<script src="/assets/vendor/uikit/uikit.min.js"></script>
-<script src="/assets/vendor/uikit/uikit-icons.min.js"></script>
+<link rel="stylesheet" media="screen" href="/vendor/uikit/uikit.min.css")>
+<link rel="stylesheet" media="screen" href="/assets/`)
+		hero.EscapeHTML(npncore.AppKey, buffer)
+		buffer.WriteString(`.min.css")>
+<script src="/vendor/uikit/uikit.min.js"></script>
+<script src="/vendor/uikit/uikit-icons.min.js"></script>
 <script src="/assets/`)
 		hero.EscapeHTML(npncore.AppKey, buffer)
 		buffer.WriteString(`.min.js"></script>

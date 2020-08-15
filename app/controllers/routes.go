@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/kyleu/npn/npnasset"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -41,6 +42,8 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(routes.Path("project", "{key}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectDetail))).Name(routes.Name("project", "detail"))
 	r.Path(routes.Path("project", "{key}", "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectEdit))).Name(routes.Name("project", "edit"))
 	r.Path(routes.Path("project", "{key}", "edit")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectSave))).Name(routes.Name("project", "save"))
+	r.Path(routes.Path("project", "{key}", "models")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectModels))).Name(routes.Name("project", "models"))
+	r.Path(routes.Path("project", "{key}", "models")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectModelsSave))).Name(routes.Name("project", "models", "save"))
 	r.Path(routes.Path("project", "{key}", "all")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskRunAll))).Name(routes.Name("project", "task", "all"))
 	r.Path(routes.Path("project", "{key}", "{task}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskRun))).Name(routes.Name("project", "task"))
 	r.Path(routes.Path("project", "{key}", "{task}", "add")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskAdd))).Name(routes.Name("project", "task", "add"))
@@ -61,6 +64,7 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	_ = r.Path(routes.Path("assets")).Subrouter()
 	r.Path(routes.Path("favicon.ico")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(Favicon))).Name(routes.Name("favicon"))
 	r.Path(routes.Path("robots.txt")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RobotsTxt))).Name(routes.Name("robots"))
+	r.PathPrefix(routes.Path("vendor")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(npnasset.VendorAsset))).Name(routes.Name("vendor"))
 	r.PathPrefix(routes.Path("assets")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(Static))).Name(routes.Name("assets"))
 
 	// Provided

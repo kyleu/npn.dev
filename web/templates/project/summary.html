@@ -2,7 +2,7 @@
 <div class="uk-card uk-card-body">
   <div class="right"><a class="theme" href="<%= ctx.Route(`project.edit`, npncore.KeyKey, project.Key) %>" data-uk-icon="icon: file-edit" title="Edit project"></a></div>
   <h3 class="uk-card-title"><%= project.Title %></h3>
-  <table class="uk-table">
+  <table class="uk-table uk-table-divider uk-table-small">
     <tbody>
       <tr>
         <td class="uk-table-shrink uk-text-nowrap">Schemata</td>
@@ -15,6 +15,12 @@
               <li><a class="theme" href="<%= ctx.Route(`schema.detail`, npncore.KeyKey, sch) %>"><%= sch %></a></li>
             <% } %>
           </ul>
+        </td>
+      </tr>
+      <tr>
+        <td class="uk-table-shrink uk-text-nowrap">Models</td>
+        <td>
+          <a class="theme" href="<%= ctx.Route(`project.models`, npncore.KeyKey, project.Key) %>"><%=v len(project.Models) %> models</a>
         </td>
       </tr>
     </tbody>

@@ -66,7 +66,7 @@ type Model struct {
 	Metadata    *Metadata `json:"metadata,omitempty"`
 }
 
-func (m *Model) ID() string {
+func (m *Model) String() string {
 	if len(m.Pkg) == 0 {
 		return m.Key
 	}

@@ -1,2 +1,2 @@
 <%: func Init(svc string, modelID uuid.UUID, buffer *bytes.Buffer) %>
-<script>window.addEventListener("load", function() { <%= npncore.AppKey %>.init('<%= svc %>'); }, false)</script>
+<script>window.addEventListener("load", function() { <%= npncore.AppKey %>.init('<%= svc %>', '<%=v modelID %>'); }, false)</script>

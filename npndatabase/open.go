@@ -2,6 +2,7 @@ package npndatabase
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 
 	"emperror.dev/errors"
 	// load postgres driver
@@ -21,7 +22,7 @@ type DBParams struct {
 }
 
 func OpenDatabase(params DBParams) (*Service, error) {
-	params.Logger = logur.WithFields(params.Logger, map[string]interface{}{"svc": "database"})
+	params.Logger = logur.WithFields(params.Logger, map[string]interface{}{npncore.KeySvc: "database"})
 
 	host := "localhost"
 	port := 5432

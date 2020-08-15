@@ -5,6 +5,7 @@ package npntemplate
 
 import (
 	"bytes"
+	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/npncore"
@@ -17,6 +18,8 @@ func Init(svc string, modelID uuid.UUID, buffer *bytes.Buffer) {
 	hero.EscapeHTML(npncore.AppKey, buffer)
 	buffer.WriteString(`.init('`)
 	hero.EscapeHTML(svc, buffer)
+	buffer.WriteString(`', '`)
+	hero.EscapeHTML(fmt.Sprintf("%v", modelID), buffer)
 	buffer.WriteString(`'); }, false)</script>
 `)
 

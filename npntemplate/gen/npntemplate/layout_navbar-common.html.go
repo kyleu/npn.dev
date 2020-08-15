@@ -39,9 +39,25 @@ func NavbarCommon(section string, static bool, ctx *npnweb.RequestContext, buffe
       <div class="uk-navbar-right">
         <ul class="uk-navbar-nav">
           <li class="uk-margin-small-right">
-            <a href="`)
-	hero.EscapeHTML(ctx.Route(npncore.KeyProfile), buffer)
-	buffer.WriteString(`" data-uk-icon="icon:user" title="Profile"></a>
+            `)
+	if len(ctx.Profile.Picture) == 0 || ctx.Profile.Picture == "none" {
+		buffer.WriteString(`
+              <a href="`)
+		hero.EscapeHTML(ctx.Route(npncore.KeyProfile), buffer)
+		buffer.WriteString(`" data-uk-icon="icon:user" title="Profile"></a>
+            `)
+	} else {
+		buffer.WriteString(`
+              <a href="`)
+		hero.EscapeHTML(ctx.Route(npncore.KeyProfile), buffer)
+		buffer.WriteString(`" title="Profile">
+                <img class="uk-border-circle" alt="user profile" src="`)
+		hero.EscapeHTML(ctx.Profile.Picture, buffer)
+		buffer.WriteString(`" />
+              </a>
+            `)
+	}
+	buffer.WriteString(`
           </li>
         </ul>
       </div>

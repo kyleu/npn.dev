@@ -60,12 +60,14 @@ endif
 
 .PHONY: build-release
 build-release: goversion compile-templates ## Build all binaries without debug information
+	@go-embed -input npnasset/vendor -output npnasset/assets/assets.go
 	@go-embed -input web/assets -output app/assets/assets.go
 	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} LDFLAGS="-w ${LDFLAGS}" GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
 	@git checkout app/assets/assets.go
 
 .PHONY: build-release-force
 build-release-force: goversion compile-templates-force ## Build all binaries without debug information
+	@go-embed -input npnasset/vendor -output npnasset/assets/assets.go
 	@go-embed -input web/assets -output app/assets/assets.go
 	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} LDFLAGS="-w ${LDFLAGS}" GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
 	@git checkout app/assets/assets.go

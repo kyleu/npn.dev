@@ -54,17 +54,28 @@ func (f *FileLoader) WriteFile(path string, content string, overwrite bool) erro
 	if os.IsNotExist(err) && !overwrite {
 		return errors.New("file exists, will not overwrite")
 	}
-	dd := filepath.Dir(f.getPath(path))
+	p := f.getPath(path)
+	dd := filepath.Dir(p)
 	err = os.MkdirAll(dd, 0755)
 	if err != nil {
 		return errors.Wrap(err, "unable to create data directory ["+dd+"]")
 	}
-	file, err := os.Create(f.getPath(path))
+	file, err := os.Create(p)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to create file ["+p+"]")
 	}
+	defer func() { _ = file.Close() }()
 	_, err = file.Write([]byte(content))
-	return err
+	if err != nil {
+		return errors.Wrap(err, "unable to write content to file ["+p+"]")
+	}
+	if !strings.HasSuffix(content, "\n") {
+		_, err = file.Write([]byte("\n"))
+		if err != nil {
+			return errors.Wrap(err, "unable to write ending linebreak to file ["+p+"]")
+		}
+	}
+	return nil
 }
 
 func (f *FileLoader) ListJSON(path string) []string {

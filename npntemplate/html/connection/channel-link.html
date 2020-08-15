@@ -1,0 +1,6 @@
+<%: func Channel(svc string, id *uuid.UUID, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<% if id == nil { %>
+  &lt;nil&gt;
+<% } else { %>
+  <a class="theme" href="<%= ctx.Route(npnweb.AdminLink(svc, npncore.KeyDetail), npncore.KeyID, id.String()) %>"><%= svc %>:<% UUID(id, buffer) %></a>
+<% } %>

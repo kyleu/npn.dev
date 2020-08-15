@@ -46,6 +46,19 @@ func (s *Service) Load(key string) (*Schema, error) {
 	return tgt, nil
 }
 
+func (s *Service) LoadAll(keys []string) (Schemata, error) {
+	var schemata Schemata
+	for _, schemaKey := range keys {
+		sch, err := s.Load(schemaKey)
+		if err != nil {
+			err = errors.Wrap(err, "cannot load schema ["+schemaKey+"]")
+			return nil, err
+		}
+		schemata = append(schemata, sch)
+	}
+	return schemata, nil
+}
+
 func (s *Service) Save(sch *Schema, overwrite bool) error {
 	return s.files.WriteFile("schema/"+sch.Key+".json", npncore.ToJSON(sch, s.logger), overwrite)
 }

@@ -2,6 +2,7 @@ package npncontroller
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npnuser"
 	"net/http"
 	"strings"
 	"time"
@@ -93,6 +94,33 @@ func WriteCORS(w http.ResponseWriter) {
 	w.Header().Set("Access-Control-Allow-Method", "GET,POST,DELETE,PUT,PATCH,OPTIONS,HEAD")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Credentials", "true")
+}
+
+type JSONResponse struct {
+	Status   string    `json:"status"`
+	Message  string    `json:"message"`
+	Path     string    `json:"path"`
+	Occurred time.Time `json:"occurred"`
+}
+
+func AdminAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestContext) (string, error)) {
+	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		if ctx.Profile.Role != npnuser.RoleAdmin {
+			if IsContentTypeJSON(GetContentType(r)) {
+				ae := JSONResponse{Status: "error", Message: "you are not an administrator", Path: r.URL.Path, Occurred: time.Now()}
+				return RespondJSON(w, "", ae, ctx.Logger)
+			}
+			msg := "you're not an administrator, silly!"
+			return FlashAndRedir(false, msg, "home", w, r, ctx)
+		}
+		return f(ctx)
+	})
+}
+
+func AdminBC(ctx *npnweb.RequestContext, action string, name string) npnweb.Breadcrumbs {
+	bc := npnweb.BreadcrumbsSimple(ctx.Route(npnweb.AdminLink()), npncore.KeyAdmin)
+	bc = append(bc, npnweb.BreadcrumbsSimple(ctx.Route(npnweb.AdminLink(action)), name)...)
+	return bc
 }
 
 func logComplete(startNanos int64, ctx *npnweb.RequestContext, status int, r *http.Request) {

@@ -59,6 +59,7 @@ const (
 	KeySystem     = "system"
 	KeyTheme      = "theme"
 	KeyTitle      = "title"
+	KeyTranscript = "transcript"
 	KeyUser       = "user"
 	KeyVoyager    = "voyager"
 )

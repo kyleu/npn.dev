@@ -10,7 +10,7 @@ import (
 )
 
 func DBWipe(s *Service, logger logur.Logger) error {
-	for _, file := range initialSchemaMigrations {
+	for _, file := range InitialSchemaMigrations {
 		_, err := exec(file, s, logger)
 		if err != nil {
 			return err
@@ -23,9 +23,12 @@ func Migrate(s *Service) error {
 	var err error
 
 	maxIdx := maxMigrationIdx(s)
-	// s.logger.Info(fmt.Sprintf("migrating database schema: %v", maxIdx))
 
-	for i, file := range databaseMigrations {
+	if len(DatabaseMigrations) > maxIdx + 1 {
+		s.logger.Info(fmt.Sprintf("applying [%v] database migrations...", len(DatabaseMigrations) - maxIdx + 1))
+	}
+
+	for i, file := range DatabaseMigrations {
 		idx := i + 1
 		switch {
 		case idx == maxIdx:
@@ -63,7 +66,7 @@ func Migrate(s *Service) error {
 	return errors.Wrap(err, "error running database migration")
 }
 
-func applyMigration(s *Service, idx int, file migrationFile) error {
+func applyMigration(s *Service, idx int, file *MigrationFile) error {
 	s.logger.Info(fmt.Sprintf("applying database migration [%v]: %v", idx, file.Title))
 	sql, err := exec(file, s, s.logger)
 	if err != nil {

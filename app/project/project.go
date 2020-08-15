@@ -5,15 +5,6 @@ import (
 	"github.com/kyleu/npn/npncore"
 )
 
-type Summary struct {
-	Key         string   `json:"key"`
-	Title       string   `json:"title,omitempty"`
-	Description string   `json:"description,omitempty"`
-	SchemaKeys  []string `json:"schemaKeys,omitempty"`
-}
-
-type Summaries []*Summary
-
 type TaskDefinition struct {
 	Key     string          `json:"key"`
 	T       string          `json:"t"`
@@ -72,6 +63,7 @@ type Project struct {
 	Description string                 `json:"description,omitempty"`
 	Prototype   string                 `json:"prototype,omitempty"`
 	SchemaKeys  []string               `json:"schemaKeys,omitempty"`
+	Models      ModelRefs              `json:"models,omitempty"`
 	Options     map[string]interface{} `json:"options,omitempty"`
 	Tasks       TaskDefinitions        `json:"tasks,omitempty"`
 }

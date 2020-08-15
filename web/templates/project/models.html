@@ -1,0 +1,52 @@
+<%: func ProjectModels(project *project.Project, schemata schema.Schemata, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <form class="uk-form-horizontal" action="<%= ctx.Route(`project.models.save`, npncore.KeyKey, project.Key) %>" method="post">
+      <div class="uk-card uk-card-body">
+        <button type="submit" class="right uk-button uk-button-default">Save</button>
+        <h3 class="uk-card-title"><%= project.Title %> models</h3>
+      </div>
+      <% for _, sch := range schemata { %>
+        <div class="uk-card uk-card-body uk-margin-top">
+          <h3 class="uk-card-title"><%= sch.Title %></h3>
+          <table class="uk-table uk-table-divider uk-table-small">
+            <thead>
+              <tr>
+                <th>
+                  <label><input class="uk-checkbox uk-margin-right" value="true" type="checkbox" disabled="disabled" /></label>
+                  Model
+                </th>
+                <th>Type</th>
+                <th>Package</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% for _, m := range sch.Models { %>
+                <% curr := project.Models.Get(m.Pkg, m.Key) %>
+                <tr>
+                  <td class="uk-table-shrink uk-text-nowrap">
+                    <% if curr == nil { %>
+                      <label><input name="<%= m.String() %>" class="uk-checkbox uk-margin-right" value="true" type="checkbox" /> <%= m.Key %></label>
+                    <% } else { %>
+                      <label><input name="<%= m.String() %>" class="uk-checkbox uk-margin-right" value="true" type="checkbox" checked="checked" /> <%= m.Key %></label>
+                    <% } %>
+                  </td>
+                  <td><%= m.Type.String() %></td>
+                  <% if curr == nil { %>
+                    <td><input name="<%= m.String() %>::pkgoverride" class="uk-input" type="text" /></td>
+                  <% } else { %>
+                    <td><input name="<%= m.String() %>::pkgoverride" class="uk-input" type="text" value="<%= curr.PkgOverride.String() %>" /></td>
+                  <% } %>
+                </tr>
+              <% } %>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </form>
+  </div>
+</div>
+<% } %>

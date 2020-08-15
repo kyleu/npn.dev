@@ -1,0 +1,13 @@
+<%: func ConnectionList(connections  npnconnection.Statuses, params npncore.ParamSet, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title">Socket Connections</h3>
+      <% ConnectionTable(connections, params.Get(npncore.KeyConnection, ctx.Logger), ctx, _buffer) %>
+    </div>
+  </div>
+</div>
+<% } %>

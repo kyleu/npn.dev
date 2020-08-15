@@ -23,7 +23,6 @@ type projectSaveForm struct {
 	Path      string `mapstructure:"path"`
 	Pkg       string `mapstructure:"pkg"`
 	Prototype string `mapstructure:"proto"`
-	Options   string `mapstructure:"options"`
 }
 
 func ProjectList(w http.ResponseWriter, r *http.Request) {
@@ -48,6 +47,18 @@ func ProjectNew(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func ProjectDetail(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		key := mux.Vars(r)[npncore.KeyKey]
+		ctx.Breadcrumbs = projectBreadcrumbs(ctx, "", key)
+		p, err := app.Projects(ctx.App).Load(key)
+		if err != nil {
+			return npncontroller.EResp(err, "cannot load project ["+key+"]")
+		}
+		return npncontroller.T(templates.ProjectDetail(p, ctx, w))
+	})
+}
+
 func ProjectEdit(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		key := mux.Vars(r)[npncore.KeyKey]
@@ -67,6 +78,7 @@ func ProjectEdit(w http.ResponseWriter, r *http.Request) {
 func ProjectSave(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		originalKey := mux.Vars(r)[npncore.KeyKey]
+
 		frm := &projectSaveForm{}
 		err := npnweb.Decode(r, frm, ctx.Logger)
 		if err != nil {
@@ -77,17 +89,17 @@ func ProjectSave(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(errors.New("title is required"))
 		}
 
+		models := project.ModelRefs{}
 		opts := map[string]interface{}{}
-		for _, v := range strings.Split(frm.Options, "||") {
-			v = strings.TrimSpace(v)
-			if len(v) > 0 {
-				idx := strings.Index(v, "::")
-				if idx == -1 {
-					opts[v] = v
-				} else {
-					opts[v[0:idx]] = v[idx+1:]
-				}
+		tasks := project.TaskDefinitions{}
+
+		if originalKey != "new" {
+			p, err := app.Projects(ctx.App).Load(originalKey)
+			if err != nil {
+				return npncontroller.EResp(err, "cannot load project ["+originalKey+"]")
 			}
+			models = p.Models
+			tasks = p.Tasks
 		}
 
 		org := frm.Org
@@ -102,7 +114,9 @@ func ProjectSave(w http.ResponseWriter, r *http.Request) {
 			RootPkg:    strings.Split(frm.Pkg, "||"),
 			Prototype:  frm.Prototype,
 			SchemaKeys: strings.Split(frm.Schema, "||"),
+			Models:     models,
 			Options:    opts,
+			Tasks:      tasks,
 		}
 		err = app.Projects(ctx.App).Save(originalKey, proj, true)
 		if err != nil {
@@ -111,18 +125,6 @@ func ProjectSave(w http.ResponseWriter, r *http.Request) {
 
 		redir := ctx.Route("project.detail", npncore.KeyKey, newKey)
 		return npncontroller.FlashAndRedir(true, "Saved project", redir, w, r, ctx)
-	})
-}
-
-func ProjectDetail(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		key := mux.Vars(r)[npncore.KeyKey]
-		ctx.Breadcrumbs = projectBreadcrumbs(ctx, "", key)
-		p, err := app.Projects(ctx.App).Load(key)
-		if err != nil {
-			return npncontroller.EResp(err, "cannot load project ["+key+"]")
-		}
-		return npncontroller.T(templates.ProjectDetail(p, ctx, w))
 	})
 }
 

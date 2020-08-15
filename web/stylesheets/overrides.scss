@@ -79,6 +79,17 @@ h4 {
   margin: 0 10px;
 }
 
+.uk-navbar-nav > li > a,
+.uk-navbar-item,
+.uk-navbar-toggle {
+  min-height: 54px;
+}
+.uk-logo {
+  img {
+    height: 54px;
+  }
+}
+
 // Tabs
 .uk-tab > * > a {
   text-transform: none;
