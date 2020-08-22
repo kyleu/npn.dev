@@ -2,6 +2,8 @@ package auth
 
 import (
 	"fmt"
+	"io/ioutil"
+	"net/http"
 	"strings"
 
 	"github.com/kyleu/npn/npncore"
@@ -82,4 +84,26 @@ func (s *Service) GetDisplayByUserID(userID uuid.UUID, params *npncore.Params) (
 
 func (s *Service) FullURL(path string) string {
 	return s.redir + strings.TrimPrefix(path, "/")
+}
+
+func callHTTP(url string, auth string) ([]byte, error) {
+	client := &http.Client{}
+
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(auth) > 0 {
+		req.Header.Add("Authorization", "Bearer "+auth)
+	}
+
+	response, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() { _ = response.Body.Close() }()
+
+	return ioutil.ReadAll(response.Body)
 }

@@ -2,8 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/kyleu/npn/npncore"
@@ -22,23 +20,7 @@ type microsoftUser struct {
 }
 
 func microsoftAuth(tok *oauth2.Token) (*Record, error) {
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", "https://graph.microsoft.com/v1.0/me/", nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Authorization", "Bearer "+tok.AccessToken)
-
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = response.Body.Close() }()
-
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := callHTTP("https://graph.microsoft.com/v1.0/me/", tok.AccessToken)
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading Microsoft response")
 	}

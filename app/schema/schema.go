@@ -33,6 +33,10 @@ func NewSchema(title string, paths []string, md *Metadata) *Schema {
 	return &Schema{Key: npncore.Slugify(title), Title: title, Paths: paths, Metadata: md}
 }
 
+func alreadyExists(t string, key string) string {
+	return t + " [" + key + "] already exists"
+}
+
 func (s *Schema) AddPath(path string) bool {
 	if path == "" {
 		return false
@@ -49,7 +53,7 @@ func (s *Schema) AddOption(opt *Option) error {
 		return errors.New("nil opt")
 	}
 	if s.Options.Get(opt.T, opt.K) != nil {
-		return errors.New("option [" + opt.T + ":" + opt.K + "] already exists")
+		return errors.New(alreadyExists("option", opt.T + ":" + opt.K))
 	}
 	s.Options = append(s.Options, opt)
 	return nil
@@ -60,7 +64,7 @@ func (s *Schema) AddScalar(sc *Scalar) error {
 		return errors.New("nil scalar")
 	}
 	if s.Scalars.Get(sc.Pkg, sc.Key) != nil {
-		return errors.New("scalar [" + sc.Key + "] already exists")
+		return errors.New(alreadyExists("scalar", sc.Key))
 	}
 	s.Scalars = append(s.Scalars, sc)
 	return nil
@@ -71,7 +75,7 @@ func (s *Schema) AddModel(m *Model) error {
 		return errors.New("nil model")
 	}
 	if s.Models.Get(m.Pkg, m.Key) != nil {
-		return errors.New("model [" + m.Key + "] already exists")
+		return errors.New(alreadyExists("model", m.Key))
 	}
 	s.Models = append(s.Models, m)
 	return nil

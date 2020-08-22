@@ -12,6 +12,8 @@ type Service struct {
 	logger logur.Logger
 }
 
+const projPath = "project/"
+
 func NewService(files *npncore.FileLoader, logger logur.Logger) *Service {
 	return &Service{files: files, data: make(map[string]*Project), logger: logger}
 }
@@ -21,7 +23,7 @@ func (s *Service) List() []string {
 }
 
 func (s *Service) Summary(key string) (*Summary, error) {
-	content, err := s.files.ReadFile("project/" + key + ".json")
+	content, err := s.files.ReadFile(projPath + key + ".json")
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to find project file with key ["+key+"]")
 	}
@@ -34,7 +36,7 @@ func (s *Service) Summary(key string) (*Summary, error) {
 }
 
 func (s *Service) Load(key string) (*Project, error) {
-	content, err := s.files.ReadFile("project/" + key + ".json")
+	content, err := s.files.ReadFile(projPath + key + ".json")
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to find project file with key ["+key+"]")
 	}
@@ -53,7 +55,7 @@ func (s *Service) Save(originalKey string, p *Project, overwrite bool) error {
 			return errors.New("remove the existing [" + originalKey + "] project before you overwrite it with this one")
 		}
 	}
-	err := s.files.WriteFile("project/"+p.Key+".json", npncore.ToJSON(p, s.logger), overwrite)
+	err := s.files.WriteFile(projPath+p.Key+".json", npncore.ToJSON(p, s.logger), overwrite)
 	if err != nil {
 		return errors.Wrap(err, "unable to write project")
 	}
@@ -80,5 +82,5 @@ func (s *Service) Summaries() (Summaries, error) {
 }
 
 func (s *Service) Remove(key string) error {
-	return errors.Wrap(s.files.Remove("project/"+key+".json"), "unable to remove project ["+key+"] file")
+	return errors.Wrap(s.files.Remove(projPath+key+".json"), "unable to remove project ["+key+"] file")
 }

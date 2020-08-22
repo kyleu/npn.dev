@@ -7,16 +7,17 @@
     <% bi := npnweb.ExtractModules() %>
     <div class="uk-card uk-card-body">
       <table class="uk-table uk-table-divider uk-table-small">
+        <caption class="hidden">module listing</caption>
         <thead>
           <tr>
-            <th><%= npncore.Title(npncore.KeyName) %></th>
-            <th>Version</th>
+            <th scope="col"><%= npncore.Title(npncore.KeyName) %></th>
+            <th scope="col">Version</th>
           </tr>
         </thead>
         <tbody>
           <% for _, m := range bi.Deps { %>
           <tr>
-            <td><a target="_blank" class="theme" href="https://<%= m.Path %>"><%= m.Path %></a></td>
+            <td><a target="_blank" class="theme" rel="noopener noreferrer" href="https://<%= m.Path %>"><%= m.Path %></a></td>
             <td title="<%= m.Sum %>"><%= m.Version %></td>
           </tr>
           <% } %>

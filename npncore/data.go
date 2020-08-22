@@ -37,6 +37,26 @@ func (d Data) Clone() Data {
 	return ret
 }
 
+func (d Data) GetPath(path string) interface{} {
+	parts := strings.Split(path, ".")
+	return getPath(d, parts)
+}
+
+func getPath(i interface{}, path []string) interface{} {
+	if len(path) == 0 {
+		return i
+	}
+	t, ok := i.(map[string]interface{})
+	if ok {
+		ret, ok := t[path[0]]
+		if !ok {
+			return nil
+		}
+		return getPath(ret, path[1:])
+	}
+	return nil
+}
+
 func (d Data) GetString(k string) string {
 	v, ok := d[k]
 	if !ok {

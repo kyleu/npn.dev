@@ -19,13 +19,13 @@ func VendorAsset(w http.ResponseWriter, r *http.Request) {
 			path = "/" + path
 		}
 		data, hash, contentType, err := assets.Asset("assets", path)
-		zipResponse(w, r, data, hash, contentType, err)
+		ZipResponse(w, r, data, hash, contentType, err)
 	} else {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
 }
 
-func zipResponse(w http.ResponseWriter, r *http.Request, data []byte, hash string, contentType string, err error) {
+func ZipResponse(w http.ResponseWriter, r *http.Request, data []byte, hash string, contentType string, err error) {
 	if err == nil {
 		w.Header().Set("Content-Encoding", "gzip")
 		w.Header().Set("Content-Type", contentType)

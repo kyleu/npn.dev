@@ -2,8 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/kyleu/npn/npncore"
@@ -22,27 +20,9 @@ type githubUser struct {
 }
 
 func githubAuth(tok *oauth2.Token) (*Record, error) {
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", "https://api.github.com/user", nil)
-
+	contents, err := callHTTP("https://api.github.com/user", tok.AccessToken)
 	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Authorization", "Bearer "+tok.AccessToken)
-
-	// req.Header.Add("Authorization", "token "+tok.AccessToken)
-	response, err := client.Do(req)
-
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = response.Body.Close() }()
-
-	contents, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "error reading GitHub response")
+		return nil, errors.Wrap(err, "error reading Github response")
 	}
 
 	var user = githubUser{}

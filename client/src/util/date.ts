@@ -1,8 +1,8 @@
 namespace date {
-  export function dateToYMD(date: Date) {
-    const d = date.getDate();
-    const m = date.getMonth() + 1;
-    const y = date.getFullYear();
+  export function dateToYMD(dt: Date) {
+    const d = dt.getDate();
+    const m = dt.getMonth() + 1;
+    const y = dt.getFullYear();
     return `${y}-${m <= 9 ? `0${m}` : m}-${d <= 9 ? `0${d}` : d}`;
   }
 

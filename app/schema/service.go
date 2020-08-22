@@ -12,6 +12,8 @@ type Service struct {
 	logger logur.Logger
 }
 
+const schemaPath = "schema/"
+
 func NewService(files *npncore.FileLoader, logger logur.Logger) *Service {
 	return &Service{files: files, data: make(map[string]*Schema), logger: logger}
 }
@@ -21,7 +23,7 @@ func (s *Service) List() []string {
 }
 
 func (s *Service) Summary(key string) (*Summary, error) {
-	content, err := s.files.ReadFile("schema/" + key + ".json")
+	content, err := s.files.ReadFile(schemaPath + key + ".json")
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to find schema file with key ["+key+"]")
 	}
@@ -34,7 +36,7 @@ func (s *Service) Summary(key string) (*Summary, error) {
 }
 
 func (s *Service) Load(key string) (*Schema, error) {
-	content, err := s.files.ReadFile("schema/" + key + ".json")
+	content, err := s.files.ReadFile(schemaPath + key + ".json")
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to find schema file with key ["+key+"]")
 	}
@@ -60,7 +62,7 @@ func (s *Service) LoadAll(keys []string) (Schemata, error) {
 }
 
 func (s *Service) Save(sch *Schema, overwrite bool) error {
-	return s.files.WriteFile("schema/"+sch.Key+".json", npncore.ToJSON(sch, s.logger), overwrite)
+	return s.files.WriteFile(schemaPath+sch.Key+".json", npncore.ToJSON(sch, s.logger), overwrite)
 }
 
 func (s *Service) Summaries() (Summaries, error) {

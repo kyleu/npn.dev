@@ -25,6 +25,10 @@ type projectSaveForm struct {
 	Prototype string `mapstructure:"proto"`
 }
 
+func projErr(key string) string {
+ return "cannot load project ["+key+"]"
+}
+
 func ProjectList(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Breadcrumbs = projectBreadcrumbs(ctx)
@@ -53,7 +57,7 @@ func ProjectDetail(w http.ResponseWriter, r *http.Request) {
 		ctx.Breadcrumbs = projectBreadcrumbs(ctx, "", key)
 		p, err := app.Projects(ctx.App).Load(key)
 		if err != nil {
-			return npncontroller.EResp(err, "cannot load project ["+key+"]")
+			return npncontroller.EResp(err, projErr(key))
 		}
 		return npncontroller.T(templates.ProjectDetail(p, ctx, w))
 	})
@@ -65,7 +69,7 @@ func ProjectEdit(w http.ResponseWriter, r *http.Request) {
 		ctx.Breadcrumbs = projectBreadcrumbs(ctx, "", key)
 		p, err := app.Projects(ctx.App).Load(key)
 		if err != nil {
-			return npncontroller.EResp(err, "cannot load project ["+key+"]")
+			return npncontroller.EResp(err, projErr(key))
 		}
 		schemaSummaries, err := app.Schemata(ctx.App).Summaries()
 		if err != nil {
@@ -96,7 +100,7 @@ func ProjectSave(w http.ResponseWriter, r *http.Request) {
 		if originalKey != "new" {
 			p, err := app.Projects(ctx.App).Load(originalKey)
 			if err != nil {
-				return npncontroller.EResp(err, "cannot load project ["+originalKey+"]")
+				return npncontroller.EResp(err, projErr(originalKey))
 			}
 			models = p.Models
 			tasks = p.Tasks

@@ -16,6 +16,8 @@ import (
 	"github.com/kyleu/npn/gen/templates"
 )
 
+const projectDetailRoute = "project.detail"
+
 func TaskRun(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		p, t, err := loadTask(r, ctx)
@@ -44,7 +46,7 @@ func TaskRunAll(w http.ResponseWriter, r *http.Request) {
 			r := task.RunTask(p, schemata, tsk, td.Options, ctx.Logger)
 			ret = append(ret, r...)
 		}
-		ctx.Breadcrumbs = projectBreadcrumbs(ctx, ctx.Route("project.detail", npncore.KeyKey, p.Key), p.Key, "", "all")
+		ctx.Breadcrumbs = projectBreadcrumbs(ctx, ctx.Route(projectDetailRoute, npncore.KeyKey, p.Key), p.Key, "", "all")
 		return npncontroller.T(templates.TaskResults(ret, ctx, w))
 	})
 }
@@ -83,7 +85,7 @@ func TaskDelete(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(err, "cannot save project")
 		}
 
-		redir := ctx.Route("project.detail", npncore.KeyKey, p.Key)
+		redir := ctx.Route(projectDetailRoute, npncore.KeyKey, p.Key)
 		return npncontroller.FlashAndRedir(true, "Deleted task ["+td.Key+"]", redir, w, r, ctx)
 	})
 }
@@ -126,7 +128,7 @@ func TaskSave(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(err, "cannot save project")
 		}
 
-		redir := ctx.Route("project.detail", npncore.KeyKey, projectKey)
+		redir := ctx.Route(projectDetailRoute, npncore.KeyKey, projectKey)
 		return npncontroller.FlashAndRedir(true, "Saved task", redir, w, r, ctx)
 	})
 }
@@ -148,7 +150,7 @@ func loadTask(r *http.Request, ctx *npnweb.RequestContext) (*project.Project, *p
 	if t == nil {
 		t = &project.TaskDefinition{Key: taskKey, T: taskKey}
 	}
-	ctx.Breadcrumbs = projectBreadcrumbs(ctx, ctx.Route("project.detail", npncore.KeyKey, p.Key), p.Key, "", t.Key)
+	ctx.Breadcrumbs = projectBreadcrumbs(ctx, ctx.Route(projectDetailRoute, npncore.KeyKey, p.Key), p.Key, "", t.Key)
 
 	return p, t, nil
 }
@@ -156,7 +158,7 @@ func loadTask(r *http.Request, ctx *npnweb.RequestContext) (*project.Project, *p
 func run(a npnweb.AppInfo, t task.Task, projectKey string, options npncore.Entries) task.Results {
 	proj, err := app.Projects(a).Load(projectKey)
 	if err != nil {
-		err = errors.Wrap(err, "cannot load project ["+projectKey+"]")
+		err = errors.Wrap(err, projErr(projectKey))
 		return task.ErrorResults(t, proj, options, err)
 	}
 	schemata, err := app.Schemata(a).LoadAll(proj.SchemaKeys)

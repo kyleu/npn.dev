@@ -86,7 +86,7 @@ func (m *Model) AddField(f *Field) error {
 		return errors.New("nil field")
 	}
 	if m.Fields.Get(f.Key) != nil {
-		return errors.New("field [" + f.Key + "] already exists")
+		return errors.New(alreadyExists("field", f.Key))
 	}
 	m.Fields = append(m.Fields, f)
 	return nil
@@ -97,7 +97,7 @@ func (m *Model) AddIndex(i *Index) error {
 		return errors.New("nil index")
 	}
 	if m.Fields.Get(i.Key) != nil {
-		return errors.New("index [" + i.Key + "] already exists")
+		return errors.New(alreadyExists("index",  i.Key))
 	}
 	m.Indexes = append(m.Indexes, i)
 	return nil

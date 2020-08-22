@@ -12,6 +12,11 @@ import (
 	"github.com/sagikazarmark/ocmux"
 )
 
+const (
+  keyParam = "{key}"
+  taskParam = "{task}"
+)
+
 func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	npncontroller.InitMime()
 
@@ -31,30 +36,30 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	// Schema
 	schema := r.Path(routes.Path("schema")).Subrouter()
 	schema.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SchemaList))).Name(routes.Name("schema"))
-	r.Path(routes.Path("schema", "{key}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SchemaDetail))).Name(routes.Name("schema", "detail"))
-	r.Path(routes.Path("schema", "{key}", "refresh")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SchemaRefresh))).Name(routes.Name("schema", "refresh"))
-	r.Path(routes.Path("schema", "{key}", "model", "{m}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SchemaModelDetail))).Name(routes.Name("schema", "model"))
+	r.Path(routes.Path("schema", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SchemaDetail))).Name(routes.Name("schema", "detail"))
+	r.Path(routes.Path("schema", keyParam, "refresh")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SchemaRefresh))).Name(routes.Name("schema", "refresh"))
+	r.Path(routes.Path("schema", keyParam, "model", "{m}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SchemaModelDetail))).Name(routes.Name("schema", "model"))
 
 	// Project
 	project := r.Path(routes.Path("project")).Subrouter()
 	project.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectList))).Name(routes.Name("project"))
 	r.Path(routes.Path("project", "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectNew))).Name(routes.Name("project", "new"))
-	r.Path(routes.Path("project", "{key}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectDetail))).Name(routes.Name("project", "detail"))
-	r.Path(routes.Path("project", "{key}", "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectEdit))).Name(routes.Name("project", "edit"))
-	r.Path(routes.Path("project", "{key}", "edit")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectSave))).Name(routes.Name("project", "save"))
-	r.Path(routes.Path("project", "{key}", "models")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectModels))).Name(routes.Name("project", "models"))
-	r.Path(routes.Path("project", "{key}", "models")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectModelsSave))).Name(routes.Name("project", "models", "save"))
-	r.Path(routes.Path("project", "{key}", "all")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskRunAll))).Name(routes.Name("project", "task", "all"))
-	r.Path(routes.Path("project", "{key}", "{task}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskRun))).Name(routes.Name("project", "task"))
-	r.Path(routes.Path("project", "{key}", "{task}", "add")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskAdd))).Name(routes.Name("project", "task", "add"))
-	r.Path(routes.Path("project", "{key}", "{task}", "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskEdit))).Name(routes.Name("project", "task", "edit"))
-	r.Path(routes.Path("project", "{key}", "{task}", "delete")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskDelete))).Name(routes.Name("project", "task", "delete"))
-	r.Path(routes.Path("project", "{key}", "task")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskSave))).Name(routes.Name("project", "task", "save"))
+	r.Path(routes.Path("project", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectDetail))).Name(routes.Name("project", "detail"))
+	r.Path(routes.Path("project", keyParam, "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectEdit))).Name(routes.Name("project", "edit"))
+	r.Path(routes.Path("project", keyParam, "edit")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectSave))).Name(routes.Name("project", "save"))
+	r.Path(routes.Path("project", keyParam, "models")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectModels))).Name(routes.Name("project", "models"))
+	r.Path(routes.Path("project", keyParam, "models")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(ProjectModelsSave))).Name(routes.Name("project", "models", "save"))
+	r.Path(routes.Path("project", keyParam, "all")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskRunAll))).Name(routes.Name("project", "task", "all"))
+	r.Path(routes.Path("project", keyParam, taskParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskRun))).Name(routes.Name("project", "task"))
+	r.Path(routes.Path("project", keyParam, taskParam, "add")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskAdd))).Name(routes.Name("project", "task", "add"))
+	r.Path(routes.Path("project", keyParam, taskParam, "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskEdit))).Name(routes.Name("project", "task", "edit"))
+	r.Path(routes.Path("project", keyParam, taskParam, "delete")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskDelete))).Name(routes.Name("project", "task", "delete"))
+	r.Path(routes.Path("project", keyParam, "task")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(TaskSave))).Name(routes.Name("project", "task", "save"))
 
 	// Sandbox
 	sandbox := r.Path(routes.Path(npncore.KeySandbox)).Subrouter()
 	sandbox.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SandboxList))).Name(routes.Name(npncore.KeySandbox))
-	r.Path(routes.Path(npncore.KeySandbox, "{key}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SandboxRun))).Name(routes.Name(npncore.KeySandbox, "run"))
+	r.Path(routes.Path(npncore.KeySandbox, keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(SandboxRun))).Name(routes.Name(npncore.KeySandbox, "run"))
 
 	// About
 	about := r.Path(routes.Path(npncore.KeyAbout)).Subrouter()

@@ -503,7 +503,7 @@ var tags;
         else {
             console.warn(`no tag open handler registered for [${key}]`);
         }
-        const ret = dom.els(".item", el).map(el => el.innerText);
+        const ret = dom.els(".item", el).map(e => e.innerText);
         dom.setValue(`#model-${key}-input`, ret.join(","));
     }
 })(tags || (tags = {}));
@@ -613,19 +613,19 @@ var collection;
     collection.flatten = flatten;
 })(collection || (collection = {}));
 var date;
-(function (date_1) {
-    function dateToYMD(date) {
-        const d = date.getDate();
-        const m = date.getMonth() + 1;
-        const y = date.getFullYear();
+(function (date) {
+    function dateToYMD(dt) {
+        const d = dt.getDate();
+        const m = dt.getMonth() + 1;
+        const y = dt.getFullYear();
         return `${y}-${m <= 9 ? `0${m}` : m}-${d <= 9 ? `0${d}` : d}`;
     }
-    date_1.dateToYMD = dateToYMD;
+    date.dateToYMD = dateToYMD;
     function dateFromYMD(s) {
         const d = new Date(s);
         return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
     }
-    date_1.dateFromYMD = dateFromYMD;
+    date.dateFromYMD = dateFromYMD;
     function dow(i) {
         switch (i) {
             case 0:
@@ -646,24 +646,24 @@ var date;
                 return "???";
         }
     }
-    date_1.dow = dow;
+    date.dow = dow;
     function toDateString(d) {
         return d.toLocaleDateString();
     }
-    date_1.toDateString = toDateString;
+    date.toDateString = toDateString;
     function toTimeString(d) {
         return d.toLocaleTimeString().slice(0, 8);
     }
-    date_1.toTimeString = toTimeString;
+    date.toTimeString = toTimeString;
     function toDateTimeString(d) {
         return `${toDateString(d)} ${toTimeString(d)}`;
     }
-    date_1.toDateTimeString = toDateTimeString;
+    date.toDateTimeString = toDateTimeString;
     const tzOffset = new Date().getTimezoneOffset() * 60000;
     function utcDate(s) {
         return new Date(Date.parse(s) + tzOffset);
     }
-    date_1.utcDate = utcDate;
+    date.utcDate = utcDate;
 })(date || (date = {}));
 var notify;
 (function (notify_1) {

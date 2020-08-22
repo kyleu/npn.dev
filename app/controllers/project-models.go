@@ -20,7 +20,7 @@ func ProjectModels(w http.ResponseWriter, r *http.Request) {
 		ctx.Breadcrumbs = projectBreadcrumbs(ctx, ctx.Route("project.detail", npncore.KeyKey, key), key, "", "models")
 		p, err := app.Projects(ctx.App).Load(key)
 		if err != nil {
-			return npncontroller.EResp(err, "cannot load project ["+key+"]")
+			return npncontroller.EResp(err, projErr(key))
 		}
 		schemata, err := app.Schemata(ctx.App).LoadAll(p.SchemaKeys)
 		if err != nil {
@@ -35,7 +35,7 @@ func ProjectModelsSave(w http.ResponseWriter, r *http.Request) {
 		key := mux.Vars(r)[npncore.KeyKey]
 		p, err := app.Projects(ctx.App).Load(key)
 		if err != nil {
-			return npncontroller.EResp(err, "cannot load project ["+key+"]")
+			return npncontroller.EResp(err, projErr(key))
 		}
 
 		schemata, err := app.Schemata(ctx.App).LoadAll(p.SchemaKeys)

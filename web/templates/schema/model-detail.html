@@ -17,13 +17,14 @@
       <div class="uk-card uk-card-body uk-margin-top">
         <h3 class="uk-card-title">Fields</h3>
         <table class="uk-table uk-table-divider">
+          <caption class="hidden">fields</caption>
           <thead>
             <tr>
-              <th>Key</th>
+              <th scope="col">Key</th>
               <% if m.Type != schema.ModelTypeEnum { %>
-              <th>Signature</th>
+              <th scope="col">Signature</th>
               <% } %>
-              <th>Description</th>
+              <th scope="col">Description</th>
             </tr>
           </thead>
           <tbody>
@@ -47,12 +48,13 @@
       <div class="uk-card uk-card-body uk-margin-top">
         <h3 class="uk-card-title">Indexes</h3>
         <table class="uk-table uk-table-divider">
+          <caption class="hidden">indexes</caption>
           <thead>
             <tr>
-              <th>Key</th>
-              <th>Fields</th>
-              <th>Unique</th>
-              <th>PK</th>
+              <th scope="col">Key</th>
+              <th scope="col">Fields</th>
+              <th scope="col">Unique</th>
+              <th scope="col">PK</th>
             </tr>
           </thead>
           <tbody>
@@ -73,9 +75,10 @@
       <div class="uk-card uk-card-body uk-margin-top">
         <h3 class="uk-card-title">Interfaces</h3>
         <table class="uk-table uk-table-divider">
+          <caption class="hidden">interfaces</caption>
           <thead>
             <tr>
-              <th>Key</th>
+              <th scope="col">Key</th>
             </tr>
           </thead>
           <tbody>

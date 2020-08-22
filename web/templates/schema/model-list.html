@@ -6,14 +6,15 @@
     <%=v len(models) %><%= " " + t.Title %>
   </h3>
   <table class="uk-table uk-table-divider">
+    <caption class="hidden">model list</caption>
     <thead>
       <tr>
         <th>Key</th>
         <% if models.HasField() { %>
-          <th>Fields</th>
+          <th scope="col">Fields</th>
         <% } %>
         <% if models.HasIndex() { %>
-          <th>Indexes</th>
+          <th scope="col">Indexes</th>
         <% } %>
       </tr>
     </thead>

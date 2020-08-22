@@ -2,8 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/kyleu/npn/npncore"
@@ -30,21 +28,7 @@ type facebookUser struct {
 }
 
 func facebookAuth(tok *oauth2.Token) (*Record, error) {
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", "https://graph.facebook.com/me?fields=id,name,email,picture&access_token="+tok.AccessToken, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = response.Body.Close() }()
-
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := callHTTP("https://graph.facebook.com/me?fields=id,name,email,picture&access_token="+tok.AccessToken, "")
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading Facebook response")
 	}

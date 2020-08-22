@@ -3,10 +3,10 @@ package npndatabase
 import (
 	"database/sql"
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 
 	"emperror.dev/errors"
 	"github.com/jmoiron/sqlx"
-	"github.com/kyleu/npn/npncore"
 )
 
 func (s *Service) Insert(q string, tx *sqlx.Tx, values ...interface{}) error {
@@ -24,19 +24,7 @@ func (s *Service) Insert(q string, tx *sqlx.Tx, values ...interface{}) error {
 }
 
 func (s *Service) Update(q string, tx *sqlx.Tx, expected int, values ...interface{}) (int, error) {
-	if s.debug {
-		logQuery(s, fmt.Sprintf("updating [%v] rows", expected), q, values)
-	}
-
-	aff, err := s.execUnknown(q, tx, values...)
-	if err != nil {
-		return 0, errors.Wrap(err, errMessage("update", q, values))
-	}
-	if expected > -1 && aff != expected {
-		msg := "expected [%v] updated row(s), but [%v] records affected from sql [%v] with values [%s]"
-		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, npncore.ValueStrings(values)))
-	}
-	return aff, nil
+	return s.process("updating", "updated", q, tx, expected, values...)
 }
 
 func (s *Service) UpdateOne(q string, tx *sqlx.Tx, values ...interface{}) error {
@@ -45,18 +33,7 @@ func (s *Service) UpdateOne(q string, tx *sqlx.Tx, values ...interface{}) error 
 }
 
 func (s *Service) Delete(q string, tx *sqlx.Tx, expected int, values ...interface{}) (int, error) {
-	if s.debug {
-		logQuery(s, fmt.Sprintf("deleting [%v] rows", expected), q, values)
-	}
-	aff, err := s.execUnknown(q, tx, values...)
-	if err != nil {
-		return 0, errors.Wrap(err, errMessage("delete", q, values))
-	}
-	if expected > -1 && aff != expected {
-		msg := "expected [%v] deleted row(s), but [%v] records affected from sql [%v] with values [%s]"
-		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, npncore.ValueStrings(values)))
-	}
-	return aff, err
+	return s.process("deleting", "deleted", q, tx, expected, values...)
 }
 
 func (s *Service) DeleteOne(q string, tx *sqlx.Tx, values ...interface{}) error {
@@ -68,18 +45,7 @@ func (s *Service) DeleteOne(q string, tx *sqlx.Tx, values ...interface{}) error 
 }
 
 func (s *Service) Exec(q string, tx *sqlx.Tx, expected int, values ...interface{}) (int, error) {
-	if s.debug {
-		logQuery(s, fmt.Sprintf("executing [%v] rows", expected), q, values)
-	}
-	aff, err := s.execUnknown(q, tx, values...)
-	if err != nil {
-		return 0, errors.Wrap(err, errMessage("exec", q, values))
-	}
-	if expected > -1 && aff != expected {
-		msg := "expected [%v] exec row(s), but [%v] records affected from sql [%v] with values [%s]"
-		return aff, errors.New(fmt.Sprintf(msg, expected, aff, q, npncore.ValueStrings(values)))
-	}
-	return aff, nil
+	return s.process("executing", "executed", q, tx, expected, values...)
 }
 
 func (s *Service) execUnknown(q string, tx *sqlx.Tx, values ...interface{}) (int, error) {
@@ -103,3 +69,20 @@ func (s *Service) execUnknown(q string, tx *sqlx.Tx, values ...interface{}) (int
 	}
 	return int(aff), nil
 }
+
+func (s *Service) process(key string, past string, q string, tx *sqlx.Tx, expected int, values ...interface{}) (int, error) {
+	if s.debug {
+		logQuery(s, fmt.Sprintf("%v [%v] rows", key, expected), q, values)
+	}
+
+	aff, err := s.execUnknown(q, tx, values...)
+	if err != nil {
+		return 0, errors.Wrap(err, errMessage(past, q, values))
+	}
+	if expected > -1 && aff != expected {
+		msg := "expected [%v] %v row(s), but [%v] records affected from sql [%v] with values [%s]"
+		return aff, errors.New(fmt.Sprintf(msg, expected, past, aff, q, npncore.ValueStrings(values)))
+	}
+	return aff, nil
+}
+

@@ -10,12 +10,13 @@
         <div>No saved <%= npncore.Plural("schema") %></div>
       <% } else { %>
         <table class="uk-table uk-table-divider">
+          <caption class="hidden">schema list</caption>
           <thead>
             <tr>
-              <th>Key</th>
-              <th>Title</th>
-              <th>Paths</th>
-              <th>Type</th>
+              <th scope="col">Key</th>
+              <th scope="col">Title</th>
+              <th scope="col">Paths</th>
+              <th scope="col">Type</th>
             </tr>
           </thead>
           <tbody>

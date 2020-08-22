@@ -64,7 +64,7 @@ namespace tags {
     } else {
       console.warn(`no tag open handler registered for [${key}]`);
     }
-    const ret = dom.els(".item", el).map(el => el.innerText);
+    const ret = dom.els(".item", el).map(e => e.innerText);
     dom.setValue(`#model-${key}-input`, ret.join(","));
   }
 }

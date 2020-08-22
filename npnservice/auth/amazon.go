@@ -2,8 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/kyleu/npn/npncore"
@@ -21,23 +19,7 @@ type amazonUser struct {
 }
 
 func amazonAuth(tok *oauth2.Token) (*Record, error) {
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", "https://api.amazon.com/user/profile", nil)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Authorization", "Bearer "+tok.AccessToken)
-
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = response.Body.Close() }()
-
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := callHTTP("https://api.amazon.com/user/profile", tok.AccessToken)
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading Amazon response")
 	}

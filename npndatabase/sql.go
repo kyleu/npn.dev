@@ -5,6 +5,8 @@ import (
 	"strings"
 )
 
+const whereSpaces = " where "
+
 func StringToArray(s string) []string {
 	split := strings.Split(strings.TrimPrefix(strings.TrimSuffix(s, "}"), "{"), ",")
 	ret := make([]string, 0)
@@ -42,7 +44,7 @@ func SQLSelect(columns string, tables string, where string, orderBy string, limi
 
 	whereClause := ""
 	if len(where) > 0 {
-		whereClause = " where " + where
+		whereClause = whereSpaces + where
 	}
 
 	orderByClause := ""
@@ -70,7 +72,7 @@ func SQLSelectSimple(columns string, tables string, where ...string) string {
 func SQLUpdate(table string, columns []string, where string) string {
 	whereClause := ""
 	if len(where) > 0 {
-		whereClause = " where " + where
+		whereClause = whereSpaces + where
 	}
 
 	stmts := make([]string, 0, len(columns))
@@ -85,5 +87,5 @@ func SQLDelete(table string, where string) string {
 	if len(strings.TrimSpace(where)) == 0 {
 		return "attempt to delete from [" + table + "] with empty where clause"
 	}
-	return "delete from " + table + " where " + where
+	return "delete from " + table + whereSpaces + where
 }

@@ -6,18 +6,19 @@
   <div class="uk-container">
     <div class="uk-card uk-card-body">
       <table class="uk-table uk-table-divider uk-table-small">
+        <caption class="hidden">route listing</caption>
         <thead>
           <tr>
-            <th><%= npncore.Title(npncore.KeyName) %></th>
-            <th>Methods</th>
-            <th>Path</th>
+            <th scope="col"><%= npncore.Title(npncore.KeyName) %></th>
+            <th scope="col">Methods</th>
+            <th scope="col">Path</th>
           </tr>
         </thead>
         <tbody>
           <% for _, r := range npnweb.ExtractRoutes(ctx.Routes) { %>
             <% if len(r.Methods) == 0 { %>
             <tr>
-              <th colspan="3"><div class="uk-margin-top"><%= strings.TrimPrefix(r.Path, "/") %></div></th>
+              <th scope="row" colspan="3"><div class="uk-margin-top"><%= strings.TrimPrefix(r.Path, "/") %></div></th>
             </tr>
             <% } else { %>
             <tr>

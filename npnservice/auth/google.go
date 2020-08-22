@@ -2,8 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/kyleu/npn/npncore"
@@ -25,17 +23,11 @@ type googleUser struct {
 }
 
 func googleAuth(tok *oauth2.Token) (*Record, error) {
-	response, err := http.Get("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + tok.AccessToken)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = response.Body.Close() }()
-
-	contents, err := ioutil.ReadAll(response.Body)
+	contents, err := callHTTP("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + tok.AccessToken, "")
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading Google response")
 	}
+
 	var user = googleUser{}
 	err = json.Unmarshal(contents, &user)
 	if err != nil {

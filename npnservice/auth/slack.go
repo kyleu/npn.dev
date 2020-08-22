@@ -2,8 +2,6 @@ package auth
 
 import (
 	"encoding/json"
-	"io/ioutil"
-	"net/http"
 	"time"
 
 	"github.com/kyleu/npn/npncore"
@@ -15,16 +13,14 @@ import (
 var slackScopes = []string{"users:read", "team:read"}
 
 func slackAuth(tok *oauth2.Token) (*Record, error) {
-	client := &http.Client{}
-
-	profile, err := loadProfile(tok, client)
+	profile, err := loadProfile(tok)
 	if err != nil {
 		return nil, errors.Wrap(err, "error getting Slack user profile")
 	}
 
-	tm, err := loadTeam(tok, client)
+	tm, err := loadTeam(tok)
 	if err != nil {
-		return nil, errors.Wrap(err, "error marshalling slack user")
+		return nil, errors.Wrap(err, "error marshalling Slack team")
 	}
 
 	ret := Record{
@@ -54,31 +50,16 @@ type slackProfile struct {
 	Picture string `json:"image_192"`
 }
 
-func loadProfile(tok *oauth2.Token, client *http.Client) (*slackProfile, error) {
-	req, err := http.NewRequest("GET", "https://slack.com/api/users.profile.get", nil)
+func loadProfile(tok *oauth2.Token) (*slackProfile, error) {
+	contents, err := callHTTP("https://slack.com/api/users.profile.get", tok.AccessToken)
 	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Authorization", "Bearer "+tok.AccessToken)
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		_ = response.Body.Close()
-	}()
-
-	contents, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, errors.Wrap(err, "error reading response from Slack")
+		return nil, errors.Wrap(err, "error reading Slack profile response")
 	}
 
 	var rsp = slackProfileResponse{}
 	err = json.Unmarshal(contents, &rsp)
 	if err != nil {
-		return nil, errors.Wrap(err, "error marshalling slack user")
+		return nil, errors.Wrap(err, "error marshalling Slack profile")
 	}
 
 	return rsp.Profile, nil
@@ -94,31 +75,16 @@ type slackTeam struct {
 	Name string `json:"name"`
 }
 
-func loadTeam(tok *oauth2.Token, client *http.Client) (*slackTeam, error) {
-	req, err := http.NewRequest("GET", "https://slack.com/api/team.info", nil)
+func loadTeam(tok *oauth2.Token) (*slackTeam, error) {
+	contents, err := callHTTP("https://slack.com/api/team.info", tok.AccessToken)
 	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Authorization", "Bearer "+tok.AccessToken)
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() {
-		_ = response.Body.Close()
-	}()
-
-	contents, err := ioutil.ReadAll(response.Body)
-	if err != nil {
-		return nil, err
+		return nil, errors.Wrap(err, "error reading Slack team response")
 	}
 
 	var rsp = slackTeamResponse{}
 	err = json.Unmarshal(contents, &rsp)
 	if err != nil {
-		return nil, errors.Wrap(err, "error marshalling slack user")
+		return nil, errors.Wrap(err, "error marshalling Slack team")
 	}
 
 	return rsp.Team, nil
