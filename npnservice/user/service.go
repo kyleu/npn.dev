@@ -40,6 +40,10 @@ func (s *Service) new(id uuid.UUID) (*SystemUser, error) {
 	return s.GetByID(id, false), nil
 }
 
+func (s *Service) HasDB() bool {
+	return s.db != nil
+}
+
 func (s *Service) List(params *npncore.Params) SystemUsers {
 	params = npncore.ParamsWithDefaultOrdering(npncore.KeyUser, params, npncore.DefaultCreatedOrdering...)
 

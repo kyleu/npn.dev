@@ -60,7 +60,7 @@ func ExtractContext(w http.ResponseWriter, r *http.Request, addIfMissing bool) *
 	}
 
 	var u *user.SystemUser
-	if ai.User() == nil {
+	if ai.User() == nil || (!ai.User().HasDB()) {
 		content, err := ai.Files().ReadFile("profile.json")
 		if err != nil {
 			return nil

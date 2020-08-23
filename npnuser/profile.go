@@ -76,7 +76,7 @@ func NewUserProfile(userID uuid.UUID, name string) *UserProfile {
 }
 
 type Profile struct {
-	UserID    uuid.UUID `json:"id"`
+	UserID    uuid.UUID `json:"userID"`
 	Name      string    `json:"name"`
 	Theme     string    `json:"theme"`
 	Role      string    `json:"role"`
