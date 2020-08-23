@@ -46,15 +46,23 @@ func getPath(i interface{}, path []string) interface{} {
 	if len(path) == 0 {
 		return i
 	}
-	t, ok := i.(map[string]interface{})
-	if ok {
+	switch t := i.(type) {
+
+	case Data:
 		ret, ok := t[path[0]]
 		if !ok {
 			return nil
 		}
 		return getPath(ret, path[1:])
+	case map[string]interface{}:
+		ret, ok := t[path[0]]
+		if !ok {
+			return nil
+		}
+		return getPath(ret, path[1:])
+	default:
+		return nil
 	}
-	return nil
 }
 
 func (d Data) GetString(k string) string {

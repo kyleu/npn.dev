@@ -1,8 +1,9 @@
 package routes
 
 import (
-	"github.com/kyleu/npn/npncore"
 	"strings"
+
+	"github.com/kyleu/npn/npncore"
 )
 
 func Name(params ...string) string {

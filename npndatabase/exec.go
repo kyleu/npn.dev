@@ -3,6 +3,7 @@ package npndatabase
 import (
 	"database/sql"
 	"fmt"
+
 	"github.com/kyleu/npn/npncore"
 
 	"emperror.dev/errors"
@@ -85,4 +86,3 @@ func (s *Service) process(key string, past string, q string, tx *sqlx.Tx, expect
 	}
 	return aff, nil
 }
-

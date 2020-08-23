@@ -2,10 +2,11 @@ package npncontroller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncontroller/routes"
 	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
-	"net/http"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"

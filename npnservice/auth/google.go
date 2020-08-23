@@ -23,7 +23,7 @@ type googleUser struct {
 }
 
 func googleAuth(tok *oauth2.Token) (*Record, error) {
-	contents, err := callHTTP("https://www.googleapis.com/oauth2/v2/userinfo?access_token=" + tok.AccessToken, "")
+	contents, err := callHTTP("https://www.googleapis.com/oauth2/v2/userinfo?access_token="+tok.AccessToken, "")
 	if err != nil {
 		return nil, errors.Wrap(err, "error reading Google response")
 	}

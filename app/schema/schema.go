@@ -53,7 +53,7 @@ func (s *Schema) AddOption(opt *Option) error {
 		return errors.New("nil opt")
 	}
 	if s.Options.Get(opt.T, opt.K) != nil {
-		return errors.New(alreadyExists("option", opt.T + ":" + opt.K))
+		return errors.New(alreadyExists("option", opt.T+":"+opt.K))
 	}
 	s.Options = append(s.Options, opt)
 	return nil

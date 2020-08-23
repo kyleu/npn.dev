@@ -26,7 +26,7 @@ type projectSaveForm struct {
 }
 
 func projErr(key string) string {
- return "cannot load project ["+key+"]"
+	return "cannot load project [" + key + "]"
 }
 
 func ProjectList(w http.ResponseWriter, r *http.Request) {

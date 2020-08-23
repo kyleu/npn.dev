@@ -1,10 +1,11 @@
 package npnconnection
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
 	"fmt"
 	"sync"
+
+	"emperror.dev/errors"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"

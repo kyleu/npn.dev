@@ -24,8 +24,8 @@ func Migrate(s *Service) error {
 
 	maxIdx := maxMigrationIdx(s)
 
-	if len(DatabaseMigrations) > maxIdx + 1 {
-		s.logger.Info(fmt.Sprintf("applying [%v] database migrations...", len(DatabaseMigrations) - maxIdx + 1))
+	if len(DatabaseMigrations) > maxIdx+1 {
+		s.logger.Info(fmt.Sprintf("applying [%v] database migrations...", len(DatabaseMigrations)-maxIdx+1))
 	}
 
 	for i, file := range DatabaseMigrations {

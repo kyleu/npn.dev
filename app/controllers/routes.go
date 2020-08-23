@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/kyleu/npn/npnasset"
 	"net/http"
+
+	"github.com/kyleu/npn/npnasset"
 
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/npncontroller"
@@ -13,8 +14,8 @@ import (
 )
 
 const (
-  keyParam = "{key}"
-  taskParam = "{task}"
+	keyParam  = "{key}"
+	taskParam = "{task}"
 )
 
 func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {

@@ -1,10 +1,11 @@
 package npncontroller
 
 import (
-	"github.com/kyleu/npn/npncontroller/routes"
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/kyleu/npn/npncontroller/routes"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"

@@ -1,9 +1,10 @@
 package npncontroller
 
 import (
-	"github.com/kyleu/npn/npncore"
 	"net/http"
 	"strings"
+
+	"github.com/kyleu/npn/npncore"
 
 	"github.com/kyleu/npn/npnweb"
 

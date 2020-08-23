@@ -2,10 +2,11 @@ package npncontroller
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npnuser"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/kyleu/npn/npnuser"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npntemplate/gen/npntemplate"

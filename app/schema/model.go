@@ -97,7 +97,7 @@ func (m *Model) AddIndex(i *Index) error {
 		return errors.New("nil index")
 	}
 	if m.Fields.Get(i.Key) != nil {
-		return errors.New(alreadyExists("index",  i.Key))
+		return errors.New(alreadyExists("index", i.Key))
 	}
 	m.Indexes = append(m.Indexes, i)
 	return nil

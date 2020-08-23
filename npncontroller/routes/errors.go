@@ -3,9 +3,10 @@ package routes
 import (
 	"context"
 	"fmt"
-	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 	"io"
 	"net/http"
+
+	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"

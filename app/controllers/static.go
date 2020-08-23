@@ -1,10 +1,11 @@
 package controllers
 
 import (
-	"github.com/kyleu/npn/npnasset"
 	"net/http"
 	"path/filepath"
 	"strings"
+
+	"github.com/kyleu/npn/npnasset"
 
 	"github.com/kyleu/npn/app/assets"
 )

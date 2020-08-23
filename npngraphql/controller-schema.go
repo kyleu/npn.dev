@@ -1,25 +1,24 @@
 package npngraphql
 
 import (
-	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 	"net/http"
+
+	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
-
 )
 
 var (
-	gqlQueryName = "Query"
+	gqlQueryName    = "Query"
 	gqlMutationName = "Mutation"
 )
 
 const (
 	graphiqlName = "GraphiQL"
-	voyagerName = "GraphQL Voyager"
+	voyagerName  = "GraphQL Voyager"
 )
-
 
 func GraphiQL(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {

@@ -3,11 +3,12 @@ package npngraphql
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/kyleu/npn/npncontroller/routes"
 	"io"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/gorilla/mux"
+	"github.com/kyleu/npn/npncontroller/routes"
 
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
@@ -92,4 +93,3 @@ func mapGetMap(m map[string]interface{}, key string, logger logur.Logger) map[st
 	}
 	return ret
 }
-
