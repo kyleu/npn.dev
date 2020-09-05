@@ -75,7 +75,9 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 
 	// Provided
 	npncontroller.RoutesProfile(app, r)
-	npncontroller.RoutesFile(app, r)
+	npncontroller.RoutesFile(app, r, func(path string) string {
+		return ""
+	})
 	npncontroller.RoutesUtil(app, r)
 
 	return r, nil

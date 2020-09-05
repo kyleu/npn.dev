@@ -1,6 +1,7 @@
 package npncore
 
 import (
+	"encoding/csv"
 	"fmt"
 	"net/url"
 	"strings"
@@ -38,8 +39,13 @@ func (d Data) Clone() Data {
 }
 
 func (d Data) GetPath(path string) interface{} {
-	parts := strings.Split(path, ".")
-	return getPath(d, parts)
+	r := csv.NewReader(strings.NewReader(path))
+	r.Comma = '.'
+	fields, err := r.Read()
+	if err != nil {
+		return err
+	}
+	return getPath(d, fields)
 }
 
 func getPath(i interface{}, path []string) interface{} {

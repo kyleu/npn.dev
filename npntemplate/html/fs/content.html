@@ -1,10 +1,11 @@
-<%: func FileContent(path []string, content string, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%: func FileContent(extraContent string, path []string, content string, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
+      <% if len(extraContent) > 0 { %><div class="right"><%== extraContent %></div><% } %>
       <h3 class="uk-card-title"><a class="theme" href="<%= ctx.Route(npncore.KeyFile) %>">/</a><%= strings.Join(path, "/") %></h3>
       <pre><%= content %></pre>
     </div>

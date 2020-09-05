@@ -61,16 +61,18 @@ func ExtractContext(w http.ResponseWriter, r *http.Request, addIfMissing bool) *
 
 	var u *user.SystemUser
 	if ai.User() == nil || (!ai.User().HasDB()) {
-		content, err := ai.Files().ReadFile("profile.json")
-		if err != nil {
-			return nil
-		}
 		tgt := &npnuser.UserProfile{}
-		err = npncore.FromJSON([]byte(content), tgt)
-		if err != nil {
-			ai.Logger().Warn(fmt.Sprintf("can't load profile: %+v", err))
-			return nil
+		content, err := ai.Files().ReadFile("profile.json")
+		if err == nil {
+			err = npncore.FromJSON([]byte(content), tgt)
+			if err != nil {
+				ai.Logger().Warn(fmt.Sprintf("can't load profile: %+v", err))
+				return nil
+			}
+		} else {
+			tgt = npnuser.NewUserProfile(npncore.UUID(), "Guest")
 		}
+
 		u = &user.SystemUser{
 			UserID:    tgt.UserID,
 			Name:      tgt.Name,

@@ -7,10 +7,6 @@ import (
 
 	"github.com/kyleu/npn/npncore"
 
-	"github.com/kyleu/npn/npnservice/auth"
-
-	"github.com/kyleu/npn/npnservice/user"
-
 	"github.com/gofrs/uuid"
 	"logur.dev/logur"
 )
@@ -23,13 +19,11 @@ type Service struct {
 	channels      map[Channel][]uuid.UUID
 	channelsMu    sync.Mutex
 	Logger        logur.Logger
-	Users         *user.Service
-	Auths         *auth.Service
 	handler       Handler
 	Context       interface{}
 }
 
-func NewService(logger logur.Logger, users *user.Service, auths *auth.Service, handler Handler, ctx interface{}) *Service {
+func NewService(logger logur.Logger, handler Handler, ctx interface{}) *Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeySocket})
 	return &Service{
 		connections:   make(map[uuid.UUID]*Connection),
@@ -37,8 +31,6 @@ func NewService(logger logur.Logger, users *user.Service, auths *auth.Service, h
 		channels:      make(map[Channel][]uuid.UUID),
 		channelsMu:    sync.Mutex{},
 		Logger:        logger,
-		Users:         users,
-		Auths:         auths,
 		handler:       handler,
 		Context:       ctx,
 	}

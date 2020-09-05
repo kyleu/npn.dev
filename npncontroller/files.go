@@ -13,7 +13,12 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
-func RoutesFile(app npnweb.AppInfo, r *mux.Router) {
+var fileExtraContent = func(path string) string {
+	return ""
+}
+
+func RoutesFile(app npnweb.AppInfo, r *mux.Router, extraContent func(path string) string) {
+	fileExtraContent = extraContent
 	file := r.Path(routes.Path(npncore.KeyFile)).Subrouter()
 	file.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(FileRoot))).Name(routes.Name(npncore.KeyFile, "root"))
 	r.PathPrefix("/" + npncore.KeyFile + "/").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(FilePath))).Name(routes.Name(npncore.KeyFile))
@@ -55,7 +60,7 @@ func FilePath(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return EResp(err, "cannot read file ["+path+"]")
 		}
-		return T(npntemplate.FileContent(paths, string(content), ctx, w))
+		return T(npntemplate.FileContent(fileExtraContent(path), paths, string(content), ctx, w))
 	})
 }
 

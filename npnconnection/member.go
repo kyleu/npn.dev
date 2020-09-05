@@ -5,15 +5,6 @@ import (
 	"github.com/kyleu/npn/npncore"
 )
 
-type UpdateMemberParams struct {
-	ID   uuid.UUID `json:"id"`
-	Role string    `json:"role"`
-}
-
-func (s *Service) UpdateMember(id uuid.UUID, name string, picture string) error {
-	return s.Users.UpdateMember(id, name, picture)
-}
-
 func (s *Service) GetOnline(ch Channel) []uuid.UUID {
 	connections, ok := s.channels[ch]
 	if !ok {

@@ -2,6 +2,7 @@ package npndatabase
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/jmoiron/sqlx"
@@ -33,6 +34,22 @@ func errMessage(t string, q string, values []interface{}) string {
 
 func logQuery(s *Service, msg string, q string, values []interface{}) {
 	s.logger.Debug(fmt.Sprintf("%v {\n  SQL: %v\n  Values: %v\n}", msg, strings.TrimSpace(q), npncore.ValueStrings(values)))
+}
+
+func (s *Service) Tables() ([]string, error) {
+	type table struct {
+		Name string `db:"n"`
+	}
+	res := []*table{}
+	sql := "select tablename as n from pg_catalog.pg_tables where schemaname != 'pg_catalog' and schemaname != 'information_schema'"
+	err := s.db.Select(&res, sql)
+
+	ret := make([]string, 0, len(res))
+	for _, t := range res {
+		ret = append(ret, t.Name)
+	}
+	sort.Strings(ret)
+	return ret, err
 }
 
 func (s *Service) Indexes(tableName string) ([]*Index, error) {
