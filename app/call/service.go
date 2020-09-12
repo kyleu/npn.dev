@@ -2,6 +2,7 @@ package call
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"
@@ -28,7 +29,10 @@ func (s *Service) Call(p *request.Prototype) *Result {
 		}
 	}
 	tr := &http.Transport{}
-	client := &http.Client{Transport: tr}
+	client := &http.Client{
+		Transport: tr,
+		Timeout:   60 * time.Second,
+	}
 
 	ret := call(client, p, s.logger)
 

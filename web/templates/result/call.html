@@ -1,0 +1,12 @@
+<%: func CallDetail(collection string, req *request.Request, result *call.Result, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <% ResultPanel(result, ctx, _buffer) %>
+    <% RequestPanel(req, ctx, `uk-margin-top`, _buffer) %>
+    <% RequestActions(collection, req, ctx, _buffer) %>
+  </div>
+</div>
+<% } %>

@@ -12,37 +12,47 @@
           Edit Request
         <% } %>
       </h3>
-      <form class="uk-margin-top">
+      <form class="uk-form-stacked" action="<%= ctx.Route(`TODO`) %>" method="post">
         <input type="hidden" name="coll" value="<%= collection %>" />
         <input type="hidden" name="originalKey" value="<%= req.Key %>" />
         <fieldset class="uk-fieldset">
-          <div class="uk-margin">
-            <input class="uk-input" type="text" placeholder="Input" />
+          <legend class="hidden">request form</legend>
+
+          <div class="uk-margin-top">
+            <label class="uk-form-label" for="key">Key</label>
+            <input class="uk-input" id="key" name="key" type="text" value="<%= req.Key %>" />
           </div>
 
-          <div class="uk-margin">
-            <select class="uk-select">
-              <option>Option 01</option>
-              <option>Option 02</option>
+          <div class="uk-margin-top">
+            <label class="uk-form-label" for="title">Title</label>
+            <input class="uk-input" id="title" name="title" type="text" value="<%= req.Title %>" />
+          </div>
+
+          <div class="uk-margin-top">
+            <label class="uk-form-label" for="description">Description</label>
+            <input class="uk-input" id="description" name="description" type="text" value="<%= req.Description %>" />
+          </div>
+
+          <div class="uk-margin-top">
+            <label class="uk-form-label" for="method">Method</label>
+            <select class="uk-select" id="method" name="method">
+            <% for _, m := range request.AllMethods { %>
+              <% if m.Key == req.Prototype.Method.Key { %>
+                <option selected="selected"><%= m.Key %></option>
+              <% } else { %>
+                <option><%= m.Key %></option>
+              <% } %>
+            <% } %>
             </select>
           </div>
 
-          <div class="uk-margin">
-            <textarea class="uk-textarea" rows="5" placeholder="Textarea"></textarea>
+          <div class="uk-margin-top">
+            <label class="uk-form-label" for="url">URL</label>
+            <input class="uk-input" id="url" name="url" type="text" value="<%= req.Prototype.URLString() %>" />
           </div>
 
-          <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-            <label><input class="uk-radio" type="radio" name="radio2" checked> A</label>
-            <label><input class="uk-radio" type="radio" name="radio2"> B</label>
-          </div>
-
-          <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
-            <label><input class="uk-checkbox" type="checkbox" checked> A</label>
-            <label><input class="uk-checkbox" type="checkbox"> B</label>
-          </div>
-
-          <div class="uk-margin">
-            <input class="uk-range" type="range" value="2" min="0" max="10" step="0.1" />
+          <div class="uk-margin-top">
+            <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
           </div>
         </fieldset>
       </form>

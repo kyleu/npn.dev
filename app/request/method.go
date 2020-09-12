@@ -3,6 +3,7 @@ package request
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 )
 
 type Method struct {
@@ -24,6 +25,7 @@ var (
 var AllMethods = []Method{MethodGet, MethodHead, MethodPost, MethodPut, MethodPatch, MethodDelete, MethodConnect, MethodOptions, MethodTrace}
 
 func MethodFromString(s string) Method {
+	s = strings.ToUpper(s)
 	for _, t := range AllMethods {
 		if t.Key == s {
 			return t

@@ -2,27 +2,29 @@ package request
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/request/body"
+	"github.com/kyleu/npn/app/request/header"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 
-	"github.com/kyleu/npn/app/auth"
+	"github.com/kyleu/npn/app/request/auth"
 	"github.com/kyleu/npn/npncore"
 )
 
 type Prototype struct {
-	Method   Method      `json:"method"`
-	Protocol Protocol    `json:"protocol"`
-	Domain   string      `json:"domain"`
-	Port     int         `json:"port,omitempty"`
-	Path     string      `json:"path,omitempty"`
-	Query    QueryParams `json:"query,omitempty"`
-	Fragment string      `json:"fragment,omitempty"`
-	Headers  Headers     `json:"headers,omitempty"`
-	Auth     auth.Auths  `json:"auth,omitempty"`
-	Body     Body        `json:"body,omitempty"`
-	Options  *Options    `json:"options,omitempty"`
+	Method   Method         `json:"method"`
+	Protocol Protocol       `json:"protocol"`
+	Domain   string         `json:"domain"`
+	Port     int            `json:"port,omitempty"`
+	Path     string         `json:"path,omitempty"`
+	Query    QueryParams    `json:"query,omitempty"`
+	Fragment string         `json:"fragment,omitempty"`
+	Headers  header.Headers `json:"headers,omitempty"`
+	Auth     auth.Auths     `json:"auth,omitempty"`
+	Body     *body.Body     `json:"body,omitempty"`
+	Options  *Options       `json:"options,omitempty"`
 }
 
 func NewPrototype() *Prototype {
@@ -73,11 +75,11 @@ func (p *Prototype) ToHTTP() *http.Request {
 	}
 }
 
-func PrototypeFromURL(method Method, u *url.URL) *Prototype {
+func PrototypeFromURL(u *url.URL) *Prototype {
 	var auths auth.Auths
 	if u.User != nil {
 		p, _ := u.User.Password()
-		a := &auth.Basic{Username: u.User.Username(), Password: p}
+		a := auth.NewBasic(u.User.Username(), p, false)
 		auths = auth.Auths{a}
 	}
 	domain, portString := npncore.SplitString(u.Host, ':', true)
@@ -88,7 +90,7 @@ func PrototypeFromURL(method Method, u *url.URL) *Prototype {
 	}
 
 	return &Prototype{
-		Method:   method,
+		Method:   MethodGet,
 		Protocol: ProtocolFromString(u.Scheme),
 		Domain:   domain,
 		Port:     port,
@@ -99,7 +101,7 @@ func PrototypeFromURL(method Method, u *url.URL) *Prototype {
 	}
 }
 
-func PrototypeFromString(method Method, u string) *Prototype {
+func PrototypeFromString(u string) *Prototype {
 	var auths auth.Auths
 
 	rest, frag := npncore.SplitString(u, '#', true)
@@ -126,11 +128,11 @@ func PrototypeFromString(method Method, u string) *Prototype {
 
 	if aut != "" {
 		user, pass := npncore.SplitString(aut, ':', true)
-		a := &auth.Basic{Username: user, Password: pass}
+		a := auth.NewBasic(user, pass, false)
 		auths = auth.Auths{a}
 	}
 	return &Prototype{
-		Method:   method,
+		Method:   MethodGet,
 		Protocol: ProtocolFromString(proto),
 		Domain:   host,
 		Port:     port,

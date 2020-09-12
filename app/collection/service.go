@@ -69,11 +69,9 @@ func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
 	if err != nil {
 		return nil, err
 	}
-	ret := &request.Request{}
-	err = npncore.FromJSON([]byte(content), ret)
+	ret, err := request.FromString(f, content)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to read request from ["+p+"]")
+		return nil, err
 	}
-
-	return ret.Normalize(f), nil
+	return ret, nil
 }

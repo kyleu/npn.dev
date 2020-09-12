@@ -1,5 +1,11 @@
 package request
 
+import (
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npncore"
+	"strings"
+)
+
 type Request struct {
 	Key         string     `json:"-"`
 	Title       string     `json:"title,omitempty"`
@@ -9,6 +15,27 @@ type Request struct {
 
 func NewRequest() *Request {
 	return &Request{Prototype: NewPrototype()}
+}
+
+func FromString(key string, content string) (*Request, error) {
+	ret := &Request{}
+	content = strings.TrimSpace(content)
+	if strings.HasPrefix(content, "\"") || strings.HasPrefix(content, "http") {
+		u := strings.TrimPrefix(strings.TrimSuffix(content, "\""), "\"")
+		proto := PrototypeFromString(u)
+		ret.Prototype = proto
+	} else {
+		err := npncore.FromJSONStrict([]byte(content), ret)
+		if err != nil {
+			proto := &Prototype{}
+			err := npncore.FromJSONStrict([]byte(content), proto)
+			if err != nil {
+				return nil, errors.Wrap(err, "unable to parse request from ["+content+"]")
+			}
+			ret.Prototype = proto
+		}
+	}
+	return ret.Normalize(key), nil
 }
 
 func (r *Request) TitleWithFallback() string {

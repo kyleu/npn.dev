@@ -1,0 +1,19 @@
+<%: func DebugRequestOptions(opts *request.Options, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <h3 class="uk-card-title">Options</h3>
+  <ul class="uk-list uk-list-divider">
+    <% if opts == nil { %>
+      <li>no auths</li>
+    <% } else { %>
+      <li>Timeout: <%=v opts.Timeout %></li>
+      <li>IgnoreRedirects: <%=v opts.IgnoreRedirects %></li>
+      <li>IgnoreReferrer: <%=v opts.IgnoreReferrer %></li>
+      <li>IgnoreCerts: <%=v opts.IgnoreCerts %></li>
+      <li>ExcludeDefaultHeaders: <%=v opts.ExcludeDefaultHeaders %></li>
+      <li>ReadCookieJars: <%=v opts.ReadCookieJars %></li>
+      <li>WriteCookieJar: <%=v opts.WriteCookieJar %></li>
+      <li>SSLCert: <%=v opts.SSLCert %></li>
+      <li>UserAgentOverride: <%=v opts.UserAgentOverride %></li>
+    <% } %>
+  </ul>
+</div>

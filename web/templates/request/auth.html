@@ -1,0 +1,12 @@
+<%: func DebugRequestAuth(auths auth.Auths, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <h3 class="uk-card-title">Authentication</h3>
+  <ul class="uk-list uk-list-divider">
+    <% if len(auths) == 0 { %>
+      <li>no auths</li>
+    <% } %>
+    <% for _, a := range auths { %>
+      <li><%= a.String() %></li>
+    <% } %>
+  </ul>
+</div>

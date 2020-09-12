@@ -1,0 +1,45 @@
+{
+  "title": "Full Request",
+  "description": "Exercises all features",
+  "prototype": {
+    "method": "GET",
+    "protocol": "http",
+    "domain": "localhost",
+    "port": 10101,
+    "path": "/testbed",
+    "query": [
+      {
+        "k": "q",
+        "v": "foo"
+      },
+      {
+        "k": "x",
+        "v": "1"
+      }
+    ],
+    "fragment": "foo",
+    "headers": [
+      {
+        "k": "Accept",
+        "v": "application/json"
+      }
+    ],
+    "auth": [
+      {
+        "type": "basic",
+        "config": {
+          "username": "kyle",
+          "password": "pass",
+          "showPassword": true
+        }
+      }
+    ],
+    "body": {
+      "type": "temp",
+      "config": {
+        "foo": "bar"
+      }
+    },
+    "options": {}
+  }
+}

@@ -1,6 +1,7 @@
 package npncore
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 
@@ -24,4 +25,10 @@ func ToJSONBytes(x interface{}, logger logur.Logger) []byte {
 
 func FromJSON(msg json.RawMessage, tgt interface{}) error {
 	return json.Unmarshal(msg, tgt)
+}
+
+func FromJSONStrict(msg json.RawMessage, tgt interface{}) error {
+	dec := json.NewDecoder(bytes.NewReader(msg))
+	dec.DisallowUnknownFields()
+	return dec.Decode(tgt)
 }

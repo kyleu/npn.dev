@@ -1,4 +1,4 @@
-package request
+package header
 
 type Header struct {
 	Key   string `json:"k,omitempty"`
