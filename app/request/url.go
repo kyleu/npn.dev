@@ -22,6 +22,17 @@ func (p *Prototype) URL() *url.URL {
 	}
 }
 
+func (p *Prototype) FullPathString() string {
+	ret := "/" + strings.TrimPrefix(p.Path, "/")
+	if len(p.Query) > 0 {
+		ret += "?" + p.Query.ToURL()
+	}
+	if len(p.Fragment) > 0 {
+		ret += "#" + url.QueryEscape(p.Fragment)
+	}
+	return ret
+}
+
 func (p *Prototype) URLString() string {
 	domain := p.Host()
 	if p.Auth.HasBasic() {
@@ -29,15 +40,7 @@ func (p *Prototype) URLString() string {
 		domain = fmt.Sprintf("%v:%v@%v", url.PathEscape(user), url.PathEscape(pass), p.Host())
 	}
 	ret := fmt.Sprintf("%v://%v", p.Protocol.Key, domain)
-	if len(p.Path) > 0 {
-		ret += "/" + strings.TrimPrefix(p.Path, "/")
-	}
-	if len(p.Query) > 0 {
-		ret += "?" + p.Query.ToURL()
-	}
-	if len(p.Fragment) > 0 {
-		ret += "#" + url.QueryEscape(p.Fragment)
-	}
+	ret += p.FullPathString()
 	return ret
 }
 
@@ -55,7 +58,9 @@ func (p *Prototype) URLParts() []*URLPart {
 	add("", "://")
 	if p.Auth.HasBasic() {
 		user, pass := p.Auth.GetBasic()
-		add("auth", fmt.Sprintf("%v:%v", url.PathEscape(user), url.PathEscape(pass)))
+		add("username", url.PathEscape(user))
+		add("", ":")
+		add("password", url.PathEscape(pass))
 		add("", "@")
 	}
 	add("domain", p.Domain)
@@ -80,13 +85,9 @@ func (p *Prototype) URLParts() []*URLPart {
 
 func URLColor(key string) string {
 	switch key {
-	case "protocol":
+	case "protocol", "auth", "username", "password":
 		return "green-fg"
-	case "auth":
-		return "green-fg"
-	case "domain":
-		return "blue-fg"
-	case "port":
+	case "domain", "port":
 		return "blue-fg"
 	case "path":
 		return "bluegrey-fg"

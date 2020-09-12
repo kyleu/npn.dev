@@ -8,6 +8,7 @@ import (
 
 type CURL struct {
   Silent bool
+  Multiline bool
 }
 
 func (c *CURL) Key() string {
@@ -38,12 +39,16 @@ func (c *CURL) Transform(p *request.Prototype) (*Result, error) {
 	} else {
 		app("--request " + p.Method.Key)
 	}
-	app("'" + esc(p.URLString()) + "'")
-
 
 	for _, h := range p.Headers {
 		app(fmt.Sprintf("--header '%v: %v'", esc(h.Key), esc(h.Value)))
 	}
 
-	return &Result{Out: strings.Join(out, " ")}, nil
+	app("'" + esc(p.URLString()) + "'")
+
+	sep := " "
+	if !c.Multiline {
+		sep = " \\\n  "
+	}
+	return &Result{Out: strings.Join(out, sep)}, nil
 }

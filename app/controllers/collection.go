@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
+	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/gen/templates"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npnweb"
@@ -20,6 +21,51 @@ func CollectionList(w http.ResponseWriter, r *http.Request) {
 		ctx.Title = "Collections"
 		ctx.Breadcrumbs = npnweb.Breadcrumbs{npnweb.BreadcrumbSelf("collections")}
 		return npncontroller.T(templates.CollectionList(colls, ctx, w))
+	})
+}
+
+func CollectionNew(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		coll := &collection.Collection{}
+		ctx.Title = "New collection"
+		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), npnweb.BreadcrumbSelf("new"))
+		return npncontroller.T(templates.CollectionForm("new", coll, ctx, w))
+	})
+}
+
+func CollectionEdit(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		key := mux.Vars(r)["c"]
+
+		coll, err := app.Svc(ctx.App).Collection.Load(key)
+		if err != nil {
+			return npncontroller.EResp(err)
+		}
+
+		ctx.Title = coll.Title
+		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), npnweb.BreadcrumbSelf(key))
+		return npncontroller.T(templates.CollectionForm(coll.Key, coll, ctx, w))
+	})
+}
+
+func CollectionSave(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		originalKey := mux.Vars(r)["c"]
+
+		_ = r.ParseForm()
+		key := r.Form.Get("key")
+		if len(key) == 0 {
+			key = originalKey
+		}
+		title := r.Form.Get("title")
+		description := r.Form.Get("description")
+
+		err := app.Svc(ctx.App).Collection.Save(originalKey, key, title, description)
+		if err != nil {
+			return npncontroller.EResp(err)
+		}
+
+		return ctx.Route(KeyCollection + ".detail", "c", key), nil
 	})
 }
 

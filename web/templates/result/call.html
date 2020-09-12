@@ -5,6 +5,8 @@
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <% ResultPanel(result, ctx, _buffer) %>
+    <% DebugResultHeaders(result.Response.Headers, ctx, _buffer) %>
+    <% DebugResultBody(result.Response.Body, ctx, _buffer) %>
     <% RequestPanel(req, ctx, `uk-margin-top`, _buffer) %>
     <% RequestActions(collection, req, ctx, _buffer) %>
   </div>

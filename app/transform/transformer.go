@@ -11,6 +11,4 @@ type Transformer interface {
 	Transform(p *request.Prototype) (*Result, error)
 }
 
-var AllTransformers = []Transformer{
-	&CURL{},
-}
+var AllTransformers = []Transformer{&CURL{}, &HTTP{}}

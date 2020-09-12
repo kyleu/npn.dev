@@ -12,7 +12,7 @@
           Edit Request
         <% } %>
       </h3>
-      <form class="uk-form-stacked" action="<%= ctx.Route(`TODO`) %>" method="post">
+      <form class="uk-form-stacked" action="<%= ctx.Route(`request.save`, `c`, collection, npncore.KeyKey, req.Key) %>" method="post">
         <input type="hidden" name="coll" value="<%= collection %>" />
         <input type="hidden" name="originalKey" value="<%= req.Key %>" />
         <fieldset class="uk-fieldset">

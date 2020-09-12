@@ -8,6 +8,7 @@
     <% RequestActions(collection, req, ctx, _buffer) %>
     <% DebugRequestAuth(req.Prototype.Auth, ctx, _buffer) %>
     <% DebugRequestHeaders(req.Prototype.Headers, ctx, _buffer) %>
+    <% DebugRequestFinalHeaders(req.Options().ExcludeDefaultHeaders, req.Prototype.FinalHeaders(), ctx, _buffer) %>
     <% DebugRequestBody(req.Prototype.Body, ctx, _buffer) %>
     <% DebugRequestOptions(req.Prototype.Options, ctx, _buffer) %>
   </div>

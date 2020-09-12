@@ -75,3 +75,8 @@ func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
 	}
 	return ret, nil
 }
+
+func (s *Service) Save(originalKey string, newKey string, title string, description string) error {
+	// TODO save collections
+	return nil
+}

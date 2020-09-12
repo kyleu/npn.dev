@@ -2,14 +2,14 @@ package request
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/request/body"
-	"github.com/kyleu/npn/app/request/header"
+	"github.com/kyleu/npn/app/body"
+	"github.com/kyleu/npn/app/header"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 
-	"github.com/kyleu/npn/app/request/auth"
+	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/npn/npncore"
 )
 
@@ -48,6 +48,51 @@ func (p *Prototype) Host() string {
 		return p.Domain
 	} else {
 		return fmt.Sprintf("%v:%v", p.Domain, p.Port)
+	}
+}
+
+func (p *Prototype) FinalHeaders() header.Headers {
+	ret := make(header.Headers, len(p.Headers))
+	for i, h := range p.Headers {
+		ret[i] = h
+	}
+	if (!p.Headers.Contains("Host")) && (!p.ExcludesHeader("Host")) {
+		host := &header.Header{Key: "Host", Value: p.Host()}
+		ret = append(header.Headers{host}, ret...)
+	}
+	if (!p.Headers.Contains("Content-Type")) && (!p.ExcludesHeader("Content-Type")) {
+		ct := p.ContentType()
+		if len(ct) > 0 {
+			ct := &header.Header{Key: "Content-Type", Value: ct}
+			ret = append(header.Headers{ct}, ret...)
+		}
+	}
+	return ret
+}
+
+func (p *Prototype) ExcludesHeader(k string) bool {
+	k = strings.ToLower(k)
+	if p.Options == nil {
+		return false
+	}
+	for _, ex := range p.Options.ExcludeDefaultHeaders {
+		if ex == k {
+			return true
+		}
+	}
+	return false
+}
+
+
+func (p *Prototype) ContentType() string {
+	if p.Body == nil {
+		return ""
+	}
+	switch p.Body.Type {
+	case body.KeyTemp:
+		return p.Body.Config.MimeType()
+	default:
+		return "text/html"
 	}
 }
 

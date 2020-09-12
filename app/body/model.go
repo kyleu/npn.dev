@@ -8,6 +8,7 @@ import (
 
 type BodyConfig interface {
 	Bytes() []byte
+	MimeType() string
 	String() string
 }
 

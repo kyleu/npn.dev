@@ -45,7 +45,15 @@ func (r *Request) TitleWithFallback() string {
 	return r.Title
 }
 
-type Requests []*Request
+func (r *Request) Options() *Options {
+	if r.Prototype == nil {
+		return &Options{}
+	}
+	if r.Prototype.Options == nil {
+		return &Options{}
+	}
+	return r.Prototype.Options
+}
 
 func (r *Request) Normalize(key string) *Request {
 	if r == nil {
@@ -58,3 +66,5 @@ func (r *Request) Normalize(key string) *Request {
 	r.Prototype = r.Prototype.Normalize()
 	return r
 }
+
+type Requests []*Request

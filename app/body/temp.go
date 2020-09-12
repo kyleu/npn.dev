@@ -7,7 +7,11 @@ type Temp struct {
 }
 
 func (t *Temp) Bytes() []byte {
-	return []byte("TODO")
+	return []byte(t.Foo)
+}
+
+func (t *Temp) MimeType() string {
+	return "text/plain"
 }
 
 func (t *Temp) String() string {

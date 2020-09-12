@@ -1,7 +1,8 @@
 package call
 
 import (
-	"github.com/kyleu/npn/app/request/header"
+	"github.com/kyleu/npn/app/body"
+	"github.com/kyleu/npn/app/header"
 	"net/http"
 )
 
@@ -16,8 +17,8 @@ type Response struct {
 	TransferEncoding []string       `json:"transferEncoding,omitempty"`
 	Close            bool           `json:"close,omitempty"`
 	Uncompressed     bool           `json:"uncompressed,omitempty"`
-	// TLS *tls.ConnectionState `json:"tls,omitempty"`
-	// Body []byte maybe? `json:"body,omitempty"`
+	Body             *body.Body     `json:"body,omitempty"`
+	Error            *string        `json:"error,omitempty"`
 }
 
 func ResponseFromHTTP(r *http.Response) *Response {
@@ -26,6 +27,12 @@ func ResponseFromHTTP(r *http.Response) *Response {
 		for _, v := range vs {
 			headers = append(headers, &header.Header{Key: k, Value: v})
 		}
+	}
+	bod, err := body.Parse(headers.GetValue("Content-Type"), r.Body)
+	var es *string = nil
+	if err != nil {
+		ex := err.Error()
+		es = &ex
 	}
 	return &Response{
 		Status:           r.Status,
@@ -38,5 +45,7 @@ func ResponseFromHTTP(r *http.Response) *Response {
 		TransferEncoding: r.TransferEncoding,
 		Close:            r.Close,
 		Uncompressed:     r.Uncompressed,
+		Body:             bod,
+		Error:            es,
 	}
 }

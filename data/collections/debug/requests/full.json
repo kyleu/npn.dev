@@ -40,6 +40,8 @@
         "foo": "bar"
       }
     },
-    "options": {}
+    "options": {
+      "excludeDefaultHeaders": ["host"]
+    }
   }
 }
