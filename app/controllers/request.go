@@ -79,6 +79,16 @@ func RequestDelete(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func RequestTransform(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		_, req, err := loadRequest(r, ctx, "transform")
+		if err != nil {
+			return npncontroller.EResp(err)
+		}
+		return npncontroller.T(templates.RequestTransform(req.Prototype, ctx, w))
+	})
+}
+
 func loadRequest(r *http.Request, ctx *npnweb.RequestContext, action string) (string, *request.Request, error) {
 	c := mux.Vars(r)["c"]
 	key := mux.Vars(r)[npncore.KeyKey]

@@ -1,16 +1,49 @@
 package transform
 
-import "github.com/kyleu/npn/app/request"
+import (
+	"fmt"
+	"github.com/kyleu/npn/app/request"
+	"strings"
+)
 
 type CURL struct {
-
+  Silent bool
 }
 
 func (c *CURL) Key() string {
 	return "curl"
 }
 
-func (c *CURL) Transform(r *request.Request) (*Result, error) {
-	out := "TODO"
-	return &Result{Out: out}, nil
+func (c *CURL) Transform(p *request.Prototype) (*Result, error) {
+	out := []string{"curl"}
+
+	var app = func(s string) {
+		out = append(out, s)
+	}
+	var esc = func(s string) string {
+		return strings.ReplaceAll(s, "'", "'\\''")
+	}
+
+	if c.Silent {
+		app("--silent")
+	}
+	if p.Options != nil && p.Options.Timeout > 0 {
+		app(fmt.Sprintf("--max-time %v", p.Options.Timeout))
+	}
+	if p.Options != nil && (!p.Options.IgnoreRedirects) {
+		app("--location")
+	}
+	if p.Method == request.MethodHead {
+		app("--head")
+	} else {
+		app("--request " + p.Method.Key)
+	}
+	app("'" + esc(p.URLString()) + "'")
+
+
+	for _, h := range p.Headers {
+		app(fmt.Sprintf("--header '%v: %v'", esc(h.Key), esc(h.Value)))
+	}
+
+	return &Result{Out: strings.Join(out, " ")}, nil
 }

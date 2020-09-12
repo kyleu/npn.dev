@@ -9,11 +9,21 @@ import (
 )
 
 func ToJSON(x interface{}, logger logur.Logger) string {
-	return string(ToJSONBytes(x, logger))
+	return string(ToJSONBytes(x, logger, true))
 }
 
-func ToJSONBytes(x interface{}, logger logur.Logger) []byte {
-	b, err := json.MarshalIndent(x, "", "  ")
+func ToJSONCompact(x interface{}, logger logur.Logger) string {
+	return string(ToJSONBytes(x, logger, false))
+}
+
+func ToJSONBytes(x interface{}, logger logur.Logger, indent bool) []byte {
+	var b []byte
+	var err error
+	if indent {
+		b, err = json.MarshalIndent(x, "", "  ")
+	} else {
+		b, err = json.Marshal(x)
+	}
 	if err != nil {
 		if logger == nil {
 			panic(err)

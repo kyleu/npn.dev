@@ -43,6 +43,7 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(routes.Path("c", "{c}", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDetail))).Name(routes.Name("request"))
 	r.Path(routes.Path("c", "{c}", keyParam, "call")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestCall))).Name(routes.Name("request", "call"))
 	r.Path(routes.Path("c", "{c}", keyParam, "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestEdit))).Name(routes.Name("request", "edit"))
+	r.Path(routes.Path("c", "{c}", keyParam, "transform")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestTransform))).Name(routes.Name("request", "transform"))
 	r.Path(routes.Path("c", "{c}", keyParam, "delete")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDelete))).Name(routes.Name("request", "delete"))
 
 	// Ad hoc

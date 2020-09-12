@@ -8,5 +8,9 @@ type Result struct {
 
 type Transformer interface {
 	Key() string
-	Transform(r *request.Request) (*Result, error)
+	Transform(p *request.Prototype) (*Result, error)
+}
+
+var AllTransformers = []Transformer{
+	&CURL{},
 }
