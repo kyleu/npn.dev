@@ -31,6 +31,14 @@ func AdhocPost(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func RequestNew(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		coll := mux.Vars(r)["c"]
+		req := request.NewRequest()
+		return npncontroller.T(templates.RequestForm(coll, req, nil, ctx, w))
+	})
+}
+
 func RequestDetail(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		coll, req, err := loadRequest(r, ctx, "")
@@ -64,10 +72,10 @@ func RequestEdit(w http.ResponseWriter, r *http.Request) {
 
 func RequestDelete(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		c := mux.Vars(r)["c"]
+		coll := mux.Vars(r)["c"]
 		key := mux.Vars(r)[npncore.KeyKey]
 		msg := "deleted request [" + key + "] from this collection"
-		return npncontroller.FlashAndRedir(true, msg, ctx.Route(KeyCollection+".detail", npncore.KeyKey, c), w, r, ctx)
+		return npncontroller.FlashAndRedir(true, msg, ctx.Route(KeyCollection+".detail", "c", coll), w, r, ctx)
 	})
 }
 
@@ -84,7 +92,7 @@ func loadRequest(r *http.Request, ctx *npnweb.RequestContext, action string) (st
 
 	bc := append(
 		npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"),
-		npnweb.Breadcrumb{Path: ctx.Route(KeyCollection+".detail", npncore.KeyKey, c), Title: c},
+		npnweb.Breadcrumb{Path: ctx.Route(KeyCollection+".detail", "c", c), Title: c},
 	)
 
 	if len(action) == 0 {

@@ -15,7 +15,7 @@ func (p *Prototype) URL() *url.URL {
 	return &url.URL{
 		Scheme:   p.Protocol.String(),
 		User:     ui,
-		Host:     p.Domain,
+		Host:     p.Host(),
 		RawPath:  p.Path,
 		RawQuery: p.Query.ToURL(),
 		Fragment: p.Fragment,
@@ -23,10 +23,10 @@ func (p *Prototype) URL() *url.URL {
 }
 
 func (p *Prototype) URLString() string {
-	domain := p.Domain
+	domain := p.Host()
 	if p.Auth.HasBasic() {
 		user, pass := p.Auth.GetBasic()
-		domain = fmt.Sprintf("%v:%v@%v", url.PathEscape(user), url.PathEscape(pass), p.Domain)
+		domain = fmt.Sprintf("%v:%v@%v", url.PathEscape(user), url.PathEscape(pass), p.Host())
 	}
 	ret := fmt.Sprintf("%v://%v", p.Protocol.Key, domain)
 	if len(p.Path) > 0 {
@@ -59,6 +59,10 @@ func (p *Prototype) URLParts() []*URLPart {
 		add("", "@")
 	}
 	add("domain", p.Domain)
+	if p.Port > 0 {
+		add("", ":")
+		add("port", fmt.Sprintf("%v", p.Port))
+	}
 	if len(p.Path) > 0 {
 		add("", "/")
 		add("path", strings.TrimPrefix(p.Path, "/"))
@@ -81,6 +85,8 @@ func URLColor(key string) string {
 	case "auth":
 		return "green-fg"
 	case "domain":
+		return "blue-fg"
+	case "port":
 		return "blue-fg"
 	case "path":
 		return "bluegrey-fg"

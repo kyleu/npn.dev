@@ -5,7 +5,6 @@ import (
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/gen/templates"
 	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
 	"net/http"
 )
@@ -26,7 +25,7 @@ func CollectionList(w http.ResponseWriter, r *http.Request) {
 
 func CollectionDetail(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		key := mux.Vars(r)[npncore.KeyKey]
+		key := mux.Vars(r)["c"]
 
 		coll, err := app.Svc(ctx.App).Collection.Load(key)
 		if err != nil {

@@ -5,8 +5,16 @@
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
-      <h3 class="uk-card-title">Edit Request</h3>
+      <h3 class="uk-card-title">
+        <% if len(req.Key) == 0 { %>
+          New Request
+        <% } else { %>
+          Edit Request
+        <% } %>
+      </h3>
       <form class="uk-margin-top">
+        <input type="hidden" name="coll" value="<%= collection %>" />
+        <input type="hidden" name="originalKey" value="<%= req.Key %>" />
         <fieldset class="uk-fieldset">
           <div class="uk-margin">
             <input class="uk-input" type="text" placeholder="Input" />

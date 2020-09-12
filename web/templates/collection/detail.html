@@ -11,6 +11,9 @@
       <% } %>
     </div>
     <div class="uk-card uk-card-body uk-margin-top">
+      <div class="right">
+        <a class="theme uk-icon-button" data-uk-icon="plus" href="<%= ctx.Route(`request.new`, `c`, c.Key) %>" title="new request"></a>
+      </div>
       <h3 class="uk-card-title">Requests</h3>
       <ul class="uk-list uk-list-divider">
         <% if len(requests) == 0 { %>

@@ -1,8 +1,10 @@
 package request
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
 	"github.com/kyleu/npn/app/auth"
@@ -13,6 +15,7 @@ type Prototype struct {
 	Method   Method      `json:"method"`
 	Protocol Protocol    `json:"protocol"`
 	Domain   string      `json:"domain"`
+	Port     int         `json:"port,omitempty"`
 	Path     string      `json:"path,omitempty"`
 	Query    QueryParams `json:"query,omitempty"`
 	Fragment string      `json:"fragment,omitempty"`
@@ -24,7 +27,7 @@ type Prototype struct {
 
 func NewPrototype() *Prototype {
 	ret := &Prototype{}
-	ret.Normalize()
+	ret = ret.Normalize()
 	return ret
 }
 
@@ -38,6 +41,14 @@ func (p *Prototype) Normalize() *Prototype {
 	return p
 }
 
+func (p *Prototype) Host() string {
+	if p.Port == 0 {
+		return p.Domain
+	} else {
+		return fmt.Sprintf("%v:%v", p.Domain, p.Port)
+	}
+}
+
 func (p *Prototype) ToHTTP() *http.Request {
 	p.URL()
 	return &http.Request{
@@ -49,7 +60,7 @@ func (p *Prototype) ToHTTP() *http.Request {
 		ContentLength:    0,
 		TransferEncoding: nil,
 		Close:            false,
-		Host:             p.Domain,
+		Host:             p.Host(),
 		Form:             nil,
 		PostForm:         nil,
 		MultipartForm:    nil,
@@ -69,10 +80,18 @@ func PrototypeFromURL(method Method, u *url.URL) *Prototype {
 		a := &auth.Basic{Username: u.User.Username(), Password: p}
 		auths = auth.Auths{a}
 	}
+	domain, portString := npncore.SplitString(u.Host, ':', true)
+
+	port := 0
+	if len(portString) > 0 {
+		port, _ = strconv.Atoi(portString)
+	}
+
 	return &Prototype{
 		Method:   method,
 		Protocol: ProtocolFromString(u.Scheme),
-		Domain:   u.Host,
+		Domain:   domain,
+		Port:     port,
 		Path:     u.Path,
 		Query:    QueryParamsFromRaw(u.RawQuery),
 		Fragment: u.Fragment,
@@ -99,6 +118,11 @@ func PrototypeFromString(method Method, u string) *Prototype {
 		host = aut
 		aut = ""
 	}
+	host, portString := npncore.SplitString(host, ':', true)
+	port := 0
+	if len(portString) > 0 {
+		port, _ = strconv.Atoi(portString)
+	}
 
 	if aut != "" {
 		user, pass := npncore.SplitString(aut, ':', true)
@@ -109,6 +133,7 @@ func PrototypeFromString(method Method, u string) *Prototype {
 		Method:   method,
 		Protocol: ProtocolFromString(proto),
 		Domain:   host,
+		Port:     port,
 		Path:     path,
 		Query:    QueryParamsFromRaw(query),
 		Fragment: frag,
