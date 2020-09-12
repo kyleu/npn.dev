@@ -3,9 +3,8 @@ module github.com/kyleu/npn/npntemplate
 go 1.14
 
 require (
-	cloud.google.com/go v0.63.0 // indirect
+	cloud.google.com/go v0.65.0 // indirect
 	github.com/gofrs/uuid v3.3.0+incompatible
-	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/kyleu/npn/npnconnection v1.0.0
 	github.com/kyleu/npn/npncore v1.0.0
 	github.com/kyleu/npn/npnservice v1.0.0

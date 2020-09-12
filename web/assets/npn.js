@@ -12,9 +12,9 @@ var npn;
     npn.onError = onError;
     function init(svc, id) {
         window.onbeforeunload = () => {
-            // socket.setAppUnloading();
+            socket.setAppUnloading();
         };
-        // socket.socketConnect(services.fromKey(svc), id);
+        socket.socketConnect(svc, id);
     }
     npn.init = init;
 })(npn || (npn = {}));
@@ -527,6 +527,76 @@ var tags;
     }
     tags.renderTagsView = renderTagsView;
 })(tags || (tags = {}));
+var socket;
+(function (socket_1) {
+    const debug = true;
+    let socket;
+    let appUnloading = false;
+    let currentService = "";
+    let currentID = "";
+    function socketUrl() {
+        const l = document.location;
+        let protocol = "ws";
+        if (l.protocol === "https:") {
+            protocol = "wss";
+        }
+        return protocol + `://${l.host}/s`;
+    }
+    function setAppUnloading() {
+        appUnloading = true;
+    }
+    socket_1.setAppUnloading = setAppUnloading;
+    function socketConnect(svc, id) {
+        // system.cache.currentService = svc;
+        // system.cache.currentID = id;
+        // system.cache.connectTime = Date.now();
+        socket = new WebSocket(socketUrl());
+        socket.onopen = () => {
+            send({ svc: svc, cmd: "connect", param: id });
+        };
+        socket.onmessage = (event) => {
+            const msg = JSON.parse(event.data);
+            onSocketMessage(msg);
+        };
+        socket.onerror = (event) => {
+            // rituals.onError(services.system, event.type);
+        };
+        socket.onclose = () => {
+            onSocketClose();
+        };
+    }
+    socket_1.socketConnect = socketConnect;
+    function send(msg) {
+        if (debug) {
+            console.debug("out", msg);
+        }
+        socket.send(JSON.stringify(msg));
+    }
+    socket_1.send = send;
+    function onSocketMessage(msg) {
+        if (debug) {
+            console.debug("in", msg);
+        }
+        switch (msg.svc) {
+            default:
+                console.warn(`unhandled message for service [${msg.svc}]`);
+        }
+    }
+    socket_1.onSocketMessage = onSocketMessage;
+    function onSocketClose() {
+        function disconnect(seconds) {
+            if (debug) {
+                console.info(`socket closed, reconnecting in ${seconds} seconds`);
+            }
+            setTimeout(() => {
+                socketConnect(currentService, currentID);
+            }, seconds * 1000);
+        }
+        if (!appUnloading) {
+            disconnect(10);
+        }
+    }
+})(socket || (socket = {}));
 var profile;
 (function (profile) {
     // noinspection JSUnusedGlobalSymbols

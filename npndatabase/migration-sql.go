@@ -3,7 +3,6 @@ package npndatabase
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/kyleu/npn/npncore"
 
@@ -28,7 +27,7 @@ func exec(file *MigrationFile, s *Service, logger logur.Logger) (string, error) 
 	file.F(sb)
 	sql := sb.String()
 	sqls := strings.Split(sql, ";")
-	startNanos := time.Now().UnixNano()
+	startNanos := npncore.StartTimer()
 	for _, q := range sqls {
 		if len(strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(q), "--"))) > 0 {
 			_, err := s.Exec(q, nil, -1)
@@ -37,8 +36,7 @@ func exec(file *MigrationFile, s *Service, logger logur.Logger) (string, error) 
 			}
 		}
 	}
-	elapsed := (time.Now().UnixNano() - startNanos) / int64(time.Microsecond)
-	ms := npncore.MicrosToMillis(language.AmericanEnglish, int(elapsed))
+	ms := npncore.MicrosToMillis(language.AmericanEnglish, npncore.EndTimer(startNanos))
 	logger.Debug(fmt.Sprintf("ran query [%s] in [%v]", file.Title, ms))
 	return sql, nil
 }

@@ -24,7 +24,7 @@ type errorResult struct {
 }
 
 func Act(w http.ResponseWriter, r *http.Request, f func(ctx *npnweb.RequestContext) (string, error)) {
-	startNanos := time.Now().UnixNano()
+	startNanos := npncore.StartTimer()
 	ctx := npnweb.ExtractContext(w, r, false)
 
 	if len(ctx.Flashes) > 0 {
@@ -125,8 +125,8 @@ func AdminBC(ctx *npnweb.RequestContext, action string, name string) npnweb.Brea
 }
 
 func logComplete(startNanos int64, ctx *npnweb.RequestContext, status int, r *http.Request) {
-	delta := (time.Now().UnixNano() - startNanos) / int64(time.Microsecond)
-	ms := npncore.MicrosToMillis(language.AmericanEnglish, int(delta))
+	delta := npncore.EndTimer(startNanos)
+	ms := npncore.MicrosToMillis(language.AmericanEnglish, delta)
 	args := map[string]interface{}{"elapsed": delta, npncore.KeyStatus: status}
 	msg := fmt.Sprintf("[%v %v] returned [%v] in [%v]", r.Method, r.URL.Path, status, ms)
 	ctx.Logger.Debug(msg, args)

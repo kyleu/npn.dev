@@ -1,0 +1,15 @@
+<%: func DebugList(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title">Debug Stuff!</h3>
+      <ul class="uk-list uk-list-divider">
+        <li><a class="theme" href="<%= ctx.Route(`debug.request`) %>">Request</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<% } %>

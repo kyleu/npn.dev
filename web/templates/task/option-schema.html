@@ -1,8 +1,0 @@
-<%: func TaskOptionSchema(schemaKeys []string, opt *task.AvailableOption, v []string, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<% for _, k := range schemaKeys { %>
-  <% if len(v) == 0 || npncore.StringArrayContains(v, k) { %>
-    <label><input class="uk-checkbox" id="form-opt-<%= opt.Key %>" name="opt-<%= opt.Key %>" type="checkbox" value="<%= k %>" checked="checked"> <%= k %></label>
-  <% } else { %>
-    <label><input class="uk-checkbox" id="form-opt-<%= opt.Key %>" name="opt-<%= opt.Key %>" type="checkbox" value="<%= k %>"> <%= k %></label>
-  <% } %>
-<% } %>

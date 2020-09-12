@@ -1,0 +1,11 @@
+<%: func DebugCall(request *request.Request, result *call.Result, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <% RequestDetail(request, ctx, _buffer) %>
+    <% ResultDetail(result, ctx, _buffer) %>
+  </div>
+</div>
+<% } %>

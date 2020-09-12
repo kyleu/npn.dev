@@ -72,9 +72,9 @@ func TraceDetail(trace errors.StackTrace) []ErrorFrame {
 
 func IDErrorString(k string, v string) string {
 	if len(v) == 0 {
-		return fmt.Sprintf("invalid %v id", k)
+		return fmt.Sprintf("empty %v id", k)
 	}
-	return fmt.Sprintf("invalid %v id \"%v\"", k, v)
+	return fmt.Sprintf("invalid %v id [%v]", k, v)
 }
 
 func IDError(k string, v string) error {

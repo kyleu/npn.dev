@@ -1,10 +1,8 @@
 /.vscode
 /.idea
 /.scannerwork
-/_projects
 /build
 /tmp
 /gen
 /npntemplate/gen
 node_modules
-/.npn

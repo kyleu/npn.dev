@@ -2,6 +2,7 @@ package npncore
 
 import (
 	"bytes"
+	"strings"
 	"text/template"
 
 	"emperror.dev/errors"
@@ -18,4 +19,15 @@ func Template(content string, arg interface{}) (string, error) {
 		return "", errors.Wrap(err, "unable to execute template")
 	}
 	return out.String(), nil
+}
+
+func SplitString(s string, sep byte, cutc bool) (string, string) {
+	i := strings.IndexByte(s, sep)
+	if i < 0 {
+		return s, ""
+	}
+	if cutc {
+		return s[:i], s[i+1:]
+	}
+	return s[:i], s[i:]
 }

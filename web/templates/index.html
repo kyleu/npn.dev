@@ -13,20 +13,25 @@
       </h3>
       <p>Coming soon!</p>
     </div>
-    <div class="uk-card uk-card-body uk-margin-top">
-      <ul class="uk-list uk-list-divider">
-        <li><a class="theme" href="<%= ctx.Route(`file.root`) %>">File System</a></li>
-        <li><a class="theme" href="<%= ctx.Route(`datasource`) %>">Data Sources</a></li>
-        <li><a class="theme" href="<%= ctx.Route(`schema`) %>">Schema</a></li>
-        <li><a class="theme" href="<%= ctx.Route(`project`) %>">Projects</a></li>
-      </ul>
-    </div>
-    <div class="uk-card uk-card-body uk-margin-top">
-      <ul class="uk-list uk-list-divider">
-        <li><a class="theme" href="<%= ctx.Route(npncore.KeySandbox) %>"><%= npncore.PluralTitle(npncore.KeySandbox) %></a></li>
-        <li><a class="theme" href="<%= ctx.Route(npncore.KeyRoutes) %>">Routes</a></li>
-        <li><a class="theme" href="<%= ctx.Route(npncore.KeyModules) %>">Modules</a></li>
-      </ul>
+    <div class="uk-grid-small uk-grid-match uk-child-width-expand@s" data-uk-grid>
+      <div>
+        <div class="uk-card uk-card-body uk-margin-top">
+          <ul class="uk-list uk-list-divider">
+            <li><a class="theme" href="<%= ctx.Route(`workspace`) %>">Workspace</a></li>
+            <li><a class="theme" href="<%= ctx.Route(`debug`) %>">Debug</a></li>
+          </ul>
+        </div>
+      </div>
+      <div>
+        <div class="uk-card uk-card-body uk-margin-top">
+          <ul class="uk-list uk-list-divider">
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeySandbox) %>"><%= npncore.PluralTitle(npncore.KeySandbox) %></a></li>
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeyRoutes) %>">Routes</a></li>
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeyModules) %>">Modules</a></li>
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeyFile + `.root`) %>">File System</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </div>

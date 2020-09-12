@@ -10,9 +10,9 @@ namespace npn {
 
   export function init(svc: string, id: string) {
     window.onbeforeunload = () => {
-      // socket.setAppUnloading();
+      socket.setAppUnloading();
     };
 
-    // socket.socketConnect(services.fromKey(svc), id);
+    socket.socketConnect(svc, id);
   }
 }

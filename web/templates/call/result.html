@@ -1,0 +1,9 @@
+<%: func ResultDebug(result *call.Result, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-card uk-card-body uk-margin-top">
+  <div class="right"><%= npncore.MicrosToMillis(ctx.Profile.Locale, result.Duration) %></div>
+  <h3 class="uk-card-title">Result: <%= result.Status %></h3>
+  <% if result.Error != nil { %>
+    <span class="red-fg"><%= *result.Error %></span>
+  <% } %>
+  <% npntemplate.DebugPanel(result, ctx.Logger, buffer) %>
+</div>

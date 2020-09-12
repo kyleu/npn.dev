@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+
+	"emperror.dev/errors"
 )
 
 type Data map[string]interface{}
@@ -53,7 +55,6 @@ func getPath(i interface{}, path []string) interface{} {
 		return i
 	}
 	switch t := i.(type) {
-
 	case Data:
 		ret, ok := t[path[0]]
 		if !ok {
@@ -71,10 +72,44 @@ func getPath(i interface{}, path []string) interface{} {
 	}
 }
 
-func (d Data) GetString(k string) string {
-	v, ok := d[k]
-	if !ok {
-		return ""
+func (d Data) SetPath(path string, val interface{}) interface{} {
+	r := csv.NewReader(strings.NewReader(path))
+	r.Comma = '.'
+	fields, err := r.Read()
+	if err != nil {
+		return err
 	}
-	return fmt.Sprintf("%v", v)
+	return setPath(d, fields, val)
+}
+
+func setPath(i interface{}, path []string, val interface{}) error {
+	work := i
+	for idx, p := range path {
+		if idx == len(path)-1 {
+			switch t := work.(type) {
+			case Data:
+				t[p] = val
+			case map[string]interface{}:
+				t[p] = val
+			default:
+				return errors.New(fmt.Sprintf("unhandled [%T]", t))
+			}
+		} else {
+			switch t := work.(type) {
+			case Data:
+				t[p] = map[string]interface{}{}
+				work = t[p]
+			case map[string]interface{}:
+				t[p] = map[string]interface{}{}
+				work = t[p]
+			default:
+				return errors.New(fmt.Sprintf("unhandled [%T]", t))
+			}
+		}
+	}
+	return nil
+}
+
+func (d Data) GetString(k string) string {
+	return fmt.Sprintf("%v", d.GetPath(k))
 }
