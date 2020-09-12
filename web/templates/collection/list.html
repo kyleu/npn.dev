@@ -1,0 +1,19 @@
+<%: func CollectionList(collections collection.Collections, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-grid-small uk-grid-match uk-child-width-expand@s" data-uk-grid>
+      <div class="uk-card uk-card-body">
+        <h3 class="uk-card-title">Collections</h3>
+        <ul class="uk-list uk-list-divider">
+          <% for _, c := range collections { %>
+            <li><a class="theme" title="<%= c.Description %>" href="<%= ctx.Route(`collection.detail`, npncore.KeyKey, c.Key) %>"><%= c.Title %></a></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<% } %>

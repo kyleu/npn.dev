@@ -18,11 +18,11 @@ import (
 )
 
 type Provider struct {
-	Key      string
-	Title    string
-	Icon     string
-	Endpoint oauth2.Endpoint
-	Scopes   []string
+	Key      string          `json:"key"`
+	Title    string          `json:"title,omitempty"`
+	Icon     string          `json:"icon,omitempty"`
+	Endpoint oauth2.Endpoint `json:"-"`
+	Scopes   []string        `json:"scopes,omitempty"`
 }
 
 type Providers []*Provider

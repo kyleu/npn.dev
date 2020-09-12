@@ -1,0 +1,26 @@
+<%: func CollectionDetail(c *collection.Collection, requests []string, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title"><%= c.TitleWithFallback() %></h3>
+      <% if len(c.Description) > 0 { %>
+        <p><%= c.Description %></p>
+      <% } %>
+    </div>
+    <div class="uk-card uk-card-body uk-margin-top">
+      <h3 class="uk-card-title">Requests</h3>
+      <ul class="uk-list uk-list-divider">
+        <% if len(requests) == 0 { %>
+          <li>no requests</li>
+        <% } %>
+        <% for _, req := range requests { %>
+          <li><a class="theme" href="<%= ctx.Route(`request`, `c`, c.Key, npncore.KeyKey, req) %>"><%= req %></a></li>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+</div>
+<% } %>

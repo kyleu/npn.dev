@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 
 	"github.com/kyleu/npn/app"
@@ -12,21 +13,43 @@ import (
 
 func DebugList(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		files := ctx.App.Files().ListJSON("collections/debug/requests")
+
 		ctx.Title = "Debug Stuff!"
 		ctx.Breadcrumbs = npnweb.Breadcrumbs{npnweb.BreadcrumbSelf("debug")}
-		return npncontroller.T(templates.DebugList(ctx, w))
+		return npncontroller.T(templates.DebugList(files, ctx, w))
 	})
 }
 
 func DebugRequest(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		u := r.URL.Query().Get("url")
+		svc := app.Svc(ctx.App)
+
 		req := request.MockRequest
+
+		k := r.URL.Query().Get("key")
+		if k != "" {
+			fn := "collections/debug/requests/" + k + ".json"
+			content, err := ctx.App.Files().ReadFile(fn)
+			if err != nil {
+				return npncontroller.EResp(err)
+			}
+			r := request.Request{}
+			err = npncore.FromJSON([]byte(content), &r)
+			if err != nil {
+				return npncontroller.EResp(err)
+			}
+			req = r.Normalize(k)
+		}
+
+		u := r.URL.Query().Get("url")
 		if u != "" {
 			p := request.PrototypeFromString(request.MethodGet, u)
-			req = &request.Request{Key: "mock", Description: "ad-hoc request", Prototype: p}
+			req = &request.Request{Key: "mock", Description: "ad hoc request", Prototype: p}
 		}
-		result := app.Svc(ctx.App).Caller.Call(req.Prototype)
+
+		result := svc.Caller.Call(req.Prototype)
+
 		ctx.Title = "Debug Request"
 		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route("debug"), "debug"), npnweb.BreadcrumbSelf("request"))
 		return npncontroller.T(templates.DebugCall(req, result, ctx, w))

@@ -79,9 +79,14 @@ func (f *FileLoader) WriteFile(path string, content string, overwrite bool) erro
 }
 
 func (f *FileLoader) ListJSON(path string) []string {
-	matches, err := filepath.Glob(f.getPath(path, "*.json"))
+	return f.ListExtension(path, "json")
+}
+
+func (f *FileLoader) ListExtension(path string, ext string) []string {
+	glob := "*." + ext
+	matches, err := filepath.Glob(f.getPath(path, glob))
 	if err != nil {
-		f.logger.Warn(fmt.Sprintf("cannot list JSON in path ["+path+"]: %+v", err))
+		f.logger.Warn(fmt.Sprintf("cannot list [" + ext + "] in path ["+path+"]: %+v", err))
 	}
 	ret := make([]string, 0, len(matches))
 	for _, j := range matches {
@@ -89,13 +94,14 @@ func (f *FileLoader) ListJSON(path string) []string {
 		if idx > 0 {
 			j = j[idx+1:]
 		}
-		ret = append(ret, strings.TrimSuffix(j, ".json"))
+		ret = append(ret, strings.TrimSuffix(j, "." + ext))
 	}
 	return ret
 }
 
 func (f *FileLoader) ListDirectories(path string) []string {
-	files, err := ioutil.ReadDir(path)
+	p := f.getPath(path)
+	files, err := ioutil.ReadDir(p)
 	if err != nil {
 		f.logger.Warn(fmt.Sprintf("cannot list path ["+path+"]: %+v", err))
 	}
@@ -106,6 +112,15 @@ func (f *FileLoader) ListDirectories(path string) []string {
 		}
 	}
 	return ret
+}
+
+func (f *FileLoader) Exists(path string) (bool, bool) {
+	p := f.getPath(path)
+	s, err := os.Stat(p)
+	if err == nil {
+		return true, s.IsDir()
+	}
+	return false, false
 }
 
 func (f *FileLoader) Remove(path string) error {

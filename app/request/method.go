@@ -6,8 +6,8 @@ import (
 )
 
 type Method struct {
-	Key         string
-	Description string
+	Key         string `json:"key"`
+	Description string `json:"description,omitempty"`
 }
 
 var (

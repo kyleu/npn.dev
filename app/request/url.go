@@ -6,35 +6,20 @@ import (
 	"strings"
 )
 
-type URLPart struct {
-	Key   string `json:"k,omitempty"`
-	Value string `json:"v,omitempty"`
-}
-
-func (p *Prototype) URLParts() []*URLPart {
-	ret := []*URLPart{{Key: "protocol", Value: p.Protocol}, {Key: "text", Value: "://"}}
-	var add = func(k string, v string) {
-		ret = append(ret, &URLPart{Key: k, Value: v})
+func (p *Prototype) URL() *url.URL {
+	user, pass := p.Auth.GetBasic()
+	var ui *url.Userinfo
+	if len(user) > 0 {
+		ui = url.UserPassword(user, pass)
 	}
-	if p.Auth.HasBasic() {
-		user, pass := p.Auth.GetBasic()
-		add("auth", fmt.Sprintf("%v:%v", url.PathEscape(user), url.PathEscape(pass)))
-		add("text", "@")
+	return &url.URL{
+		Scheme:   p.Protocol.String(),
+		User:     ui,
+		Host:     p.Domain,
+		RawPath:  p.Path,
+		RawQuery: p.Query.ToURL(),
+		Fragment: p.Fragment,
 	}
-	add("domain", p.Domain)
-	if len(p.Path) > 0 {
-		add("text", "/")
-		add("path", strings.TrimPrefix(p.Path, "/"))
-	}
-	if len(p.Query) > 0 {
-		add("text", "?")
-		add("query", p.Query.ToURL())
-	}
-	if len(p.Fragment) > 0 {
-		add("text", "#")
-		add("fragment", p.Fragment)
-	}
-	return ret
 }
 
 func (p *Prototype) URLString() string {
@@ -43,7 +28,7 @@ func (p *Prototype) URLString() string {
 		user, pass := p.Auth.GetBasic()
 		domain = fmt.Sprintf("%v:%v@%v", url.PathEscape(user), url.PathEscape(pass), p.Domain)
 	}
-	ret := fmt.Sprintf("%v://%v", p.Protocol, domain)
+	ret := fmt.Sprintf("%v://%v", p.Protocol.Key, domain)
 	if len(p.Path) > 0 {
 		ret += "/" + strings.TrimPrefix(p.Path, "/")
 	}
@@ -56,18 +41,52 @@ func (p *Prototype) URLString() string {
 	return ret
 }
 
-func (p *Prototype) URL() *url.URL {
-	user, pass := p.Auth.GetBasic()
-	var ui *url.Userinfo
-	if len(user) > 0 {
-		ui = url.UserPassword(user, pass)
+type URLPart struct {
+	Key   string `json:"k,omitempty"`
+	Value string `json:"v,omitempty"`
+}
+
+func (p *Prototype) URLParts() []*URLPart {
+	ret := []*URLPart{}
+	var add = func(k string, v string) {
+		ret = append(ret, &URLPart{Key: k, Value: v})
 	}
-	return &url.URL{
-		Scheme:   p.Protocol,
-		User:     ui,
-		Host:     p.Domain,
-		RawPath:  p.Path,
-		RawQuery: p.Query.ToURL(),
-		Fragment: p.Fragment,
+	add("protocol", p.Protocol.String())
+	add("", "://")
+	if p.Auth.HasBasic() {
+		user, pass := p.Auth.GetBasic()
+		add("auth", fmt.Sprintf("%v:%v", url.PathEscape(user), url.PathEscape(pass)))
+		add("", "@")
+	}
+	add("domain", p.Domain)
+	if len(p.Path) > 0 {
+		add("", "/")
+		add("path", strings.TrimPrefix(p.Path, "/"))
+	}
+	if len(p.Query) > 0 {
+		add("", "?")
+		add("query", p.Query.ToURL())
+	}
+	if len(p.Fragment) > 0 {
+		add("", "#")
+		add("fragment", p.Fragment)
+	}
+	return ret
+}
+
+func URLColor(key string) string {
+	switch key {
+	case "protocol":
+		return "green-fg"
+	case "auth":
+		return "green-fg"
+	case "domain":
+		return "blue-fg"
+	case "path":
+		return "bluegrey-fg"
+	case "query":
+		return "purple-fg"
+	default:
+		return ""
 	}
 }

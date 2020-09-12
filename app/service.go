@@ -2,6 +2,7 @@ package app
 
 import (
 	"github.com/kyleu/npn/app/call"
+	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/socket"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
@@ -12,33 +13,32 @@ import (
 )
 
 type Service struct {
-	debug   bool
-	files   *npncore.FileLoader
-	user    *user.Service
-	auth    *auth.Service
-	version string
-	commit  string
-	logger  logur.Logger
-	Caller  *call.Service
-	Socket  *npnconnection.Service
+	debug      bool
+	files      *npncore.FileLoader
+	user       *user.Service
+	auth       *auth.Service
+	version    string
+	commit     string
+	logger     logur.Logger
+	Collection *collection.Service
+	Caller     *call.Service
+	Socket     *npnconnection.Service
 }
 
-func NewService(debug bool, version string, commitHash string, logger logur.Logger) *Service {
-	files := npncore.NewFileLoader(".", logger)
+func NewService(debug bool, dataDir string, version string, commitHash string, logger logur.Logger) *Service {
+	files := npncore.NewFileLoader(dataDir, logger)
 	us := user.NewService(files, nil, logger)
-	au := auth.NewService(false, "", nil, logger, us)
-	call := call.NewService(logger)
-	sock := socket.NewService(logger)
 	return &Service{
-		debug:   debug,
-		files:   files,
-		user:    us,
-		auth:    au,
-		version: version,
-		commit:  commitHash,
-		logger:  logger,
-		Caller:  call,
-		Socket:  sock,
+		debug:      debug,
+		files:      files,
+		user:       us,
+		auth:       auth.NewService(false, "", nil, logger, us),
+		version:    version,
+		commit:     commitHash,
+		logger:     logger,
+		Collection: collection.NewService(files, logger),
+		Caller:     call.NewService(logger),
+		Socket:     socket.NewService(logger),
 	}
 }
 

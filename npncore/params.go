@@ -10,10 +10,10 @@ import (
 var allowedColumns = map[string][]string{}
 
 type Params struct {
-	Key       string
-	Orderings Orderings
-	Limit     int
-	Offset    int
+	Key       string    `json:"key"`
+	Orderings Orderings `json:"orderings,omitempty"`
+	Limit     int       `json:"limit,omitempty"`
+	Offset    int       `json:"offset,omitempty"`
 }
 
 func ParamsWithDefaultOrdering(key string, params *Params, orderings ...*Ordering) *Params {

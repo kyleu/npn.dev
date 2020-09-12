@@ -1,0 +1,19 @@
+{
+  "prototype": {
+    "method": "GET",
+    "protocol": "https",
+    "domain": "google.com",
+    "path": "search",
+    "query": [
+      {
+        "k": "q",
+        "v": "foo"
+      },
+      {
+        "k": "x",
+        "v": "1"
+      }
+    ],
+    "options": {}
+  }
+}

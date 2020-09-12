@@ -15,7 +15,9 @@ import (
 func Workspace(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		title := "Workspace"
+
 		ctx.Title = title
+		ctx.Breadcrumbs = npnweb.Breadcrumbs{npnweb.BreadcrumbSelf("workspace")}
 
 		debug := "TODO"
 

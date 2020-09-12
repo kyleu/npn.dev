@@ -18,6 +18,15 @@ func NewService(logger logur.Logger) *Service {
 }
 
 func (s *Service) Call(p *request.Prototype) *Result {
+	if p == nil {
+		e := "no request"
+		return &Result{
+			Status:   "error",
+			Response: nil,
+			Duration: 0,
+			Error:    &e,
+		}
+	}
 	tr := &http.Transport{}
 	client := &http.Client{Transport: tr}
 

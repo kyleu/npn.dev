@@ -11,7 +11,7 @@ import (
 
 type Prototype struct {
 	Method   Method      `json:"method"`
-	Protocol string      `json:"protocol"`
+	Protocol Protocol    `json:"protocol"`
 	Domain   string      `json:"domain"`
 	Path     string      `json:"path,omitempty"`
 	Query    QueryParams `json:"query,omitempty"`
@@ -20,6 +20,22 @@ type Prototype struct {
 	Auth     auth.Auths  `json:"auth,omitempty"`
 	Body     Body        `json:"body,omitempty"`
 	Options  *Options    `json:"options,omitempty"`
+}
+
+func NewPrototype() *Prototype {
+	ret := &Prototype{}
+	ret.Normalize()
+	return ret
+}
+
+func (p *Prototype) Normalize() *Prototype {
+	if len(p.Method.Key) == 0 {
+		p.Method = MethodGet
+	}
+	if len(p.Protocol.Key) == 0 {
+		p.Protocol = ProtocolHTTPS
+	}
+	return p
 }
 
 func (p *Prototype) ToHTTP() *http.Request {
@@ -46,7 +62,7 @@ func (p *Prototype) ToHTTP() *http.Request {
 	}
 }
 
-func PrototypeFromURL(method string, u *url.URL) *Prototype {
+func PrototypeFromURL(method Method, u *url.URL) *Prototype {
 	var auths auth.Auths
 	if u.User != nil {
 		p, _ := u.User.Password()
@@ -54,8 +70,8 @@ func PrototypeFromURL(method string, u *url.URL) *Prototype {
 		auths = auth.Auths{a}
 	}
 	return &Prototype{
-		Method:   MethodGet,
-		Protocol: u.Scheme,
+		Method:   method,
+		Protocol: ProtocolFromString(u.Scheme),
 		Domain:   u.Host,
 		Path:     u.Path,
 		Query:    QueryParamsFromRaw(u.RawQuery),
@@ -91,7 +107,7 @@ func PrototypeFromString(method Method, u string) *Prototype {
 	}
 	return &Prototype{
 		Method:   method,
-		Protocol: proto,
+		Protocol: ProtocolFromString(proto),
 		Domain:   host,
 		Path:     path,
 		Query:    QueryParamsFromRaw(query),

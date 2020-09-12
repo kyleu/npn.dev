@@ -84,9 +84,27 @@ h4 {
 .uk-navbar-toggle {
   min-height: 54px;
 }
+
 .uk-logo {
   img {
     height: 54px;
+  }
+}
+
+// Search
+.uk-search-default .uk-search-input {
+  border: 1px solid #999;
+}
+
+.uk-light {
+  .uk-search-default .uk-search-input:focus {
+    border: 1px solid #ddd;
+  }
+}
+
+.uk-dark {
+  .uk-search-default .uk-search-input:focus {
+    border: 1px solid #666;
   }
 }
 

@@ -1,0 +1,44 @@
+<%: func RequestForm(collection string, req *request.Request, result *call.Result, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body">
+      <h3 class="uk-card-title">Edit Request</h3>
+      <form class="uk-margin-top">
+        <fieldset class="uk-fieldset">
+          <div class="uk-margin">
+            <input class="uk-input" type="text" placeholder="Input" />
+          </div>
+
+          <div class="uk-margin">
+            <select class="uk-select">
+              <option>Option 01</option>
+              <option>Option 02</option>
+            </select>
+          </div>
+
+          <div class="uk-margin">
+            <textarea class="uk-textarea" rows="5" placeholder="Textarea"></textarea>
+          </div>
+
+          <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+            <label><input class="uk-radio" type="radio" name="radio2" checked> A</label>
+            <label><input class="uk-radio" type="radio" name="radio2"> B</label>
+          </div>
+
+          <div class="uk-margin uk-grid-small uk-child-width-auto uk-grid">
+            <label><input class="uk-checkbox" type="checkbox" checked> A</label>
+            <label><input class="uk-checkbox" type="checkbox"> B</label>
+          </div>
+
+          <div class="uk-margin">
+            <input class="uk-range" type="range" value="2" min="0" max="10" step="0.1" />
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>

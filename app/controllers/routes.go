@@ -32,6 +32,21 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	workspace.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(Workspace))).Name(routes.Name("workspace"))
 	r.Path(routes.Path("s")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(Socket))).Name(routes.Name("websocket"))
 
+	// Collections
+	collection := r.Path(routes.Path("c")).Subrouter()
+	collection.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionList))).Name(routes.Name("collection"))
+	r.Path(routes.Path("c", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionDetail))).Name(routes.Name("collection", "detail"))
+
+	// Requests
+	r.Path(routes.Path("c", "{c}", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDetail))).Name(routes.Name("request"))
+	r.Path(routes.Path("c", "{c}", keyParam, "call")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestCall))).Name(routes.Name("request", "call"))
+	r.Path(routes.Path("c", "{c}", keyParam, "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestEdit))).Name(routes.Name("request", "edit"))
+	r.Path(routes.Path("c", "{c}", keyParam, "delete")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDelete))).Name(routes.Name("request", "delete"))
+
+	adhoc := r.Path(routes.Path("adhoc")).Subrouter()
+	adhoc.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(AdhocForm))).Name(routes.Name("adhoc"))
+	adhoc.Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(AdhocPost))).Name(routes.Name("adhoc", "post"))
+
 	// Debug
 	debug := r.Path(routes.Path("debug")).Subrouter()
 	debug.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(DebugList))).Name(routes.Name("debug"))

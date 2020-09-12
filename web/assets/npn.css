@@ -550,6 +550,18 @@ h4 {
   height: 54px;
 }
 
+.uk-search-default .uk-search-input {
+  border: 1px solid #999;
+}
+
+.uk-light .uk-search-default .uk-search-input:focus {
+  border: 1px solid #ddd;
+}
+
+.uk-dark .uk-search-default .uk-search-input:focus {
+  border: 1px solid #666;
+}
+
 .uk-tab > * > a {
   text-transform: none;
 }
