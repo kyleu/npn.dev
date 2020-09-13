@@ -2,6 +2,7 @@ package call
 
 import (
 	"net/http"
+	"net/http/httptrace"
 	"time"
 
 	"github.com/kyleu/npn/app/request"
@@ -22,10 +23,8 @@ func (s *Service) Call(p *request.Prototype) *Result {
 	if p == nil {
 		e := "no request"
 		return &Result{
-			Status:   "error",
-			Response: nil,
-			Duration: 0,
-			Error:    &e,
+			Status: "error",
+			Error:  &e,
 		}
 	}
 	tr := &http.Transport{}
@@ -41,9 +40,11 @@ func (s *Service) Call(p *request.Prototype) *Result {
 
 func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
 	req := p.ToHTTP()
-	startNanos := npncore.StartTimer()
+	timing := &Timing{}
+	req = req.WithContext(httptrace.WithClientTrace(req.Context(), timing.Trace()))
+	timing.Begin()
 	hr, err := client.Do(req)
-	duration := npncore.EndTimer(startNanos)
+	timing.Complete()
 
 	status := "ok"
 	var errStr *string = nil
@@ -55,5 +56,5 @@ func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
 
 	rsp := ResponseFromHTTP(hr)
 
-	return &Result{Status: status, Response: rsp, Duration: duration, Error: errStr}
+	return &Result{Status: status, Response: rsp, Timing: timing, Error: errStr}
 }
