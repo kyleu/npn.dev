@@ -11,7 +11,7 @@ cd $project_dir
 docker build -m 4g -t kyleu/npn .
 
 mkdir -p build/docker
-docker save -o build/docker/docker.tar kyleu/npn
+docker save -o build/docker/npn.docker.tar kyleu/npn
 cd build/docker/
-rm -f docker.tar.gz
-gzip docker.tar
+rm -f npn.docker.tar.gz
+gzip npn.docker.tar

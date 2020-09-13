@@ -1,5 +1,5 @@
 module github.com/kyleu/npn/npngraphql
-go 1.14
+go 1.15
 
 require (
 	emperror.dev/errors v0.7.0

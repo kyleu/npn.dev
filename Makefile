@@ -38,7 +38,7 @@ endif
 
 .PHONY: compile-templates
 compile-templates:
-	bin/templates.sh
+	@bin/templates.sh
 
 .PHONY: compile-templates-force
 compile-templates-force:

@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"os"
@@ -26,19 +26,7 @@ func Configure(version string, commitHash string) cobra.Command {
 		Use:   npncore.AppKey,
 		Short: "Command line interface for " + npncore.AppName,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			npncore.AppKey = "npn"
-			npncore.AppName = npncore.AppKey
-
-			info := initApp(version, commitHash)
-
-			r, err := controllers.BuildRouter(info)
-			if err != nil {
-				return errors.WithMessage(err, "unable to construct routes")
-			}
-
-			setIcon()
-
-			return npnweb.MakeServer(info, r, addr, port)
+			return Run(addr, port, version, commitHash)
 		},
 	}
 
@@ -52,8 +40,24 @@ func Configure(version string, commitHash string) cobra.Command {
 	return rootCmd
 }
 
-func initApp(version string, commitHash string) npnweb.AppInfo {
+func Run(a string, p uint16, version string, commitHash string) error {
+	info := InitApp(version, commitHash)
+
+	r, err := controllers.BuildRouter(info)
+	if err != nil {
+		return errors.WithMessage(err, "unable to construct routes")
+	}
+
+	setIcon()
+
+	return npnweb.MakeServer(info, r, a, p)
+}
+
+func InitApp(version string, commitHash string) npnweb.AppInfo {
 	_ = os.Setenv("TZ", "UTC")
+
+	npncore.AppKey = "npn"
+	npncore.AppName = npncore.AppKey
 
 	logger := npncore.InitLogging(verbose)
 	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": version, "commit": commitHash})

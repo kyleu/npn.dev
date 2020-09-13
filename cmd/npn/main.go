@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/cli"
 	"os"
 )
 
@@ -13,7 +14,7 @@ var (
 )
 
 func main() {
-	cmd := Configure(version, commitHash)
+	cmd := cli.Configure(version, commitHash)
 
 	err := cmd.Execute()
 	if err != nil {
