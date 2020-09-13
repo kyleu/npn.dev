@@ -37,17 +37,20 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	collection := r.Path(routes.Path("c")).Subrouter()
 	collection.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionList))).Name(routes.Name("collection"))
 	r.Path(routes.Path("c", "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionNew))).Name(routes.Name("collection", "new"))
-	r.Path(routes.Path("c", collectionParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionDetail))).Name(routes.Name("collection", "detail"))
-	r.Path(routes.Path("c", collectionParam, "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionEdit))).Name(routes.Name("collection", "edit"))
-	r.Path(routes.Path("c", collectionParam, "save")).Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionSave))).Name(routes.Name("collection", "save"))
+	collectionPath := routes.Path("c", collectionParam)
+	r.Path(collectionPath).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionDetail))).Name(routes.Name("collection", "detail"))
+	r.Path(collectionPath + "/edit").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionEdit))).Name(routes.Name("collection", "edit"))
+	r.Path(collectionPath + "/save").Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionSave))).Name(routes.Name("collection", "save"))
 
 	// Requests
-	r.Path(routes.Path("c", "{c}", "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestNew))).Name(routes.Name("request", "new"))
-	r.Path(routes.Path("c", "{c}", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDetail))).Name(routes.Name("request"))
-	r.Path(routes.Path("c", "{c}", keyParam, "call")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestCall))).Name(routes.Name("request", "call"))
-	r.Path(routes.Path("c", "{c}", keyParam, "edit")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestEdit))).Name(routes.Name("request", "edit"))
-	r.Path(routes.Path("c", "{c}", keyParam, "transform")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestTransform))).Name(routes.Name("request", "transform"))
-	r.Path(routes.Path("c", "{c}", keyParam, "delete")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDelete))).Name(routes.Name("request", "delete"))
+	r.Path(routes.Path("c", collectionParam, "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestNew))).Name(routes.Name("request", "new"))
+	requestPath := collectionPath + "/" + keyParam
+	r.Path(requestPath).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDetail))).Name(routes.Name("request"))
+	r.Path(requestPath + "/call").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestCall))).Name(routes.Name("request", "call"))
+	r.Path(requestPath + "/edit").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestEdit))).Name(routes.Name("request", "edit"))
+	r.Path(requestPath + "/save").Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestSave))).Name(routes.Name("request", "save"))
+	r.Path(requestPath + "/transform").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestTransform))).Name(routes.Name("request", "transform"))
+	r.Path(requestPath + "/delete").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestDelete))).Name(routes.Name("request", "delete"))
 
 	// Ad hoc
 	adhoc := r.Path(routes.Path("adhoc")).Subrouter()

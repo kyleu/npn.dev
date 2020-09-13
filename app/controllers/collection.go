@@ -78,7 +78,7 @@ func CollectionDetail(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(err)
 		}
 
-		reqs, err := app.Svc(ctx.App).Collection.Requests(key)
+		reqs, err := app.Svc(ctx.App).Collection.ListRequests(key)
 		if err != nil {
 			return npncontroller.EResp(err)
 		}

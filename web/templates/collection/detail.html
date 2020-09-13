@@ -5,6 +5,9 @@
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body">
+      <div class="right">
+        <a class="theme uk-icon-button" data-uk-icon="file-text" href="<%= ctx.Route(`collection.edit`, `c`, c.Key) %>" title="edit collection"></a>
+      </div>
       <h3 class="uk-card-title"><%= c.TitleWithFallback() %></h3>
       <% if len(c.Description) > 0 { %>
         <p><%= c.Description %></p>

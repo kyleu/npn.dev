@@ -1,4 +1,4 @@
-<%: func Select(name string, choices []string, selected string, buffer *bytes.Buffer) %>
+<%: func InputSelect(name string, choices []string, selected string, buffer *bytes.Buffer) %>
 <select class="uk-select" name="<%= name %>">
 <% for _, choice := range choices { %>
   <% if choice == selected { %>

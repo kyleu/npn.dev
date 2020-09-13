@@ -1,0 +1,8 @@
+<%: func InputRadio(name string, choices []string, selected string, buffer *bytes.Buffer) %>
+<% for _, choice := range choices { %>
+  <% if choice == selected { %>
+    <label><input class="uk-radio" type="radio" name="<%= name %>" value="<%= choice %>" checked> <%= choice %></label>
+  <% } else { %>
+    <label><input class="uk-radio" type="radio" name="<%= name %>" value="<%= choice %>"> <%= choice %></label>
+  <% } %>
+<% } %>

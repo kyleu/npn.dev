@@ -1,4 +1,4 @@
-<%: func CallDetail(collection string, req *request.Request, result *call.Result, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%: func CallDetail(coll string, req *request.Request, result *call.Result, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
@@ -7,8 +7,8 @@
     <% ResultPanel(result, ctx, _buffer) %>
     <% DebugResultHeaders(result.Response.Headers, ctx, _buffer) %>
     <% DebugResultBody(result.Response.Body, ctx, _buffer) %>
-    <% RequestPanel(req, ctx, `uk-margin-top`, _buffer) %>
-    <% RequestActions(collection, req, ctx, _buffer) %>
+    <% RequestPanel(coll, req, ctx, `uk-margin-top`, _buffer) %>
+    <% RequestActions(coll, req, ctx, _buffer) %>
   </div>
 </div>
 <% } %>

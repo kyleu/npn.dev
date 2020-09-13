@@ -2,11 +2,9 @@ package collection
 
 import (
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 	"path"
-	"strings"
 )
 
 const rootDir = "collections"
@@ -57,26 +55,44 @@ func (s *Service) Load(key string) (*Collection, error) {
 	return ret.Normalize(key, p), nil
 }
 
-func (s *Service) Requests(key string) ([]string, error) {
-	p := path.Join(rootDir, key, "requests")
-	return s.files.ListJSON(p), nil
-}
-
-func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
-	f = strings.TrimSuffix(f, ".json")
-	p := path.Join(rootDir, c, "requests", f + ".json")
-	content, err := s.files.ReadFile(p)
-	if err != nil {
-		return nil, err
-	}
-	ret, err := request.FromString(f, content)
-	if err != nil {
-		return nil, err
-	}
-	return ret, nil
-}
-
 func (s *Service) Save(originalKey string, newKey string, title string, description string) error {
-	// TODO save collections
+	orig, err := s.Load(originalKey)
+	if err != nil {
+		// return errors.Wrap(err, "unable to load original collection [" + originalKey + "] (expected)")
+	}
+	shouldDelete := orig != nil && originalKey != newKey
+
+	n := &Collection{
+		Key:         newKey,
+		Title:       title,
+		Description: description,
+	}
+
+	if orig == nil {
+		n.Owner = "system"
+		n.Path = "TODO"
+	} else {
+		n.Owner = orig.Owner
+		n.Path = orig.Path
+	}
+
+	p := path.Join(rootDir, newKey, "collection.json")
+	content := npncore.ToJSON(n, s.logger)
+	err = s.files.WriteFile(p, content, true)
+	if err != nil {
+		return errors.Wrap(err, "unable to save collection [" + newKey + "]")
+	}
+
+	if shouldDelete {
+		err := s.Delete(originalKey)
+		if err != nil {
+			return errors.Wrap(err, "unable to delete original collection [" + originalKey + "]")
+		}
+	}
 	return nil
+}
+
+func (s *Service) Delete(key string) error {
+	p := path.Join(rootDir, key)
+	return s.files.RemoveRecursive(p)
 }

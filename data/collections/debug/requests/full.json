@@ -6,7 +6,7 @@
     "protocol": "http",
     "domain": "localhost",
     "port": 10101,
-    "path": "/testbed",
+    "path": "testbed",
     "query": [
       {
         "k": "q",
@@ -40,8 +40,6 @@
         "foo": "bar"
       }
     },
-    "options": {
-      "excludeDefaultHeaders": ["host"]
-    }
+    "options": {}
   }
 }

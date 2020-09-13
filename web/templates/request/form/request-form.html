@@ -6,13 +6,15 @@
   <div class="uk-container">
     <div class="uk-card uk-card-body">
       <h3 class="uk-card-title">
+        <% k := "new" %>
         <% if len(req.Key) == 0 { %>
           New Request
         <% } else { %>
+          <% k = req.Key %>
           Edit Request
         <% } %>
       </h3>
-      <form class="uk-form-stacked" action="<%= ctx.Route(`request.save`, `c`, collection, npncore.KeyKey, req.Key) %>" method="post">
+      <form class="uk-form-stacked" action="<%= ctx.Route(`request.save`, `c`, collection, npncore.KeyKey, k) %>" method="post">
         <input type="hidden" name="coll" value="<%= collection %>" />
         <input type="hidden" name="originalKey" value="<%= req.Key %>" />
         <fieldset class="uk-fieldset">
@@ -33,23 +35,7 @@
             <input class="uk-input" id="description" name="description" type="text" value="<%= req.Description %>" />
           </div>
 
-          <div class="uk-margin-top">
-            <label class="uk-form-label" for="method">Method</label>
-            <select class="uk-select" id="method" name="method">
-            <% for _, m := range request.AllMethods { %>
-              <% if m.Key == req.Prototype.Method.Key { %>
-                <option selected="selected"><%= m.Key %></option>
-              <% } else { %>
-                <option><%= m.Key %></option>
-              <% } %>
-            <% } %>
-            </select>
-          </div>
-
-          <div class="uk-margin-top">
-            <label class="uk-form-label" for="url">URL</label>
-            <input class="uk-input" id="url" name="url" type="text" value="<%= req.Prototype.URLString() %>" />
-          </div>
+          <% PrototypeFields(req.Prototype, ctx, _buffer) %>
 
           <div class="uk-margin-top">
             <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>

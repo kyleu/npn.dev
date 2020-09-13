@@ -1,0 +1,23 @@
+<%: func PrototypeFields(proto *request.Prototype, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-margin-top">
+  <label class="uk-form-label" for="method">Method</label>
+  <select class="uk-select" id="method" name="method">
+  <% for _, m := range request.AllMethods { %>
+    <% if m.Key == proto.Method.Key { %>
+      <option selected="selected"><%= m.Key %></option>
+    <% } else { %>
+      <option><%= m.Key %></option>
+    <% } %>
+  <% } %>
+  </select>
+</div>
+
+<div class="uk-margin-top">
+  <label class="uk-form-label" for="url">URL</label>
+  <input class="uk-input" id="url" name="url" type="text" value="<%= proto.URLString() %>" />
+</div>
+
+<% HeaderFields(proto.Headers, ctx, buffer) %>
+<% AuthFields(proto.Auth, ctx, buffer) %>
+<% BodyFields(proto.Body, ctx, buffer) %>
+<% OptionFields(proto.Options, ctx, buffer) %>

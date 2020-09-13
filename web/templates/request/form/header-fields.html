@@ -1,0 +1,5 @@
+<%: func HeaderFields(h header.Headers, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<div class="uk-margin-top">
+  <label class="uk-form-label" for="headers">Headers</label>
+  <textarea class="uk-textarea" id="headers" name="headers"><%= npncore.ToJSON(h, ctx.Logger) %></textarea>
+</div>

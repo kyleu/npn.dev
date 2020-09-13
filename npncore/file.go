@@ -128,3 +128,24 @@ func (f *FileLoader) Remove(path string) error {
 	f.logger.Warn("removing file at path [" + p + "]")
 	return os.Remove(p)
 }
+
+func (f *FileLoader) RemoveRecursive(pt string) error {
+	p := f.getPath(pt)
+	s, err := os.Stat(p)
+	if err != nil {
+		return err
+	}
+	if s.IsDir() {
+		files, err := ioutil.ReadDir(p)
+		if err != nil {
+			f.logger.Warn(fmt.Sprintf("cannot list path ["+pt+"]: %+v", err))
+		}
+		for _, file := range files {
+			err := f.RemoveRecursive(path.Join(pt, file.Name()))
+			if err != nil {
+				return err
+			}
+		}
+	}
+	return os.Remove(p)
+}
