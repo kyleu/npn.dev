@@ -3,11 +3,13 @@ var command;
 (function (command) {
     command.client = {
         ping: "ping",
-        connect: "connect"
+        connect: "connect",
+        getCollections: "getCollections"
     };
     command.server = {
         pong: "pong",
         connected: "connected",
+        collections: "collections",
         error: "error"
     };
 })(command || (command = {}));
@@ -33,7 +35,8 @@ var npn;
 var services;
 (function (services) {
     services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
-    const allServices = [services.system];
+    services.collection = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
+    const allServices = [services.system, services.collection];
     function fromKey(key) {
         const ret = allServices.find(s => s.key === key);
         if (!ret) {
@@ -43,6 +46,24 @@ var services;
     }
     services.fromKey = fromKey;
 })(services || (services = {}));
+var collection;
+(function (collection) {
+    class Cache {
+    }
+    collection.cache = new Cache();
+})(collection || (collection = {}));
+var collection;
+(function (collection) {
+    function onCollectionMessage(cmd, param) {
+        switch (cmd) {
+            case command.server.collections:
+                console.warn("Collections!");
+            default:
+                console.warn(`unhandled collection command [${cmd}]`);
+        }
+    }
+    collection.onCollectionMessage = onCollectionMessage;
+})(collection || (collection = {}));
 var dom;
 (function (dom) {
     function initDom(t, color) {
@@ -607,6 +628,9 @@ var socket;
             case services.system.key:
                 system.onSystemMessage(msg.cmd, msg.param);
                 break;
+            case services.collection.key:
+                collection.onCollectionMessage(msg.cmd, msg.param);
+                break;
             default:
                 console.warn(`unhandled message for service [${msg.svc}]`);
         }
@@ -628,10 +652,25 @@ var socket;
 })(socket || (socket = {}));
 var system;
 (function (system) {
+    class Cache {
+        getProfile() {
+            if (!this.profile) {
+                throw "no active profile";
+            }
+            return this.profile;
+        }
+        apply(sj) {
+            system.cache.profile = sj.profile;
+        }
+    }
+    system.cache = new Cache();
+})(system || (system = {}));
+var system;
+(function (system) {
     function onSystemMessage(cmd, param) {
         switch (cmd) {
             case command.server.connected:
-                console.info("Connected!!!!");
+                system.cache.apply(param);
                 break;
             default:
                 console.warn(`unhandled system command [${cmd}]`);
@@ -672,6 +711,11 @@ var profile;
         el.classList.add("active");
     }
     profile.setLinkColor = setLinkColor;
+    function setPicture(p) {
+        dom.setValue("#self-picture-input", p);
+        return false;
+    }
+    profile.setPicture = setPicture;
 })(profile || (profile = {}));
 var collection;
 (function (collection) {

@@ -1,8 +1,13 @@
 namespace profile {
   export interface Profile {
+    readonly userID: string;
+    readonly name: string;
+    readonly role: string;
     readonly theme: string;
     readonly navColor: string;
     readonly linkColor: string;
+    readonly picture: string;
+    readonly locale: string;
   }
 
   // noinspection JSUnusedGlobalSymbols
@@ -34,5 +39,10 @@ namespace profile {
       i.classList.remove("active");
     });
     el.classList.add("active");
+  }
+
+  export function setPicture(p: string) {
+    dom.setValue("#self-picture-input", p);
+    return false;
   }
 }

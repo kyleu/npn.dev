@@ -7,8 +7,9 @@ namespace services {
   }
 
   export const system: Service = { key: "system", title: "System", plural: "systems", icon: "close" };
+  export const collection: Service = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
 
-  const allServices = [system];
+  const allServices = [system, collection];
 
   export function fromKey(key: string) {
     const ret = allServices.find(s => s.key === key);

@@ -63,6 +63,9 @@ namespace socket {
       case services.system.key:
         system.onSystemMessage(msg.cmd, msg.param);
         break;
+      case services.collection.key:
+        collection.onCollectionMessage(msg.cmd, msg.param);
+        break;
       default:
         console.warn(`unhandled message for service [${msg.svc}]`);
     }

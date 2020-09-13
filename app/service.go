@@ -28,6 +28,7 @@ type Service struct {
 func NewService(debug bool, dataDir string, version string, commitHash string, logger logur.Logger) *Service {
 	files := npncore.NewFileLoader(dataDir, logger)
 	us := user.NewService(files, nil, logger)
+	cs := collection.NewService(files, logger)
 	return &Service{
 		debug:      debug,
 		files:      files,
@@ -36,9 +37,9 @@ func NewService(debug bool, dataDir string, version string, commitHash string, l
 		version:    version,
 		commit:     commitHash,
 		logger:     logger,
-		Collection: collection.NewService(files, logger),
+		Collection: cs,
 		Caller:     call.NewService(logger),
-		Socket:     socket.NewService(logger),
+		Socket:     socket.NewService(cs, logger),
 	}
 }
 
