@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"github.com/kyleu/npn/npncore"
 	"os"
 
 	"emperror.dev/errors"
@@ -74,7 +75,7 @@ func (s *Service) decodeRecord(prv *Provider, code string) (*Record, error) {
 }
 
 func envsFor(prv *Provider) (string, string) {
-	var id = "rituals_client_id_" + prv.Key
-	var secret = "rituals_client_secret_" + prv.Key
+	var id = npncore.AppKey + "_client_id_" + prv.Key
+	var secret = npncore.AppKey + "_client_secret_" + prv.Key
 	return id, secret
 }

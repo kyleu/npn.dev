@@ -2,15 +2,12 @@ package controllers
 
 import (
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/npn/app/body"
 	"github.com/kyleu/npn/app/header"
 	"github.com/kyleu/npn/app/request"
-	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
-	"net/http"
+	"strconv"
 )
 
 type optionsForm struct {
@@ -65,18 +62,13 @@ func (f *requestForm) ToRequest() (*request.Request, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse body")
 	}
-	proto.Body = b
+	if len(b.Type) > 0 {
+		proto.Body = b
+	}
 
-	proto.Options = &request.Options{
-		Timeout:               0,
-		IgnoreRedirects:       f.IgnoreRedirects == "true",
-		IgnoreReferrer:        f.IgnoreReferrer == "true",
-		IgnoreCerts:           f.IgnoreCerts == "true",
-		ExcludeDefaultHeaders: nil,
-		ReadCookieJars:        nil,
-		WriteCookieJar:        f.WriteCookieJar,
-		SSLCert:               f.SSLCert,
-		UserAgentOverride:     f.UserAgentOverride,
+	proto.Options, err = parseOptions(f)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse options")
 	}
 
 	req := &request.Request{
@@ -86,37 +78,36 @@ func (f *requestForm) ToRequest() (*request.Request, error) {
 		Prototype:   proto,
 	}
 
-	return req, nil
+	return req.Normalize(f.Key), nil
 }
 
-func RequestSave(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		frm := &requestForm{}
-		err := npnweb.Decode(r, frm, ctx.Logger)
-		if err != nil {
-			return npncontroller.EResp(err)
-		}
-		req, err := frm.ToRequest()
-		if err != nil {
-			return npncontroller.EResp(err, "unable to parse request")
-		}
+func parseOptions(f *requestForm) (*request.Options, error) {
+	timeout, err := strconv.Atoi(f.Timeout)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse numeric timeout from [" + f.Timeout + "]")
+	}
 
-		csvc := app.Svc(ctx.App).Collection
+	excludeDefaultHeaders := &[]string{}
+	err = npncore.FromJSON([]byte(f.ExcludeDefaultHeaders), excludeDefaultHeaders)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse exclusions from [" + f.ExcludeDefaultHeaders + "]")
+	}
 
-		err = csvc.SaveRequest(frm.Coll, req)
-		if err != nil {
-			return npncontroller.EResp(err, "unable to save ["+frm.Coll+"/"+req.Key+"]")
-		}
+	readCookieJars := &[]string{}
+	err = npncore.FromJSON([]byte(f.ReadCookieJars), readCookieJars)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse cookie jars from [" + f.ReadCookieJars + "]")
+	}
 
-		if frm.Key != frm.OriginalKey {
-			err = csvc.DeleteRequest(frm.Coll, frm.OriginalKey)
-			if err != nil {
-				return npncontroller.EResp(err, "unable to delete ["+frm.Coll+"/"+frm.OriginalKey+"]")
-			}
-		}
-
-		msg := "saved request [" + req.Key + "]"
-		rt := ctx.Route(KeyRequest, "c", frm.Coll, npncore.KeyKey, req.Key)
-		return npncontroller.FlashAndRedir(true, msg, rt, w, r, ctx)
-	})
+	return &request.Options{
+		Timeout:               timeout,
+		IgnoreRedirects:       f.IgnoreRedirects == "true",
+		IgnoreReferrer:        f.IgnoreReferrer == "true",
+		IgnoreCerts:           f.IgnoreCerts == "true",
+		ExcludeDefaultHeaders: *excludeDefaultHeaders,
+		ReadCookieJars:        *readCookieJars,
+		WriteCookieJar:        f.WriteCookieJar,
+		SSLCert:               f.SSLCert,
+		UserAgentOverride:     f.UserAgentOverride,
+	}, nil
 }

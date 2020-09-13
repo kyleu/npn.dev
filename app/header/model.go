@@ -1,6 +1,9 @@
 package header
 
-import "strings"
+import (
+	"net/http"
+	"strings"
+)
 
 type Header struct {
 	Key   string `json:"k,omitempty"`
@@ -19,7 +22,6 @@ func (h Headers) Contains(k string) bool {
 }
 
 func (h Headers) Get(k string) *Header {
-	k = strings.ToLower(k)
 	for _, x := range h {
 		if strings.EqualFold(x.Key, k) {
 			return x
@@ -34,4 +36,12 @@ func (h Headers) GetValue(k string) string {
 		return ""
 	}
 	return x.Value
+}
+
+func (h Headers) ToHTTP() http.Header {
+	ret := make(http.Header, len(h))
+	for _, hd := range h {
+		ret[hd.Key] = append(ret[hd.Key], hd.Value)
+	}
+	return ret
 }

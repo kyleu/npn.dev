@@ -88,3 +88,17 @@ func CollectionDetail(w http.ResponseWriter, r *http.Request) {
 		return npncontroller.T(templates.CollectionDetail(coll, reqs, ctx, w))
 	})
 }
+
+func CollectionDelete(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		coll := mux.Vars(r)["c"]
+
+		err := app.Svc(ctx.App).Collection.Delete(coll)
+		if err != nil {
+			return npncontroller.EResp(err, "unable to delete collection [" + coll + "]")
+		}
+
+		msg := "deleted collection [" + coll + "]"
+		return npncontroller.FlashAndRedir(true, msg, ctx.Route(KeyCollection), w, r, ctx)
+	})
+}

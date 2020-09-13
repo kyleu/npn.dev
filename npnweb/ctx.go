@@ -42,9 +42,9 @@ func ExtractContext(w http.ResponseWriter, r *http.Request, addIfMissing bool) *
 	if !ok {
 		ai.Logger().Warn("cannot load Router")
 	}
-	session, err := Store.Get(r, npncore.AppName)
+	session, err := Store.Get(r, npncore.AppKey)
 	if err != nil {
-		session = sessions.NewSession(Store, npncore.AppName)
+		session = sessions.NewSession(Store, npncore.AppKey)
 	}
 
 	var userID uuid.UUID

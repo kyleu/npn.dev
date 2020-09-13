@@ -1,10 +1,10 @@
 <%: func Workspace(title string, debug interface{}, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
-<%@ head { %><% npntemplate.Init(npncore.AppName, npncore.UUID(), _buffer) %><% } %>
+<%@ head { %><% npntemplate.Init(npncore.AppKey, npncore.UUID(), _buffer) %><% } %>
 <%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
-  <div class="uk-container">
+  <div class="uk-container uk-container-expand">
     <div class="uk-card uk-card-body">
       <h3 class="uk-card-title"><%= title %></h3>
       <p>Coming soon!</p>

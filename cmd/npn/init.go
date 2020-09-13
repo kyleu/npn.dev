@@ -23,7 +23,7 @@ var dataDir string
 // Configure configures a root command.
 func Configure(version string, commitHash string) cobra.Command {
 	rootCmd := cobra.Command{
-		Use:   npncore.AppName,
+		Use:   npncore.AppKey,
 		Short: "Command line interface for " + npncore.AppName,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			npncore.AppKey = "npn"

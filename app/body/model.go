@@ -1,20 +1,24 @@
 package body
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"io/ioutil"
 )
 
-type BodyConfig interface {
+type Config interface {
+	ContentLength() int64
 	Bytes() []byte
 	MimeType() string
 	String() string
 }
 
 type Body struct {
-	Type   string     `json:"type"`
-	Config BodyConfig `json:"config"`
+	Type   string `json:"type"`
+	Config Config `json:"config"`
 }
 
 func (b *Body) String() string {
@@ -36,6 +40,9 @@ func (w *Body) UnmarshalJSON(data []byte) error {
 	if err != nil {
 		return err
 	}
+	if x == nil {
+		return nil
+	}
 	w.Type = x.Type
 	switch w.Type {
 	case KeyTemp:
@@ -45,8 +52,24 @@ func (w *Body) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		w.Config = temp
+	case "":
+		return nil
 	default:
 		return errors.New("invalid body type [" + x.Type + "]")
 	}
 	return nil
+}
+
+func (b *Body) ToHTTP() io.ReadCloser {
+	if b == nil {
+		return nil
+	}
+	return ioutil.NopCloser(bytes.NewReader(b.Config.Bytes()))
+}
+
+func (b *Body) ContentLength() int64 {
+	if b == nil {
+		return 0
+	}
+	return b.Config.ContentLength()
 }

@@ -14,6 +14,7 @@ require (
 	github.com/kyleu/npn/npncore v1.0.0
 	github.com/kyleu/npn/npnservice v1.0.0
 	github.com/kyleu/npn/npntemplate v1.0.0
+	github.com/kyleu/npn/npnuser v1.0.0
 	github.com/kyleu/npn/npnweb v1.0.0
 	github.com/sagikazarmark/ocmux v0.2.0
 	github.com/shiyanhui/hero v0.0.2

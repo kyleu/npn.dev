@@ -9,7 +9,7 @@
         <% for _, f := range npncore.TraceDetail(ed.StackTrace) { %>
         <tr>
           <td>
-            <% if strings.Contains(f.Key, npncore.AppName) { %>
+            <% if strings.Contains(f.Key, npncore.AppKey) { %>
             <div class="error-key error-owned"><%= f.Key %></div>
             <% } else { %>
             <div class="error-key"><%= f.Key %></div>

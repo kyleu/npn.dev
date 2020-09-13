@@ -1,4 +1,4 @@
-<%: func CollectionDetail(c *collection.Collection, requests []string, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%: func CollectionDetail(c *collection.Collection, requests request.Requests, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
@@ -23,7 +23,7 @@
           <li>no requests</li>
         <% } %>
         <% for _, req := range requests { %>
-          <li><a class="theme" href="<%= ctx.Route(`request`, `c`, c.Key, npncore.KeyKey, req) %>"><%= req %></a></li>
+          <li><a class="theme" href="<%= ctx.Route(`request`, `c`, c.Key, npncore.KeyKey, req.Key) %>"><%= req.TitleWithFallback() %></a></li>
         <% } %>
       </ul>
     </div>

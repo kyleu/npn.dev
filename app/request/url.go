@@ -23,7 +23,11 @@ func (p *Prototype) URL() *url.URL {
 }
 
 func (p *Prototype) FullPathString() string {
-	ret := "/" + strings.TrimPrefix(p.Path, "/")
+	trimmed := strings.TrimSpace(strings.TrimPrefix(p.Path, "/"))
+	if len(trimmed) == 0 {
+		return ""
+	}
+	ret := "/" + trimmed
 	if len(p.Query) > 0 {
 		ret += "?" + p.Query.ToURL()
 	}

@@ -2,15 +2,12 @@ package request
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/npn/app/body"
 	"github.com/kyleu/npn/app/header"
 	"net/http"
-	"net/url"
 	"strconv"
 	"strings"
-
-	"github.com/kyleu/npn/app/auth"
-	"github.com/kyleu/npn/npncore"
 )
 
 type Prototype struct {
@@ -61,129 +58,55 @@ func (p *Prototype) FinalHeaders() header.Headers {
 		ret = append(header.Headers{host}, ret...)
 	}
 	if (!p.Headers.Contains("Content-Type")) && (!p.ExcludesHeader("Content-Type")) {
-		ct := p.ContentType()
-		if len(ct) > 0 {
-			ct := &header.Header{Key: "Content-Type", Value: ct}
-			ret = append(header.Headers{ct}, ret...)
+		curr := p.ContentType()
+		if len(curr) > 0 {
+			ret = append(header.Headers{&header.Header{Key: "Content-Type", Value: curr}}, ret...)
 		}
 	}
 	return ret
 }
 
 func (p *Prototype) ExcludesHeader(k string) bool {
-	k = strings.ToLower(k)
 	if p.Options == nil {
 		return false
 	}
 	for _, ex := range p.Options.ExcludeDefaultHeaders {
-		if ex == k {
+		if strings.EqualFold(ex, k) {
 			return true
 		}
 	}
 	return false
 }
 
-
 func (p *Prototype) ContentType() string {
+	curr := p.Headers.GetValue("Content-Type")
+	if len(curr) > 0 {
+		return curr
+	}
 	if p.Body == nil {
 		return ""
 	}
-	switch p.Body.Type {
-	case body.KeyTemp:
-		return p.Body.Config.MimeType()
-	default:
-		return "text/html"
-	}
+	return p.Body.Config.MimeType()
 }
 
 func (p *Prototype) ToHTTP() *http.Request {
-	p.URL()
+	fh := p.FinalHeaders()
+	cls := fh.GetValue("Content-Length")
+
+	cl := int64(0)
+	if len(cls) == 0 {
+		cl = p.Body.ContentLength()
+	} else {
+		x, _ := strconv.Atoi(cls)
+		cl = int64(x)
+	}
 	return &http.Request{
 		Method:           p.Method.Key,
 		URL:              p.URL(),
-		Header:           nil,
-		Body:             nil,
-		GetBody:          nil,
-		ContentLength:    0,
-		TransferEncoding: nil,
+		Header:           fh.ToHTTP(),
+		Body:             p.Body.ToHTTP(),
+		ContentLength:    cl,
 		Close:            false,
 		Host:             p.Host(),
-		Form:             nil,
-		PostForm:         nil,
-		MultipartForm:    nil,
-		Trailer:          nil,
-		RemoteAddr:       "",
-		RequestURI:       "",
-		TLS:              nil,
-		Cancel:           nil,
-		Response:         nil,
-	}
-}
-
-func PrototypeFromURL(u *url.URL) *Prototype {
-	var auths auth.Auths
-	if u.User != nil {
-		p, _ := u.User.Password()
-		a := auth.NewBasic(u.User.Username(), p, false)
-		auths = auth.Auths{a}
-	}
-	domain, portString := npncore.SplitString(u.Host, ':', true)
-
-	port := 0
-	if len(portString) > 0 {
-		port, _ = strconv.Atoi(portString)
-	}
-
-	return &Prototype{
-		Method:   MethodGet,
-		Protocol: ProtocolFromString(u.Scheme),
-		Domain:   domain,
-		Port:     port,
-		Path:     u.Path,
-		Query:    QueryParamsFromRaw(u.RawQuery),
-		Fragment: u.Fragment,
-		Auth:     auths,
-	}
-}
-
-func PrototypeFromString(u string) *Prototype {
-	var auths auth.Auths
-
-	rest, frag := npncore.SplitString(u, '#', true)
-	if len(frag) > 0 {
-		frag, _ = url.QueryUnescape(frag)
-	}
-	rest, query := npncore.SplitString(rest, '?', true)
-	proto, rest := npncore.SplitString(rest, ':', true)
-	rest = strings.TrimPrefix(strings.TrimPrefix(rest, "/"), "/")
-	rest, path := npncore.SplitString(rest, '/', true)
-	if len(path) > 0 {
-		path, _ = url.PathUnescape(path)
-	}
-	aut, host := npncore.SplitString(rest, '@', true)
-	if host == "" {
-		host = aut
-		aut = ""
-	}
-	host, portString := npncore.SplitString(host, ':', true)
-	port := 0
-	if len(portString) > 0 {
-		port, _ = strconv.Atoi(portString)
-	}
-
-	if aut != "" {
-		user, pass := npncore.SplitString(aut, ':', true)
-		a := auth.NewBasic(user, pass, false)
-		auths = auth.Auths{a}
-	}
-	return &Prototype{
-		Method:   MethodGet,
-		Protocol: ProtocolFromString(proto),
-		Domain:   host,
-		Port:     port,
-		Path:     path,
-		Query:    QueryParamsFromRaw(query),
-		Fragment: frag,
-		Auth:     auths,
 	}
 }

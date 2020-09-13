@@ -12,7 +12,7 @@ import (
 )
 
 func GetContentType(r *http.Request) string {
-	ret := r.Header.Get("content-type")
+	ret := r.Header.Get("Content-Type")
 	idx := strings.Index(ret, ";")
 	if idx > -1 {
 		ret = ret[0:idx]

@@ -41,6 +41,7 @@ func BuildRouter(app npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(collectionPath).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionDetail))).Name(routes.Name("collection", "detail"))
 	r.Path(collectionPath + "/edit").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionEdit))).Name(routes.Name("collection", "edit"))
 	r.Path(collectionPath + "/save").Methods(http.MethodPost).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionSave))).Name(routes.Name("collection", "save"))
+	r.Path(collectionPath + "/delete").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(CollectionDelete))).Name(routes.Name("collection", "delete"))
 
 	// Requests
 	r.Path(routes.Path("c", collectionParam, "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RequestNew))).Name(routes.Name("request", "new"))

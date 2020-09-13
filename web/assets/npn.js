@@ -1,4 +1,16 @@
 "use strict";
+var command;
+(function (command) {
+    command.client = {
+        ping: "ping",
+        connect: "connect"
+    };
+    command.server = {
+        pong: "pong",
+        connected: "connected",
+        error: "error"
+    };
+})(command || (command = {}));
 var npn;
 (function (npn) {
     function onError(svc, err) {
@@ -18,6 +30,19 @@ var npn;
     }
     npn.init = init;
 })(npn || (npn = {}));
+var services;
+(function (services) {
+    services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
+    const allServices = [services.system];
+    function fromKey(key) {
+        const ret = allServices.find(s => s.key === key);
+        if (!ret) {
+            throw `invalid service [${key}]`;
+        }
+        return ret;
+    }
+    services.fromKey = fromKey;
+})(services || (services = {}));
 var dom;
 (function (dom) {
     function initDom(t, color) {
@@ -528,12 +553,13 @@ var tags;
     tags.renderTagsView = renderTagsView;
 })(tags || (tags = {}));
 var socket;
-(function (socket_1) {
+(function (socket) {
     const debug = true;
-    let socket;
+    let sock;
     let appUnloading = false;
     let currentService = "";
     let currentID = "";
+    let connectTime;
     function socketUrl() {
         const l = document.location;
         let protocol = "ws";
@@ -545,44 +571,47 @@ var socket;
     function setAppUnloading() {
         appUnloading = true;
     }
-    socket_1.setAppUnloading = setAppUnloading;
+    socket.setAppUnloading = setAppUnloading;
     function socketConnect(svc, id) {
-        // system.cache.currentService = svc;
-        // system.cache.currentID = id;
-        // system.cache.connectTime = Date.now();
-        socket = new WebSocket(socketUrl());
-        socket.onopen = () => {
-            send({ svc: svc, cmd: "connect", param: id });
+        currentService = svc;
+        currentID = id;
+        connectTime = Date.now();
+        sock = new WebSocket(socketUrl());
+        sock.onopen = () => {
+            send({ svc: services.system.key, cmd: command.client.connect, param: id });
         };
-        socket.onmessage = (event) => {
+        sock.onmessage = (event) => {
             const msg = JSON.parse(event.data);
             onSocketMessage(msg);
         };
-        socket.onerror = (event) => {
-            // rituals.onError(services.system, event.type);
+        sock.onerror = (event) => {
+            npn.onError("socket", event.type);
         };
-        socket.onclose = () => {
+        sock.onclose = () => {
             onSocketClose();
         };
     }
-    socket_1.socketConnect = socketConnect;
+    socket.socketConnect = socketConnect;
     function send(msg) {
         if (debug) {
             console.debug("out", msg);
         }
-        socket.send(JSON.stringify(msg));
+        sock.send(JSON.stringify(msg));
     }
-    socket_1.send = send;
+    socket.send = send;
     function onSocketMessage(msg) {
         if (debug) {
             console.debug("in", msg);
         }
         switch (msg.svc) {
+            case services.system.key:
+                system.onSystemMessage(msg.cmd, msg.param);
+                break;
             default:
                 console.warn(`unhandled message for service [${msg.svc}]`);
         }
     }
-    socket_1.onSocketMessage = onSocketMessage;
+    socket.onSocketMessage = onSocketMessage;
     function onSocketClose() {
         function disconnect(seconds) {
             if (debug) {
@@ -597,6 +626,19 @@ var socket;
         }
     }
 })(socket || (socket = {}));
+var system;
+(function (system) {
+    function onSystemMessage(cmd, param) {
+        switch (cmd) {
+            case command.server.connected:
+                console.info("Connected!!!!");
+                break;
+            default:
+                console.warn(`unhandled system command [${cmd}]`);
+        }
+    }
+    system.onSystemMessage = onSystemMessage;
+})(system || (system = {}));
 var profile;
 (function (profile) {
     // noinspection JSUnusedGlobalSymbols
