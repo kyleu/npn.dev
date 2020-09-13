@@ -58,6 +58,7 @@ var collection;
         switch (cmd) {
             case command.server.collections:
                 console.warn("Collections!");
+                break;
             default:
                 console.warn(`unhandled collection command [${cmd}]`);
         }
