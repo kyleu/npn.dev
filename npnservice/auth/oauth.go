@@ -46,7 +46,7 @@ func (s *Service) getToken(prv *Provider, code string) (*oauth2.Token, error) {
 		return nil, errors.New("no auth config for [" + prv.Key + "]")
 	}
 
-	ctx := context.TODO()
+	ctx := context.Background()
 	return cfg.Exchange(ctx, code)
 }
 

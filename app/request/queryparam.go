@@ -8,17 +8,30 @@ import (
 )
 
 type QueryParam struct {
-	Key   string `json:"k,omitempty"`
-	Value string `json:"v,omitempty"`
+	Key         string `json:"k,omitempty"`
+	Value       string `json:"v,omitempty"`
+	Description string `json:"desc,omitempty"`
 }
 
 func (q *QueryParam) String() string {
 	return url.QueryEscape(q.Key) + "=" + url.QueryEscape(q.Value)
 }
 
+func (q *QueryParam) HTTP() string {
+	return url.QueryEscape(q.Key) + ":" + url.QueryEscape(q.Value)
+}
+
 type QueryParams []*QueryParam
 
-func (q QueryParams) ToURL() string {
+func (q QueryParams) HTTP() string {
+	ret := make([]string, 0, len(q))
+	for _, x := range q {
+		ret = append(ret, x.HTTP())
+	}
+	return strings.Join(ret, "\n")
+}
+
+func (q QueryParams) String() string {
 	ret := make([]string, 0, len(q))
 	for _, x := range q {
 		ret = append(ret, x.String())

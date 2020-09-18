@@ -8,7 +8,10 @@ namespace socket {
   const debug = true;
 
   let sock: WebSocket;
+  let connected = false;
   let appUnloading = false;
+  let pendingMessages: Message[] = [];
+
   let currentService = "";
   let currentID = "";
   let connectTime: number | undefined;
@@ -32,26 +35,30 @@ namespace socket {
     connectTime = Date.now();
 
     sock = new WebSocket(socketUrl());
-    sock.onopen = () => {
-      send({ svc: services.system.key, cmd: command.client.connect, param: id });
-    };
-    sock.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      onSocketMessage(msg);
-    };
-    sock.onerror = (event) => {
-      npn.onError("socket", event.type);
-    };
-    sock.onclose = () => {
-      onSocketClose();
-    };
+    sock.onopen = onSocketOpen;
+    sock.onmessage = (event) => onSocketMessage(JSON.parse(event.data));
+    sock.onerror = (event) => npn.onError("socket", event.type);
+    sock.onclose = onSocketClose;
   }
 
   export function send(msg: Message) {
-    if (debug) {
-      console.debug("out", msg);
+    if (connected) {
+      if (debug) {
+        console.debug("out", msg);
+      }
+      const m = JSON.stringify(msg, null, 2);
+      sock.send(m);
+    } else {
+      pendingMessages.push(msg);
     }
-    sock.send(JSON.stringify(msg));
+  }
+
+  function onSocketOpen() {
+    log.info("socket connected");
+    connected = true;
+    pendingMessages.forEach(send);
+    pendingMessages = [];
+    // send({ svc: services.system.key, cmd: command.client.connect, param: currentID });
   }
 
   export function onSocketMessage(msg: Message) {
@@ -73,6 +80,7 @@ namespace socket {
 
   function onSocketClose() {
     function disconnect(seconds: number) {
+      connected = false;
       if (debug) {
         console.info(`socket closed, reconnecting in ${seconds} seconds`);
       }

@@ -26,7 +26,11 @@ func Configure(version string, commitHash string) cobra.Command {
 		Use:   npncore.AppKey,
 		Short: "Command line interface for " + npncore.AppName,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			return Run(addr, port, version, commitHash)
+			actualPort, err := Run(addr, port, version, commitHash)
+			if actualPort > 0 {
+				port = actualPort
+			}
+			return err
 		},
 	}
 
@@ -40,12 +44,12 @@ func Configure(version string, commitHash string) cobra.Command {
 	return rootCmd
 }
 
-func Run(a string, p uint16, version string, commitHash string) error {
+func Run(a string, p uint16, version string, commitHash string) (uint16, error) {
 	info := InitApp(version, commitHash)
 
 	r, err := controllers.BuildRouter(info)
 	if err != nil {
-		return errors.WithMessage(err, "unable to construct routes")
+		return 0, errors.WithMessage(err, "unable to construct routes")
 	}
 
 	setIcon()

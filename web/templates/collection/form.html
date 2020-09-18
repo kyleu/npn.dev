@@ -4,7 +4,7 @@
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
-    <div class="uk-card uk-card-body">
+    <div class="uk-card uk-card-body uk-card-default">
       <h3 class="uk-card-title"><%= c.TitleWithFallback() %></h3>
       <form class="uk-form-stacked" action="<%= ctx.Route(`collection.save`, `c`, key) %>" method="post">
         <fieldset class="uk-fieldset">

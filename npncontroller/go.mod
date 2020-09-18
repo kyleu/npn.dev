@@ -6,7 +6,7 @@ require (
 	github.com/kyleu/npn/npnconnection v1.0.0
 	github.com/kyleu/npn/npncore v1.0.0
 	github.com/kyleu/npn/npntemplate v1.0.0
-	github.com/kyleu/npn/npnweb v0.0.2
+	github.com/kyleu/npn/npnweb v1.0.0
 )
 
 replace github.com/kyleu/npn/npnconnection => ../npnconnection

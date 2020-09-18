@@ -7,6 +7,12 @@ import (
 	"time"
 )
 
+type TimingSection struct {
+	Key   string `json:"key"`
+	Start int    `json:"start"`
+	End   int    `json:"end"`
+}
+
 type Timing struct {
 	began             int64
 	DNSStart          int `json:"dnsStart,omitempty"`
@@ -18,6 +24,7 @@ type Timing struct {
 	WroteHeaders      int `json:"wroteHeaders,omitempty"`
 	WroteRequest      int `json:"wroteRequest,omitempty"`
 	FirstResponseByte int `json:"firstResponseByte,omitempty"`
+	ResponseHeaders   int `json:"responseHeaders,omitempty"`
 	Completed         int `json:"complete,omitempty"`
 }
 
@@ -41,8 +48,33 @@ func (t *Timing) Request() (int, int, int) {
 	return t.FirstResponseByte, t.WroteHeaders - t.FirstResponseByte, t.WroteRequest - t.WroteHeaders
 }
 
+func (t *Timing) ConnectComplete() int {
+	if t.TLSEnd > 0 {
+		return t.TLSEnd
+	}
+	return t.ConnectEnd
+}
+
 func (t *Timing) Duration() int {
 	return t.Completed
+}
+
+func (t *Timing) Sections() []*TimingSection {
+	ret := make([]*TimingSection, 0, 5)
+	var add = func(k string, s int, e int) {
+		ret = append(ret, &TimingSection{Key: k, Start: s, End: e})
+	}
+	add("dns", t.DNSStart, t.DNSEnd)
+	add("connect", t.ConnectStart, t.ConnectEnd)
+	if t.TLSEnd > 0 {
+		add("tls", t.TLSStart, t.TLSEnd)
+	}
+	add("reqheaders", t.ConnectComplete(), t.WroteHeaders)
+	add("reqbody", t.WroteHeaders, t.WroteRequest)
+	add("rspwait", t.WroteRequest, t.FirstResponseByte)
+	add("rspheaders", t.FirstResponseByte, t.ResponseHeaders)
+	add("rspbody", t.ResponseHeaders, t.Completed)
+	return ret
 }
 
 func (t *Timing) Trace() *httptrace.ClientTrace {
@@ -75,6 +107,10 @@ func (t *Timing) Trace() *httptrace.ClientTrace {
 			t.FirstResponseByte = int((npncore.StartTimer() - t.began) / 1000)
 		},
 	}
+}
+
+func (t *Timing) CompleteHeaders() {
+	t.ResponseHeaders = int((npncore.StartTimer() - t.began) / 1000)
 }
 
 func (t *Timing) Complete() {

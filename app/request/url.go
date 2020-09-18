@@ -16,20 +16,20 @@ func (p *Prototype) URL() *url.URL {
 		Scheme:   p.Protocol.String(),
 		User:     ui,
 		Host:     p.Host(),
-		RawPath:  p.Path,
-		RawQuery: p.Query.ToURL(),
+		Path:     "/" + p.Path,
+		RawQuery: p.Query.String(),
 		Fragment: p.Fragment,
 	}
 }
 
 func (p *Prototype) FullPathString() string {
 	trimmed := strings.TrimSpace(strings.TrimPrefix(p.Path, "/"))
-	if len(trimmed) == 0 {
-		return ""
+	ret := trimmed
+	if len(ret) > 0 {
+		ret = "/" + ret
 	}
-	ret := "/" + trimmed
 	if len(p.Query) > 0 {
-		ret += "?" + p.Query.ToURL()
+		ret += "?" + p.Query.String()
 	}
 	if len(p.Fragment) > 0 {
 		ret += "#" + url.QueryEscape(p.Fragment)
@@ -78,7 +78,7 @@ func (p *Prototype) URLParts() []*URLPart {
 	}
 	if len(p.Query) > 0 {
 		add("", "?")
-		add("query", p.Query.ToURL())
+		add("query", p.Query.String())
 	}
 	if len(p.Fragment) > 0 {
 		add("", "#")

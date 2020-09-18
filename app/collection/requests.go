@@ -4,6 +4,7 @@ import (
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"
+	"os"
 	"path"
 	"strings"
 )
@@ -37,28 +38,37 @@ func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
 }
 
 func (s *Service) SaveRequest(coll string, originalKey string, req *request.Request) error {
-	if len(originalKey) > 0 && req.Key != originalKey {
+	shouldDelete := len(originalKey) > 0 && req.Key != originalKey
+
+	if shouldDelete {
 		orig, err := s.LoadRequest(coll, req.Key)
 		if err == nil && orig != nil {
 			return errors.New("file already exists in collection [" + coll + "] with key [" + req.Key + "]")
 		}
 	}
 
+	p := requestPath(coll, req.Key)
+
+	if shouldDelete {
+		o := path.Join(s.files.Root(), requestPath(coll, originalKey))
+		n := path.Join(s.files.Root(), p)
+		err := os.Rename(o, n)
+		if err != nil {
+			return errors.Wrap(err, "unable to rename original request [" + originalKey + "] in path [" + o + "]")
+		}
+	}
+
 	msg := npncore.ToJSON(req, s.logger)
-	p := path.Join(rootDir, coll, "requests", req.Key+".json")
 	err := s.files.WriteFile(p, msg, true)
 	if err != nil {
 		return errors.Wrap(err, "unable to write file")
 	}
 
-	if len(originalKey) > 0 && req.Key != originalKey {
-		err = s.DeleteRequest(coll, originalKey)
-		if err != nil {
-			return errors.Wrap(err, "unable to delete ["+coll+"/"+originalKey+"]")
-		}
-	}
-
 	return nil
+}
+
+func requestPath(coll string, key string) string {
+	return path.Join(rootDir, coll, "requests", key+".json")
 }
 
 func (s *Service) DeleteRequest(coll string, key string) error {

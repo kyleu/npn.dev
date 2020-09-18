@@ -1,5 +1,5 @@
-<%: func AuthFields(a auth.Auths, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<%: func AuthFields(key string, a auth.Auths, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <div class="uk-margin-top">
-  <label class="uk-form-label" for="auth">Auth</label>
-  <textarea class="uk-textarea" id="auth" name="auth"><%= npncore.ToJSON(a, ctx.Logger) %></textarea>
+  <label class="uk-form-label" for="<%= key %>-auth">Auth</label>
+  <textarea class="uk-textarea" id="<%= key %>-auth" name="auth"><%= npncore.ToJSON(a, ctx.Logger) %></textarea>
 </div>

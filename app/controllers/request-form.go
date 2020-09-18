@@ -11,15 +11,15 @@ import (
 )
 
 type optionsForm struct {
-	Timeout               string `mapstructure:"opt.timeout"`
-	IgnoreRedirects       string `mapstructure:"opt.ignoreRedirects"`
-	IgnoreReferrer        string `mapstructure:"opt.ignoreReferrer"`
-	IgnoreCerts           string `mapstructure:"opt.ignoreCerts"`
-	ExcludeDefaultHeaders string `mapstructure:"opt.excludeDefaultHeaders"`
-	ReadCookieJars        string `mapstructure:"opt.readCookieJars"`
-	WriteCookieJar        string `mapstructure:"opt.writeCookieJar"`
-	SSLCert               string `mapstructure:"opt.sslCert"`
-	UserAgentOverride     string `mapstructure:"opt.userAgentOverride"`
+	Timeout               string `mapstructure:"opt-timeout"`
+	IgnoreRedirects       string `mapstructure:"opt-ignoreRedirects"`
+	IgnoreReferrer        string `mapstructure:"opt-ignoreReferrer"`
+	IgnoreCerts           string `mapstructure:"opt-ignoreCerts"`
+	ExcludeDefaultHeaders string `mapstructure:"opt-excludeDefaultHeaders"`
+	ReadCookieJars        string `mapstructure:"opt-readCookieJars"`
+	WriteCookieJar        string `mapstructure:"opt-writeCookieJar"`
+	SSLCert               string `mapstructure:"opt-sslCert"`
+	UserAgentOverride     string `mapstructure:"opt-userAgentOverride"`
 }
 
 type prototypeForm struct {

@@ -14,7 +14,7 @@ type Sandbox struct {
 
 type Sandboxes = []*Sandbox
 
-var allSandboxes = Sandboxes{&Error}
+var allSandboxes = Sandboxes{&Testbed, &Error}
 
 func All() Sandboxes {
 	return allSandboxes

@@ -7,7 +7,7 @@ import (
 )
 
 type Request struct {
-	Key         string     `json:"-"`
+	Key         string     `json:"key,omitempty"`
 	Title       string     `json:"title,omitempty"`
 	Description string     `json:"description,omitempty"`
 	Prototype   *Prototype `json:"prototype"`

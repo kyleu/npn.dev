@@ -1,18 +1,4 @@
 "use strict";
-var command;
-(function (command) {
-    command.client = {
-        ping: "ping",
-        connect: "connect",
-        getCollections: "getCollections"
-    };
-    command.server = {
-        pong: "pong",
-        connected: "connected",
-        collections: "collections",
-        error: "error"
-    };
-})(command || (command = {}));
 var npn;
 (function (npn) {
     function onError(svc, err) {
@@ -28,36 +14,77 @@ var npn;
         window.onbeforeunload = () => {
             socket.setAppUnloading();
         };
+        nav.init(function (p) {
+            let parts = p.split("/");
+            parts = parts.filter(x => x.length > 0);
+            console.info("nav handler called, check it out: " + parts.join(" -> "));
+            if (parts.length === 0) {
+                return; // index
+            }
+            const svc = parts[0];
+            switch (svc) {
+                case "c":
+                    const collName = parts[1];
+                    if (collName !== collection.cache.active) {
+                        collection.cache.setActiveCollection(collName);
+                        socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: collName });
+                    }
+                    if (parts.length > 2) {
+                        const reqName = parts[2];
+                        if (reqName !== request.cache.active) {
+                            request.cache.setActiveRequest(reqName);
+                        }
+                    }
+                    break;
+                default:
+                    console.info("unhandled svc [" + svc + "]");
+            }
+        });
         socket.socketConnect(svc, id);
     }
     npn.init = init;
 })(npn || (npn = {}));
-var services;
-(function (services) {
-    services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
-    services.collection = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
-    const allServices = [services.system, services.collection];
-    function fromKey(key) {
-        const ret = allServices.find(s => s.key === key);
-        if (!ret) {
-            throw `invalid service [${key}]`;
+var collection;
+(function (collection_1) {
+    class Cache {
+        updateCollection(collection) {
+            // TODO
         }
-        return ret;
+        setActiveCollection(key) {
+            this.active = key;
+        }
     }
-    services.fromKey = fromKey;
-})(services || (services = {}));
+    collection_1.cache = new Cache();
+})(collection || (collection = {}));
 var collection;
 (function (collection) {
-    class Cache {
+    function renderCollections(cs) {
+        return JSX("ul", { class: "uk-list uk-list-divider" }, cs.map(renderCollection));
     }
-    collection.cache = new Cache();
+    collection.renderCollections = renderCollections;
+    function renderCollection(c) {
+        let title = c.title;
+        if (!title || c.title.length === 0) {
+            title = c.key;
+        }
+        return JSX("li", null, nav.link("/c/" + c.key, title));
+    }
+    collection.renderCollection = renderCollection;
 })(collection || (collection = {}));
 var collection;
 (function (collection) {
     function onCollectionMessage(cmd, param) {
         switch (cmd) {
             case command.server.collections:
-                console.warn("Collections!");
+                collection.cache.collections = param;
+                log.info(`processing [${collection.cache.collections.length}] collections`);
+                dom.setContent("#collection-list", collection.renderCollections(collection.cache.collections));
+                break;
+            case command.server.detail:
+                const d = param;
+                log.info(`processing [${d.requests.length}] requests for collection [${d.collection.key}]`);
+                collection.cache.updateCollection(d.collection);
+                request.cache.setCollectionRequests(d.collection.key, d.requests);
                 break;
             default:
                 console.warn(`unhandled collection command [${cmd}]`);
@@ -283,7 +310,6 @@ var style;
 (function (style) {
     function setTheme(theme) {
         wireEmoji(theme);
-        const card = dom.els(".uk-card");
         switch (theme) {
             case "auto":
                 let t = "light";
@@ -300,20 +326,12 @@ var style;
                 document.body.classList.remove("uk-light");
                 document.documentElement.classList.add("uk-dark");
                 document.body.classList.add("uk-dark");
-                card.forEach(x => {
-                    x.classList.add("uk-card-default");
-                    x.classList.remove("uk-card-secondary");
-                });
                 break;
             case "dark":
                 document.documentElement.classList.add("uk-light");
                 document.body.classList.add("uk-light");
                 document.documentElement.classList.remove("uk-dark");
                 document.body.classList.remove("uk-dark");
-                card.forEach(x => {
-                    x.classList.remove("uk-card-default");
-                    x.classList.add("uk-card-secondary");
-                });
                 break;
             default:
                 console.warn("invalid theme");
@@ -321,9 +339,11 @@ var style;
         }
     }
     style.setTheme = setTheme;
+    style.linkColor = "";
     function themeLinks(color) {
+        style.linkColor = `${color}-fg`;
         dom.els(".theme").forEach(el => {
-            el.classList.add(`${color}-fg`);
+            el.classList.add(style.linkColor);
         });
     }
     style.themeLinks = themeLinks;
@@ -574,11 +594,419 @@ var tags;
     }
     tags.renderTagsView = renderTagsView;
 })(tags || (tags = {}));
+var request;
+(function (request) {
+    class Cache {
+        constructor() {
+            this.requests = new Map();
+        }
+        setCollectionRequests(key, requests) {
+            this.requests.set(key, requests);
+            if (key === collection.cache.active) {
+                dom.setContent("#request-list", request.renderRequests(key, requests));
+                for (let req of requests) {
+                    if (this.active == req.key) {
+                        renderActiveRequest(key, req);
+                    }
+                }
+            }
+        }
+        setActiveRequest(key) {
+            if (!collection.cache.active) {
+                console.warn("no active collection");
+                return;
+            }
+            const coll = collection.cache.active;
+            const reqs = this.requests.get(coll) || [];
+            this.active = key;
+            for (let req of reqs) {
+                if (req.key == key) {
+                    renderActiveRequest(coll, req);
+                }
+            }
+        }
+    }
+    function renderActiveRequest(key, req) {
+        dom.setContent("#active-request", request.renderRequest(key, req));
+    }
+    request.cache = new Cache();
+})(request || (request = {}));
+var request;
+(function (request) {
+    function newPrototype(protocol, hostname, port, path, qp, fragment, auth) {
+        if (protocol.endsWith(":")) {
+            protocol = protocol.substr(0, protocol.length - 1);
+        }
+        if (fragment.startsWith("#")) {
+            fragment = fragment.substr(1);
+        }
+        return { method: "get", protocol: protocol, domain: hostname, port: port, path: path, query: qp, fragment: fragment, auth: auth };
+    }
+    function prototypeFromURL(u) {
+        const url = new URL(u);
+        const qp = [];
+        for (const [k, v] of url.searchParams) {
+            qp.push({ k: k, v: v });
+        }
+        const auth = [];
+        if (url.username.length > 0) {
+            auth.push({ type: "basic", config: { "username": url.username, "password": url.password, "showPassword": true } });
+        }
+        let port;
+        if (url.port.length > 0) {
+            port = parseInt(url.port);
+        }
+        return newPrototype(url.protocol, url.hostname, port, url.pathname, qp, url.hash, auth);
+    }
+    request.prototypeFromURL = prototypeFromURL;
+})(request || (request = {}));
+var request;
+(function (request) {
+    function renderRequests(coll, rs) {
+        return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
+    }
+    request.renderRequests = renderRequests;
+    function renderRequestLink(coll, r) {
+        let title = r.title;
+        if (!title || r.title.length === 0) {
+            title = r.key;
+        }
+        return JSX("div", null, nav.link("/c/" + coll + "/" + r.key, title));
+    }
+    request.renderRequestLink = renderRequestLink;
+    function renderRequest(coll, r) {
+        return renderPrototype(r.prototype);
+    }
+    request.renderRequest = renderRequest;
+    function renderPrototype(p) {
+        return JSX("div", null, request.prototypeToURL(p));
+    }
+})(request || (request = {}));
+var request;
+(function (request) {
+    function prototypeToURLParts(p) {
+        const ret = [];
+        let push = function (t, v) {
+            ret.push({ t: t, v: v });
+        };
+        push("protocol", p.protocol);
+        push("", "://");
+        push("domain", p.domain);
+        if (p.port) {
+            push("", ":");
+            push("port", p.port.toString());
+        }
+        if (p.path && p.path.length > 0) {
+            push("", "/");
+            push("path", p.path);
+        }
+        if (p.query && p.query.length > 0) {
+            push("", "?");
+            var query = p.query.map(k => encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v)).join('&');
+            push("query", query);
+        }
+        if (p.fragment && p.fragment.length > 0) {
+            push("", "#");
+            push("fragment", encodeURIComponent(p.fragment));
+        }
+        return ret;
+    }
+    request.prototypeToURLParts = prototypeToURLParts;
+    function prototypeToURL(p) {
+        return prototypeToURLParts(p).map(x => x.v).join("");
+    }
+    request.prototypeToURL = prototypeToURL;
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function initAuthEditor(el) {
+        }
+        form.initAuthEditor = initAuthEditor;
+        function setAuth(cache, auth) {
+            const url = new URL(cache.url.value);
+            let u = "";
+            let p = "";
+            if (auth) {
+                for (let a of auth) {
+                    if (a.type === "basic") {
+                        const basic = a.config;
+                        u = encodeURIComponent(basic.username);
+                        p = encodeURIComponent(basic.password);
+                    }
+                }
+            }
+            url.username = u;
+            url.password = p;
+            cache.url.value = url.toString();
+        }
+        form.setAuth = setAuth;
+        function updateBasicAuth(cache, auth) {
+            let currentAuth = [];
+            try {
+                currentAuth = JSON.parse(cache.auth.value);
+            }
+            catch (e) {
+                console.log("invalid auth JSON [" + cache.auth.value + "]");
+            }
+            let matched = -1;
+            if (!currentAuth) {
+                currentAuth = [];
+            }
+            for (let i = 0; i < currentAuth.length; i++) {
+                const x = currentAuth[i];
+                if (x.type === "basic") {
+                    matched = i;
+                }
+            }
+            let basic;
+            if (auth) {
+                for (let i = 0; i < auth.length; i++) {
+                    const x = auth[i];
+                    if (x.type === "basic") {
+                        basic = x.config;
+                    }
+                }
+            }
+            if (matched === -1) {
+                if (basic) {
+                    currentAuth.push({ type: "basic", config: basic });
+                }
+            }
+            else {
+                if (basic) {
+                    let curr = currentAuth[matched].config;
+                    if (curr) {
+                        curr = {
+                            username: basic.username,
+                            password: basic.password,
+                            showPassword: curr.showPassword
+                        };
+                    }
+                    else {
+                        curr = basic;
+                    }
+                    currentAuth[matched] = { type: "basic", config: curr };
+                }
+                else {
+                    currentAuth.splice(matched, 1);
+                }
+            }
+            cache.auth.value = JSON.stringify(currentAuth, null, 2);
+        }
+        form.updateBasicAuth = updateBasicAuth;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function initBodyEditor(el) {
+        }
+        form.initBodyEditor = initBodyEditor;
+        function setBody(cache, body) {
+        }
+        form.setBody = setBody;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function wireForm(prefix) {
+            const id = function (k) {
+                return "#" + prefix + "-" + k;
+            };
+            const cache = {
+                url: dom.req(id("url")),
+                auth: dom.req(id("auth")),
+                qp: dom.req(id("queryparams")),
+                headers: dom.req(id("headers")),
+                body: dom.req(id("body"))
+            };
+            initEditors(prefix, cache);
+            wireEvents(cache);
+        }
+        form.wireForm = wireForm;
+        function initEditors(prefix, cache) {
+            form.initURLEditor(cache.url);
+            form.initAuthEditor(cache.auth);
+            form.initQueryParamsEditor(cache.qp);
+            form.initHeadersEditor(cache.headers);
+            form.initBodyEditor(cache.body);
+            form.initOptionsEditor(prefix);
+        }
+        function events(e, f) {
+            e.onchange = f;
+            e.onkeyup = f;
+            e.onblur = f;
+        }
+        function wireEvents(cache) {
+            events(cache.url, function () {
+                form.setURL(cache, request.prototypeFromURL(cache.url.value));
+            });
+            events(cache.auth, function () {
+                let auth;
+                try {
+                    auth = JSON.parse(cache.auth.value);
+                }
+                catch (e) {
+                    console.log("invalid auth JSON [" + cache.auth.value + "]");
+                    auth = [];
+                }
+                form.setAuth(cache, auth);
+            });
+            events(cache.qp, function () {
+                let qp;
+                try {
+                    qp = JSON.parse(cache.qp.value);
+                }
+                catch (e) {
+                    console.log("invalid qp JSON [" + cache.qp.value + "]");
+                    qp = [];
+                }
+                form.setQueryParams(cache, qp);
+            });
+            events(cache.headers, function () {
+                let h;
+                try {
+                    h = JSON.parse(cache.headers.value);
+                }
+                catch (e) {
+                    console.log("invalid headers JSON [" + cache.headers.value + "]");
+                    h = [];
+                }
+                form.setHeaders(cache, h);
+            });
+            events(cache.body, function () {
+                let b;
+                try {
+                    b = JSON.parse(cache.body.value);
+                }
+                catch (e) {
+                    console.log("invalid body JSON [" + cache.body.value + "]");
+                }
+                form.setBody(cache, b);
+            });
+        }
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function createHeadersEditor(el) {
+            const container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
+            const header = JSX("li", null,
+                JSX("div", { "uk-grid": true },
+                    JSX("div", { class: "uk-width-1-4" }, "Name"),
+                    JSX("div", { class: "uk-width-1-4" }, "Value"),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "request.form.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
+                                JSX("span", { "data-uk-icon": "icon: plus" }))),
+                        "Description")));
+            const updateFn = function () {
+                const curr = JSON.parse(el.value);
+                container.innerText = "";
+                container.appendChild(header);
+                for (let h of curr) {
+                    addChild(container, h);
+                }
+            };
+            updateFn();
+            return container;
+        }
+        form.createHeadersEditor = createHeadersEditor;
+        function addChild(container, h) {
+            console.info(container);
+            container.appendChild(JSX("li", null,
+                JSX("div", { "uk-grid": true },
+                    JSX("div", { class: "uk-width-1-4" }, h.k),
+                    JSX("div", { class: "uk-width-1-4" }, h.v),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return false;", title: "new header" },
+                                JSX("span", { "data-uk-icon": "icon: close" }))),
+                        h.desc ? h.desc : ""))));
+        }
+        form.addChild = addChild;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function initHeadersEditor(el) {
+            const parent = el.parentElement;
+            parent.appendChild(form.createHeadersEditor(el));
+        }
+        form.initHeadersEditor = initHeadersEditor;
+        function setHeaders(cache, headers) {
+        }
+        form.setHeaders = setHeaders;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function initOptionsEditor(prefix) {
+        }
+        form.initOptionsEditor = initOptionsEditor;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function initQueryParamsEditor(el) {
+        }
+        form.initQueryParamsEditor = initQueryParamsEditor;
+        function setQueryParams(cache, qp) {
+            let ret = [];
+            if (qp) {
+                for (let p of qp) {
+                    ret.push(encodeURIComponent(p.k) + '=' + encodeURIComponent(p.v));
+                }
+            }
+            const url = new URL(cache.url.value);
+            url.search = ret.join("&");
+            cache.url.value = url.toString();
+        }
+        form.setQueryParams = setQueryParams;
+        function updateQueryParams(cache, qp) {
+            cache.qp.value = JSON.stringify(qp, null, 2);
+        }
+        form.updateQueryParams = updateQueryParams;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function initURLEditor(el) {
+        }
+        form.initURLEditor = initURLEditor;
+        function setURL(cache, u) {
+            if (!u) {
+                cache.qp.value = "[]";
+                return;
+            }
+            form.updateQueryParams(cache, u.query);
+            form.updateBasicAuth(cache, u.auth);
+        }
+        form.setURL = setURL;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
 var socket;
 (function (socket) {
     const debug = true;
     let sock;
+    let connected = false;
     let appUnloading = false;
+    let pendingMessages = [];
     let currentService = "";
     let currentID = "";
     let connectTime;
@@ -599,28 +1027,32 @@ var socket;
         currentID = id;
         connectTime = Date.now();
         sock = new WebSocket(socketUrl());
-        sock.onopen = () => {
-            send({ svc: services.system.key, cmd: command.client.connect, param: id });
-        };
-        sock.onmessage = (event) => {
-            const msg = JSON.parse(event.data);
-            onSocketMessage(msg);
-        };
-        sock.onerror = (event) => {
-            npn.onError("socket", event.type);
-        };
-        sock.onclose = () => {
-            onSocketClose();
-        };
+        sock.onopen = onSocketOpen;
+        sock.onmessage = (event) => onSocketMessage(JSON.parse(event.data));
+        sock.onerror = (event) => npn.onError("socket", event.type);
+        sock.onclose = onSocketClose;
     }
     socket.socketConnect = socketConnect;
     function send(msg) {
-        if (debug) {
-            console.debug("out", msg);
+        if (connected) {
+            if (debug) {
+                console.debug("out", msg);
+            }
+            const m = JSON.stringify(msg, null, 2);
+            sock.send(m);
         }
-        sock.send(JSON.stringify(msg));
+        else {
+            pendingMessages.push(msg);
+        }
     }
     socket.send = send;
+    function onSocketOpen() {
+        log.info("socket connected");
+        connected = true;
+        pendingMessages.forEach(send);
+        pendingMessages = [];
+        // send({ svc: services.system.key, cmd: command.client.connect, param: currentID });
+    }
     function onSocketMessage(msg) {
         if (debug) {
             console.debug("in", msg);
@@ -639,6 +1071,7 @@ var socket;
     socket.onSocketMessage = onSocketMessage;
     function onSocketClose() {
         function disconnect(seconds) {
+            connected = false;
             if (debug) {
                 console.info(`socket closed, reconnecting in ${seconds} seconds`);
             }
@@ -718,57 +1151,22 @@ var profile;
     }
     profile.setPicture = setPicture;
 })(profile || (profile = {}));
-var collection;
-(function (collection) {
-    class Group {
-        constructor(key) {
-            this.members = [];
-            this.key = key;
-        }
-    }
-    collection.Group = Group;
-    class GroupSet {
-        constructor() {
-            this.groups = [];
-        }
-        findOrInsert(key) {
-            const ret = this.groups.find(x => x.key === key);
-            if (ret) {
-                return ret;
-            }
-            const n = new Group(key);
-            this.groups.push(n);
-            return n;
-        }
-    }
-    collection.GroupSet = GroupSet;
-    function groupBy(list, func) {
-        const res = new GroupSet();
-        if (list) {
-            list.forEach(o => {
-                const group = res.findOrInsert(func(o));
-                group.members.push(o);
-            });
-        }
-        return res;
-    }
-    collection.groupBy = groupBy;
-    function findGroup(groups, key) {
-        for (const g of groups) {
-            if (g.key === key) {
-                return g.members;
-            }
-        }
-        return [];
-    }
-    collection.findGroup = findGroup;
-    function flatten(a) {
-        const ret = [];
-        a.forEach(v => ret.push(...v));
-        return ret;
-    }
-    collection.flatten = flatten;
-})(collection || (collection = {}));
+var command;
+(function (command) {
+    command.client = {
+        ping: "ping",
+        connect: "connect",
+        getCollections: "getCollections",
+        getCollection: "getCollection"
+    };
+    command.server = {
+        pong: "pong",
+        connected: "connected",
+        collections: "collections",
+        detail: "detail",
+        error: "error"
+    };
+})(command || (command = {}));
 var date;
 (function (date) {
     function dateToYMD(dt) {
@@ -822,6 +1220,112 @@ var date;
     }
     date.utcDate = utcDate;
 })(date || (date = {}));
+var group;
+(function (group_1) {
+    class Group {
+        constructor(key) {
+            this.members = [];
+            this.key = key;
+        }
+    }
+    group_1.Group = Group;
+    class GroupSet {
+        constructor() {
+            this.groups = [];
+        }
+        findOrInsert(key) {
+            const ret = this.groups.find(x => x.key === key);
+            if (ret) {
+                return ret;
+            }
+            const n = new Group(key);
+            this.groups.push(n);
+            return n;
+        }
+    }
+    group_1.GroupSet = GroupSet;
+    function groupBy(list, func) {
+        const res = new GroupSet();
+        if (list) {
+            list.forEach(o => {
+                const group = res.findOrInsert(func(o));
+                group.members.push(o);
+            });
+        }
+        return res;
+    }
+    group_1.groupBy = groupBy;
+    function findGroup(groups, key) {
+        for (const g of groups) {
+            if (g.key === key) {
+                return g.members;
+            }
+        }
+        return [];
+    }
+    group_1.findGroup = findGroup;
+    function flatten(a) {
+        const ret = [];
+        a.forEach(v => ret.push(...v));
+        return ret;
+    }
+    group_1.flatten = flatten;
+})(group || (group = {}));
+var log;
+(function (log) {
+    const started = Date.now();
+    function info(msg) {
+        const el = l("info", msg);
+        const container = dom.req("#log-panel");
+        container.appendChild(el);
+    }
+    log.info = info;
+    function l(level, msg) {
+        const n = Date.now() - started;
+        return JSX("li", null,
+            JSX("div", { class: "right" },
+                n,
+                "ms"),
+            msg);
+    }
+    log.l = l;
+})(log || (log = {}));
+var nav;
+(function (nav) {
+    let handler = function (p) {
+        console.info("default nav handler called: " + p);
+    };
+    function init(f) {
+        handler = f;
+        window.onpopstate = function (event) {
+            f(event.state === null ? "" : event.state);
+        };
+        let path = location.pathname;
+        if (path.startsWith("/w")) {
+            path = path.substr(2);
+        }
+        navigate(path);
+    }
+    nav.init = init;
+    function navigate(path) {
+        if (path.startsWith("/")) {
+            path = path.substr(1);
+        }
+        let fullpath = "/w";
+        if (path.length > 0) {
+            fullpath = fullpath + "/" + path;
+        }
+        if (location.pathname !== fullpath) {
+            history.pushState(path, "", fullpath);
+        }
+        handler(path);
+    }
+    nav.navigate = navigate;
+    function link(path, title) {
+        return JSX("a", { class: style.linkColor, href: path, onclick: "nav.navigate('" + path + "', '" + title + "');return false;" }, title);
+    }
+    nav.link = link;
+})(nav || (nav = {}));
 var notify;
 (function (notify_1) {
     function notify(msg, status) {
@@ -841,4 +1345,18 @@ var notify;
     }
     notify_1.modal = modal;
 })(notify || (notify = {}));
+var services;
+(function (services) {
+    services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
+    services.collection = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
+    const allServices = [services.system, services.collection];
+    function fromKey(key) {
+        const ret = allServices.find(s => s.key === key);
+        if (!ret) {
+            throw `invalid service [${key}]`;
+        }
+        return ret;
+    }
+    services.fromKey = fromKey;
+})(services || (services = {}));
 //# sourceMappingURL=npn.js.map

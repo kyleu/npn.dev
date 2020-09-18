@@ -12,7 +12,7 @@
         }
       %>
       <div class="uk-width-<%= width %>@m">
-        <div id="profile-card" class="uk-card uk-card-body">
+        <div id="profile-card" class="uk-card uk-card-body uk-card-default">
           <h3 class="uk-card-title">Profile</h3>
           <form class="uk-form-horizontal" action="<%= ctx.Route(`profile.save`) %>" method="post">
             <input type="hidden" name="ref" value="<%= ref %>" />

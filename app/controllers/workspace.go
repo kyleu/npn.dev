@@ -14,14 +14,7 @@ import (
 
 func Workspace(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		title := "Workspace"
-
-		ctx.Title = title
-		ctx.Breadcrumbs = npnweb.Breadcrumbs{npnweb.BreadcrumbSelf("workspace")}
-
-		debug := "TODO"
-
-		return npncontroller.T(templates.Workspace(title, debug, ctx, w))
+		return npncontroller.T(templates.Workspace(ctx, w))
 	})
 }
 
@@ -35,13 +28,17 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	connID, err := app.Svc(ctx.App).Socket.Register(ctx.Profile.ToProfile(), c)
+	ss := app.Svc(ctx.App).Socket
+
+	connID, err := ss.Register(ctx.Profile.ToProfile(), c)
 	if err != nil {
 		ctx.Logger.Warn("unable to register websocket connection")
 		return
 	}
 
-	err = app.Svc(ctx.App).Socket.ReadLoop(connID)
+	err = ss.OnOpen(connID)
+
+	err = ss.ReadLoop(connID)
 	if err != nil {
 		ctx.Logger.Error(fmt.Sprintf("error processing socket read loop: %+v", err))
 		return

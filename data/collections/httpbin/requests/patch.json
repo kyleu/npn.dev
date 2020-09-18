@@ -1,0 +1,9 @@
+{
+  "title": "patch",
+  "prototype": {
+    "method": "PATCH",
+    "protocol": "https",
+    "domain": "httpbin.org",
+    "path": "patch"
+  }
+}

@@ -4,6 +4,7 @@ import (
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
+	"os"
 	"path"
 )
 
@@ -57,10 +58,15 @@ func (s *Service) Load(key string) (*Collection, error) {
 
 func (s *Service) Save(originalKey string, newKey string, title string, description string) error {
 	orig, err := s.Load(originalKey)
-	if err != nil {
-		// return errors.Wrap(err, "unable to load original collection [" + originalKey + "] (expected)")
+
+	if orig != nil && originalKey != newKey {
+		o := path.Join(s.files.Root(), rootDir, originalKey)
+		n := path.Join(s.files.Root(), rootDir, newKey)
+		err := os.Rename(o, n)
+		if err != nil {
+			return errors.Wrap(err, "unable to rename original collection [" + originalKey + "] in path [" + o + "]")
+		}
 	}
-	shouldDelete := orig != nil && originalKey != newKey
 
 	n := &Collection{
 		Key:         newKey,
@@ -70,11 +76,10 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 
 	if orig == nil {
 		n.Owner = "system"
-		n.Path = "TODO"
 	} else {
 		n.Owner = orig.Owner
-		n.Path = orig.Path
 	}
+	n.Path = newKey
 
 	p := path.Join(rootDir, newKey, "collection.json")
 	content := npncore.ToJSON(n, s.logger)
@@ -83,12 +88,6 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 		return errors.Wrap(err, "unable to save collection [" + newKey + "]")
 	}
 
-	if shouldDelete {
-		err := s.Delete(originalKey)
-		if err != nil {
-			return errors.Wrap(err, "unable to delete original collection [" + originalKey + "]")
-		}
-	}
 	return nil
 }
 

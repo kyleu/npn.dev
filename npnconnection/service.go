@@ -12,6 +12,7 @@ import (
 )
 
 type Handler func(s *Service, conn *Connection, svc string, cmd string, param json.RawMessage) error
+type ConnectEvent func(s *Service, conn *Connection) error
 
 type Service struct {
 	connections   map[uuid.UUID]*Connection
@@ -19,11 +20,13 @@ type Service struct {
 	channels      map[Channel][]uuid.UUID
 	channelsMu    sync.Mutex
 	Logger        logur.Logger
+	onOpen        ConnectEvent
 	handler       Handler
+	onClose       ConnectEvent
 	Context       interface{}
 }
 
-func NewService(logger logur.Logger, handler Handler, ctx interface{}) *Service {
+func NewService(logger logur.Logger, onOpen ConnectEvent, handler Handler, onClose ConnectEvent, ctx interface{}) *Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeySocket})
 	return &Service{
 		connections:   make(map[uuid.UUID]*Connection),
@@ -32,6 +35,7 @@ func NewService(logger logur.Logger, handler Handler, ctx interface{}) *Service 
 		channelsMu:    sync.Mutex{},
 		Logger:        logger,
 		handler:       handler,
+		onOpen:        onOpen,
 		Context:       ctx,
 	}
 }
@@ -69,6 +73,14 @@ func (s *Service) Count() int {
 	return len(s.connections)
 }
 
+func (s *Service) OnOpen(connID uuid.UUID) error {
+	c, ok := s.connections[connID]
+	if !ok {
+		return invalidConnection(connID)
+	}
+	return s.onOpen(s, c)
+}
+
 func onMessage(s *Service, connID uuid.UUID, message Message) error {
 	if connID == systemID {
 		s.Logger.Warn("--- admin message received ---")
@@ -81,4 +93,12 @@ func onMessage(s *Service, connID uuid.UUID, message Message) error {
 	}
 
 	return s.handler(s, c, message.Svc, message.Cmd, message.Param)
+}
+
+func (s *Service) OnClose(connID uuid.UUID) error {
+	c, ok := s.connections[connID]
+	if !ok {
+		return invalidConnection(connID)
+	}
+	return s.onOpen(s, c)
 }

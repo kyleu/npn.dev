@@ -1,6 +1,6 @@
 <%: func DebugRequestFinalHeaders(excluded []string, headers header.Headers, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <% if len(excluded) > 0 { %>
-  <div class="uk-card uk-card-body uk-margin-top">
+  <div class="uk-card uk-card-body uk-card-default uk-margin-top">
     <h3 class="uk-card-title">Excluded Default Headers</h3>
     <ul class="uk-list uk-list-divider">
       <% for _, h := range excluded { %>
@@ -9,7 +9,7 @@
     </ul>
   </div>
 <% } %>
-<div class="uk-card uk-card-body uk-margin-top">
+<div class="uk-card uk-card-body uk-card-default uk-margin-top">
   <h3 class="uk-card-title">Final Headers</h3>
   <ul class="uk-list uk-list-divider">
     <% if len(headers) == 0 { %>

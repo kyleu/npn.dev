@@ -4,7 +4,7 @@
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
-    <div class="uk-card uk-card-body">
+    <div class="uk-card uk-card-body uk-card-default">
       <h3 class="uk-card-title"><%= sb.Title %></h3>
       <div class="uk-margin-top">
         <% if sb.Key == "testbed" { %>
@@ -14,10 +14,10 @@
         <% } %>
       </div>
     </div>
-    <div class="uk-card uk-card-body uk-margin-top">
+    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
       <h3 class="uk-card-title">Response (<%= t %>)</h3>
       <div class="uk-margin-top">
-        <pre><%= json %></pre>
+        <pre><code><%= json %></code></pre>
       </div>
     </div>
   </div>

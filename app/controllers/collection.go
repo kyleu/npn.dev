@@ -33,6 +33,26 @@ func CollectionNew(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func CollectionDetail(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		key := mux.Vars(r)["c"]
+
+		coll, err := app.Svc(ctx.App).Collection.Load(key)
+		if err != nil {
+			return npncontroller.EResp(err)
+		}
+
+		reqs, err := app.Svc(ctx.App).Collection.ListRequests(key)
+		if err != nil {
+			return npncontroller.EResp(err)
+		}
+
+		ctx.Title = "Collection"
+		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), npnweb.BreadcrumbSelf(key))
+		return npncontroller.T(templates.CollectionDetail(coll, reqs, ctx, w))
+	})
+}
+
 func CollectionEdit(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		key := mux.Vars(r)["c"]
@@ -43,7 +63,8 @@ func CollectionEdit(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ctx.Title = coll.Title
-		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), npnweb.BreadcrumbSelf(key))
+		bc := npnweb.Breadcrumb{Path: ctx.Route(KeyCollection+".detail", "c", key), Title: key}
+		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), bc, npnweb.BreadcrumbSelf("edit"))
 		return npncontroller.T(templates.CollectionForm(coll.Key, coll, ctx, w))
 	})
 }
@@ -65,27 +86,7 @@ func CollectionSave(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(err)
 		}
 
-		return ctx.Route(KeyCollection + ".detail", "c", key), nil
-	})
-}
-
-func CollectionDetail(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		key := mux.Vars(r)["c"]
-
-		coll, err := app.Svc(ctx.App).Collection.Load(key)
-		if err != nil {
-			return npncontroller.EResp(err)
-		}
-
-		reqs, err := app.Svc(ctx.App).Collection.ListRequests(key)
-		if err != nil {
-			return npncontroller.EResp(err)
-		}
-
-		ctx.Title = "Collection"
-		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), npnweb.BreadcrumbSelf(key))
-		return npncontroller.T(templates.CollectionDetail(coll, reqs, ctx, w))
+		return ctx.Route(KeyCollection+".detail", "c", key), nil
 	})
 }
 
@@ -95,7 +96,7 @@ func CollectionDelete(w http.ResponseWriter, r *http.Request) {
 
 		err := app.Svc(ctx.App).Collection.Delete(coll)
 		if err != nil {
-			return npncontroller.EResp(err, "unable to delete collection [" + coll + "]")
+			return npncontroller.EResp(err, "unable to delete collection ["+coll+"]")
 		}
 
 		msg := "deleted collection [" + coll + "]"

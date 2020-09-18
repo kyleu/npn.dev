@@ -4,7 +4,7 @@
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
-    <div class="uk-card uk-card-body">
+    <div class="uk-card uk-card-body uk-card-default">
       <div class="right">
         <a class="theme uk-icon-button" data-uk-icon="file-text" href="<%= ctx.Route(`collection.edit`, `c`, c.Key) %>" title="edit collection"></a>
       </div>
@@ -13,7 +13,7 @@
         <p><%= c.Description %></p>
       <% } %>
     </div>
-    <div class="uk-card uk-card-body uk-margin-top">
+    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
       <div class="right">
         <a class="theme uk-icon-button" data-uk-icon="plus" href="<%= ctx.Route(`request.new`, `c`, c.Key) %>" title="new request"></a>
       </div>

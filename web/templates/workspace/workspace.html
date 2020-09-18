@@ -1,18 +1,27 @@
-<%: func Workspace(title string, debug interface{}, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%: func Workspace(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ head { %><% npntemplate.Init(npncore.AppKey, npncore.UUID(), _buffer) %><% } %>
 <%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container uk-container-expand">
-    <div class="uk-card uk-card-body">
-      <h3 class="uk-card-title"><%= title %></h3>
-      <p>Coming soon!</p>
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">Workspace</h3>
+      <p>TODO</p>
     </div>
-    <div class="uk-card uk-card-body uk-margin-top">
-      <h3 class="uk-card-title">Output</h3>
-      <% npntemplate.DebugPanel(debug, ctx.Logger, _buffer) %>
+    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+      <h3 class="uk-card-title">Collections</h3>
+      <div id="collection-list" class="uk-margin-top"></div>
     </div>
+    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+      <h3 class="uk-card-title">Requests</h3>
+      <div id="request-list" class="uk-margin-top"></div>
+    </div>
+    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+      <h3 class="uk-card-title">Active Request</h3>
+      <div id="active-request" class="uk-margin-top"></div>
+    </div>
+    <% LogPanel(ctx, _buffer) %>
   </div>
 </div>
 <% } %>

@@ -1,0 +1,16 @@
+<%: func RequestDetail(coll string, req *request.Request, result *call.Result, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <% RequestPanel(coll, req, ctx, "", _buffer) %>
+    <% RequestActions(coll, req, ctx, _buffer) %>
+    <% DebugRequestAuth(req.Prototype.Auth, ctx, _buffer) %>
+    <% ViewHeaders(req.Prototype.Headers, ctx, _buffer) %>
+    <% DebugRequestFinalHeaders(req.Options().ExcludeDefaultHeaders, req.Prototype.FinalHeaders(), ctx, _buffer) %>
+    <% ViewBody(req.Prototype.Body, ctx, _buffer) %>
+    <% DebugRequestOptions(req.Prototype.Options, ctx, _buffer) %>
+  </div>
+</div>
+<% } %>

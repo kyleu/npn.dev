@@ -24,3 +24,10 @@ func About(w http.ResponseWriter, r *http.Request) {
 		return npncontroller.T(templates.StaticAbout(ctx, w))
 	})
 }
+
+func Source(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		http.ServeFile(w, r, "./"+r.URL.Path)
+		return "", nil
+	})
+}

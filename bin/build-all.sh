@@ -11,13 +11,12 @@ cd $project_dir
 bin/build-client.sh
 bin/build-css.sh
 
-bin/build-macos.sh
-# bin/build-macos-arm.sh
-
-bin/build-linux.sh
-bin/build-linux-arm.sh
-
-bin/build-windows.sh
-# bin/build-windows-arm.sh
+bin/build-desktop.sh
 
 bin/build-docker.sh
+
+bin/build-wasm.sh
+
+bin/build-android.sh
+bin/build-ios.sh
+

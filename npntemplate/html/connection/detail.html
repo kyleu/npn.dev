@@ -4,7 +4,7 @@
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
-    <div class="uk-card uk-card-body">
+    <div class="uk-card uk-card-body uk-card-default">
       <h3 class="uk-card-title">Socket Connection</h3>
       <table class="uk-table uk-table-divider uk-text-left">
         <caption class="hidden">socket list</caption>
@@ -20,7 +20,7 @@
         </tbody>
       </table>
     </div>
-    <div class="uk-card uk-card-body uk-margin-top">
+    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
       <form class="uk-form-stacked" action="<%= ctx.Route(npnweb.AdminLink(npncore.KeyConnection, `post`)) %>" method="post">
         <input name="<%= npncore.KeyID %>" type="hidden" value="<%=v model.ID %>" />
         <fieldset class="uk-fieldset">

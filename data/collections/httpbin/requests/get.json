@@ -1,0 +1,9 @@
+{
+  "title": "get",
+  "prototype": {
+    "method": "GET",
+    "protocol": "https",
+    "domain": "httpbin.org",
+    "path": "get"
+  }
+}

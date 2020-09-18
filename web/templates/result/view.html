@@ -1,0 +1,17 @@
+<%: func CallDetail(coll string, req *request.Request, result *call.Result, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <% ResultPanel(result, ctx, _buffer) %>
+    <% DebugResultTiming(result.Timing, ctx, _buffer) %>
+    <% if result.Response != nil { %>
+      <% ViewHeaders(result.Response.Headers, ctx, _buffer) %>
+      <% ViewBody(result.Response.Body, ctx, _buffer) %>
+    <% } %>
+    <% RequestPanel(coll, req, ctx, `uk-margin-top`, _buffer) %>
+    <% RequestActions(coll, req, ctx, _buffer) %>
+  </div>
+</div>
+<% } %>

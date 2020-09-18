@@ -1,5 +1,5 @@
 <%: func RequestActions(collection string, req *request.Request, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<div class="uk-card uk-card-body uk-margin-top">
+<div class="uk-card uk-card-body uk-card-default uk-margin-top">
   <h3 class="uk-card-title">Actions</h3>
   <a class="uk-button uk-button-default uk-margin-top" href="<%= ctx.Route(`request.call`, `c`, collection, npncore.KeyKey, req.Key) %>">Call</a>
   <a class="uk-button uk-button-default uk-margin-top" href="<%= ctx.Route(`request.transform`, `c`, collection, npncore.KeyKey, req.Key) %>">Transform</a>

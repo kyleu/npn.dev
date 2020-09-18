@@ -44,7 +44,6 @@ func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
 	req = req.WithContext(httptrace.WithClientTrace(req.Context(), timing.Trace()))
 	timing.Begin()
 	hr, err := client.Do(req)
-	timing.Complete()
 
 	status := "ok"
 	var errStr *string = nil
@@ -54,7 +53,14 @@ func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
 		errStr = &es
 	}
 
-	rsp := ResponseFromHTTP(hr)
+	timing.CompleteHeaders()
+
+	var rsp *Response
+	if hr != nil {
+		rsp = ResponseFromHTTP(hr)
+	}
+
+	timing.Complete()
 
 	return &Result{Status: status, Response: rsp, Timing: timing, Error: errStr}
 }

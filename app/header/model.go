@@ -6,8 +6,9 @@ import (
 )
 
 type Header struct {
-	Key   string `json:"k,omitempty"`
-	Value string `json:"v,omitempty"`
+	Key         string `json:"k,omitempty"`
+	Value       string `json:"v,omitempty"`
+	Description string `json:"desc,omitempty"`
 }
 
 type Headers []*Header
@@ -42,6 +43,14 @@ func (h Headers) ToHTTP() http.Header {
 	ret := make(http.Header, len(h))
 	for _, hd := range h {
 		ret[hd.Key] = append(ret[hd.Key], hd.Value)
+	}
+	return ret
+}
+
+func (h Headers) Clone() Headers {
+	ret := make(Headers, len(h))
+	for i, hx := range h {
+		ret[i] = hx
 	}
 	return ret
 }

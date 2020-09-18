@@ -1,5 +1,5 @@
-<%: func BodyFields(b *body.Body, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<%: func BodyFields(key string, b *body.Body, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <div class="uk-margin-top">
-  <label class="uk-form-label" for="body">Body</label>
-  <textarea class="uk-textarea" id="body" name="body"><%= npncore.ToJSON(b, ctx.Logger) %></textarea>
+  <label class="uk-form-label" for="<%= key %>-body">Body</label>
+  <textarea class="uk-textarea" id="<%= key %>-body" name="body"><%= npncore.ToJSON(b, ctx.Logger) %></textarea>
 </div>

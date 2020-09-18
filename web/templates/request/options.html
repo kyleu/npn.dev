@@ -1,9 +1,9 @@
 <%: func DebugRequestOptions(opts *request.Options, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<div class="uk-card uk-card-body uk-margin-top">
+<div class="uk-card uk-card-body uk-card-default uk-margin-top">
   <h3 class="uk-card-title">Options</h3>
   <ul class="uk-list uk-list-divider">
     <% if opts == nil { %>
-      <li>no auths</li>
+      <li>no options</li>
     <% } else { %>
       <li>Timeout: <%=v opts.Timeout %></li>
       <li>IgnoreRedirects: <%=v opts.IgnoreRedirects %></li>

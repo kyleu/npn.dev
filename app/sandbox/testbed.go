@@ -4,7 +4,7 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
-var Testbed = Register(&Sandbox{
+var Testbed = Sandbox{
 	Key:         "testbed",
 	Title:       "Testbed",
 	Description: "This could do anything, be careful",
@@ -12,4 +12,4 @@ var Testbed = Register(&Sandbox{
 		ret := "OK"
 		return "Testbed!", ret, nil
 	},
-})
+}

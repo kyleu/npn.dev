@@ -1,4 +1,4 @@
-<%: func PrototypeFields(proto *request.Prototype, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<%: func PrototypeFields(key string, proto *request.Prototype, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <div class="uk-margin-top">
   <label class="uk-form-label" for="method">Method</label>
   <select class="uk-select" id="method" name="method">
@@ -13,11 +13,14 @@
 </div>
 
 <div class="uk-margin-top">
-  <label class="uk-form-label" for="url">URL</label>
-  <input class="uk-input" id="url" name="url" type="text" value="<%= proto.URLString() %>" />
+  <label class="uk-form-label" for="<%= key %>-url">URL</label>
+  <input class="uk-input" id="<%= key %>-url" name="url" type="text" value="<%= proto.URLString() %>" />
 </div>
 
-<% HeaderFields(proto.Headers, ctx, buffer) %>
-<% AuthFields(proto.Auth, ctx, buffer) %>
-<% BodyFields(proto.Body, ctx, buffer) %>
-<% OptionFields(proto.Options, ctx, buffer) %>
+<% AuthFields(key, proto.Auth, ctx, buffer) %>
+<% QueryParamFields(key, proto.Query, ctx, buffer) %>
+<% HeaderFields(key, proto.Headers, ctx, buffer) %>
+<% BodyFields(key, proto.Body, ctx, buffer) %>
+<% OptionFields(key, proto.Options, ctx, buffer) %>
+
+<script>window.addEventListener("load", function() { request.form.wireForm('<%= key %>'); }, false)</script>

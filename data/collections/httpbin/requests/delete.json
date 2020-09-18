@@ -1,0 +1,9 @@
+{
+  "title": "delete",
+  "prototype": {
+    "method": "DELETE",
+    "protocol": "https",
+    "domain": "httpbin.org",
+    "path": "delete"
+  }
+}

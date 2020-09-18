@@ -1,5 +1,5 @@
 <%: func DebugResultTiming(t *call.Timing, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<div class="uk-card uk-card-body uk-margin-top">
+<div class="uk-card uk-card-body uk-card-default uk-margin-top">
   <h3 class="uk-card-title">Timing</h3>
   <ul class="uk-list uk-list-divider">
     <% if t == nil { %>
@@ -14,7 +14,13 @@
       <li>WroteHeaders: <%= npncore.MicrosToMillis(ctx.Profile.Locale, t.WroteHeaders) %></li>
       <li>WroteRequest: <%= npncore.MicrosToMillis(ctx.Profile.Locale, t.WroteRequest) %></li>
       <li>FirstResponseByte: <%= npncore.MicrosToMillis(ctx.Profile.Locale, t.FirstResponseByte) %></li>
+      <li>ResponseHeaders: <%= npncore.MicrosToMillis(ctx.Profile.Locale, t.ResponseHeaders) %></li>
       <li>Completed: <%= npncore.MicrosToMillis(ctx.Profile.Locale, t.Completed) %></li>
     <% } %>
   </ul>
+  <div>
+    <% for _, section := range t.Sections() { %>
+      <div><%= section.Key %>: <%=v section.Start %> - <%=v section.End %></div>
+    <% } %>
+  </div>
 </div>

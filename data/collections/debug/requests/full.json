@@ -1,4 +1,5 @@
 {
+  "key": "full",
   "title": "Full Request",
   "description": "Exercises all features",
   "prototype": {
@@ -6,7 +7,6 @@
     "protocol": "http",
     "domain": "localhost",
     "port": 10101,
-    "path": "testbed",
     "query": [
       {
         "k": "q",
@@ -28,18 +28,12 @@
       {
         "type": "basic",
         "config": {
-          "username": "kyle",
-          "password": "pass",
+          "username": "kyleu",
+          "password": "password",
           "showPassword": true
         }
       }
     ],
-    "body": {
-      "type": "temp",
-      "config": {
-        "foo": "bar"
-      }
-    },
     "options": {}
   }
 }

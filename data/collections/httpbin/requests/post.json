@@ -1,0 +1,9 @@
+{
+  "title": "post",
+  "prototype": {
+    "method": "POST",
+    "protocol": "https",
+    "domain": "httpbin.org",
+    "path": "post"
+  }
+}
