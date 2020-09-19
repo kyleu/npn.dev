@@ -7,6 +7,13 @@ build
 /npntemplate/gen
 /tmp
 
+/web/assets/npn.css
+/web/assets/npn.min.css
+/web/assets/npn.js
+/web/assets/npn.js.map
+/web/assets/npn.min.js
+/web/assets/npn.min.js.map
+
 node_modules
 
 xcuserdata
