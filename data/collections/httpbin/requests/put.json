@@ -1,9 +1,0 @@
-{
-  "title": "put",
-  "prototype": {
-    "method": "PUT",
-    "protocol": "https",
-    "domain": "httpbin.org",
-    "path": "put"
-  }
-}

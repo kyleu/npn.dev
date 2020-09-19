@@ -10,6 +10,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/gorilla/websocket v1.4.1
 	github.com/howeyc/fsnotify v0.9.0 // indirect
+	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
 	github.com/kyleu/npn/npnasset v1.0.0
 	github.com/kyleu/npn/npnconnection v1.0.0
 	github.com/kyleu/npn/npncontroller v1.0.0

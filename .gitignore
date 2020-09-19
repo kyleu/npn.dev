@@ -2,7 +2,7 @@
 /.idea
 /.scannerwork
 build
-/data/import
+/data
 /gen
 /npntemplate/gen
 /tmp

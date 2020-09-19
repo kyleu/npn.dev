@@ -12,7 +12,7 @@ class MainActivity : AppCompatActivity() {
         Log.i("npn", "npn is starting")
         val path = getFilesDir().getAbsolutePath()
         val port = lib.Lib.run("android", path)
-        Log.i("npn", "npn has started on port [${port}]")
+        Log.i("npn", "npn has started with path [" + path + "] on port [${port}]")
         setContentView(R.layout.activity_main)
 
         val webView: WebView = findViewById(R.id.webview)
