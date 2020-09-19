@@ -11,11 +11,15 @@ import (
 )
 
 func MakeServer(info AppInfo, r *mux.Router, address string, port uint16) (uint16, error) {
-	var msg = "%v is starting on [%v:%v]"
+	var msg = "%v is starting in directory [%v] on [%v:%v]"
 	if info.Debug() {
 		msg += " (verbose)"
 	}
-	info.Logger().Info(fmt.Sprintf(msg, npncore.AppName, address, port))
+	dir := "?"
+	if info != nil {
+		dir = info.Files().Root()
+		info.Logger().Info(fmt.Sprintf(msg, npncore.AppName, dir, address, port))
+	}
 	port, l, err := Listen(address, port)
 	if err != nil {
 		return port, errors.Wrap(err, fmt.Sprintf("unable to listen on port [%v]", port))

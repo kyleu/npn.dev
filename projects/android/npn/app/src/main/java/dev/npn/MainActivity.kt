@@ -6,12 +6,12 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 
-
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.i("npn", "npn is starting")
-        val port = lib.Lib.run()
+        val path = getFilesDir().getAbsolutePath()
+        val port = lib.Lib.run(path)
         Log.i("npn", "npn has started on port [${port}]")
         setContentView(R.layout.activity_main)
 

@@ -81,6 +81,7 @@ namespace socket {
   function onSocketClose() {
     function disconnect(seconds: number) {
       connected = false;
+      log.info("socket closed");
       if (debug) {
         console.info(`socket closed, reconnecting in ${seconds} seconds`);
       }
