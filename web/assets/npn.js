@@ -11,35 +11,11 @@ var npn;
     }
     npn.onError = onError;
     function init(svc, id) {
+        log.init();
         window.onbeforeunload = () => {
             socket.setAppUnloading();
         };
-        nav.init(function (p) {
-            let parts = p.split("/");
-            parts = parts.filter(x => x.length > 0);
-            console.info("nav handler called, check it out: " + parts.join(" -> "));
-            if (parts.length === 0) {
-                return; // index
-            }
-            const svc = parts[0];
-            switch (svc) {
-                case "c":
-                    const collName = parts[1];
-                    if (collName !== collection.cache.active) {
-                        collection.cache.setActiveCollection(collName);
-                        socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: collName });
-                    }
-                    if (parts.length > 2) {
-                        const reqName = parts[2];
-                        if (reqName !== request.cache.active) {
-                            request.cache.setActiveRequest(reqName);
-                        }
-                    }
-                    break;
-                default:
-                    console.info("unhandled svc [" + svc + "]");
-            }
-        });
+        nav.init(socket.route);
         socket.socketConnect(svc, id);
     }
     npn.init = init;
@@ -291,11 +267,18 @@ function JSX(tag, attrs) {
         let child = arguments[i];
         if (Array.isArray(child)) {
             child.forEach(c => {
+                if (child === undefined || child === null) {
+                    // throw `child for tag [${tag}] is ${child}\n${e.outerHTML}`;
+                    debugger;
+                    c = document.createTextNode("NULL!");
+                }
                 e.appendChild(c);
             });
         }
         else if (child === undefined || child === null) {
-            throw `child for tag [${tag}] is ${child}`;
+            throw `child for tag [${tag}] is ${child}\n${e.outerHTML}`;
+            // debugger;
+            // child = document.createTextNode("NULL!");
         }
         else {
             if (!child.nodeType) {
@@ -596,17 +579,28 @@ var tags;
 })(tags || (tags = {}));
 var request;
 (function (request) {
+    function renderEmpty(r) {
+        return JSX("div", null);
+    }
+    request.renderEmpty = renderEmpty;
+    function renderSplash(r) {
+        return JSX("div", null, "Actions: TODO");
+    }
+    request.renderSplash = renderSplash;
+})(request || (request = {}));
+var request;
+(function (request) {
     class Cache {
         constructor() {
             this.requests = new Map();
         }
-        setCollectionRequests(key, requests) {
-            this.requests.set(key, requests);
-            if (key === collection.cache.active) {
-                dom.setContent("#request-list", request.renderRequests(key, requests));
+        setCollectionRequests(coll, requests) {
+            this.requests.set(coll, requests);
+            if (coll === collection.cache.active) {
+                dom.setContent("#request-list", request.view.renderRequests(coll, requests));
                 for (let req of requests) {
                     if (this.active == req.key) {
-                        renderActiveRequest(key, req);
+                        renderActiveRequest(collection.cache.active, req, this.action);
                     }
                 }
             }
@@ -618,18 +612,63 @@ var request;
             }
             const coll = collection.cache.active;
             const reqs = this.requests.get(coll) || [];
-            this.active = key;
-            for (let req of reqs) {
-                if (req.key == key) {
-                    renderActiveRequest(coll, req);
+            if (this.active !== key) {
+                this.active = key;
+                for (let req of reqs) {
+                    if (req.key == this.active) {
+                        renderActiveRequest(coll, req, this.action);
+                    }
+                }
+            }
+        }
+        setActiveAction(act) {
+            if (!collection.cache.active) {
+                console.warn("no active collection");
+                return;
+            }
+            const coll = collection.cache.active;
+            const reqs = this.requests.get(coll) || [];
+            if (this.action !== act) {
+                this.action = act;
+                for (let req of reqs) {
+                    if (req.key == this.active) {
+                        renderActiveAction(coll, req, this.action);
+                    }
                 }
             }
         }
     }
-    function renderActiveRequest(key, req) {
-        dom.setContent("#active-request", request.renderRequest(key, req));
+    function renderActiveRequest(coll, req, action) {
+        dom.setContent("#active-request", request.view.renderRequestDetail(coll, req));
+        renderActiveAction(coll, req, action);
+    }
+    function renderActiveAction(coll, req, action) {
+        switch (action) {
+            case undefined:
+                dom.setContent("#request-action", request.renderEmpty(req));
+                break;
+            case "edit":
+                dom.setContent("#request-action", request.form.renderForm(coll, req));
+                break;
+            default:
+                console.warn("unhandled request action [" + action + "]");
+                dom.setContent("#request-action", request.renderSplash(req));
+        }
     }
     request.cache = new Cache();
+})(request || (request = {}));
+var request;
+(function (request) {
+    const MethodGet = { "key": "GET", "description": "" };
+    const MethodHead = { "key": "HEAD", "description": "" };
+    const MethodPost = { "key": "POST", "description": "" };
+    const MethodPut = { "key": "PUT", "description": "" };
+    const MethodPatch = { "key": "PATCH", "description": "" };
+    const MethodDelete = { "key": "DELETE", "description": "" };
+    const MethodConnect = { "key": "CONNECT", "description": "" };
+    const MethodOptions = { "key": "OPTIONS", "description": "" };
+    const MethodTrace = { "key": "TRACE", "description": "" };
+    request.allMethods = [MethodGet, MethodHead, MethodPost, MethodPut, MethodPatch, MethodDelete, MethodConnect, MethodOptions, MethodTrace];
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -662,28 +701,6 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
-    function renderRequests(coll, rs) {
-        return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
-    }
-    request.renderRequests = renderRequests;
-    function renderRequestLink(coll, r) {
-        let title = r.title;
-        if (!title || r.title.length === 0) {
-            title = r.key;
-        }
-        return JSX("div", null, nav.link("/c/" + coll + "/" + r.key, title));
-    }
-    request.renderRequestLink = renderRequestLink;
-    function renderRequest(coll, r) {
-        return renderPrototype(r.prototype);
-    }
-    request.renderRequest = renderRequest;
-    function renderPrototype(p) {
-        return JSX("div", null, request.prototypeToURL(p));
-    }
-})(request || (request = {}));
-var request;
-(function (request) {
     function prototypeToURLParts(p) {
         const ret = [];
         let push = function (t, v) {
@@ -691,6 +708,23 @@ var request;
         };
         push("protocol", p.protocol);
         push("", "://");
+        if (p.auth) {
+            for (let a of p.auth) {
+                if (a.type === "basic") {
+                    const cfg = a.config;
+                    push("username", cfg.username);
+                    push("", ":");
+                    if (cfg.showPassword) {
+                        push("password", cfg.password);
+                    }
+                    else {
+                        push("password", "****");
+                    }
+                    push("", "@");
+                    break;
+                }
+            }
+        }
         push("domain", p.domain);
         if (p.port) {
             push("", ":");
@@ -719,11 +753,11 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
-    var form;
-    (function (form) {
+    var editor;
+    (function (editor) {
         function initAuthEditor(el) {
         }
-        form.initAuthEditor = initAuthEditor;
+        editor.initAuthEditor = initAuthEditor;
         function setAuth(cache, auth) {
             const url = new URL(cache.url.value);
             let u = "";
@@ -741,7 +775,7 @@ var request;
             url.password = p;
             cache.url.value = url.toString();
         }
-        form.setAuth = setAuth;
+        editor.setAuth = setAuth;
         function updateBasicAuth(cache, auth) {
             let currentAuth = [];
             try {
@@ -795,25 +829,25 @@ var request;
             }
             cache.auth.value = JSON.stringify(currentAuth, null, 2);
         }
-        form.updateBasicAuth = updateBasicAuth;
-    })(form = request.form || (request.form = {}));
+        editor.updateBasicAuth = updateBasicAuth;
+    })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
-    var form;
-    (function (form) {
+    var editor;
+    (function (editor) {
         function initBodyEditor(el) {
         }
-        form.initBodyEditor = initBodyEditor;
+        editor.initBodyEditor = initBodyEditor;
         function setBody(cache, body) {
         }
-        form.setBody = setBody;
-    })(form = request.form || (request.form = {}));
+        editor.setBody = setBody;
+    })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
-    var form;
-    (function (form) {
+    var editor;
+    (function (editor) {
         function wireForm(prefix) {
             const id = function (k) {
                 return "#" + prefix + "-" + k;
@@ -828,14 +862,14 @@ var request;
             initEditors(prefix, cache);
             wireEvents(cache);
         }
-        form.wireForm = wireForm;
+        editor.wireForm = wireForm;
         function initEditors(prefix, cache) {
-            form.initURLEditor(cache.url);
-            form.initAuthEditor(cache.auth);
-            form.initQueryParamsEditor(cache.qp);
-            form.initHeadersEditor(cache.headers);
-            form.initBodyEditor(cache.body);
-            form.initOptionsEditor(prefix);
+            editor.initURLEditor(cache.url);
+            editor.initAuthEditor(cache.auth);
+            editor.initQueryParamsEditor(cache.qp);
+            editor.initHeadersEditor(cache.headers);
+            editor.initBodyEditor(cache.body);
+            editor.initOptionsEditor(prefix);
         }
         function events(e, f) {
             e.onchange = f;
@@ -844,7 +878,7 @@ var request;
         }
         function wireEvents(cache) {
             events(cache.url, function () {
-                form.setURL(cache, request.prototypeFromURL(cache.url.value));
+                editor.setURL(cache, request.prototypeFromURL(cache.url.value));
             });
             events(cache.auth, function () {
                 let auth;
@@ -855,7 +889,7 @@ var request;
                     console.log("invalid auth JSON [" + cache.auth.value + "]");
                     auth = [];
                 }
-                form.setAuth(cache, auth);
+                editor.setAuth(cache, auth);
             });
             events(cache.qp, function () {
                 let qp;
@@ -866,7 +900,7 @@ var request;
                     console.log("invalid qp JSON [" + cache.qp.value + "]");
                     qp = [];
                 }
-                form.setQueryParams(cache, qp);
+                editor.setQueryParams(cache, qp);
             });
             events(cache.headers, function () {
                 let h;
@@ -877,7 +911,7 @@ var request;
                     console.log("invalid headers JSON [" + cache.headers.value + "]");
                     h = [];
                 }
-                form.setHeaders(cache, h);
+                editor.setHeaders(cache, h);
             });
             events(cache.body, function () {
                 let b;
@@ -887,19 +921,19 @@ var request;
                 catch (e) {
                     console.log("invalid body JSON [" + cache.body.value + "]");
                 }
-                form.setBody(cache, b);
+                editor.setBody(cache, b);
             });
         }
-    })(form = request.form || (request.form = {}));
+    })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
-    var form;
-    (function (form) {
+    var editor;
+    (function (editor) {
         function createHeadersEditor(el) {
             const container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
             const header = JSX("li", null,
-                JSX("div", { "uk-grid": true },
+                JSX("div", { "data-uk-grid": "" },
                     JSX("div", { class: "uk-width-1-4" }, "Name"),
                     JSX("div", { class: "uk-width-1-4" }, "Value"),
                     JSX("div", { class: "uk-width-1-2" },
@@ -918,11 +952,11 @@ var request;
             updateFn();
             return container;
         }
-        form.createHeadersEditor = createHeadersEditor;
+        editor.createHeadersEditor = createHeadersEditor;
         function addChild(container, h) {
             console.info(container);
             container.appendChild(JSX("li", null,
-                JSX("div", { "uk-grid": true },
+                JSX("div", { "data-uk-grid": "" },
                     JSX("div", { class: "uk-width-1-4" }, h.k),
                     JSX("div", { class: "uk-width-1-4" }, h.v),
                     JSX("div", { class: "uk-width-1-2" },
@@ -931,39 +965,39 @@ var request;
                                 JSX("span", { "data-uk-icon": "icon: close" }))),
                         h.desc ? h.desc : ""))));
         }
-        form.addChild = addChild;
-    })(form = request.form || (request.form = {}));
+        editor.addChild = addChild;
+    })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
-    var form;
-    (function (form) {
+    var editor;
+    (function (editor) {
         function initHeadersEditor(el) {
             const parent = el.parentElement;
-            parent.appendChild(form.createHeadersEditor(el));
+            parent.appendChild(editor.createHeadersEditor(el));
         }
-        form.initHeadersEditor = initHeadersEditor;
+        editor.initHeadersEditor = initHeadersEditor;
         function setHeaders(cache, headers) {
         }
-        form.setHeaders = setHeaders;
-    })(form = request.form || (request.form = {}));
+        editor.setHeaders = setHeaders;
+    })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
-    var form;
-    (function (form) {
+    var editor;
+    (function (editor) {
         function initOptionsEditor(prefix) {
         }
-        form.initOptionsEditor = initOptionsEditor;
-    })(form = request.form || (request.form = {}));
+        editor.initOptionsEditor = initOptionsEditor;
+    })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
-    var form;
-    (function (form) {
+    var editor;
+    (function (editor) {
         function initQueryParamsEditor(el) {
         }
-        form.initQueryParamsEditor = initQueryParamsEditor;
+        editor.initQueryParamsEditor = initQueryParamsEditor;
         function setQueryParams(cache, qp) {
             let ret = [];
             if (qp) {
@@ -975,31 +1009,339 @@ var request;
             url.search = ret.join("&");
             cache.url.value = url.toString();
         }
-        form.setQueryParams = setQueryParams;
+        editor.setQueryParams = setQueryParams;
         function updateQueryParams(cache, qp) {
             cache.qp.value = JSON.stringify(qp, null, 2);
         }
-        form.updateQueryParams = updateQueryParams;
+        editor.updateQueryParams = updateQueryParams;
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function initURLEditor(el) {
+        }
+        editor.initURLEditor = initURLEditor;
+        function setURL(cache, u) {
+            if (!u) {
+                cache.qp.value = "[]";
+                return;
+            }
+            editor.updateQueryParams(cache, u.query);
+            editor.updateBasicAuth(cache, u.auth);
+        }
+        editor.setURL = setURL;
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function renderForm(coll, r) {
+            return JSX("form", { class: "uk-form-stacked" },
+                JSX("input", { type: "hidden", name: "coll", value: coll }),
+                JSX("input", { type: "hidden", name: "originalKey", value: r.key }),
+                JSX("fieldset", { class: "uk-fieldset" },
+                    JSX("legend", { class: "hidden" }, "request form"),
+                    JSX("div", { class: "uk-margin-top" },
+                        JSX("label", { class: "uk-form-label", for: r.key + "-key" }, "Key"),
+                        JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "" })),
+                    JSX("div", { class: "uk-margin-top" },
+                        JSX("label", { class: "uk-form-label", for: r.key + "-title" }, "Title"),
+                        JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "" })),
+                    JSX("div", { class: "uk-margin-top" },
+                        JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
+                        JSX("input", { class: "uk-input", id: r.key + "-description", name: "description", type: "text", value: r.description || "" })),
+                    form.renderPrototype(r.key, r.prototype),
+                    JSX("div", { class: "uk-margin-top" },
+                        JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"),
+                        nav.link("/c/" + coll + "/" + r.key, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right"))));
+        }
+        form.renderForm = renderForm;
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
     var form;
     (function (form) {
-        function initURLEditor(el) {
-        }
-        form.initURLEditor = initURLEditor;
-        function setURL(cache, u) {
-            if (!u) {
-                cache.qp.value = "[]";
-                return;
+        function renderOptions(key, opts) {
+            if (!opts) {
+                opts = {};
             }
-            form.updateQueryParams(cache, u.query);
-            form.updateBasicAuth(cache, u.auth);
+            return JSX("div", null,
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-timeout" }, "Timeout"),
+                    JSX("input", { class: "uk-input", id: key + "-opt-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-ignoreRedirects" }, "Ignore Redirects"),
+                    inputBool(key + "-opt-ignoreRedirects", opts.ignoreRedirects)),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-ignoreReferrer" }, "Ignore Referrer"),
+                    inputBool(key + "-opt-ignoreReferrer", opts.ignoreReferrer)),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-ignoreCerts" }, "Ignore Certs"),
+                    inputBool(key + "-opt-ignoreCerts", opts.ignoreCerts)),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-excludeDefaultHeaders" }, "Exclude Default Headers"),
+                    JSX("input", { class: "uk-input", id: key + "-opt-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-readCookieJars" }, "Read Cookie Jars"),
+                    JSX("input", { class: "uk-input", id: key + "-opt-readCookieJars", name: "opt-readCookieJars", type: "text", value: opts.readCookieJars })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-writeCookieJar" }, "Write Cookie Jar"),
+                    JSX("input", { class: "uk-input", id: key + "-opt-writeCookieJar", name: "opt-writeCookieJar", type: "text", value: opts.writeCookieJar })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-sslCert" }, "SSL Cert"),
+                    JSX("input", { class: "uk-input", id: key + "-opt-sslCert", name: "opt-sslCert", type: "text", value: opts.sslCert })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-opt-userAgentOverride" }, "User Agent Override"),
+                    JSX("input", { class: "uk-input", id: key + "-opt-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
         }
-        form.setURL = setURL;
+        form.renderOptions = renderOptions;
+        function inputBool(name, v) {
+            if (v) {
+                return JSX("div", null,
+                    JSX("label", null,
+                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "true", checked: "checked" }),
+                        " True"),
+                    JSX("label", { class: "uk-margin-left" },
+                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "false" }),
+                        " False"));
+            }
+            else {
+                return JSX("div", null,
+                    JSX("label", null,
+                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "true" }),
+                        " True"),
+                    JSX("label", { class: "uk-margin-left" },
+                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "false", checked: "checked" }),
+                        " False"));
+            }
+        }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function renderPrototype(key, p) {
+            return JSX("div", null,
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-method" }, "Method"),
+                    JSX("select", { class: "uk-select", id: key + "-method", name: "method" }, request.allMethods.map(m => {
+                        if (m.key === p.method) {
+                            return JSX("option", { selected: "selected" }, m.key);
+                        }
+                        else {
+                            return JSX("option", null, m.key);
+                        }
+                    }))),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-url" }, "URL"),
+                    JSX("input", { class: "uk-input", id: key + "-url", name: "url", type: "text", value: request.prototypeToURL(p) })),
+                renderAuthFields(key, p.auth),
+                renderQueryParams(key, p.query),
+                renderHeaders(key, p.headers),
+                renderBody(key, p.body),
+                form.renderOptions(key, p.options));
+        }
+        form.renderPrototype = renderPrototype;
+        function renderAuthFields(key, auth) {
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
+                JSX("textarea", { class: "uk-textarea", id: "key-auth", name: "auth" }, auth ? JSON.stringify(auth, null, 2) : "null"));
+        }
+        function renderQueryParams(key, query) {
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
+                JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, query ? JSON.stringify(query, null, 2) : "null"));
+        }
+        function renderHeaders(key, headers) {
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
+                JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, headers ? JSON.stringify(headers, null, 2) : "null"));
+        }
+        function renderBody(key, body) {
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
+                JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, body ? JSON.stringify(body, null, 2) : "null"));
+        }
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var view;
+    (function (view) {
+        function renderAuth(auth) {
+            if (!auth || auth.length === 0) {
+                return JSX("em", null, "no authentication");
+            }
+            return JSX("div", null, auth.map(a => JSX("div", { "data-uk-grid": "" },
+                JSX("div", { class: "uk-width-1-4" }, a.type),
+                JSX("div", { class: "uk-width-3-4" },
+                    JSX("pre", null, JSON.stringify(a.config, null, 2))))));
+        }
+        view.renderAuth = renderAuth;
+    })(view = request.view || (request.view = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var view;
+    (function (view) {
+        function renderBody(b) {
+            if (!b) {
+                return JSX("em", null, "no body");
+            }
+            return JSX("div", { "data-uk-grid": "" },
+                JSX("div", { class: "uk-width-1-4" }, (b === null || b === void 0 ? void 0 : b.type) || "?"),
+                JSX("div", { class: "uk-width-3-4" },
+                    JSX("pre", null, JSON.stringify(b.config, null, 2))));
+        }
+        view.renderBody = renderBody;
+    })(view = request.view || (request.view = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var view;
+    (function (view) {
+        function renderPrototype(p) {
+            return JSX("div", { class: "prototype" },
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "URL"),
+                    JSX("div", { class: "uk-width-3-4" },
+                        JSX("div", { class: "url" }, request.prototypeToURL(p)))),
+                JSX("hr", null),
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "Query Params"),
+                    JSX("div", { class: "uk-width-3-4" }, renderQueryParams(p.query))),
+                JSX("hr", null),
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "Auth"),
+                    JSX("div", { class: "uk-width-3-4" }, view.renderAuth(p.auth))),
+                JSX("hr", null),
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "Body"),
+                    JSX("div", { class: "uk-width-3-4" }, view.renderBody(p.body))),
+                JSX("hr", null),
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "Options"),
+                    JSX("div", { class: "uk-width-3-4" }, renderOptions(p.options))));
+        }
+        view.renderPrototype = renderPrototype;
+        function renderQueryParams(query) {
+            if (!query || query.length === 0) {
+                return JSX("em", null, "no query params");
+            }
+            return JSX("div", null, query.map(qp => JSX("div", { "data-uk-grid": "" },
+                JSX("div", { class: "uk-width-1-4" }, qp.k),
+                JSX("div", { class: "uk-width-3-4" }, qp.v))));
+        }
+        function renderOptions(o) {
+            if (!o || !(o.timeout || o.ignoreRedirects || o.ignoreReferrer || o.ignoreCerts ||
+                o.excludeDefaultHeaders || o.readCookieJars || o.writeCookieJar || o.sslCert || o.userAgentOverride)) {
+                return JSX("em", null, "no options");
+            }
+            const section = function (title, v) {
+                if (!v) {
+                    return JSX("div", null);
+                }
+                return JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, title),
+                    JSX("div", { class: "uk-width-3-4" }, v));
+            };
+            return JSX("div", null,
+                section("Timeout", o.timeout),
+                section("ignoreRedirects", o.ignoreRedirects),
+                section("ignoreReferrer", o.ignoreReferrer),
+                section("ignoreCerts", o.ignoreCerts),
+                section("excludeDefaultHeaders", o.excludeDefaultHeaders),
+                section("readCookieJars", o.readCookieJars),
+                section("writeCookieJar", o.writeCookieJar),
+                section("sslCert", o.sslCert),
+                section("userAgentOverride", o.userAgentOverride));
+        }
+    })(view = request.view || (request.view = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var view;
+    (function (view) {
+        function renderRequests(coll, rs) {
+            return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
+        }
+        view.renderRequests = renderRequests;
+        function renderRequestLink(coll, r) {
+            let title = r.title;
+            if (!title || r.title.length === 0) {
+                title = r.key;
+            }
+            return JSX("li", null, nav.link("/c/" + coll + "/" + r.key, title));
+        }
+        view.renderRequestLink = renderRequestLink;
+        function renderRequestDetail(coll, r) {
+            const path = "/c/" + coll + "/" + r.key;
+            return JSX("div", { class: "req", id: "req-" + r.key },
+                JSX("div", null,
+                    JSX("div", { "data-uk-grid": "" },
+                        JSX("div", { class: "uk-width-1-4" }, "Actions"),
+                        JSX("div", { class: "uk-width-3-4" },
+                            nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-right"),
+                            nav.link(path + "/transform", "Transform", "uk-button uk-button-default uk-margin-right"),
+                            nav.link(path + "/edit", "Edit", "uk-button uk-button-default uk-margin-right"),
+                            nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }"))),
+                    JSX("hr", null),
+                    JSX("div", { "data-uk-grid": "" },
+                        JSX("div", { class: "uk-width-1-4" }, "Key"),
+                        JSX("div", { class: "uk-width-3-4" }, r.key)),
+                    JSX("hr", null),
+                    JSX("div", { "data-uk-grid": "" },
+                        JSX("div", { class: "uk-width-1-4" }, "Title"),
+                        JSX("div", { class: "uk-width-3-4" }, r.title || "")),
+                    JSX("hr", null),
+                    JSX("div", { "data-uk-grid": "" },
+                        JSX("div", { class: "uk-width-1-4" }, "Description"),
+                        JSX("div", { class: "uk-width-3-4" }, r.description || "")),
+                    JSX("hr", null)),
+                view.renderPrototype(r.prototype));
+        }
+        view.renderRequestDetail = renderRequestDetail;
+    })(view = request.view || (request.view = {}));
+})(request || (request = {}));
+var socket;
+(function (socket) {
+    function route(p) {
+        let parts = p.split("/");
+        parts = parts.filter(x => x.length > 0);
+        console.info("nav handler called, check it out: " + parts.join(" -> "));
+        if (parts.length === 0) {
+            return; // index
+        }
+        const svc = parts[0];
+        switch (svc) {
+            case "c":
+                const collName = parts[1];
+                if (collName !== collection.cache.active) {
+                    collection.cache.setActiveCollection(collName);
+                    socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: collName });
+                }
+                if (parts.length > 2) {
+                    const reqName = parts[2];
+                    if (reqName !== request.cache.active) {
+                        request.cache.setActiveRequest(reqName);
+                    }
+                    const action = parts[3];
+                    if (action !== request.cache.action) {
+                        request.cache.setActiveAction(action);
+                    }
+                }
+                break;
+            default:
+                console.info("unhandled svc [" + svc + "]");
+        }
+    }
+    socket.route = route;
+})(socket || (socket = {}));
 var socket;
 (function (socket) {
     const debug = true;
@@ -1273,22 +1615,48 @@ var group;
 })(group || (group = {}));
 var log;
 (function (log) {
-    const started = Date.now();
+    let started = 0;
+    let container;
+    function init() {
+        started = Date.now();
+        l("debug", "npn started");
+    }
+    log.init = init;
     function info(msg) {
-        const el = l("info", msg);
-        const container = dom.req("#log-panel");
-        container.appendChild(el);
+        l("info", msg);
     }
     log.info = info;
     function l(level, msg) {
+        if (started === 0) {
+            console.warn("call `log.init()` before attempting to log");
+            return;
+        }
         const n = Date.now() - started;
-        return JSX("li", null,
+        const el = JSX("li", { class: color(level) },
             JSX("div", { class: "right" },
                 n,
                 "ms"),
             msg);
+        if (!container) {
+            container = dom.req("#log-panel");
+        }
+        container.appendChild(el);
     }
     log.l = l;
+    function color(level) {
+        switch (level) {
+            case "debug":
+                return "grey-fg";
+            case "info":
+                return "";
+            case "warn":
+                return "yellow-fg";
+            case "error":
+                return "red-fg";
+            default:
+                return "";
+        }
+    }
 })(log || (log = {}));
 var nav;
 (function (nav) {
@@ -1321,8 +1689,29 @@ var nav;
         handler(path);
     }
     nav.navigate = navigate;
-    function link(path, title) {
-        return JSX("a", { class: style.linkColor, href: path, onclick: "nav.navigate('" + path + "', '" + title + "');return false;" }, title);
+    function link(path, title, cls, onclk) {
+        let href = path;
+        if (!href.startsWith("/")) {
+            href = "/" + href;
+        }
+        if (!href.startsWith("/w")) {
+            href = "/w" + href;
+        }
+        if (cls) {
+            cls = " " + cls.trim();
+        }
+        else {
+            cls = "";
+        }
+        if (onclk) {
+            if (!onclk.endsWith(";")) {
+                onclk += ";";
+            }
+        }
+        else {
+            onclk = "";
+        }
+        return JSX("a", { class: style.linkColor + cls, href: href, onclick: onclk + "nav.navigate('" + path + "', '" + title + "');return false;" }, title);
     }
     nav.link = link;
 })(nav || (nav = {}));

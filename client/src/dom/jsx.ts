@@ -26,10 +26,17 @@ function JSX(tag: string, attrs: any) {
     let child = arguments[i];
     if (Array.isArray(child)) {
       child.forEach(c => {
+        if (child === undefined || child === null) {
+          // throw `child for tag [${tag}] is ${child}\n${e.outerHTML}`;
+          debugger;
+          c = document.createTextNode("NULL!");
+        }
         e.appendChild(c);
       });
     } else if (child === undefined || child === null) {
-      throw `child for tag [${tag}] is ${child}`;
+      throw `child for tag [${tag}] is ${child}\n${e.outerHTML}`;
+      // debugger;
+      // child = document.createTextNode("NULL!");
     } else {
       if (!child.nodeType) {
         child = document.createTextNode(child.toString());

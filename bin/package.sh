@@ -64,8 +64,8 @@ zip -r "$DIR/build/publish/npn.android.zip" *
 rm ./npn.aar
 
 # iOS
-cp  -r "$DIR/build/ios/npn.framework" ./npn.framework
+cp  -r "$DIR/build/ios/NpnServer.framework" ./NpnServer.framework
 zip -r "$DIR/build/publish/npn.ios.zip" *
-rm  -rf ./npn.framework
+rm  -rf ./NpnServer.framework
 
 rm -rf "$DIR/build/release/stage"

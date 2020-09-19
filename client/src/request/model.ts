@@ -23,6 +23,23 @@ namespace request {
     readonly userAgentOverride?: string;
   }
 
+  export interface Method {
+    readonly key: string;
+    readonly description?: string;
+  }
+
+  const MethodGet     = {"key": "GET", "description": ""}
+  const MethodHead    = {"key": "HEAD", "description": ""}
+  const MethodPost    = {"key": "POST", "description": ""}
+  const MethodPut     = {"key": "PUT", "description": ""}
+  const MethodPatch   = {"key": "PATCH", "description": ""}
+  const MethodDelete  = {"key": "DELETE", "description": ""}
+  const MethodConnect = {"key": "CONNECT", "description": ""}
+  const MethodOptions = {"key": "OPTIONS", "description": ""}
+  const MethodTrace   = {"key": "TRACE", "description": ""}
+
+  export const allMethods: Method[] = [MethodGet, MethodHead, MethodPost, MethodPut, MethodPatch, MethodDelete, MethodConnect, MethodOptions, MethodTrace];
+
   export interface Prototype {
     readonly method: string;
     readonly protocol: string;

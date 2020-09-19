@@ -6,4 +6,14 @@ cd "$DIR"
 echo "Building [android]..."
 
 mkdir -p build/android/
+
+go-embed -input web/assets -output app/assets/assets.go
+echo "gomobile..."
 gomobile bind -o build/android/npn.aar -target=android github.com/kyleu/npn/lib
+git checkout app/assets/assets.go
+
+cd  projects/android/npn/app/libs
+rm -f npn.aar npn-sources.jar
+cp ../../../../../build/android/npn.aar .
+cp ../../../../../build/android/npn-sources.jar .
+

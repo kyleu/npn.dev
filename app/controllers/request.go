@@ -8,28 +8,11 @@ import (
 	"github.com/kyleu/npn/gen/templates"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 	"github.com/kyleu/npn/npnweb"
 	"net/http"
 )
 
 const KeyRequest = "request"
-
-func AdhocForm(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		ctx.Title = "Ad hoc Request"
-		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple("", "ad hoc")
-		return npncontroller.T(npntemplate.StaticMessage("TODO", ctx, w))
-	})
-}
-
-func AdhocPost(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		ctx.Title = "Ad hoc Post"
-		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple("", "ad hoc")
-		return npncontroller.T(npntemplate.StaticMessage("TODO", ctx, w))
-	})
-}
 
 func RequestDetail(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {

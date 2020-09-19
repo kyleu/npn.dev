@@ -12,6 +12,23 @@ namespace request {
 
     push("protocol", p.protocol);
     push("", "://");
+    if(p.auth) {
+      for (let a of p.auth) {
+        if (a.type === "basic") {
+          const cfg = a.config as auth.Basic
+          push("username", cfg.username);
+          push("", ":");
+
+          if (cfg.showPassword) {
+            push("password", cfg.password);
+          } else {
+            push("password", "****");
+          }
+          push("", "@");
+          break;
+        }
+      }
+    }
     push("domain", p.domain);
     if (p.port) {
       push("", ":");

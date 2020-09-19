@@ -1,8 +1,8 @@
 <%: func InputBool(name string, selected bool, buffer *bytes.Buffer) %>
 <% if selected { %>
-  <label><input class="uk-radio" type="radio" name="<%= name %>" value="true" checked> True</label>
-  <label><input class="uk-radio" type="radio" name="<%= name %>" value="false"> False</label>
+  <label><input class="uk-radio" type="radio" name="<%= name %>" value="true" checked /> True</label>
+  <label><input class="uk-radio" type="radio" name="<%= name %>" value="false" /> False</label>
 <% } else { %>
-  <label><input class="uk-radio" type="radio" name="<%= name %>" value="true"> True</label>
-  <label><input class="uk-radio" type="radio" name="<%= name %>" value="false" checked> False</label>
+  <label><input class="uk-radio" type="radio" name="<%= name %>" value="true" /> True</label>
+  <label><input class="uk-radio" type="radio" name="<%= name %>" value="false" checked /> False</label>
 <% } %>

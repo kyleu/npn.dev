@@ -6,4 +6,8 @@ cd "$DIR"
 echo "Building [ios]..."
 
 mkdir -p build/ios/
-gomobile bind -o build/ios/npn.framework -target=ios github.com/kyleu/npn/lib
+
+go-embed -input web/assets -output app/assets/assets.go
+echo "gomobile..."
+gomobile bind -o build/ios/NpnServer.framework -target=ios github.com/kyleu/npn/lib
+git checkout app/assets/assets.go

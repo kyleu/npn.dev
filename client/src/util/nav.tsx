@@ -29,7 +29,26 @@ namespace nav {
     handler(path);
   }
 
-  export function link(path: string, title: string) {
-    return <a class={style.linkColor} href={path} onclick={"nav.navigate('" + path + "', '" + title + "');return false;"}>{title}</a>
+  export function link(path: string, title: string, cls?: string, onclk?: string) {
+    let href = path;
+    if (!href.startsWith("/")) {
+      href = "/" + href;
+    }
+    if (!href.startsWith("/w")) {
+      href = "/w" + href;
+    }
+    if (cls) {
+      cls = " " + cls.trim();
+    } else {
+      cls = "";
+    }
+    if (onclk) {
+      if (!onclk.endsWith(";")) {
+        onclk += ";"
+      }
+    } else {
+      onclk = "";
+    }
+    return <a class={style.linkColor + cls} href={href} onclick={onclk + "nav.navigate('" + path + "', '" + title + "');return false;"}>{title}</a>;
   }
 }
