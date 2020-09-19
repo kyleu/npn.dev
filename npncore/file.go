@@ -41,22 +41,31 @@ func (f *FileLoader) Root() string {
 	return f.root
 }
 
-func (f *FileLoader) ReadFile(path string) (string, error) {
+func (f *FileLoader) ReadFile(path string) ([]byte, error) {
 	b, err := ioutil.ReadFile(f.getPath(path))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(b), nil
+	return b, nil
 }
 
-func (f *FileLoader) WriteFile(path string, content string, overwrite bool) error {
-	_, err := os.Stat(path)
-	if os.IsNotExist(err) && !overwrite {
-		return errors.New("file exists, will not overwrite")
-	}
+func (f *FileLoader) CreateDirectory(path string) error {
 	p := f.getPath(path)
-	dd := filepath.Dir(p)
-	err = os.MkdirAll(dd, 0755)
+	err := os.MkdirAll(p, 0755)
+	if err != nil {
+		return errors.Wrap(err, "unable to create data directory ["+p+"]")
+	}
+	return nil
+}
+
+func (f *FileLoader) WriteFile(path string, content []byte, overwrite bool) error {
+	p := f.getPath(path)
+	_, err := os.Stat(p)
+	if os.IsExist(err) && !overwrite {
+		return errors.New("file [" + p + "] exists, will not overwrite")
+	}
+	dd := filepath.Dir(path)
+	err = f.CreateDirectory(dd)
 	if err != nil {
 		return errors.Wrap(err, "unable to create data directory ["+dd+"]")
 	}
@@ -65,15 +74,9 @@ func (f *FileLoader) WriteFile(path string, content string, overwrite bool) erro
 		return errors.Wrap(err, "unable to create file ["+p+"]")
 	}
 	defer func() { _ = file.Close() }()
-	_, err = file.Write([]byte(content))
+	_, err = file.Write(content)
 	if err != nil {
 		return errors.Wrap(err, "unable to write content to file ["+p+"]")
-	}
-	if !strings.HasSuffix(content, "\n") {
-		_, err = file.Write([]byte("\n"))
-		if err != nil {
-			return errors.Wrap(err, "unable to write ending linebreak to file ["+p+"]")
-		}
 	}
 	return nil
 }

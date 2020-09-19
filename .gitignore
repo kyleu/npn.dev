@@ -2,9 +2,11 @@
 /.idea
 /.scannerwork
 build
-/tmp
+/data/import
 /gen
 /npntemplate/gen
+/tmp
+
 node_modules
 
 xcuserdata

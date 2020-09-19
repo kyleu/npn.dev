@@ -99,7 +99,7 @@ func (s *Service) GetByCreated(d *time.Time, params *npncore.Params) SystemUsers
 
 func (s *Service) SaveProfile(prof *npnuser.UserProfile) (*npnuser.UserProfile, error) {
 	if s.db == nil {
-		err := s.files.WriteFile("profile.json", npncore.ToJSON(prof, s.logger), true)
+		err := s.files.WriteFile("profile.json", []byte(npncore.ToJSON(prof, s.logger)), true)
 		if err != nil {
 			return nil, err
 		}

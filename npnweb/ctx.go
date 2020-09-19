@@ -64,7 +64,7 @@ func ExtractContext(w http.ResponseWriter, r *http.Request, addIfMissing bool) *
 		tgt := &npnuser.UserProfile{}
 		content, err := ai.Files().ReadFile("profile.json")
 		if err == nil {
-			err = npncore.FromJSON([]byte(content), tgt)
+			err = npncore.FromJSON(content, tgt)
 			if err != nil {
 				ai.Logger().Warn(fmt.Sprintf("can't load profile: %+v", err))
 				return nil

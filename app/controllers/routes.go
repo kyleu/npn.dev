@@ -34,6 +34,12 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.PathPrefix(routes.Path("w/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path("w/"), http.HandlerFunc(Workspace)))).Name(routes.Name("workspace", "path"))
 	r.Path(routes.Path("s")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Socket))).Name(routes.Name("websocket"))
 
+	// Import
+	imprt := r.Path(routes.Path("i")).Subrouter()
+	imprt.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportForm))).Name(routes.Name("import", "form"))
+	imprt.Methods(http.MethodPost).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportUpload))).Name(routes.Name("import", "upload"))
+	r.Path(routes.Path("i", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportDetail))).Name(routes.Name("import", "detail"))
+
 	// Collections
 	collection := r.Path(routes.Path("c")).Subrouter()
 	collection.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionList))).Name(routes.Name("collection"))

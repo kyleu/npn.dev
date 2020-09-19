@@ -47,7 +47,7 @@ func (s *Service) Load(key string) (*Collection, error) {
 		if err != nil {
 			return nil, err
 		}
-		err = npncore.FromJSON([]byte(content), ret)
+		err = npncore.FromJSON(content, ret)
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to read collection from ["+filePath+"]")
 		}
@@ -83,7 +83,7 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 
 	p := path.Join(rootDir, newKey, "collection.json")
 	content := npncore.ToJSON(n, s.logger)
-	err = s.files.WriteFile(p, content, true)
+	err = s.files.WriteFile(p, []byte(content), true)
 	if err != nil {
 		return errors.Wrap(err, "unable to save collection [" + newKey + "]")
 	}

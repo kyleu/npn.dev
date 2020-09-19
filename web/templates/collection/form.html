@@ -1,11 +1,11 @@
-<%: func CollectionForm(key string, c *collection.Collection, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%: func CollectionForm(key string, c *collection.Collection, showUpload bool, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-card-default">
-      <h3 class="uk-card-title"><%= c.TitleWithFallback() %></h3>
+      <h3 class="uk-card-title"><% if showUpload { %>New Collection<% } else { %><%= c.TitleWithFallback() %><% } %></h3>
       <form class="uk-form-stacked" action="<%= ctx.Route(`collection.save`, `c`, key) %>" method="post">
         <fieldset class="uk-fieldset">
           <legend class="hidden">request form</legend>

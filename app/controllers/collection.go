@@ -29,7 +29,7 @@ func CollectionNew(w http.ResponseWriter, r *http.Request) {
 		coll := &collection.Collection{}
 		ctx.Title = "New collection"
 		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), npnweb.BreadcrumbSelf("new"))
-		return npncontroller.T(templates.CollectionForm("new", coll, ctx, w))
+		return npncontroller.T(templates.CollectionForm("new", coll, true, ctx, w))
 	})
 }
 
@@ -65,7 +65,7 @@ func CollectionEdit(w http.ResponseWriter, r *http.Request) {
 		ctx.Title = coll.Title
 		bc := npnweb.Breadcrumb{Path: ctx.Route(KeyCollection+".detail", "c", key), Title: key}
 		ctx.Breadcrumbs = append(npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"), bc, npnweb.BreadcrumbSelf("edit"))
-		return npncontroller.T(templates.CollectionForm(coll.Key, coll, ctx, w))
+		return npncontroller.T(templates.CollectionForm(coll.Key, coll, false, ctx, w))
 	})
 }
 

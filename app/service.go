@@ -3,6 +3,7 @@ package app
 import (
 	"github.com/kyleu/npn/app/call"
 	"github.com/kyleu/npn/app/collection"
+	"github.com/kyleu/npn/app/imprt"
 	"github.com/kyleu/npn/app/socket"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
@@ -21,6 +22,7 @@ type Service struct {
 	commit     string
 	logger     logur.Logger
 	Collection *collection.Service
+	Import     *imprt.Service
 	Caller     *call.Service
 	Socket     *npnconnection.Service
 }
@@ -38,6 +40,7 @@ func NewService(debug bool, dataDir string, version string, commitHash string, l
 		commit:     commitHash,
 		logger:     logger,
 		Collection: cs,
+		Import:     imprt.NewService(files, logger),
 		Caller:     call.NewService(logger),
 		Socket:     socket.NewService(cs, logger),
 	}

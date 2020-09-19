@@ -30,7 +30,7 @@ func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
 	if err != nil {
 		return nil, err
 	}
-	ret, err := request.FromString(f, content)
+	ret, err := request.FromString(f, string(content))
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 	}
 
 	msg := npncore.ToJSON(req, s.logger)
-	err := s.files.WriteFile(p, msg, true)
+	err := s.files.WriteFile(p, []byte(msg), true)
 	if err != nil {
 		return errors.Wrap(err, "unable to write file")
 	}
