@@ -8,7 +8,7 @@
     "noImplicitAny": true,
     "removeComments": false,
     "preserveConstEnums": true,
-    "outFile": "../web/assets/npn.js",
+    "outFile": "../web/assets/vendor/npn.js",
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "sourceMap": true,

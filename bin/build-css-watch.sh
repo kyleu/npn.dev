@@ -10,4 +10,4 @@ cd $project_dir
 
 bin/build-css.sh
 echo "Watching sass compilation for [web/stylesheets/style.scss]..."
-sass --watch --no-source-map web/stylesheets/style.scss web/assets/npn.css
+sass --watch --no-source-map web/stylesheets/style.scss web/assets/vendor/npn.css
