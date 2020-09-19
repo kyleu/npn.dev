@@ -8,10 +8,10 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
-func Run(path string) int32 {
+func Run(platform string, path string) int32 {
 	a := "0.0.0.0"
 	p := uint16(10101)
-	info, r, err := cli.Start(path, "0.0.0", "master")
+	info, r, err := cli.Start(platform, path, "0.0.0", "master")
 	if err != nil {
 		panic(errors.WithStack(err))
 	}

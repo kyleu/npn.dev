@@ -8,18 +8,24 @@ class WebViewStateModel: ObservableObject {
     @Published var goBack: Bool = false
 }
 
+class FullScreenWKWebView: WKWebView {
+    override var safeAreaInsets: UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
+}
+
 final class WebViewWrapper : UIViewRepresentable {
     @ObservedObject var webViewStateModel: WebViewStateModel
     let action: ((_ navigationAction: WebView.NavigationAction) -> Void)?
     
     let request: URLRequest
-    let view: WKWebView
+    let view: FullScreenWKWebView
 
     init(webViewStateModel: WebViewStateModel, action: ((_ navigationAction: WebView.NavigationAction) -> Void)?, request: URLRequest) {
         self.action = action
         self.request = request
         self.webViewStateModel = webViewStateModel
-        self.view = WKWebView()
+        self.view = FullScreenWKWebView()
     }
 
     func makeUIView(context: Context) -> WKWebView  {

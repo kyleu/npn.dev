@@ -2,6 +2,7 @@ package npncore
 
 var AppKey = "SetAppKey"
 var AppName = "SetAppName"
+var AppPlatform = "SetAppName"
 
 type key int
 

@@ -44,7 +44,7 @@ compile-templates:
 compile-templates-force:
 	echo "updating [npntemplate] templates"
 	cd npntemplate && rm -rf gen
-	cd npntemplate && hero -extensions .html -source "html" -pkgname npntemplate -dest gen
+	cd npntemplate && hero -extensions .html -source "html" -pkgname npntemplate -dest "gen/npntemplate"
 	echo "updating [web/templates] templates"
 	rm -rf gen/components
 	hero -extensions .html -source "web/templates" -pkgname templates -dest gen/templates

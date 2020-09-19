@@ -14,8 +14,8 @@ import (
 	"strings"
 )
 
-func Run(a string, p uint16, dir string, version string, commitHash string) (uint16, error) {
-	info, r, err := Start(dir, version, commitHash)
+func Run(a string, p uint16, platform string, dir string, version string, commitHash string) (uint16, error) {
+	info, r, err := Start(platform, dir, version, commitHash)
 	if err != nil {
 		return p, err
 	}
@@ -23,8 +23,8 @@ func Run(a string, p uint16, dir string, version string, commitHash string) (uin
 	return npnweb.MakeServer(info, r, a, p)
 }
 
-func Start(dir string, version string, commitHash string) (npnweb.AppInfo, *mux.Router, error) {
-	info := InitApp(dir, version, commitHash)
+func Start(platform string, dir string, version string, commitHash string) (npnweb.AppInfo, *mux.Router, error) {
+	info := InitApp(platform, dir, version, commitHash)
 
 	r, err := controllers.BuildRouter(info)
 	if err != nil {
@@ -36,11 +36,12 @@ func Start(dir string, version string, commitHash string) (npnweb.AppInfo, *mux.
 	return info, r, nil
 }
 
-func InitApp(dir string, version string, commitHash string) npnweb.AppInfo {
+func InitApp(platform string, dir string, version string, commitHash string) npnweb.AppInfo {
 	_ = os.Setenv("TZ", "UTC")
 
 	npncore.AppKey = "npn"
 	npncore.AppName = npncore.AppKey
+	npncore.AppPlatform = platform
 
 	logger := npncore.InitLogging(verbose)
 	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": version, "commit": commitHash})

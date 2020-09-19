@@ -8,7 +8,7 @@ struct npnApp: App {
     init() {
         print("starting npn...")
         let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
-        port = NpnServer.LibRun(path[0])
+        port = NpnServer.LibRun("ios", path[0])
         print("npn started on port [\(port)]")
     }
 
