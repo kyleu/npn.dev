@@ -81,13 +81,19 @@ namespace socket {
   function onSocketClose() {
     function disconnect(seconds: number) {
       connected = false;
-      log.info("socket closed");
-      if (debug) {
-        console.info(`socket closed, reconnecting in ${seconds} seconds`);
-      }
-      setTimeout(() => {
+      const elapsed = Date.now() - connectTime!;
+
+      if (elapsed < 2000) {
+        if (debug) {
+          console.info(`socket closed immediately, reconnecting in ${seconds} seconds`);
+        }
+        setTimeout(() => {
+          socketConnect(currentService, currentID);
+        }, seconds * 1000);
+      } else {
+        log.info("socket closed after [" + elapsed + "ms]");
         socketConnect(currentService, currentID);
-      }, seconds * 1000);
+      }
     }
 
     if (!appUnloading) {
