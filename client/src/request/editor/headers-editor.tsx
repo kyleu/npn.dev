@@ -8,7 +8,7 @@ namespace request.editor {
         <div class="uk-width-1-4">Value</div>
         <div class="uk-width-1-2">
           <div class="right">
-            <a class={style.linkColor} href="" onclick={"request.form.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;"} title="new header"><span data-uk-icon="icon: plus" /></a>
+            <a class={style.linkColor} href="" onclick={"request.editor.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;"} title="new header"><span data-uk-icon="icon: plus" /></a>
           </div>
           Description
         </div>
@@ -30,7 +30,6 @@ namespace request.editor {
   }
 
   export function addChild(container: HTMLElement, h: Header) {
-    console.info(container);
     container.appendChild(<li>
       <div data-uk-grid="">
         <div class="uk-width-1-4">{h.k}</div>

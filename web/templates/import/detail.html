@@ -15,7 +15,9 @@
         <% for _, o := range os { %>
           <% if o.Filename == f.Filename { %>
             <% matched = true %>
-            <p><%= o.Type %></p>
+            <p>
+              <%= o.Type %><% if len(o.Error) > 0 { %>: <%= o.Error %><% } %>
+            </p>
           <% } %>
         <% } %>
         <% if !matched { %>

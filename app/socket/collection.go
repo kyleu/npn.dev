@@ -25,8 +25,8 @@ func sendCollections(s *npnconnection.Service, connID uuid.UUID) {
 }
 
 type collDetails struct {
-	Collection *collection.Collection `json:"collection,omitempty"`
-	Requests   request.Requests       `json:"requests,omitempty"`
+	Collection *collection.Collection `json:"collection"`
+	Requests   request.Requests       `json:"requests"`
 }
 
 func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {

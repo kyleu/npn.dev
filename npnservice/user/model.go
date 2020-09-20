@@ -40,3 +40,17 @@ func (su *SystemUser) ToProfile() *npnuser.UserProfile {
 		Locale:    locale,
 	}
 }
+
+func FromProfile(p *npnuser.UserProfile, created time.Time) *SystemUser {
+	return &SystemUser{
+		UserID:    p.UserID,
+		Name:      p.Name,
+		Role:      p.Role.String(),
+		Theme:     p.Theme.String(),
+		NavColor:  p.NavColor,
+		LinkColor: p.LinkColor,
+		Picture:   p.Picture,
+		Locale:    p.Locale.String(),
+		Created:   created,
+	}
+}

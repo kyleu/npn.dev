@@ -29,15 +29,6 @@ func (s *Service) Create(key string, files []File) error {
 	return nil
 }
 
-func (s *Service) WriteImportFile(key string, filename string, f multipart.File) error {
-	p := path.Join("import", key, "files", filename)
-	content, err := ioutil.ReadAll(f)
-	if err != nil {
-		return errors.Wrap(err, "unable to read file ["+p+"]")
-	}
-	return s.files.WriteFile(p, []byte(content), true)
-}
-
 func (s *Service) Load(key string) (*Config, Outputs, error) {
 	p := path.Join("import", key, "_import.json")
 	content, err := s.files.ReadFile(p)
@@ -52,21 +43,31 @@ func (s *Service) Load(key string) (*Config, Outputs, error) {
 
 	outs := make(Outputs, 0, len(cfg.Files))
 	for _, f := range cfg.Files {
-		o, err := s.LoadFile(key, f.Filename, f.ContentType)
-		if err != nil {
-			return nil, nil, errors.Wrap(err, "cannot import file [" + f.Filename + "]")
-		}
-		outs = append(outs, o)
+		outs = append(outs, s.LoadFile(key, f.Filename, f.ContentType))
 	}
+
 	return cfg, outs, nil
 }
 
-func (s *Service) LoadFile(key string, filename string, contentType string) (*Output, error) {
+func (s *Service) LoadFile(key string, filename string, contentType string) *Output {
 	p := path.Join("import", key, "files", filename)
 	content, err := s.files.ReadFile(p)
 	if err != nil {
-		return nil, errors.Wrap(err, "cannot read import summary")
+		return &Output{Filename: filename, Type: contentType, Value: len(content), Error: errors.Wrap(err, "cannot read import summary").Error()}
+	}
+	t, o, err := parse(filename, contentType, content)
+	if err != nil {
+		return &Output{Filename: filename, Type: t, Value: o, Error: errors.Wrap(err, "cannot parse ["+filename+"]").Error()}
 	}
 
-	return &Output{Filename: filename, Type: contentType, Value: len(content)}, nil
+	return &Output{Filename: filename, Type: t, Value: o}
+}
+
+func (s *Service) WriteFile(key string, filename string, f multipart.File) error {
+	p := path.Join("import", key, "files", filename)
+	content, err := ioutil.ReadAll(f)
+	if err != nil {
+		return errors.Wrap(err, "unable to read file ["+p+"]")
+	}
+	return s.files.WriteFile(p, []byte(content), true)
 }

@@ -2,12 +2,10 @@
 <header>
   <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky">
     <nav id="navbar" class="uk-navbar-container <%= ctx.Profile.NavColor %>-bg" data-uk-navbar>
-      <div class="uk-navbar-left">
-        <% if len(npnweb.IconContent) > 0 { %>
-          <a title="<%= npncore.AppName %>" class="uk-navbar-item uk-logo" href="<%= ctx.Route(`home`) %>">
-            <%== npnweb.IconContent %>
-          </a>
-        <% } %>
+      <div id="breadcrumbs" class="uk-navbar-left">
+        <% if len(npnweb.IconContent) > 0 { %><a title="<%= npncore.AppName %>" class="uk-navbar-item uk-logo" href="<%= ctx.Route(`home`) %>">
+          <%== npnweb.IconContent %>
+        </a><% } %>
         <% BreadcrumbDisplay(ctx, buffer) %>
       </div>
       <div class="uk-navbar-right">
@@ -15,11 +13,11 @@
           <%== npnweb.NavbarContent %>
           <li class="uk-margin-small-right">
             <% if len(ctx.Profile.Picture) == 0 || ctx.Profile.Picture == "none" { %>
-              <a href="<%= ctx.Route(npncore.KeyProfile) %>" data-uk-icon="icon:user" title="Profile"></a>
+            <a href="<%= ctx.Route(npncore.KeyProfile) %>" data-uk-icon="icon:user" title="Profile"></a>
             <% } else { %>
-              <a href="<%= ctx.Route(npncore.KeyProfile) %>" title="Profile">
-                <img class="uk-border-circle" alt="user profile" src="<%= ctx.Profile.Picture %>" />
-              </a>
+            <a href="<%= ctx.Route(npncore.KeyProfile) %>" title="Profile">
+              <img class="uk-border-circle" alt="user profile" src="<%= ctx.Profile.Picture %>" />
+            </a>
             <% } %>
           </li>
         </ul>

@@ -65,7 +65,7 @@ func ImportUpload(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				return npncontroller.EResp(err, "unable to open uploaded file [" + file.Filename + "]")
 			}
-			err = svc.Import.WriteImportFile(importKey, file.Filename, f)
+			err = svc.Import.WriteFile(importKey, file.Filename, f)
 			if err != nil {
 				return npncontroller.EResp(err, "unable to write import file [" + file.Filename + "]")
 			}

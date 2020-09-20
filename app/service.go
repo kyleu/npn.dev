@@ -16,7 +16,7 @@ import (
 type Service struct {
 	debug      bool
 	files      *npncore.FileLoader
-	user       *user.Service
+	user       user.Service
 	auth       *auth.Service
 	version    string
 	commit     string
@@ -29,7 +29,7 @@ type Service struct {
 
 func NewService(debug bool, dataDir string, version string, commitHash string, logger logur.Logger) *Service {
 	files := npncore.NewFileLoader(dataDir, logger)
-	us := user.NewService(files, nil, logger)
+	us := user.NewServiceFilesystem(false, files, logger)
 	cs := collection.NewService(files, logger)
 	return &Service{
 		debug:      debug,
@@ -54,7 +54,7 @@ func (c *Service) Files() *npncore.FileLoader {
 	return c.files
 }
 
-func (c *Service) User() *user.Service {
+func (c *Service) User() user.Service {
 	return c.user
 }
 

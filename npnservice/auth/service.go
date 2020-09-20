@@ -21,10 +21,10 @@ type Service struct {
 	// actions          *action.Service
 	db     *npndatabase.Service
 	logger logur.Logger
-	users  *user.Service
+	users  user.Service
 }
 
-func NewService(enabled bool, redir string /* actions *action.Service, */, db *npndatabase.Service, logger logur.Logger, users *user.Service) *Service {
+func NewService(enabled bool, redir string /* actions *action.Service, */, db *npndatabase.Service, logger logur.Logger, users user.Service) *Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyAuth})
 
 	if !strings.HasPrefix(redir, "http") {

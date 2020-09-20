@@ -1,4 +1,4 @@
-<%: func Index(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%: func SystemIndex(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>
@@ -17,16 +17,15 @@
       <div>
         <div class="uk-card uk-card-body uk-card-default uk-margin-top">
           <ul class="uk-list uk-list-divider">
-            <li><a class="theme" href="<%= ctx.Route(`workspace`) %>">Workspace</a></li>
             <li><a class="theme" href="<%= ctx.Route(`collection`) %>">Collections</a></li>
             <li><a class="theme" href="<%= ctx.Route(`import.form`) %>">Import</a></li>
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeySandbox) %>"><%= npncore.PluralTitle(npncore.KeySandbox) %></a></li>
           </ul>
         </div>
       </div>
       <div>
         <div class="uk-card uk-card-body uk-card-default uk-margin-top">
           <ul class="uk-list uk-list-divider">
-            <li><a class="theme" href="<%= ctx.Route(npncore.KeySandbox) %>"><%= npncore.PluralTitle(npncore.KeySandbox) %></a></li>
             <li><a class="theme" href="<%= ctx.Route(npncore.KeyRoutes) %>">Routes</a></li>
             <li><a class="theme" href="<%= ctx.Route(npncore.KeyModules) %>">Modules</a></li>
             <li><a class="theme" href="<%= ctx.Route(npncore.KeyFile + `.root`) %>">File System</a></li>

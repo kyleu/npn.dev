@@ -729,10 +729,6 @@ h3 a:hover {
 #navbar {
   max-height: 54px;
   overflow: hidden;
-  padding: 0;
-  padding-top: env(safe-area-inset-top);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
 }
 #navbar svg {
   max-width: none;

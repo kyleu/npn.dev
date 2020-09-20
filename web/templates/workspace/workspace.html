@@ -7,21 +7,29 @@
   <div class="uk-container uk-container-expand">
     <div class="uk-card uk-card-body uk-card-default">
       <h3 class="uk-card-title">Workspace</h3>
-      <p>TODO</p>
+      <p>
+        <a class="uk-button uk-button-default uk-margin-small-right" href="<%= ctx.Route(`collection`) %>">Browse</a>
+        <a class="uk-button uk-button-default uk-margin-small-right" href="<%= ctx.Route(`import.form`) %>">Import</a>
+        <a class="uk-button uk-button-default uk-margin-small-right" href="<%= ctx.Route(`system`) %>">System</a>
+        <a class="uk-button uk-button-default" href="" onclick="npn.debug();return false;">Debug</a>
+      </p>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+    <div id="collection-list-panel" class="uk-card uk-card-body uk-card-default uk-margin-top hidden">
       <h3 class="uk-card-title">Collections</h3>
       <div id="collection-list" class="uk-margin-top"></div>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+    <div id="collection-panel" class="uk-card uk-card-body uk-card-default uk-margin-top hidden">
+      <div class="right"><a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close collection"></a></div>
       <h3 class="uk-card-title">Requests</h3>
       <div id="request-list" class="uk-margin-top"></div>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+    <div id="request-panel" class="uk-card uk-card-body uk-card-default uk-margin-top hidden">
+      <div class="right"><a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close request"></a></div>
       <h3 class="uk-card-title">Active Request</h3>
       <div id="active-request" class="uk-margin-top"></div>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+    <div id="action-panel" class="uk-card uk-card-body uk-card-default uk-margin-top hidden">
+      <div class="right"><a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close action"></a></div>
       <h3 class="uk-card-title">Action</h3>
       <div id="request-action" class="uk-margin-top"></div>
     </div>

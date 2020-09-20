@@ -65,7 +65,7 @@ func ProfileSave(w http.ResponseWriter, r *http.Request) {
 		}
 		ref := strings.TrimSpace(prof.Ref)
 		if len(ref) == 0 || strings.HasPrefix(ref, "http") {
-			ref = "home"
+			ref = ctx.Route("home")
 		}
 		return FlashAndRedir(true, "Profile saved", ref, w, r, ctx)
 	})

@@ -19,6 +19,15 @@ var npn;
         socket.socketConnect(svc, id);
     }
     npn.init = init;
+    function debug() {
+        const dump = function (k, v) {
+            console.warn(`${k}: ${v}`);
+        };
+        dump("Active Collection", collection.cache.active);
+        dump("Active Request", request.cache.active);
+        dump("Active Action", request.cache.action);
+    }
+    npn.debug = debug;
 })(npn || (npn = {}));
 var collection;
 (function (collection_1) {
@@ -599,7 +608,7 @@ var request;
             if (coll === collection.cache.active) {
                 dom.setContent("#request-list", request.view.renderRequests(coll, requests));
                 for (let req of requests) {
-                    if (this.active == req.key) {
+                    if (this.active === req.key) {
                         renderActiveRequest(collection.cache.active, req, this.action);
                     }
                 }
@@ -615,7 +624,7 @@ var request;
             if (this.active !== key) {
                 this.active = key;
                 for (let req of reqs) {
-                    if (req.key == this.active) {
+                    if (req.key === this.active) {
                         renderActiveRequest(coll, req, this.action);
                     }
                 }
@@ -631,7 +640,7 @@ var request;
             if (this.action !== act) {
                 this.action = act;
                 for (let req of reqs) {
-                    if (req.key == this.active) {
+                    if (req.key === this.active) {
                         renderActiveAction(coll, req, this.action);
                     }
                 }
@@ -938,7 +947,7 @@ var request;
                     JSX("div", { class: "uk-width-1-4" }, "Value"),
                     JSX("div", { class: "uk-width-1-2" },
                         JSX("div", { class: "right" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "request.form.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "request.editor.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
                                 JSX("span", { "data-uk-icon": "icon: plus" }))),
                         "Description")));
             const updateFn = function () {
@@ -954,7 +963,6 @@ var request;
         }
         editor.createHeadersEditor = createHeadersEditor;
         function addChild(container, h) {
-            console.info(container);
             container.appendChild(JSX("li", null,
                 JSX("div", { "data-uk-grid": "" },
                     JSX("div", { class: "uk-width-1-4" }, h.k),
@@ -1310,10 +1318,10 @@ var request;
 })(request || (request = {}));
 var socket;
 (function (socket) {
-    function route(p) {
+    function routeOld(p) {
         let parts = p.split("/");
         parts = parts.filter(x => x.length > 0);
-        console.info("nav handler called, check it out: " + parts.join(" -> "));
+        console.info("nav (old): " + parts.join(" -> "));
         if (parts.length === 0) {
             return; // index
         }
@@ -1340,6 +1348,37 @@ var socket;
                 console.info("unhandled svc [" + svc + "]");
         }
     }
+    socket.routeOld = routeOld;
+    function route(p) {
+        let parts = p.split("/");
+        parts = parts.filter(x => x.length > 0);
+        console.info("nav: " + parts.join(" -> "));
+        if (parts.length === 0 || parts[0].length === 0) {
+            ui.setPanels();
+            return; // index
+        }
+        const svc = parts[0];
+        switch (svc) {
+            case "c":
+                let coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
+                let req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
+                let act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
+                if (coll !== collection.cache.active) {
+                    collection.cache.setActiveCollection(coll);
+                    socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
+                }
+                if (req !== request.cache.active) {
+                    request.cache.setActiveRequest(req);
+                }
+                if (act !== request.cache.action) {
+                    request.cache.setActiveAction(act);
+                }
+                ui.setPanels(coll, req, act);
+                break;
+            default:
+                console.info("unhandled svc [" + svc + "]");
+        }
+    }
     socket.route = route;
 })(socket || (socket = {}));
 var socket;
@@ -1347,6 +1386,7 @@ var socket;
     const debug = true;
     let sock;
     let connected = false;
+    let pauseSeconds = 0;
     let appUnloading = false;
     let pendingMessages = [];
     let currentService = "";
@@ -1391,9 +1431,9 @@ var socket;
     function onSocketOpen() {
         log.info("socket connected");
         connected = true;
+        pauseSeconds = 1;
         pendingMessages.forEach(send);
         pendingMessages = [];
-        // send({ svc: services.system.key, cmd: command.client.connect, param: currentID });
     }
     function onSocketMessage(msg) {
         if (debug) {
@@ -1412,16 +1452,17 @@ var socket;
     }
     socket.onSocketMessage = onSocketMessage;
     function onSocketClose() {
-        function disconnect(seconds) {
+        function disconnect() {
             connected = false;
             const elapsed = Date.now() - connectTime;
             if (elapsed < 2000) {
+                pauseSeconds = pauseSeconds * 2;
                 if (debug) {
-                    console.info(`socket closed immediately, reconnecting in ${seconds} seconds`);
+                    console.info(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
                 }
                 setTimeout(() => {
                     socketConnect(currentService, currentID);
-                }, seconds * 1000);
+                }, pauseSeconds * 1000);
             }
             else {
                 log.info("socket closed after [" + elapsed + "ms]");
@@ -1429,7 +1470,7 @@ var socket;
             }
         }
         if (!appUnloading) {
-            disconnect(10);
+            disconnect();
         }
     }
 })(socket || (socket = {}));
@@ -1461,6 +1502,67 @@ var system;
     }
     system.onSystemMessage = onSystemMessage;
 })(system || (system = {}));
+var ui;
+(function (ui) {
+    function setBreadcrumbs(coll, req, act) {
+        const el = dom.req("#breadcrumbs");
+        reset(el);
+        if (coll) {
+            el.appendChild(sep());
+            el.appendChild(bcForColl(coll));
+        }
+        if (req) {
+            el.appendChild(sep());
+            el.appendChild(bcForReq(coll, req));
+        }
+        if (act) {
+            el.appendChild(sep());
+            el.appendChild(bcForAct(coll, req, act));
+        }
+    }
+    ui.setBreadcrumbs = setBreadcrumbs;
+    function reset(el) {
+        for (let i = el.childElementCount - 1; i >= 0; i--) {
+            const e = el.children[i];
+            if (e.classList.contains("dynamic")) {
+                el.removeChild(e);
+            }
+        }
+    }
+    ui.reset = reset;
+    function sep() {
+        return JSX("span", { class: "uk-navbar-item dynamic", style: "padding: 0 8px;" }, " / ");
+    }
+    function bcForColl(coll) {
+        return bcFor(coll, coll);
+    }
+    function bcForReq(coll, req) {
+        return bcFor(req, coll, req);
+    }
+    function bcForAct(coll, req, act) {
+        return bcFor(act, coll, req, act);
+    }
+    function bcFor(title, coll, req, act) {
+        if (act) {
+            return nav.link("/c/" + coll + "/" + req + "/" + act, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
+        }
+        if (req) {
+            return nav.link("/c/" + coll + "/" + req, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
+        }
+        return nav.link("/c/" + coll, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
+    }
+})(ui || (ui = {}));
+var ui;
+(function (ui) {
+    function setPanels(coll, req, act) {
+        dom.setDisplay("#collection-list-panel", coll === undefined);
+        dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
+        dom.setDisplay("#request-panel", req !== undefined && req.length > 0 && act === undefined);
+        dom.setDisplay("#action-panel", act !== undefined && act.length > 0);
+        ui.setBreadcrumbs(coll, req, act);
+    }
+    ui.setPanels = setPanels;
+})(ui || (ui = {}));
 var profile;
 (function (profile) {
     // noinspection JSUnusedGlobalSymbols
@@ -1676,9 +1778,6 @@ var nav;
             f(event.state === null ? "" : event.state);
         };
         let path = location.pathname;
-        if (path.startsWith("/w")) {
-            path = path.substr(2);
-        }
         navigate(path);
     }
     nav.init = init;
@@ -1686,23 +1785,24 @@ var nav;
         if (path.startsWith("/")) {
             path = path.substr(1);
         }
-        let fullpath = "/w";
-        if (path.length > 0) {
-            fullpath = fullpath + "/" + path;
-        }
-        if (location.pathname !== fullpath) {
-            history.pushState(path, "", fullpath);
+        if (location.pathname !== path) {
+            history.pushState(path, "", "/" + path);
         }
         handler(path);
     }
     nav.navigate = navigate;
+    function pop() {
+        let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
+        if (p === '/c') {
+            p = "";
+        }
+        navigate(p);
+    }
+    nav.pop = pop;
     function link(path, title, cls, onclk) {
         let href = path;
         if (!href.startsWith("/")) {
             href = "/" + href;
-        }
-        if (!href.startsWith("/w")) {
-            href = "/w" + href;
         }
         if (cls) {
             cls = " " + cls.trim();

@@ -10,10 +10,17 @@ import (
 	"github.com/kyleu/npn/gen/templates"
 )
 
-func Home(w http.ResponseWriter, r *http.Request) {
+func TEMPHome(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Title = npncore.AppName
-		return npncontroller.T(templates.Index(ctx, w))
+		return npncontroller.T(templates.SystemIndex(ctx, w))
+	})
+}
+
+func System(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		ctx.Title = npncore.AppName
+		return npncontroller.T(templates.SystemIndex(ctx, w))
 	})
 }
 

@@ -19,4 +19,13 @@ namespace npn {
 
     socket.socketConnect(svc, id);
   }
+
+  export function debug() {
+    const dump = function(k: string, v?: string) {
+      console.warn(`${k}: ${v}`);
+    }
+    dump("Active Collection", collection.cache.active);
+    dump("Active Request", request.cache.active);
+    dump("Active Action", request.cache.action);
+  }
 }

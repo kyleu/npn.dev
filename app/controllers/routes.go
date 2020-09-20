@@ -25,13 +25,13 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.Use(ocmux.Middleware())
 
 	// Home
-	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Home))).Name(routes.Name("home"))
+	r.Path(routes.Path("system")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(System))).Name(routes.Name("system"))
 	r.Path(routes.Path("health")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Health))).Name(routes.Name("health"))
 
 	// Workspace
-	workspace := r.Path(routes.Path("w")).Subrouter()
-	workspace.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("workspace"))
-	r.PathPrefix(routes.Path("w/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path("w/"), http.HandlerFunc(Workspace)))).Name(routes.Name("workspace", "path"))
+	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("home"))
+	r.PathPrefix(routes.Path("c/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("workspace"))
+
 	r.Path(routes.Path("s")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Socket))).Name(routes.Name("websocket"))
 
 	// Import
@@ -41,10 +41,10 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(routes.Path("i", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportDetail))).Name(routes.Name("import", "detail"))
 
 	// Collections
-	collection := r.Path(routes.Path("c")).Subrouter()
+	collection := r.Path(routes.Path("browse")).Subrouter()
 	collection.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionList))).Name(routes.Name("collection"))
-	r.Path(routes.Path("c", "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionNew))).Name(routes.Name("collection", "new"))
-	collectionPath := routes.Path("c", collectionParam)
+	r.Path(routes.Path("browse", "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionNew))).Name(routes.Name("collection", "new"))
+	collectionPath := routes.Path("browse", collectionParam)
 	r.Path(collectionPath).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionDetail))).Name(routes.Name("collection", "detail"))
 	r.Path(collectionPath + "/act/edit").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionEdit))).Name(routes.Name("collection", "edit"))
 	r.Path(collectionPath + "/act/save").Methods(http.MethodPost).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionSave))).Name(routes.Name("collection", "save"))

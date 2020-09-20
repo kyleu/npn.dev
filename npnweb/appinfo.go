@@ -10,7 +10,7 @@ import (
 type AppInfo interface {
 	Debug() bool
 	Files() *npncore.FileLoader
-	User() *user.Service
+	User() user.Service
 	Auth() *auth.Service
 	Version() string
 	Commit() string

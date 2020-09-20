@@ -9,7 +9,7 @@ namespace request {
       if (coll === collection.cache.active) {
         dom.setContent("#request-list", view.renderRequests(coll, requests));
         for (let req of requests) {
-          if (this.active == req.key) {
+          if (this.active === req.key) {
             renderActiveRequest(collection.cache.active, req, this.action);
           }
         }
@@ -28,7 +28,7 @@ namespace request {
         this.active = key;
 
         for (let req of reqs) {
-          if (req.key == this.active) {
+          if (req.key === this.active) {
             renderActiveRequest(coll, req, this.action);
           }
         }
@@ -47,7 +47,7 @@ namespace request {
         this.action = act;
 
         for (let req of reqs) {
-          if (req.key == this.active) {
+          if (req.key === this.active) {
             renderActiveAction(coll, req, this.action);
           }
         }

@@ -2,15 +2,11 @@ package npnweb
 
 import (
 	"fmt"
-	"net/http"
-	"net/url"
-	"time"
-
 	"github.com/gofrs/uuid"
-	"github.com/kyleu/npn/npnservice/user"
-
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
+	"net/http"
+	"net/url"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -59,34 +55,7 @@ func ExtractContext(w http.ResponseWriter, r *http.Request, addIfMissing bool) *
 		userID = SetSessionUser(npncore.UUID(), session, r, w, ai.Logger())
 	}
 
-	var u *user.SystemUser
-	if ai.User() == nil || (!ai.User().HasDB()) {
-		tgt := &npnuser.UserProfile{}
-		content, err := ai.Files().ReadFile("profile.json")
-		if err == nil {
-			err = npncore.FromJSON(content, tgt)
-			if err != nil {
-				ai.Logger().Warn(fmt.Sprintf("can't load profile: %+v", err))
-				return nil
-			}
-		} else {
-			tgt = npnuser.NewUserProfile(npncore.UUID(), "Guest")
-		}
-
-		u = &user.SystemUser{
-			UserID:    tgt.UserID,
-			Name:      tgt.Name,
-			Role:      tgt.Role.String(),
-			Theme:     tgt.Theme.String(),
-			NavColor:  tgt.NavColor,
-			LinkColor: tgt.LinkColor,
-			Picture:   tgt.Picture,
-			Locale:    tgt.Locale.String(),
-			Created:   time.Now(),
-		}
-	} else {
-		u = ai.User().GetByID(userID, addIfMissing)
-	}
+	u := ai.User().GetByID(userID, addIfMissing)
 	var prof *npnuser.UserProfile
 	if u == nil {
 		prof = npnuser.NewUserProfile(userID, "")

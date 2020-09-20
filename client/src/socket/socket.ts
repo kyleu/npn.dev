@@ -9,6 +9,7 @@ namespace socket {
 
   let sock: WebSocket;
   let connected = false;
+  let pauseSeconds = 0;
   let appUnloading = false;
   let pendingMessages: Message[] = [];
 
@@ -56,9 +57,9 @@ namespace socket {
   function onSocketOpen() {
     log.info("socket connected");
     connected = true;
+    pauseSeconds = 1;
     pendingMessages.forEach(send);
     pendingMessages = [];
-    // send({ svc: services.system.key, cmd: command.client.connect, param: currentID });
   }
 
   export function onSocketMessage(msg: Message) {
@@ -79,17 +80,18 @@ namespace socket {
   }
 
   function onSocketClose() {
-    function disconnect(seconds: number) {
+    function disconnect() {
       connected = false;
       const elapsed = Date.now() - connectTime!;
 
       if (elapsed < 2000) {
+        pauseSeconds = pauseSeconds * 2;
         if (debug) {
-          console.info(`socket closed immediately, reconnecting in ${seconds} seconds`);
+          console.info(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
         }
         setTimeout(() => {
           socketConnect(currentService, currentID);
-        }, seconds * 1000);
+        }, pauseSeconds * 1000);
       } else {
         log.info("socket closed after [" + elapsed + "ms]");
         socketConnect(currentService, currentID);
@@ -97,7 +99,7 @@ namespace socket {
     }
 
     if (!appUnloading) {
-      disconnect(10);
+      disconnect();
     }
   }
 }

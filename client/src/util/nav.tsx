@@ -9,9 +9,6 @@ namespace nav {
       f(event.state === null ? "" : (event.state as string));
     }
     let path = location.pathname;
-    if (path.startsWith("/w")) {
-      path = path.substr(2)
-    }
     navigate(path);
   }
 
@@ -19,23 +16,24 @@ namespace nav {
     if (path.startsWith("/")) {
       path = path.substr(1);
     }
-    let fullpath = "/w";
-    if (path.length > 0) {
-      fullpath = fullpath + "/" + path;
-    }
-    if (location.pathname !== fullpath) {
-      history.pushState(path, "", fullpath);
+    if (location.pathname !== path) {
+      history.pushState(path, "", "/" + path);
     }
     handler(path);
+  }
+
+  export function pop() {
+    let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
+    if (p === '/c') {
+      p = ""
+    }
+    navigate(p)
   }
 
   export function link(path: string, title: string, cls?: string, onclk?: string) {
     let href = path;
     if (!href.startsWith("/")) {
       href = "/" + href;
-    }
-    if (!href.startsWith("/w")) {
-      href = "/w" + href;
     }
     if (cls) {
       cls = " " + cls.trim();
