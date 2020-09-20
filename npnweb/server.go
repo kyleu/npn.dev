@@ -15,16 +15,18 @@ func MakeServer(info AppInfo, r *mux.Router, address string, port uint16) (uint1
 	if info.Debug() {
 		msg += " (verbose)"
 	}
-	dir := "?"
-	if info != nil {
-		dir = info.Files().Root()
-		info.Logger().Info(fmt.Sprintf(msg, npncore.AppName, dir, address, port))
-	}
-	port, l, err := Listen(address, port)
+	actualPort, l, err := Listen(address, port)
 	if err != nil {
-		return port, errors.Wrap(err, fmt.Sprintf("unable to listen on port [%v]", port))
+		return actualPort, errors.Wrap(err, fmt.Sprintf("unable to listen on port [%v]", actualPort))
 	}
-	return port, Serve(l, r)
+	if actualPort != port {
+		fmt.Println("port:", actualPort)
+	}
+	if info != nil {
+		dir := info.Files().Root()
+		info.Logger().Info(fmt.Sprintf(msg, npncore.AppName, dir, address, actualPort))
+	}
+	return actualPort, Serve(l, r)
 }
 
 func Listen(address string, port uint16) (uint16, net.Listener, error) {

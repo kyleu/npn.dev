@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path"
 	"strings"
 
 	"github.com/gorilla/mux"
@@ -13,12 +14,11 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
-var fileExtraContent = func(path string) string {
-	return ""
-}
+var FileExtraContent func(string) string
 
-func RoutesFile(app npnweb.AppInfo, r *mux.Router, extraContent func(path string) string) {
-	fileExtraContent = extraContent
+var FileBrowseRoot = "."
+
+func RoutesFile(app npnweb.AppInfo, r *mux.Router) {
 	file := r.Path(routes.Path(npncore.KeyFile)).Subrouter()
 	file.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(FileRoot))).Name(routes.Name(npncore.KeyFile, "root"))
 	r.PathPrefix("/" + npncore.KeyFile + "/").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(FilePath))).Name(routes.Name(npncore.KeyFile))
@@ -28,9 +28,9 @@ func FileRoot(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Title = npncore.PluralTitle(npncore.KeyFile)
 		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple("", npncore.KeyFile)
-		files, err := ioutil.ReadDir(".")
+		files, err := ioutil.ReadDir(FileBrowseRoot)
 		if err != nil {
-			return EResp(err, "cannot read path [.]")
+			return EResp(err, "cannot read path [" + FileBrowseRoot + "]")
 		}
 		return T(npntemplate.FileBrowse([]string{}, files, ctx, w))
 	})
@@ -38,29 +38,34 @@ func FileRoot(w http.ResponseWriter, r *http.Request) {
 
 func FilePath(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		path := r.URL.Path
-		path = strings.TrimPrefix(path, "/"+npncore.KeyFile)
-		path = strings.TrimPrefix(path, "/")
-		paths := strings.Split(path, "/")
-		fi, err := os.Stat("./" + path)
+		p := r.URL.Path
+		p = strings.TrimPrefix(p, "/"+npncore.KeyFile)
+		p = strings.TrimPrefix(p, "/")
+		paths := strings.Split(p, "/")
+		filepath := path.Join(FileBrowseRoot, p)
+		fi, err := os.Stat(filepath)
 		if err != nil {
-			return EResp(err, "cannot load file ["+path+"]")
+			return EResp(err, "cannot load file ["+p+"]")
 		}
 		ctx.Title = npncore.PluralTitle(npncore.KeyFile)
 		ctx.Breadcrumbs = fileBreadcrumbs(ctx, paths...)
 
 		if fi.Mode().IsDir() {
-			files, err := ioutil.ReadDir("./" + path)
+			files, err := ioutil.ReadDir(filepath)
 			if err != nil {
-				return EResp(err, "cannot read directory ["+path+"]")
+				return EResp(err, "cannot read directory ["+p+"]")
 			}
 			return T(npntemplate.FileBrowse(paths, files, ctx, w))
 		}
-		content, err := ioutil.ReadFile("./" + path)
+		content, err := ioutil.ReadFile(filepath)
 		if err != nil {
-			return EResp(err, "cannot read file ["+path+"]")
+			return EResp(err, "cannot read file ["+p+"]")
 		}
-		return T(npntemplate.FileContent(fileExtraContent(path), paths, string(content), ctx, w))
+		extra := ""
+		if FileExtraContent != nil {
+			extra = FileExtraContent(p)
+		}
+		return T(npntemplate.FileContent(extra, paths, string(content), ctx, w))
 	})
 }
 

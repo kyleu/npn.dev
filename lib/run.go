@@ -10,7 +10,7 @@ import (
 
 func Run(platform string, path string) int32 {
 	a := "0.0.0.0"
-	p := uint16(10101)
+	p := uint16(0)
 	info, r, err := cli.Start(platform, path, "0.0.0", "master")
 	if err != nil {
 		panic(errors.WithStack(err))

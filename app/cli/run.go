@@ -7,6 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/controllers"
+	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
 	log "logur.dev/logur"
@@ -42,6 +43,8 @@ func InitApp(platform string, dir string, version string, commitHash string) npn
 	npncore.AppKey = "npn"
 	npncore.AppName = npncore.AppKey
 	npncore.AppPlatform = platform
+
+	npncontroller.FileBrowseRoot = "./data"
 
 	logger := npncore.InitLogging(verbose)
 	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": version, "commit": commitHash})

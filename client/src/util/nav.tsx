@@ -30,7 +30,7 @@ namespace nav {
     navigate(p)
   }
 
-  export function link(path: string, title: string, cls?: string, onclk?: string) {
+  export function link(path: string, title: string, cls?: string, onclk?: string, isButton?: boolean) {
     let href = path;
     if (!href.startsWith("/")) {
       href = "/" + href;
@@ -47,6 +47,9 @@ namespace nav {
     } else {
       onclk = "";
     }
-    return <a class={style.linkColor + cls} href={href} onclick={onclk + "nav.navigate('" + path + "', '" + title + "');return false;"}>{title}</a>;
+    if (!isButton) {
+      cls = style.linkColor + cls;
+    }
+    return <a class={cls} href={href} onclick={onclk + "nav.navigate('" + path + "', '" + title + "');return false;"}>{title}</a>;
   }
 }

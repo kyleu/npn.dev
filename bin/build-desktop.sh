@@ -7,7 +7,8 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 project_dir=${dir}/..
 cd $project_dir
 
-bin/build.sh darwin amd64
+bin/build-macos.sh
+
 # bin/build.sh darwin arm64
 
 bin/build.sh linux amd64

@@ -1,15 +1,20 @@
 import SwiftUI
 
 struct ContentView: View {
-    @ObservedObject var webViewStateModel: WebViewStateModel = WebViewStateModel()
-
+    let u: URLRequest
+    
     var body: some View {
-        WebView(url: URL.init(string: "http://localhost:10101")!, webViewStateModel: self.webViewStateModel, onNavigationAction: nil).edgesIgnoringSafeArea(.all)
+        WebView(url: self.u).edgesIgnoringSafeArea(.all)
+    }
+    
+    init(url: URLRequest) {
+        self.u = url
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let u = URL.init(string: "http://localhost:10101")!
+        ContentView(url: URLRequest(url: u))
     }
 }

@@ -20,10 +20,10 @@ namespace request.view {
         <div data-uk-grid="">
           <div class="uk-width-1-4">Actions</div>
           <div class="uk-width-3-4">
-            {nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-right")}
-            {nav.link(path + "/transform", "Transform", "uk-button uk-button-default uk-margin-right")}
-            {nav.link(path + "/edit", "Edit", "uk-button uk-button-default uk-margin-right")}
-            {nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }")}
+            {nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-right", "", true)}
+            {nav.link(path + "/transform", "Transform", "uk-button uk-button-default uk-margin-right", "", true)}
+            {nav.link(path + "/edit", "Edit", "uk-button uk-button-default uk-margin-right", "", true)}
+            {nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }", true)}
           </div>
         </div>
         <hr/>

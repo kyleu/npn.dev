@@ -7,12 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2711F6812517F3F2002A43CB /* NpnServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E138A725151B24003FD8B6 /* NpnServer.framework */; };
 		27386CB425153A790037B682 /* WebView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27386CB325153A790037B682 /* WebView.swift */; };
 		27E1388425150E19003FD8B6 /* npnApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E1388325150E19003FD8B6 /* npnApp.swift */; };
 		27E1388625150E19003FD8B6 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27E1388525150E19003FD8B6 /* ContentView.swift */; };
 		27E1388825150E1A003FD8B6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 27E1388725150E1A003FD8B6 /* Assets.xcassets */; };
 		27E1388B25150E1A003FD8B6 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 27E1388A25150E1A003FD8B6 /* Preview Assets.xcassets */; };
-		27E138A825151B24003FD8B6 /* NpnServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 27E138A725151B24003FD8B6 /* NpnServer.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,7 +31,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				27E138A825151B24003FD8B6 /* NpnServer.framework in Frameworks */,
+				2711F6812517F3F2002A43CB /* NpnServer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,10 +60,10 @@
 			children = (
 				27E1388325150E19003FD8B6 /* npnApp.swift */,
 				27E1388525150E19003FD8B6 /* ContentView.swift */,
+				27386CB325153A790037B682 /* WebView.swift */,
 				27E1388725150E1A003FD8B6 /* Assets.xcassets */,
 				27E1388C25150E1A003FD8B6 /* Info.plist */,
 				27E1388925150E1A003FD8B6 /* Preview Content */,
-				27386CB325153A790037B682 /* WebView.swift */,
 			);
 			path = npn;
 			sourceTree = "<group>";

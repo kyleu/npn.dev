@@ -1294,10 +1294,10 @@ var request;
                     JSX("div", { "data-uk-grid": "" },
                         JSX("div", { class: "uk-width-1-4" }, "Actions"),
                         JSX("div", { class: "uk-width-3-4" },
-                            nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-right"),
-                            nav.link(path + "/transform", "Transform", "uk-button uk-button-default uk-margin-right"),
-                            nav.link(path + "/edit", "Edit", "uk-button uk-button-default uk-margin-right"),
-                            nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }"))),
+                            nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-right", "", true),
+                            nav.link(path + "/transform", "Transform", "uk-button uk-button-default uk-margin-right", "", true),
+                            nav.link(path + "/edit", "Edit", "uk-button uk-button-default uk-margin-right", "", true),
+                            nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }", true))),
                     JSX("hr", null),
                     JSX("div", { "data-uk-grid": "" },
                         JSX("div", { class: "uk-width-1-4" }, "Key"),
@@ -1799,7 +1799,7 @@ var nav;
         navigate(p);
     }
     nav.pop = pop;
-    function link(path, title, cls, onclk) {
+    function link(path, title, cls, onclk, isButton) {
         let href = path;
         if (!href.startsWith("/")) {
             href = "/" + href;
@@ -1818,7 +1818,10 @@ var nav;
         else {
             onclk = "";
         }
-        return JSX("a", { class: style.linkColor + cls, href: href, onclick: onclk + "nav.navigate('" + path + "', '" + title + "');return false;" }, title);
+        if (!isButton) {
+            cls = style.linkColor + cls;
+        }
+        return JSX("a", { class: cls, href: href, onclick: onclk + "nav.navigate('" + path + "', '" + title + "');return false;" }, title);
     }
     nav.link = link;
 })(nav || (nav = {}));

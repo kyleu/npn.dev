@@ -23,6 +23,6 @@ class MainActivity : AppCompatActivity() {
         settings.javaScriptEnabled = true;
         settings.domStorageEnabled = true;
 
-        webView.loadUrl("http://localhost:10101")
+        webView.loadUrl("http://localhost:${port}/")
     }
 }

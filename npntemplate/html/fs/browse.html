@@ -19,12 +19,12 @@
             <tr>
               <td>
                 <a class="theme" href="<%= ctx.Route(npncore.KeyFile) %><%= strings.Join(append(dir, file.Name()), `/`) %>">
-                  <% if file.IsDir() { %>
-                    <span data-uk-icon="icon: folder"></span>
-                  <% } else { %>
-                    <span data-uk-icon="icon: file-text"></span>
-                  <% } %>
-                  <%= file.Name() %>
+                  <%
+                  icon := "file-text"
+                  if file.IsDir() {
+                    icon = "folder"
+                  }
+                  %><span data-uk-icon="icon: <%= icon %>"c class="uk-margin-small-right"></span><%= file.Name() %>
                 </a>
               </td>
               <td class="uk-table-shrink uk-text-nowrap">
