@@ -1,5 +1,14 @@
 namespace request.editor {
-  export function createHeadersEditor(el: HTMLTextAreaElement) {
+  export function initHeadersEditor(el: HTMLTextAreaElement) {
+    const parent = el.parentElement!;
+    parent.appendChild(createHeadersEditor(el));
+  }
+
+  export function setHeaders(cache: Cache, headers: Header[] | undefined) {
+
+  }
+
+  function createHeadersEditor(el: HTMLTextAreaElement) {
     const container = <ul id={el.id + "-ul"} class="uk-list uk-list-divider"></ul>;
 
     const header = <li>
@@ -29,7 +38,7 @@ namespace request.editor {
     return container;
   }
 
-  export function addChild(container: HTMLElement, h: Header) {
+  function addChild(container: HTMLElement, h: Header) {
     container.appendChild(<li>
       <div data-uk-grid="">
         <div class="uk-width-1-4">{h.k}</div>

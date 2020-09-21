@@ -939,6 +939,14 @@ var request;
 (function (request) {
     var editor;
     (function (editor) {
+        function initHeadersEditor(el) {
+            const parent = el.parentElement;
+            parent.appendChild(createHeadersEditor(el));
+        }
+        editor.initHeadersEditor = initHeadersEditor;
+        function setHeaders(cache, headers) {
+        }
+        editor.setHeaders = setHeaders;
         function createHeadersEditor(el) {
             const container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
             const header = JSX("li", null,
@@ -961,7 +969,6 @@ var request;
             updateFn();
             return container;
         }
-        editor.createHeadersEditor = createHeadersEditor;
         function addChild(container, h) {
             container.appendChild(JSX("li", null,
                 JSX("div", { "data-uk-grid": "" },
@@ -973,21 +980,6 @@ var request;
                                 JSX("span", { "data-uk-icon": "icon: close" }))),
                         h.desc ? h.desc : ""))));
         }
-        editor.addChild = addChild;
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function initHeadersEditor(el) {
-            const parent = el.parentElement;
-            parent.appendChild(editor.createHeadersEditor(el));
-        }
-        editor.initHeadersEditor = initHeadersEditor;
-        function setHeaders(cache, headers) {
-        }
-        editor.setHeaders = setHeaders;
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;

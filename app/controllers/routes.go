@@ -51,7 +51,7 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(collectionPath + "/act/delete").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionDelete))).Name(routes.Name("collection", "delete"))
 
 	// Requests
-	r.Path(routes.Path("c", collectionParam, "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RequestNew))).Name(routes.Name("request", "new"))
+	r.Path(routes.Path("browse", collectionParam, "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RequestNew))).Name(routes.Name("request", "new"))
 	requestPath := collectionPath + "/" + keyParam
 	r.Path(requestPath).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RequestDetail))).Name(routes.Name("request"))
 	r.Path(requestPath + "/call").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RequestCall))).Name(routes.Name("request", "call"))
