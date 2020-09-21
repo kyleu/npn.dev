@@ -11,3 +11,13 @@ go-embed -input web/assets -output app/assets/assets.go
 echo "gomobile..."
 gomobile bind -o build/ios/NpnServer.framework -target=ios github.com/kyleu/npn/lib
 git checkout app/assets/assets.go
+
+echo "Building [ios] app..."
+
+cd projects/ios/npn
+
+xcodebuild -project npn.xcodeproj
+
+cd build/Release-iphoneos/
+
+cp -R npn.app ../../../../../build/ios

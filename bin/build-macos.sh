@@ -3,9 +3,9 @@ while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 cd "$DIR"
 
-echo "Building [ios]..."
+echo "Building [macos] app..."
 
-mkdir -p build/macos/
+mkdir -p build/darwin/
 
 bin/build.sh darwin amd64
 cp build/darwin/amd64/npn projects/macos/npn/npn/npn-server
@@ -16,4 +16,4 @@ xcodebuild -project npn.xcodeproj
 
 cd build/Release/
 
-zip -r ../../../../../build/macos/npn.macos.zip npn.app
+cp -R npn.app ../../../../../build/darwin

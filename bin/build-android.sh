@@ -17,3 +17,10 @@ rm -f npn.aar npn-sources.jar
 cp ../../../../../build/android/npn.aar .
 cp ../../../../../build/android/npn-sources.jar .
 
+cd "${DIR}/projects/android/npn"
+
+gradle assembleDebug
+
+cp "app/build/outputs/apk/debug/app-debug.apk" "${DIR}/build/android/npn.apk"
+
+cd "${DIR}/build/android"
