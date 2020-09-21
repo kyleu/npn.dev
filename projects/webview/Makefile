@@ -10,7 +10,7 @@ else
     BUILD_DATE ?= $(shell date "$(DATE_FMT)")
 endif
 LDFLAGS += -X main.version=${VERSION} -X main.commitHash=${COMMIT_HASH} -X main.buildDate=${BUILD_DATE}
-export CGO_ENABLED ?= 0
+export CGO_ENABLED ?= 1
 ifeq (${VERBOSE}, 1)
 ifeq ($(filter -v,${GOARGS}),)
 	GOARGS += -v
@@ -32,13 +32,21 @@ ifneq (${IGNORE_GOLANG_VERSION_REQ}, 1)
 endif
 
 .PHONY: build
-build: goversion ## Build all binaries
+build: goversion
 ifeq (${VERBOSE}, 1)
 	go env
 endif
 
 	@mkdir -p ${BUILD_DIR}
-	go build ${GOARGS} -tags "${GOTAGS}" -ldflags "${LDFLAGS}" -o ${BUILD_DIR}/{{.Key}} ./cmd/...
+	go build ${GOARGS} -tags "${GOTAGS}" -ldflags "${LDFLAGS}" -o ${BUILD_DIR}/ ./npn-webview.go
+
+.PHONY: build-release
+build-release: goversion ## Build all binaries without debug information
+	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} LDFLAGS="-w ${LDFLAGS}" GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
+
+.PHONY: build-debug
+build-debug: goversion compile-templates ## Build all binaries with remote debugging capabilities
+	@${MAKE} GOARGS="${GOARGS} -gcflags \"all=-N -l\"" BUILD_DIR="${BUILD_DIR}/debug" build
 
 .PHONY: help
 help:

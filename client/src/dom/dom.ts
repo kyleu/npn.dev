@@ -23,6 +23,11 @@ namespace dom {
     } catch (e) {
       console.warn("error wiring tag editors", e);
     }
+    try {
+      flash.wire();
+    } catch (e) {
+      console.warn("error wiring tag editors", e);
+    }
   }
 
   export function els<T extends HTMLElement>(selector: string, context?: HTMLElement): readonly T[] {

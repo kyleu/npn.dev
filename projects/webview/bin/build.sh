@@ -7,9 +7,10 @@ cd "$DIR"
 
 os=${1:-darwin}
 arch=${2:-amd64}
-fn=${3:-npn}
+fn=${3:-npn-webview}
 
-echo "Building [$os $arch]..."
+echo "Building webview for [$os $arch]..."
 env GOOS=$os GOARCH=$arch make build-release
+
 mkdir -p ./build/$os/$arch
 mv "./build/release/$fn" "./build/$os/$arch/$fn"

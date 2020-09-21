@@ -105,6 +105,12 @@ var dom;
         catch (e) {
             console.warn("error wiring tag editors", e);
         }
+        try {
+            flash.wire();
+        }
+        catch (e) {
+            console.warn("error wiring tag editors", e);
+        }
     }
     dom.initDom = initDom;
     function els(selector, context) {
@@ -433,6 +439,28 @@ var events;
     }
     events.getCloseEvent = getCloseEvent;
 })(events || (events = {}));
+var flash;
+(function (flash) {
+    function wire() {
+        setTimeout(fadeOut, 4000);
+    }
+    flash.wire = wire;
+    function fadeOut() {
+        let matched = false;
+        dom.els(".alert-top").forEach(el => {
+            matched = true;
+            el.classList.add("uk-animation-fade", "uk-animation-reverse");
+        });
+        if (matched) {
+            setTimeout(remove, 1000);
+        }
+    }
+    function remove() {
+        dom.els(".alert-top").forEach(el => {
+            el.remove();
+        });
+    }
+})(flash || (flash = {}));
 var modal;
 (function (modal) {
     let activeParam;

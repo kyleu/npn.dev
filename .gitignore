@@ -8,12 +8,3 @@ build
 /tmp
 
 node_modules
-
-xcuserdata
-*.xcscmblueprint
-*.xccheckout
-*.moved-aside
-*.pbxuser
-!default.pbxuser
-
-/projects/macos/npn/npn/npn-server

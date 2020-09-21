@@ -1,0 +1,15 @@
+/.vscode
+/.idea
+/.scannerwork
+build
+
+xcuserdata
+*.xcscmblueprint
+*.xccheckout
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+
+npn/npn-server
+
+NpnServer.framework
