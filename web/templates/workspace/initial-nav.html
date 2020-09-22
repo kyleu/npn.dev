@@ -1,0 +1,19 @@
+<%: func InitialNav(ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<div class="nav-section">
+  <div class="nav-header">Collections</div>
+  <div class="nav-list">
+    <div class="nav-item"><a class="theme" href="">A</a></div>
+    <div class="nav-item"><a class="theme" href="">B</a></div>
+  </div>
+</div>
+<div class="nav-section uk-margin-top">
+  <div class="nav-header">System</div>
+  <div class="nav-list">
+    <div class="nav-item"><a class="theme" href="<%= ctx.Route(`collection`) %>">Browse</a></div>
+    <div class="nav-item"><a class="theme" href="<%= ctx.Route(`import.form`) %>">Import</a></div>
+    <div class="nav-item"><a class="theme" href="<%= ctx.Route(`system`) %>">System</a></div>
+    <div class="nav-item"><a class="theme" href="" onclick="npn.debug();return false;">Debug</a></div>
+    <div class="nav-item"><a class="theme" href="" onclick="log.toggle();return false;">Toggle Log</a></div>
+    <div class="nav-item"><a class="theme" href="" onclick="npn.testbed();return false;">Testbed</a></div>
+  </div>
+</div>

@@ -25,9 +25,13 @@ var npn;
         };
         dump("Active Collection", collection.cache.active);
         dump("Active Request", request.cache.active);
-        dump("Active Action", request.cache.action);
+        dump("Active Action", `${request.cache.action} [${request.cache.extra}]`);
     }
     npn.debug = debug;
+    function testbed() {
+        log.info("Testbed!");
+    }
+    npn.testbed = testbed;
 })(npn || (npn = {}));
 var collection;
 (function (collection_1) {
@@ -1809,7 +1813,8 @@ var group;
 var log;
 (function (log) {
     let started = 0;
-    let container;
+    let content;
+    let list;
     function init() {
         started = Date.now();
         l("debug", "npn started");
@@ -1830,12 +1835,33 @@ var log;
                 n,
                 "ms"),
             msg);
-        if (!container) {
-            container = dom.req("#log-panel");
+        if (!list) {
+            list = dom.req("#log-list");
         }
-        container.appendChild(el);
+        list.appendChild(el);
+        if (!content) {
+            content = dom.req("#log-content");
+        }
+        content.scrollTo(0, content.scrollHeight);
     }
     log.l = l;
+    function toggle() {
+        const wsc = dom.req("#workspace-content");
+        const lp = dom.req("#log-container");
+        const curr = (lp.style.display !== "") && (lp.style.display !== "none");
+        if (curr) {
+            wsc.classList.remove("log-visible");
+        }
+        else {
+            wsc.classList.add("log-visible");
+        }
+        dom.setDisplay(lp, !curr);
+        if (!content) {
+            content = dom.req("#log-content");
+        }
+        content.scrollTo(0, content.scrollHeight);
+    }
+    log.toggle = toggle;
     function color(level) {
         switch (level) {
             case "debug":

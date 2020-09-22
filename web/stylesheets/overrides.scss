@@ -57,11 +57,14 @@ h4 {
       color: #fff;
     }
   }
+  .uk-navbar-toggle-icon {
+    color: #ddd;
+  }
 }
 
 .uk-dark {
   .uk-navbar-nav > li > a, .uk-logo {
-    color: #333;
+    color: #666;
 
     &:hover {
       color: #000;
@@ -104,7 +107,7 @@ h4 {
 
 .uk-dark {
   .uk-search-default .uk-search-input:focus {
-    border: 1px solid #666;
+    border: 1px solid #444;
   }
 }
 
@@ -122,6 +125,9 @@ h4 {
     .uk-nav-default > li > a, .uk-nav-default .uk-nav-sub a, .uk-nav-default .uk-nav-header, h3, .uk-close {
       color: #fff;
     }
+  }
+  .uk-offcanvas-overlay::before {
+    background: rgba(128, 128, 128, 0.4);
   }
 }
 
@@ -179,9 +185,4 @@ pre {
   .uk-card-default .uk-card-title {
     color: #fff;
   }
-}
-
-// Em
-em, .uk-light em {
-  color: #999;
 }

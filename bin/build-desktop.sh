@@ -8,12 +8,12 @@ project_dir=${dir}/..
 cd $project_dir
 
 bin/build-macos.sh
-bin/build-webview.sh darwin amd64
+# bin/build-webview.sh darwin amd64
 
 # bin/build.sh darwin arm64
 
 bin/build.sh linux amd64
-bin/build-webview.sh linux amd64
+# bin/build-webview.sh linux amd64
 
 bin/build.sh linux 386
 bin/build.sh linux arm64
@@ -26,7 +26,7 @@ bin/build.sh freebsd 386
 bin/build.sh freebsd arm64
 
 bin/build.sh windows amd64 npn.exe
-bin/build-webview.sh windows amd64
+# bin/build-webview.sh windows amd64
 
 bin/build.sh windows 386 npn.exe
 bin/build.sh windows arm npn.exe

@@ -56,6 +56,15 @@ p {
   margin-bottom: 0;
 }
 
+a:hover, .uk-link:hover, .uk-link-toggle:hover .uk-link, .uk-link-toggle:focus .uk-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+em, .uk-light em {
+  color: #999;
+}
+
 .uk-light {
   #logo-symbol {
     stroke: #ddd !important;
@@ -88,10 +97,6 @@ p {
   height: 100%;
   display: flex;
   flex-direction: column;
-}
-
-h3 a:hover {
-  text-decoration: none;
 }
 
 .h3-icon {
@@ -191,3 +196,4 @@ h3 a:hover {
 @import "form.scss";
 @import "tags.scss";
 @import "profile.scss";
+@import "workspace.scss";

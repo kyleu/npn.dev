@@ -26,6 +26,10 @@ namespace npn {
     }
     dump("Active Collection", collection.cache.active);
     dump("Active Request", request.cache.active);
-    dump("Active Action", request.cache.action);
+    dump("Active Action", `${request.cache.action} [${request.cache.extra}]`);
+  }
+
+  export function testbed() {
+    log.info("Testbed!");
   }
 }

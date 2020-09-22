@@ -1,6 +1,7 @@
 namespace log {
   let started = 0;
-  let container: HTMLElement | undefined;
+  let content: HTMLElement | undefined;
+  let list: HTMLElement | undefined;
 
   export function init() {
     started = Date.now();
@@ -21,10 +22,32 @@ namespace log {
       <div class="right">{n}ms</div>
       {msg}
     </li>;
-    if (!container) {
-      container = dom.req("#log-panel");
+    if (!list) {
+      list = dom.req("#log-list");
     }
-    container.appendChild(el);
+    list.appendChild(el);
+    if (!content) {
+      content = dom.req<HTMLDivElement>("#log-content");
+    }
+    content.scrollTo(0, content.scrollHeight);
+  }
+
+  export function toggle() {
+    const wsc = dom.req("#workspace-content");
+    const lp = dom.req("#log-container");
+
+    const curr = (lp.style.display !== "") && (lp.style.display !== "none");
+    if (curr) {
+      wsc.classList.remove("log-visible");
+    } else {
+      wsc.classList.add("log-visible");
+    }
+    dom.setDisplay(lp, !curr);
+
+    if (!content) {
+      content = dom.req<HTMLDivElement>("#log-content");
+    }
+    content.scrollTo(0, content.scrollHeight);
   }
 
   function color(level: string): string {
