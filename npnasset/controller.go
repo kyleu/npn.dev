@@ -12,13 +12,15 @@ import (
 	"github.com/kyleu/npn/npnasset/assets"
 )
 
+var AssetBase = "npnasset/vendor"
+
 func VendorAsset(w http.ResponseWriter, r *http.Request) {
 	path, err := filepath.Abs(strings.TrimPrefix(r.URL.Path, "/vendor"))
 	if err == nil {
 		if !strings.HasPrefix(path, "/") {
 			path = "/" + path
 		}
-		data, hash, contentType, err := assets.Asset("assets", path)
+		data, hash, contentType, err := assets.Asset(AssetBase, path)
 		ZipResponse(w, r, data, hash, contentType, err)
 	} else {
 		http.Error(w, err.Error(), http.StatusBadRequest)
