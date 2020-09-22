@@ -7,28 +7,15 @@ import (
 	"github.com/kyleu/npn/app/header"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"
-	"strconv"
 )
 
-type optionsForm struct {
-	Timeout               string `mapstructure:"opt-timeout"`
-	IgnoreRedirects       string `mapstructure:"opt-ignoreRedirects"`
-	IgnoreReferrer        string `mapstructure:"opt-ignoreReferrer"`
-	IgnoreCerts           string `mapstructure:"opt-ignoreCerts"`
-	ExcludeDefaultHeaders string `mapstructure:"opt-excludeDefaultHeaders"`
-	ReadCookieJars        string `mapstructure:"opt-readCookieJars"`
-	WriteCookieJar        string `mapstructure:"opt-writeCookieJar"`
-	SSLCert               string `mapstructure:"opt-sslCert"`
-	UserAgentOverride     string `mapstructure:"opt-userAgentOverride"`
-}
-
 type prototypeForm struct {
-	Method      string `mapstructure:"method"`
-	URL         string `mapstructure:"url"`
-	Headers     string `mapstructure:"headers"`
-	Auth        string `mapstructure:"auth"`
-	Body        string `mapstructure:"body"`
-	optionsForm `mapstructure:",squash"`
+	Method  string `mapstructure:"method"`
+	URL     string `mapstructure:"url"`
+	Headers string `mapstructure:"headers"`
+	Auth    string `mapstructure:"auth"`
+	Body    string `mapstructure:"body"`
+	Options string `mapstructure:"options"`
 }
 
 type requestForm struct {
@@ -66,10 +53,12 @@ func (f *requestForm) ToRequest() (*request.Request, error) {
 		proto.Body = b
 	}
 
-	proto.Options, err = parseOptions(f)
+	o := &request.Options{}
+	err = npncore.FromJSON([]byte(f.Options), o)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse options")
 	}
+	proto.Options = o
 
 	req := &request.Request{
 		Key:         f.Key,
@@ -79,35 +68,4 @@ func (f *requestForm) ToRequest() (*request.Request, error) {
 	}
 
 	return req.Normalize(f.Key), nil
-}
-
-func parseOptions(f *requestForm) (*request.Options, error) {
-	timeout, err := strconv.Atoi(f.Timeout)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse numeric timeout from [" + f.Timeout + "]")
-	}
-
-	excludeDefaultHeaders := &[]string{}
-	err = npncore.FromJSON([]byte(f.ExcludeDefaultHeaders), excludeDefaultHeaders)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse exclusions from [" + f.ExcludeDefaultHeaders + "]")
-	}
-
-	readCookieJars := &[]string{}
-	err = npncore.FromJSON([]byte(f.ReadCookieJars), readCookieJars)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse cookie jars from [" + f.ReadCookieJars + "]")
-	}
-
-	return &request.Options{
-		Timeout:               timeout,
-		IgnoreRedirects:       f.IgnoreRedirects == "true",
-		IgnoreReferrer:        f.IgnoreReferrer == "true",
-		IgnoreCerts:           f.IgnoreCerts == "true",
-		ExcludeDefaultHeaders: *excludeDefaultHeaders,
-		ReadCookieJars:        *readCookieJars,
-		WriteCookieJar:        f.WriteCookieJar,
-		SSLCert:               f.SSLCert,
-		UserAgentOverride:     f.UserAgentOverride,
-	}, nil
 }

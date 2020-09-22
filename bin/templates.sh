@@ -31,7 +31,7 @@ function check {
     rm -f "$fsrc"
   fi
 
-  find -s "$2" -type f -exec md5sum {} \; | md5sum > "$ftgt"
+  find "$2" -type f -exec md5sum {} \; | md5sum > "$ftgt"
 
   if cmp -s "$fsrc" "$ftgt"; then
     if [ "$FORCE" = "force" ]; then

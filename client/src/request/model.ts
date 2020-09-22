@@ -16,6 +16,7 @@ namespace request {
     readonly ignoreRedirects?: boolean;
     readonly ignoreReferrer?: boolean;
     readonly ignoreCerts?: boolean;
+    readonly ignoreCookies?: boolean;
     readonly excludeDefaultHeaders?: string[];
     readonly readCookieJars?: string[];
     readonly writeCookieJar?: string;

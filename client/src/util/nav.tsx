@@ -25,9 +25,13 @@ namespace nav {
   export function pop() {
     let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
     if (p === '/c') {
-      p = ""
+      p = "";
     }
-    navigate(p)
+    navigate(p);
+  }
+
+  export function navActiveRequest() {
+    navigate(`/c/${collection.cache.active}/${request.cache.active}`);
   }
 
   export function link(path: string, title: string, cls?: string, onclk?: string, isButton?: boolean) {

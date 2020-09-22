@@ -1,10 +1,18 @@
 namespace request {
-  export interface Part {
+  export function prototypeToURL(p: Prototype): string {
+    return prototypeToURLParts(p).map(x => x.v).join("");
+  }
+
+  export function prototypeToHTML(p: Prototype) {
+    return <span>{prototypeToURLParts(p).map(x => <span title={x.t} class={urlColor(x.t)}>{ x.v }</span>)}</span>;
+  }
+
+  interface Part {
     readonly t: string;
     readonly v: string;
   }
 
-  export function prototypeToURLParts(p: Prototype): request.Part[] {
+  function prototypeToURLParts(p: Prototype): Part[] {
     const ret: Part[] = []
     let push = function(t: string, v: string) {
       ret.push({t: t, v: v});
@@ -51,7 +59,22 @@ namespace request {
     return ret
   }
 
-  export function prototypeToURL(p: Prototype): string {
-    return prototypeToURLParts(p).map(x => x.v).join("");
+  function urlColor(key: string): string {
+    switch (key) {
+      case "username":
+      case "password":
+      case "protocol":
+      case "auth":
+        return "green-fg"
+      case "domain":
+      case "port":
+        return "blue-fg"
+      case "path":
+        return "bluegrey-fg"
+      case "query":
+        return "purple-fg"
+      default:
+        return ""
+    }
   }
 }

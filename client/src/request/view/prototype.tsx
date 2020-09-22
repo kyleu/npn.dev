@@ -3,7 +3,7 @@ namespace request.view {
     return <div class="prototype">
       <div data-uk-grid="">
         <div class="uk-width-1-4">URL</div>
-        <div class="uk-width-3-4"><div class="url">{request.prototypeToURL(p)}</div></div>
+        <div class="uk-width-3-4"><div class="url">{request.prototypeToHTML(p)}</div></div>
       </div>
       <hr/>
       <div data-uk-grid="">
@@ -42,7 +42,7 @@ namespace request.view {
 
   function renderOptions(o: request.Options | undefined) {
     if (!o || !(
-      o.timeout || o.ignoreRedirects || o.ignoreReferrer || o.ignoreCerts ||
+      o.timeout || o.ignoreRedirects || o.ignoreReferrer || o.ignoreCerts || o.ignoreCookies ||
       o.excludeDefaultHeaders || o.readCookieJars || o.writeCookieJar || o.sslCert || o.userAgentOverride
     )) {
       return <em>no options</em>;
@@ -62,6 +62,7 @@ namespace request.view {
       {section("ignoreRedirects", o.ignoreRedirects)}
       {section("ignoreReferrer", o.ignoreReferrer)}
       {section("ignoreCerts", o.ignoreCerts)}
+      {section("ignoreCookies", o.ignoreCookies)}
       {section("excludeDefaultHeaders", o.excludeDefaultHeaders)}
       {section("readCookieJars", o.readCookieJars)}
       {section("writeCookieJar", o.writeCookieJar)}

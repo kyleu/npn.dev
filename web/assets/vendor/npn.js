@@ -283,9 +283,13 @@ function JSX(tag, attrs) {
         if (Array.isArray(child)) {
             child.forEach(c => {
                 if (child === undefined || child === null) {
-                    // throw `child for tag [${tag}] is ${child}\n${e.outerHTML}`;
-                    debugger;
-                    c = document.createTextNode("NULL!");
+                    throw `child array for tag [${tag}] is ${child}\n${e.outerHTML}`;
+                }
+                if (c === undefined || c === null) {
+                    throw `child for tag [${tag}] is ${c}\n${e.outerHTML}`;
+                }
+                if (typeof c === "string") {
+                    c = document.createTextNode(c);
                 }
                 e.appendChild(c);
             });
@@ -630,6 +634,7 @@ var request;
     class Cache {
         constructor() {
             this.requests = new Map();
+            this.extra = [];
         }
         setCollectionRequests(coll, requests) {
             this.requests.set(coll, requests);
@@ -637,7 +642,10 @@ var request;
                 dom.setContent("#request-list", request.view.renderRequests(coll, requests));
                 for (let req of requests) {
                     if (this.active === req.key) {
-                        renderActiveRequest(collection.cache.active, req, this.action);
+                        renderActiveRequest(collection.cache.active, req);
+                        if (this.action) {
+                            renderActiveAction(collection.cache.active, req, this.action);
+                        }
                     }
                 }
             }
@@ -647,50 +655,70 @@ var request;
                 console.warn("no active collection");
                 return;
             }
-            const coll = collection.cache.active;
-            const reqs = this.requests.get(coll) || [];
             if (this.active !== key) {
                 this.active = key;
-                for (let req of reqs) {
-                    if (req.key === this.active) {
-                        renderActiveRequest(coll, req, this.action);
+                if (this.active) {
+                    const r = getActiveRequest();
+                    if (r) {
+                        renderActiveRequest(collection.cache.active, r);
                     }
+                }
+                else {
                 }
             }
         }
-        setActiveAction(act) {
+        setActiveAction(act, extra) {
             if (!collection.cache.active) {
                 console.warn("no active collection");
                 return;
             }
-            const coll = collection.cache.active;
-            const reqs = this.requests.get(coll) || [];
             if (this.action !== act) {
                 this.action = act;
-                for (let req of reqs) {
-                    if (req.key === this.active) {
-                        renderActiveAction(coll, req, this.action);
-                    }
+                const r = getActiveRequest();
+                if (r) {
+                    renderActiveAction(collection.cache.active, r, this.action);
                 }
+            }
+            if (this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; })) {
+                // same
+            }
+            else {
+                this.extra = extra;
+                log.info("Extra: " + this.extra);
+                // TODO setActionExtra(this.action, this.extra);
             }
         }
     }
-    function renderActiveRequest(coll, req, action) {
+    function renderActiveRequest(coll, req) {
+        log.info("Request: " + req.key);
         dom.setContent("#active-request", request.view.renderRequestDetail(coll, req));
-        renderActiveAction(coll, req, action);
     }
     function renderActiveAction(coll, req, action) {
+        log.info("Action: " + action);
         switch (action) {
             case undefined:
                 dom.setContent("#request-action", request.renderEmpty(req));
                 break;
             case "edit":
                 dom.setContent("#request-action", request.form.renderForm(coll, req));
+                request.editor.wireForm(req.key);
                 break;
             default:
                 console.warn("unhandled request action [" + action + "]");
                 dom.setContent("#request-action", request.renderSplash(req));
         }
+    }
+    function getActiveRequest() {
+        const coll = collection.cache.active;
+        if (!coll) {
+            return undefined;
+        }
+        for (let req of request.cache.requests.get(coll) || []) {
+            if (req.key === request.cache.active) {
+                return req;
+            }
+        }
+        return undefined;
     }
     request.cache = new Cache();
 })(request || (request = {}));
@@ -738,6 +766,14 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
+    function prototypeToURL(p) {
+        return prototypeToURLParts(p).map(x => x.v).join("");
+    }
+    request.prototypeToURL = prototypeToURL;
+    function prototypeToHTML(p) {
+        return JSX("span", null, prototypeToURLParts(p).map(x => JSX("span", { title: x.t, class: urlColor(x.t) }, x.v)));
+    }
+    request.prototypeToHTML = prototypeToHTML;
     function prototypeToURLParts(p) {
         const ret = [];
         let push = function (t, v) {
@@ -782,11 +818,24 @@ var request;
         }
         return ret;
     }
-    request.prototypeToURLParts = prototypeToURLParts;
-    function prototypeToURL(p) {
-        return prototypeToURLParts(p).map(x => x.v).join("");
+    function urlColor(key) {
+        switch (key) {
+            case "username":
+            case "password":
+            case "protocol":
+            case "auth":
+                return "green-fg";
+            case "domain":
+            case "port":
+                return "blue-fg";
+            case "path":
+                return "bluegrey-fg";
+            case "query":
+                return "purple-fg";
+            default:
+                return "";
+        }
     }
-    request.prototypeToURL = prototypeToURL;
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -894,7 +943,8 @@ var request;
                 auth: dom.req(id("auth")),
                 qp: dom.req(id("queryparams")),
                 headers: dom.req(id("headers")),
-                body: dom.req(id("body"))
+                body: dom.req(id("body")),
+                options: dom.req(id("options"))
             };
             initEditors(prefix, cache);
             wireEvents(cache);
@@ -906,7 +956,7 @@ var request;
             editor.initQueryParamsEditor(cache.qp);
             editor.initHeadersEditor(cache.headers);
             editor.initBodyEditor(cache.body);
-            editor.initOptionsEditor(prefix);
+            editor.initOptionsEditor(cache.options);
         }
         function events(e, f) {
             e.onchange = f;
@@ -990,8 +1040,10 @@ var request;
                 const curr = JSON.parse(el.value);
                 container.innerText = "";
                 container.appendChild(header);
-                for (let h of curr) {
-                    addChild(container, h);
+                if (curr) {
+                    for (let h of curr) {
+                        addChild(container, h);
+                    }
                 }
             };
             updateFn();
@@ -1014,9 +1066,68 @@ var request;
 (function (request) {
     var editor;
     (function (editor) {
-        function initOptionsEditor(prefix) {
+        function initOptionsEditor(el) {
+            const parent = el.parentElement;
+            parent.appendChild(createOptionsEditor(el));
         }
         editor.initOptionsEditor = initOptionsEditor;
+        function inputBool(key, v) {
+            if (v) {
+                return JSX("div", null,
+                    JSX("label", { class: "uk-margin-small-right" },
+                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "true", checked: true }),
+                        " True"),
+                    JSX("label", null,
+                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "false" }),
+                        " False"));
+            }
+            else {
+                return JSX("div", null,
+                    JSX("label", { class: "uk-margin-small-right" },
+                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "true" }),
+                        " True"),
+                    JSX("label", null,
+                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "false", checked: true }),
+                        " False"));
+            }
+        }
+        function createOptionsEditor(el) {
+            let opts = JSON.parse(el.value);
+            if (!opts) {
+                opts = {};
+            }
+            return JSX("div", null,
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-timeout" }, "Timeout"),
+                    JSX("input", { class: "uk-input", id: el.id + "-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-ignoreRedirects" }, "Ignore Redirects"),
+                    inputBool(el.id + "-ignoreRedirects", opts.ignoreRedirects || false)),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: "<%= key %>-opt-ignoreReferrer" }, "Ignore Referrer"),
+                    inputBool(el.id + "ignoreReferrer", opts.ignoreReferrer || false)),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: "<%= key %>-opt-ignoreCerts" }, "Ignore Certs"),
+                    inputBool(el.id + "ignoreCerts", opts.ignoreCerts || false)),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: "<%= key %>-opt-ignoreCookies" }, "Ignore Cookies"),
+                    inputBool(el.id + "ignoreCookies", opts.ignoreCookies || false)),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-excludeDefaultHeaders" }, "Exclude Default Headers"),
+                    JSX("input", { class: "uk-input", id: el.id + "-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-readCookieJars" }, "Read Cookie Jars"),
+                    JSX("input", { class: "uk-input", id: el.id + "-readCookieJars", name: "opt-readCookieJars", type: "text", value: opts.readCookieJars })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "writeCookieJar" }, "Write Cookie Jar"),
+                    JSX("input", { class: "uk-input", id: el.id + "-writeCookieJar", name: "opt-writeCookieJar", type: "text", value: opts.writeCookieJar })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-sslCert" }, "SSL Cert"),
+                    JSX("input", { class: "uk-input", id: el.id + "-sslCert", name: "opt-sslCert", type: "text", value: opts.sslCert })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-userAgentOverride" }, "User Agent Override"),
+                    JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
+        }
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
@@ -1067,21 +1178,72 @@ var request;
     var form;
     (function (form) {
         function renderForm(coll, r) {
+            const key = r.key;
+            const p = r.prototype;
             return JSX("form", { class: "uk-form-stacked" },
                 JSX("input", { type: "hidden", name: "coll", value: coll }),
                 JSX("input", { type: "hidden", name: "originalKey", value: r.key }),
                 JSX("fieldset", { class: "uk-fieldset" },
                     JSX("legend", { class: "hidden" }, "request form"),
+                    JSX("div", null,
+                        JSX("div", { class: "left", style: "width:120px;" },
+                            JSX("select", { class: "uk-select", id: key + "-method", name: "method" }, request.allMethods.map(m => {
+                                if (m.key === p.method) {
+                                    return JSX("option", { selected: "selected" }, m.key);
+                                }
+                                else {
+                                    return JSX("option", null, m.key);
+                                }
+                            }))),
+                        JSX("div", { class: "right", style: "width:calc(100% - 120px);" },
+                            JSX("input", { class: "uk-input", id: key + "-url", name: "url", type: "text", value: request.prototypeToURL(p) })),
+                        JSX("div", { class: "clear" })),
+                    JSX("hr", null),
                     JSX("div", { class: "uk-margin-top" },
-                        JSX("label", { class: "uk-form-label", for: r.key + "-key" }, "Key"),
-                        JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "" })),
-                    JSX("div", { class: "uk-margin-top" },
-                        JSX("label", { class: "uk-form-label", for: r.key + "-title" }, "Title"),
-                        JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "" })),
-                    JSX("div", { class: "uk-margin-top" },
-                        JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
-                        JSX("input", { class: "uk-input", id: r.key + "-description", name: "description", type: "text", value: r.description || "" })),
-                    form.renderPrototype(r.key, r.prototype),
+                        JSX("ul", { "data-uk-tab": "" },
+                            JSX("li", null,
+                                JSX("a", { href: "#" }, "Details")),
+                            JSX("li", null,
+                                JSX("a", { href: "#" }, "Query")),
+                            JSX("li", null,
+                                JSX("a", { href: "#" }, "Auth")),
+                            JSX("li", null,
+                                JSX("a", { href: "#" }, "Headers")),
+                            JSX("li", null,
+                                JSX("a", { href: "#" }, "Body")),
+                            JSX("li", null,
+                                JSX("a", { href: "#" }, "Options"))),
+                        JSX("ul", { class: "uk-switcher uk-margin" },
+                            JSX("li", { class: "request-details-panel" },
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-key" }, "Key"),
+                                    JSX("input", { class: "uk-input", id: key + "-key", name: "key", type: "text", value: r.key || "" })),
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-title" }, "Title"),
+                                    JSX("input", { class: "uk-input", id: key + "-title", name: "title", type: "text", value: r.title || "" })),
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-description" }, "Description"),
+                                    JSX("input", { class: "uk-input", id: key + "-description", name: "description", type: "text", value: r.description || "" }))),
+                            JSX("li", { class: "request-url-panel" },
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
+                                    JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, p.query ? JSON.stringify(p.query, null, 2) : "null"))),
+                            JSX("li", { class: "request-auth-panel" },
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
+                                    JSX("textarea", { class: "uk-textarea", id: key + "-auth", name: "auth" }, p.auth ? JSON.stringify(p.auth, null, 2) : "null"))),
+                            JSX("li", { class: "request-headers-panel" },
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
+                                    JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, p.headers ? JSON.stringify(p.headers, null, 2) : "null"))),
+                            JSX("li", { class: "request-body-panel" },
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
+                                    JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, p.body ? JSON.stringify(p.body, null, 2) : "null"))),
+                            JSX("li", { class: "request-options-panel" },
+                                JSX("div", { class: "uk-margin-top" },
+                                    JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
+                                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, p.options ? JSON.stringify(p.options, null, 2) : "null"))))),
                     JSX("div", { class: "uk-margin-top" },
                         JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"),
                         nav.link("/c/" + coll + "/" + r.key, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right"))));
@@ -1093,97 +1255,7 @@ var request;
 (function (request) {
     var form;
     (function (form) {
-        function renderOptions(key, opts) {
-            if (!opts) {
-                opts = {};
-            }
-            return JSX("div", null,
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-timeout" }, "Timeout"),
-                    JSX("input", { class: "uk-input", id: key + "-opt-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-ignoreRedirects" }, "Ignore Redirects"),
-                    inputBool(key + "-opt-ignoreRedirects", opts.ignoreRedirects)),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-ignoreReferrer" }, "Ignore Referrer"),
-                    inputBool(key + "-opt-ignoreReferrer", opts.ignoreReferrer)),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-ignoreCerts" }, "Ignore Certs"),
-                    inputBool(key + "-opt-ignoreCerts", opts.ignoreCerts)),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-excludeDefaultHeaders" }, "Exclude Default Headers"),
-                    JSX("input", { class: "uk-input", id: key + "-opt-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-readCookieJars" }, "Read Cookie Jars"),
-                    JSX("input", { class: "uk-input", id: key + "-opt-readCookieJars", name: "opt-readCookieJars", type: "text", value: opts.readCookieJars })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-writeCookieJar" }, "Write Cookie Jar"),
-                    JSX("input", { class: "uk-input", id: key + "-opt-writeCookieJar", name: "opt-writeCookieJar", type: "text", value: opts.writeCookieJar })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-sslCert" }, "SSL Cert"),
-                    JSX("input", { class: "uk-input", id: key + "-opt-sslCert", name: "opt-sslCert", type: "text", value: opts.sslCert })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-opt-userAgentOverride" }, "User Agent Override"),
-                    JSX("input", { class: "uk-input", id: key + "-opt-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
-        }
-        form.renderOptions = renderOptions;
-        function inputBool(name, v) {
-            if (v) {
-                return JSX("div", null,
-                    JSX("label", null,
-                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "true", checked: "checked" }),
-                        " True"),
-                    JSX("label", { class: "uk-margin-left" },
-                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "false" }),
-                        " False"));
-            }
-            else {
-                return JSX("div", null,
-                    JSX("label", null,
-                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "true" }),
-                        " True"),
-                    JSX("label", { class: "uk-margin-left" },
-                        JSX("input", { class: "uk-radio", type: "radio", name: name, value: "false", checked: "checked" }),
-                        " False"));
-            }
-        }
-    })(form = request.form || (request.form = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var form;
-    (function (form) {
-        function renderPrototype(key, p) {
-            return JSX("div", null,
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-method" }, "Method"),
-                    JSX("select", { class: "uk-select", id: key + "-method", name: "method" }, request.allMethods.map(m => {
-                        if (m.key === p.method) {
-                            return JSX("option", { selected: "selected" }, m.key);
-                        }
-                        else {
-                            return JSX("option", null, m.key);
-                        }
-                    }))),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-url" }, "URL"),
-                    JSX("input", { class: "uk-input", id: key + "-url", name: "url", type: "text", value: request.prototypeToURL(p) })),
-                renderAuthFields(key, p.auth),
-                renderQueryParams(key, p.query),
-                renderHeaders(key, p.headers),
-                renderBody(key, p.body),
-                form.renderOptions(key, p.options));
-        }
-        form.renderPrototype = renderPrototype;
         function renderAuthFields(key, auth) {
-            return JSX("div", { class: "uk-margin-top" },
-                JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
-                JSX("textarea", { class: "uk-textarea", id: "key-auth", name: "auth" }, auth ? JSON.stringify(auth, null, 2) : "null"));
-        }
-        function renderQueryParams(key, query) {
-            return JSX("div", { class: "uk-margin-top" },
-                JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
-                JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, query ? JSON.stringify(query, null, 2) : "null"));
         }
         function renderHeaders(key, headers) {
             return JSX("div", { class: "uk-margin-top" },
@@ -1194,6 +1266,11 @@ var request;
             return JSX("div", { class: "uk-margin-top" },
                 JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
                 JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, body ? JSON.stringify(body, null, 2) : "null"));
+        }
+        function renderOptions(key, opts) {
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
+                JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, opts ? JSON.stringify(opts, null, 2) : "null"));
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
@@ -1238,7 +1315,7 @@ var request;
                 JSX("div", { "data-uk-grid": "" },
                     JSX("div", { class: "uk-width-1-4" }, "URL"),
                     JSX("div", { class: "uk-width-3-4" },
-                        JSX("div", { class: "url" }, request.prototypeToURL(p)))),
+                        JSX("div", { class: "url" }, request.prototypeToHTML(p)))),
                 JSX("hr", null),
                 JSX("div", { "data-uk-grid": "" },
                     JSX("div", { class: "uk-width-1-4" }, "Query Params"),
@@ -1266,7 +1343,7 @@ var request;
                 JSX("div", { class: "uk-width-3-4" }, qp.v))));
         }
         function renderOptions(o) {
-            if (!o || !(o.timeout || o.ignoreRedirects || o.ignoreReferrer || o.ignoreCerts ||
+            if (!o || !(o.timeout || o.ignoreRedirects || o.ignoreReferrer || o.ignoreCerts || o.ignoreCookies ||
                 o.excludeDefaultHeaders || o.readCookieJars || o.writeCookieJar || o.sslCert || o.userAgentOverride)) {
                 return JSX("em", null, "no options");
             }
@@ -1283,6 +1360,7 @@ var request;
                 section("ignoreRedirects", o.ignoreRedirects),
                 section("ignoreReferrer", o.ignoreReferrer),
                 section("ignoreCerts", o.ignoreCerts),
+                section("ignoreCookies", o.ignoreCookies),
                 section("excludeDefaultHeaders", o.excludeDefaultHeaders),
                 section("readCookieJars", o.readCookieJars),
                 section("writeCookieJar", o.writeCookieJar),
@@ -1338,37 +1416,6 @@ var request;
 })(request || (request = {}));
 var socket;
 (function (socket) {
-    function routeOld(p) {
-        let parts = p.split("/");
-        parts = parts.filter(x => x.length > 0);
-        console.info("nav (old): " + parts.join(" -> "));
-        if (parts.length === 0) {
-            return; // index
-        }
-        const svc = parts[0];
-        switch (svc) {
-            case "c":
-                const collName = parts[1];
-                if (collName !== collection.cache.active) {
-                    collection.cache.setActiveCollection(collName);
-                    socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: collName });
-                }
-                if (parts.length > 2) {
-                    const reqName = parts[2];
-                    if (reqName !== request.cache.active) {
-                        request.cache.setActiveRequest(reqName);
-                    }
-                    const action = parts[3];
-                    if (action !== request.cache.action) {
-                        request.cache.setActiveAction(action);
-                    }
-                }
-                break;
-            default:
-                console.info("unhandled svc [" + svc + "]");
-        }
-    }
-    socket.routeOld = routeOld;
     function route(p) {
         let parts = p.split("/");
         parts = parts.filter(x => x.length > 0);
@@ -1383,16 +1430,13 @@ var socket;
                 let coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
                 let req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
                 let act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
+                let extra = (parts.length > 4) ? parts.slice(4) : [];
                 if (coll !== collection.cache.active) {
                     collection.cache.setActiveCollection(coll);
                     socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
                 }
-                if (req !== request.cache.active) {
-                    request.cache.setActiveRequest(req);
-                }
-                if (act !== request.cache.action) {
-                    request.cache.setActiveAction(act);
-                }
+                request.cache.setActiveRequest(req);
+                request.cache.setActiveAction(act, extra);
                 ui.setPanels(coll, req, act);
                 break;
             default:
@@ -1580,8 +1624,28 @@ var ui;
         dom.setDisplay("#request-panel", req !== undefined && req.length > 0 && act === undefined);
         dom.setDisplay("#action-panel", act !== undefined && act.length > 0);
         ui.setBreadcrumbs(coll, req, act);
+        setTitle(coll, req, act);
     }
     ui.setPanels = setPanels;
+    function setTitle(coll, req, act) {
+        let title = "";
+        if (act) {
+            title += act + " ";
+        }
+        if (coll) {
+            title += coll;
+        }
+        if (req) {
+            title += "/" + req;
+        }
+        if (title.length == 0) {
+            title = "npn";
+        }
+        else {
+            title = "npn: " + title;
+        }
+        document.title = title;
+    }
 })(ui || (ui = {}));
 var profile;
 (function (profile) {
@@ -1819,6 +1883,10 @@ var nav;
         navigate(p);
     }
     nav.pop = pop;
+    function navActiveRequest() {
+        navigate(`/c/${collection.cache.active}/${request.cache.active}`);
+    }
+    nav.navActiveRequest = navActiveRequest;
     function link(path, title, cls, onclk, isButton) {
         let href = path;
         if (!href.startsWith("/")) {

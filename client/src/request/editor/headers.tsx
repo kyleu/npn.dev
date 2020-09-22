@@ -9,7 +9,7 @@ namespace request.editor {
   }
 
   function createHeadersEditor(el: HTMLTextAreaElement) {
-    const container = <ul id={el.id + "-ul"} class="uk-list uk-list-divider"></ul>;
+    const container = <ul id={el.id + "-ul"} class="uk-list uk-list-divider" />;
 
     const header = <li>
       <div data-uk-grid="">
@@ -28,8 +28,10 @@ namespace request.editor {
       const curr = JSON.parse(el.value) as Header[];
       container.innerText = ""
       container.appendChild(header);
-      for (let h of curr) {
-        addChild(container, h);
+      if (curr) {
+        for (let h of curr) {
+          addChild(container, h);
+        }
       }
     }
 

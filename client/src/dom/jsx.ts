@@ -27,9 +27,13 @@ function JSX(tag: string, attrs: any) {
     if (Array.isArray(child)) {
       child.forEach(c => {
         if (child === undefined || child === null) {
-          // throw `child for tag [${tag}] is ${child}\n${e.outerHTML}`;
-          debugger;
-          c = document.createTextNode("NULL!");
+          throw `child array for tag [${tag}] is ${child}\n${e.outerHTML}`;
+        }
+        if (c === undefined || c === null) {
+          throw `child for tag [${tag}] is ${c}\n${e.outerHTML}`;
+        }
+        if (typeof c === "string") {
+          c = document.createTextNode(c);
         }
         e.appendChild(c);
       });

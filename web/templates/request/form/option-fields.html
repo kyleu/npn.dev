@@ -1,38 +1,5 @@
 <%: func OptionFields(key string, opts *request.Options, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<% if opts == nil { opts = &request.Options{} } %>
 <div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-timeout">Timeout</label>
-  <input class="uk-input" id="<%= key %>-opt-timeout" name="opt-timeout" type="number" value="<%=v opts.Timeout %>" />
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-ignoreRedirects">Ignore Redirects</label>
-  <% npntemplate.InputBool(key + "-opt-ignoreRedirects", opts.IgnoreRedirects, buffer) %>
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-ignoreReferrer">Ignore Referrer</label>
-  <% npntemplate.InputBool(key + "-opt-ignoreReferrer", opts.IgnoreReferrer, buffer) %>
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-ignoreCerts">Ignore Certs</label>
-  <% npntemplate.InputBool(key + "-opt-ignoreCerts", opts.IgnoreCerts, buffer) %>
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-excludeDefaultHeaders">Exclude Default Headers</label>
-  <input class="uk-input" id="<%= key %>-opt-excludeDefaultHeaders" name="opt-excludeDefaultHeaders" type="text" value="<%=v opts.ExcludeDefaultHeaders %>" />
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-readCookieJars">Read Cookie Jars</label>
-  <input class="uk-input" id="<%= key %>-opt-readCookieJars" name="opt-readCookieJars" type="text" value="<%=v opts.ReadCookieJars %>" />
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-writeCookieJar">Write Cookie Jar</label>
-  <input class="uk-input" id="<%= key %>-opt-writeCookieJar" name="opt-writeCookieJar" type="text" value="<%=v opts.WriteCookieJar %>" />
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-sslCert">SSL Cert</label>
-  <input class="uk-input" id="<%= key %>-opt-sslCert" name="opt-sslCert" type="text" value="<%=v opts.SSLCert %>" />
-</div>
-<div class="uk-margin-top">
-  <label class="uk-form-label" for="<%= key %>-opt-userAgentOverride">User Agent Override</label>
-  <input class="uk-input" id="<%= key %>-opt-userAgentOverride" name="opt-userAgentOverride" type="text" value="<%=v opts.UserAgentOverride %>" />
+  <label class="uk-form-label" for="<%= key %>-options">Options</label>
+  <textarea class="uk-textarea" id="<%= key %>-options" name="options"><%= npncore.ToJSON(opts, ctx.Logger) %></textarea>
 </div>

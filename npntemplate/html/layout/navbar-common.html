@@ -1,6 +1,6 @@
-<%: func NavbarCommon(section string, static bool, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<%: func NavbarCommon(section string, showToggle bool, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <header>
-  <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky">
+  <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky; media: 960">
     <nav id="navbar" class="uk-navbar-container <%= ctx.Profile.NavColor %>-bg" data-uk-navbar>
       <div id="breadcrumbs" class="uk-navbar-left">
         <% if len(npnweb.IconContent) > 0 { %><a title="<%= npncore.AppName %>" class="uk-navbar-item uk-logo" href="<%= ctx.Route(`home`) %>">
@@ -21,6 +21,7 @@
             <% } %>
           </li>
         </ul>
+        <% if showToggle { %><a href="" data-uk-toggle="target: #my-id;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a><% } %>
       </div>
     </nav>
   </div>

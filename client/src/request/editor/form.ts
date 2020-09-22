@@ -5,6 +5,7 @@ namespace request.editor {
     readonly qp: HTMLTextAreaElement
     readonly headers: HTMLTextAreaElement
     readonly body: HTMLTextAreaElement
+    readonly options: HTMLTextAreaElement
   }
 
   export function wireForm(prefix: string) {
@@ -17,7 +18,8 @@ namespace request.editor {
       auth: dom.req<HTMLTextAreaElement>(id("auth")),
       qp: dom.req<HTMLTextAreaElement>(id("queryparams")),
       headers: dom.req<HTMLTextAreaElement>(id("headers")),
-      body: dom.req<HTMLTextAreaElement>(id("body"))
+      body: dom.req<HTMLTextAreaElement>(id("body")),
+      options: dom.req<HTMLTextAreaElement>(id("options"))
     }
     initEditors(prefix, cache);
     wireEvents(cache);
@@ -29,7 +31,7 @@ namespace request.editor {
     initQueryParamsEditor(cache.qp);
     initHeadersEditor(cache.headers);
     initBodyEditor(cache.body);
-    initOptionsEditor(prefix);
+    initOptionsEditor(cache.options);
   }
 
   function events(e: HTMLElement, f: () => void) {
