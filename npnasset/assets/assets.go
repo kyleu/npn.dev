@@ -17,9 +17,6 @@ func Asset(base string, p string) ([]byte, string, string, error) {
 	var b bytes.Buffer
 
 	file := path.Join(base, p)
-	println("!!!!")
-	println(file)
-	println(filepath.Abs(file))
 
 	data, err := ioutil.ReadFile(file)
 
