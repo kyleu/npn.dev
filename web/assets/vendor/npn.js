@@ -48,7 +48,7 @@ var collection;
 var collection;
 (function (collection) {
     function renderCollections(cs) {
-        return JSX("ul", { class: "uk-list uk-list-divider" }, cs.map(renderCollection));
+        return cs.map(renderCollection);
     }
     collection.renderCollections = renderCollections;
     function renderCollection(c) {
@@ -56,7 +56,7 @@ var collection;
         if (!title || c.title.length === 0) {
             title = c.key;
         }
-        return JSX("li", null, nav.link("/c/" + c.key, title));
+        return JSX("div", { class: "nav-item" }, nav.link("/c/" + c.key, title));
     }
     collection.renderCollection = renderCollection;
 })(collection || (collection = {}));
@@ -66,8 +66,14 @@ var collection;
         switch (cmd) {
             case command.server.collections:
                 collection.cache.collections = param;
-                log.info(`processing [${collection.cache.collections.length}] collections`);
-                dom.setContent("#collection-list", collection.renderCollections(collection.cache.collections));
+                if (!collection.cache.collections) {
+                }
+                else {
+                    log.info(`processing [${collection.cache.collections.length}] collections`);
+                    dom.els(".collection-list").forEach(el => {
+                        dom.setContent(el, collection.renderCollections(collection.cache.collections));
+                    });
+                }
                 break;
             case command.server.detail:
                 const d = param;
@@ -173,7 +179,12 @@ var dom;
             el = req(el);
         }
         dom.clear(el);
-        el.appendChild(e);
+        if (Array.isArray(e)) {
+            e.forEach(x => el.appendChild(x));
+        }
+        else {
+            el.appendChild(e);
+        }
         return el;
     }
     dom.setContent = setContent;
@@ -1623,7 +1634,7 @@ var ui;
 var ui;
 (function (ui) {
     function setPanels(coll, req, act) {
-        dom.setDisplay("#collection-list-panel", coll === undefined);
+        dom.setDisplay("#welcome-panel", coll === undefined);
         dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
         dom.setDisplay("#request-panel", req !== undefined && req.length > 0 && act === undefined);
         dom.setDisplay("#action-panel", act !== undefined && act.length > 0);
@@ -1895,7 +1906,12 @@ var nav;
         if (path.startsWith("/")) {
             path = path.substr(1);
         }
-        if (location.pathname !== path) {
+        let locPath = location.pathname;
+        if (locPath.startsWith("/")) {
+            locPath = locPath.substr(1);
+        }
+        if (locPath !== path) {
+            console.warn("PUSH:" + path);
             history.pushState(path, "", "/" + path);
         }
         handler(path);

@@ -16,7 +16,12 @@ namespace nav {
     if (path.startsWith("/")) {
       path = path.substr(1);
     }
-    if (location.pathname !== path) {
+    let locPath = location.pathname;
+    if (locPath.startsWith("/")) {
+      locPath = locPath.substr(1);
+    }
+    if (locPath !== path) {
+      console.warn("PUSH:" + path);
       history.pushState(path, "", "/" + path);
     }
     handler(path);

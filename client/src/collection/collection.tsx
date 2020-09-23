@@ -1,8 +1,6 @@
 namespace collection {
   export function renderCollections(cs: Collection[]) {
-    return <ul class="uk-list uk-list-divider">
-      {cs.map(renderCollection)}
-    </ul>
+    return cs.map(renderCollection);
   }
 
   export function renderCollection(c: collection.Collection) {
@@ -10,6 +8,6 @@ namespace collection {
     if (!title || c.title.length === 0) {
       title = c.key;
     }
-    return <li>{nav.link("/c/" + c.key, title)}</li>;
+    return <div class="nav-item">{nav.link("/c/" + c.key, title)}</div>;
   }
 }

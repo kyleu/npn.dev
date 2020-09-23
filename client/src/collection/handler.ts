@@ -9,8 +9,14 @@ namespace collection {
     switch (cmd) {
       case command.server.collections:
         cache.collections = param as Collection[];
-        log.info(`processing [${cache.collections.length}] collections`);
-        dom.setContent("#collection-list", renderCollections(cache.collections));
+        if (!cache.collections) {
+
+        } else {
+          log.info(`processing [${cache.collections.length}] collections`);
+          dom.els(".collection-list").forEach(el => {
+            dom.setContent(el, renderCollections(cache.collections!));
+          });
+        }
         break;
       case command.server.detail:
         const d = param as CollectionDetails;

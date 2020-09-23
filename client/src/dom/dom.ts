@@ -81,12 +81,16 @@ namespace dom {
     return el;
   }
 
-  export function setContent(el: string | HTMLElement, e: JSX.Element) {
+  export function setContent(el: string | HTMLElement, e: JSX.Element | JSX.Element[]) {
     if (typeof el === "string") {
       el = req(el);
     }
     dom.clear(el);
-    el.appendChild(e);
+    if (Array.isArray(e)) {
+      e.forEach(x => (el as HTMLElement).appendChild(x));
+    } else {
+      el.appendChild(e);
+    }
     return el;
   }
 
