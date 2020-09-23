@@ -48,15 +48,23 @@ var collection;
 var collection;
 (function (collection) {
     function renderCollections(cs) {
-        return cs.map(renderCollection);
+        return cs.map(renderCollectionLink);
     }
     collection.renderCollections = renderCollections;
-    function renderCollection(c) {
+    function renderCollectionLink(c) {
         let title = c.title;
         if (!title || c.title.length === 0) {
             title = c.key;
         }
         return JSX("div", { class: "nav-item" }, nav.link("/c/" + c.key, title));
+    }
+    function renderCollection(coll, requests) {
+        const cn = coll.title ? coll.title : coll.key;
+        return JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+            JSX("div", { class: "right" },
+                JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
+            JSX("h3", { class: "uk-card-title" }, cn),
+            JSX("div", { id: "request-list", class: "uk-margin-top" }, request.view.renderRequests(cn, requests)));
     }
     collection.renderCollection = renderCollection;
 })(collection || (collection = {}));
@@ -79,7 +87,7 @@ var collection;
                 const d = param;
                 log.info(`processing [${d.requests.length}] requests for collection [${d.collection.key}]`);
                 collection.cache.updateCollection(d.collection);
-                request.cache.setCollectionRequests(d.collection.key, d.requests);
+                request.cache.setCollectionRequests(d.collection, d.requests);
                 break;
             default:
                 console.warn(`unhandled collection command [${cmd}]`);
@@ -652,9 +660,9 @@ var request;
             this.extra = [];
         }
         setCollectionRequests(coll, requests) {
-            this.requests.set(coll, requests);
-            if (coll === collection.cache.active) {
-                dom.setContent("#request-list", request.view.renderRequests(coll, requests));
+            this.requests.set(coll.key, requests);
+            if (coll.key === collection.cache.active) {
+                dom.setContent("#collection-panel", collection.renderCollection(coll, requests));
                 for (let req of requests) {
                     if (this.active === req.key) {
                         renderActiveRequest(collection.cache.active, req);
@@ -706,17 +714,15 @@ var request;
     }
     function renderActiveRequest(coll, req) {
         log.info("Request: " + req.key);
-        dom.setContent("#active-request", request.view.renderRequestDetail(coll, req));
+        dom.setText("#active-request-title", req.title ? req.title : req.key);
+        dom.setContent("#active-request", request.form.renderForm(coll, req));
+        request.editor.wireForm(req.key);
     }
     function renderActiveAction(coll, req, action) {
         log.info("Action: " + action);
         switch (action) {
             case undefined:
                 dom.setContent("#request-action", request.renderEmpty(req));
-                break;
-            case "edit":
-                dom.setContent("#request-action", request.form.renderForm(coll, req));
-                request.editor.wireForm(req.key);
                 break;
             default:
                 console.warn("unhandled request action [" + action + "]");
@@ -928,7 +934,7 @@ var request;
                     currentAuth.splice(matched, 1);
                 }
             }
-            cache.auth.value = JSON.stringify(currentAuth, null, 2);
+            cache.auth.value = json.str(currentAuth);
         }
         editor.updateBasicAuth = updateBasicAuth;
     })(editor = request.editor || (request.editor = {}));
@@ -1165,7 +1171,7 @@ var request;
         }
         editor.setQueryParams = setQueryParams;
         function updateQueryParams(cache, qp) {
-            cache.qp.value = JSON.stringify(qp, null, 2);
+            cache.qp.value = json.str(qp);
         }
         editor.updateQueryParams = updateQueryParams;
     })(editor = request.editor || (request.editor = {}));
@@ -1193,100 +1199,117 @@ var request;
     var form;
     (function (form) {
         function renderForm(coll, r) {
-            const key = r.key;
-            const p = r.prototype;
-            return JSX("form", { class: "uk-form-stacked" },
+            return JSX("form", { class: "uk-form-stacked", action: "/browse/" + coll + "/" + r.key + "/save", method: "post", onsubmit: "return false;" },
                 JSX("input", { type: "hidden", name: "coll", value: coll }),
                 JSX("input", { type: "hidden", name: "originalKey", value: r.key }),
                 JSX("fieldset", { class: "uk-fieldset" },
                     JSX("legend", { class: "hidden" }, "request form"),
-                    JSX("div", null,
-                        JSX("div", { class: "left", style: "width:120px;" },
-                            JSX("select", { class: "uk-select", id: key + "-method", name: "method" }, request.allMethods.map(m => {
-                                if (m.key === p.method) {
-                                    return JSX("option", { selected: "selected" }, m.key);
-                                }
-                                else {
-                                    return JSX("option", null, m.key);
-                                }
-                            }))),
-                        JSX("div", { class: "right", style: "width:calc(100% - 120px);" },
-                            JSX("input", { class: "uk-input", id: key + "-url", name: "url", type: "text", value: request.prototypeToURL(p) })),
-                        JSX("div", { class: "clear" })),
+                    form.renderURL(r),
                     JSX("hr", null),
-                    JSX("div", { class: "uk-margin-top" },
-                        JSX("ul", { "data-uk-tab": "" },
-                            JSX("li", null,
-                                JSX("a", { href: "#" }, "Details")),
-                            JSX("li", null,
-                                JSX("a", { href: "#" }, "Query")),
-                            JSX("li", null,
-                                JSX("a", { href: "#" }, "Auth")),
-                            JSX("li", null,
-                                JSX("a", { href: "#" }, "Headers")),
-                            JSX("li", null,
-                                JSX("a", { href: "#" }, "Body")),
-                            JSX("li", null,
-                                JSX("a", { href: "#" }, "Options"))),
-                        JSX("ul", { class: "uk-switcher uk-margin" },
-                            JSX("li", { class: "request-details-panel" },
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-key" }, "Key"),
-                                    JSX("input", { class: "uk-input", id: key + "-key", name: "key", type: "text", value: r.key || "" })),
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-title" }, "Title"),
-                                    JSX("input", { class: "uk-input", id: key + "-title", name: "title", type: "text", value: r.title || "" })),
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-description" }, "Description"),
-                                    JSX("input", { class: "uk-input", id: key + "-description", name: "description", type: "text", value: r.description || "" }))),
-                            JSX("li", { class: "request-url-panel" },
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
-                                    JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, p.query ? JSON.stringify(p.query, null, 2) : "null"))),
-                            JSX("li", { class: "request-auth-panel" },
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
-                                    JSX("textarea", { class: "uk-textarea", id: key + "-auth", name: "auth" }, p.auth ? JSON.stringify(p.auth, null, 2) : "null"))),
-                            JSX("li", { class: "request-headers-panel" },
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
-                                    JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, p.headers ? JSON.stringify(p.headers, null, 2) : "null"))),
-                            JSX("li", { class: "request-body-panel" },
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
-                                    JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, p.body ? JSON.stringify(p.body, null, 2) : "null"))),
-                            JSX("li", { class: "request-options-panel" },
-                                JSX("div", { class: "uk-margin-top" },
-                                    JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
-                                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, p.options ? JSON.stringify(p.options, null, 2) : "null"))))),
+                    form.renderSwitcher(r),
                     JSX("div", { class: "uk-margin-top" },
                         JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"),
-                        nav.link("/c/" + coll + "/" + r.key, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right"))));
+                        nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true))));
         }
         form.renderForm = renderForm;
+        function renderDetails(r) {
+            return JSX("li", { class: "request-details-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: r.key + "-key" }, "Key"),
+                    JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "" })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: r.key + "-title" }, "Title"),
+                    JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "" })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
+                    JSX("input", { class: "uk-input", id: r.key + "-description", name: "description", type: "text", value: r.description || "" })));
+        }
+        form.renderDetails = renderDetails;
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
 var request;
 (function (request) {
     var form;
     (function (form) {
-        function renderAuthFields(key, auth) {
-        }
-        function renderHeaders(key, headers) {
+        function renderSwitcher(r) {
+            const key = r.key;
+            const p = r.prototype;
             return JSX("div", { class: "uk-margin-top" },
-                JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
-                JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, headers ? JSON.stringify(headers, null, 2) : "null"));
+                JSX("ul", { "data-uk-tab": "" },
+                    JSX("li", null,
+                        JSX("a", { href: "#" }, "Details")),
+                    JSX("li", null,
+                        JSX("a", { href: "#" }, "Query")),
+                    JSX("li", null,
+                        JSX("a", { href: "#" }, "Auth")),
+                    JSX("li", null,
+                        JSX("a", { href: "#" }, "Headers")),
+                    JSX("li", null,
+                        JSX("a", { href: "#" }, "Body")),
+                    JSX("li", null,
+                        JSX("a", { href: "#" }, "Options"))),
+                JSX("ul", { class: "uk-switcher uk-margin" },
+                    form.renderDetails(r),
+                    renderQueryParams(key, p.query),
+                    renderAuth(key, p.auth),
+                    renderHeaders(key, p.headers),
+                    renderBody(key, p.body),
+                    renderOptions(key, p.options)));
         }
-        function renderBody(key, body) {
-            return JSX("div", { class: "uk-margin-top" },
-                JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
-                JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, body ? JSON.stringify(body, null, 2) : "null"));
+        form.renderSwitcher = renderSwitcher;
+        function renderQueryParams(key, qp) {
+            return JSX("li", { class: "request-queryparams-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, json.str(qp))));
+        }
+        function renderAuth(key, as) {
+            return JSX("li", { class: "request-auth-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-auth", name: "auth" }, json.str(as))));
+        }
+        function renderHeaders(key, hs) {
+            return JSX("li", { class: "request-headers-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, json.str(hs))));
+        }
+        function renderBody(key, b) {
+            return JSX("li", { class: "request-body-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, json.str(b))));
         }
         function renderOptions(key, opts) {
-            return JSX("div", { class: "uk-margin-top" },
-                JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
-                JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, opts ? JSON.stringify(opts, null, 2) : "null"));
+            return JSX("li", { class: "request-options-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, json.str(opts))));
         }
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function renderURL(r) {
+            return JSX("div", null,
+                JSX("div", { class: "left", style: "width:120px;" },
+                    JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
+                        if (m.key === r.prototype.method) {
+                            return JSX("option", { selected: "selected" }, m.key);
+                        }
+                        else {
+                            return JSX("option", null, m.key);
+                        }
+                    }))),
+                JSX("div", { class: "uk-inline right", style: "width:calc(100% - 120px);" },
+                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: "return false;", "uk-icon": "icon: refresh" }),
+                    JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" })),
+                JSX("div", { class: "clear" }));
+        }
+        form.renderURL = renderURL;
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
 var request;
@@ -1300,7 +1323,7 @@ var request;
             return JSX("div", null, auth.map(a => JSX("div", { "data-uk-grid": "" },
                 JSX("div", { class: "uk-width-1-4" }, a.type),
                 JSX("div", { class: "uk-width-3-4" },
-                    JSX("pre", null, JSON.stringify(a.config, null, 2))))));
+                    JSX("pre", null, json.str(a.config))))));
         }
         view.renderAuth = renderAuth;
     })(view = request.view || (request.view = {}));
@@ -1316,7 +1339,7 @@ var request;
             return JSX("div", { "data-uk-grid": "" },
                 JSX("div", { class: "uk-width-1-4" }, (b === null || b === void 0 ? void 0 : b.type) || "?"),
                 JSX("div", { class: "uk-width-3-4" },
-                    JSX("pre", null, JSON.stringify(b.config, null, 2))));
+                    JSX("pre", null, json.str(b.config))));
         }
         view.renderBody = renderBody;
     })(view = request.view || (request.view = {}));
@@ -1499,7 +1522,7 @@ var socket;
             if (debug) {
                 console.debug("out", msg);
             }
-            const m = JSON.stringify(msg, null, 2);
+            const m = json.str(msg);
             sock.send(m);
         }
         else {
@@ -1821,6 +1844,16 @@ var group;
     }
     group_1.flatten = flatten;
 })(group || (group = {}));
+var json;
+(function (json) {
+    function str(x) {
+        if (x === undefined) {
+            return "null";
+        }
+        return JSON.stringify(x, null, 2);
+    }
+    json.str = str;
+})(json || (json = {}));
 var log;
 (function (log) {
     let started = 0;

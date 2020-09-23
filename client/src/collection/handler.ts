@@ -22,7 +22,7 @@ namespace collection {
         const d = param as CollectionDetails;
         log.info(`processing [${d.requests.length}] requests for collection [${d.collection.key}]`);
         cache.updateCollection(d.collection);
-        request.cache.setCollectionRequests(d.collection.key, d.requests);
+        request.cache.setCollectionRequests(d.collection, d.requests);
         break;
       default:
         console.warn(`unhandled collection command [${cmd}]`);

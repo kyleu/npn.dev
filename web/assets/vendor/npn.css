@@ -807,6 +807,10 @@ em, .uk-light em {
   right: 8px;
 }
 
+input {
+  background-image: none !important;
+}
+
 .tag-editor .item, .tag-view .item {
   float: left;
   background-color: #AAA5;

@@ -6,7 +6,7 @@ namespace request.view {
     return <div>
       {auth.map(a => <div data-uk-grid="">
         <div class="uk-width-1-4">{a.type}</div>
-        <div class="uk-width-3-4"><pre>{JSON.stringify(a.config, null, 2)}</pre></div>
+        <div class="uk-width-3-4"><pre>{json.str(a.config)}</pre></div>
       </div>)}
     </div>;
   }

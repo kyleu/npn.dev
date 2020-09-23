@@ -5,10 +5,10 @@ namespace request {
     action?: string;
     extra: string[] = [];
 
-    setCollectionRequests(coll: string, requests: Request[]) {
-      this.requests.set(coll, requests);
-      if (coll === collection.cache.active) {
-        dom.setContent("#request-list", view.renderRequests(coll, requests));
+    setCollectionRequests(coll: collection.Collection, requests: request.Request[]) {
+      this.requests.set(coll.key, requests);
+      if (coll.key === collection.cache.active) {
+        dom.setContent("#collection-panel", collection.renderCollection(coll, requests));
         for (let req of requests) {
           if (this.active === req.key) {
             renderActiveRequest(collection.cache.active, req);
@@ -63,7 +63,9 @@ namespace request {
 
   function renderActiveRequest(coll: string, req: request.Request) {
     log.info("Request: " + req.key)
-    dom.setContent("#active-request", view.renderRequestDetail(coll, req));
+    dom.setText("#active-request-title", req.title ? req.title : req.key);
+    dom.setContent("#active-request", request.form.renderForm(coll, req));
+    request.editor.wireForm(req.key);
   }
 
   function renderActiveAction(coll: string, req: request.Request, action: string | undefined) {
@@ -71,10 +73,6 @@ namespace request {
     switch (action) {
       case undefined:
         dom.setContent("#request-action", request.renderEmpty(req));
-        break;
-      case "edit":
-        dom.setContent("#request-action", request.form.renderForm(coll, req));
-        request.editor.wireForm(req.key);
         break;
       default:
         console.warn("unhandled request action [" + action + "]")

@@ -17,6 +17,6 @@ namespace request.editor {
   }
 
   export function updateQueryParams(cache: Cache, qp: QueryParam[] | undefined) {
-    cache.qp.value = JSON.stringify(qp, null, 2);
+    cache.qp.value = json.str(qp);
   }
 }

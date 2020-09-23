@@ -16,7 +16,7 @@
           "Accept": "application/json",
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(graphQLParams),
+        body: JSON.stringify(graphQLParams, null, 2),
       }).then(function (response) {
         return response.text();
       }).then(function (responseBody) {

@@ -72,6 +72,6 @@ namespace request.editor {
       }
     }
 
-    cache.auth.value = JSON.stringify(currentAuth, null, 2)
+    cache.auth.value = json.str(currentAuth);
   }
 }

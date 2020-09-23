@@ -47,7 +47,7 @@ namespace socket {
       if (debug) {
         console.debug("out", msg);
       }
-      const m = JSON.stringify(msg, null, 2);
+      const m = json.str(msg);
       sock.send(m);
     } else {
       pendingMessages.push(msg);
