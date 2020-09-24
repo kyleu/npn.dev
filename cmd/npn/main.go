@@ -2,8 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/cli"
 	"os"
+
+	"github.com/kyleu/npn/app/cli"
 )
 
 // Provisioned by ldflags

@@ -1,11 +1,12 @@
 package collection
 
 import (
+	"os"
+	"path"
+
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
-	"os"
-	"path"
 )
 
 const rootDir = "collections"
@@ -58,13 +59,16 @@ func (s *Service) Load(key string) (*Collection, error) {
 
 func (s *Service) Save(originalKey string, newKey string, title string, description string) error {
 	orig, err := s.Load(originalKey)
+	if err != nil {
+		return errors.Wrap(err, "unable to load original collection ["+originalKey+"]")
+	}
 
 	if orig != nil && originalKey != newKey {
 		o := path.Join(s.files.Root(), rootDir, originalKey)
 		n := path.Join(s.files.Root(), rootDir, newKey)
 		err := os.Rename(o, n)
 		if err != nil {
-			return errors.Wrap(err, "unable to rename original collection [" + originalKey + "] in path [" + o + "]")
+			return errors.Wrap(err, "unable to rename original collection ["+originalKey+"] in path ["+o+"]")
 		}
 	}
 
@@ -85,7 +89,7 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 	content := npncore.ToJSON(n, s.logger)
 	err = s.files.WriteFile(p, []byte(content), true)
 	if err != nil {
-		return errors.Wrap(err, "unable to save collection [" + newKey + "]")
+		return errors.Wrap(err, "unable to save collection ["+newKey+"]")
 	}
 
 	return nil

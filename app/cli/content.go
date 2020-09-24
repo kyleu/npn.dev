@@ -13,4 +13,3 @@ func setIcon() {
 				</g>
 			</svg>`
 }
-

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	keyParam = "{key}"
+	keyParam        = "{key}"
 	collectionParam = "{c}"
 )
 

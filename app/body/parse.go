@@ -1,10 +1,11 @@
 package body
 
 import (
-	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
 	"io"
 	"io/ioutil"
+
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npncore"
 )
 
 func Parse(contentType string, contentLength int64, rd io.ReadCloser) (*Body, error) {
@@ -30,7 +31,7 @@ func Parse(contentType string, contentLength int64, rd io.ReadCloser) (*Body, er
 func detect(contentType string, b []byte) *Body {
 	switch contentType {
 	case "application/json":
-		cfg, err := tryParseJson(b)
+		cfg, err := tryParseJSON(b)
 		if err != nil {
 			return detect("", b)
 		}
@@ -43,7 +44,7 @@ func detect(contentType string, b []byte) *Body {
 	}
 }
 
-func tryParseJson(b []byte) (Config, error) {
+func tryParseJSON(b []byte) (Config, error) {
 	var x interface{}
 	err := npncore.FromJSON(b, &x)
 	if err != nil {

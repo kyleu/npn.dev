@@ -2,8 +2,9 @@ package user
 
 import (
 	"fmt"
-	"golang.org/x/text/language"
 	"time"
+
+	"golang.org/x/text/language"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"

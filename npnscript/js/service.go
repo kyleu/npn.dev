@@ -2,15 +2,13 @@ package js
 
 import (
 	"fmt"
+
+	"github.com/robertkrimen/otto"
 	"logur.dev/logur"
 )
 
-import (
-	"github.com/robertkrimen/otto"
-)
-
 type Service struct {
-	ot *otto.Otto
+	ot     *otto.Otto
 	logger logur.Logger
 }
 

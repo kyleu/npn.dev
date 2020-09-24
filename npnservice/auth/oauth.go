@@ -2,8 +2,9 @@ package auth
 
 import (
 	"context"
-	"github.com/kyleu/npn/npncore"
 	"os"
+
+	"github.com/kyleu/npn/npncore"
 
 	"emperror.dev/errors"
 	"golang.org/x/oauth2"

@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/request"
@@ -8,7 +10,6 @@ import (
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
-	"net/http"
 )
 
 func RequestNew(w http.ResponseWriter, r *http.Request) {
@@ -26,7 +27,7 @@ func RequestDelete(w http.ResponseWriter, r *http.Request) {
 
 		err := app.Svc(ctx.App).Collection.DeleteRequest(coll, key)
 		if err != nil {
-			return npncontroller.EResp(err, "unable to delete [" + coll + "/" + key + "]")
+			return npncontroller.EResp(err, "unable to delete ["+coll+"/"+key+"]")
 		}
 
 		msg := "deleted request [" + key + "] from this collection"

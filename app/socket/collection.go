@@ -1,9 +1,10 @@
 package socket
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
 	"fmt"
+
+	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
@@ -42,6 +43,9 @@ func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param
 	svcs := ctx(s)
 	key := ""
 	err := npncore.FromJSON(param, &key)
+	if err != nil {
+		return errors.Wrap(err, fmt.Sprintf("error parsing collection [%v]: %+v", key, err))
+	}
 	coll, err := svcs.Collection.Load(key)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error retrieving collection [%v]: %+v", key, err))
@@ -52,5 +56,5 @@ func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param
 	}
 	cd := collDetails{Collection: coll, Requests: reqs}
 	msg := npnconnection.NewMessage("collection", "detail", &cd)
-  return s.WriteMessage(c.ID, msg)
+	return s.WriteMessage(c.ID, msg)
 }

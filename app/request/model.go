@@ -1,9 +1,10 @@
 package request
 
 import (
+	"strings"
+
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"
-	"strings"
 )
 
 type Request struct {

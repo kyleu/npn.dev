@@ -2,8 +2,9 @@ package transform
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/request"
 	"strings"
+
+	"github.com/kyleu/npn/app/request"
 )
 
 type HTTP struct {

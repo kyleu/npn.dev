@@ -1,12 +1,13 @@
 package imprt
 
 import (
-	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
 	"io/ioutil"
-	"logur.dev/logur"
 	"mime/multipart"
 	"path"
+
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
 )
 
 type Service struct {
@@ -69,5 +70,5 @@ func (s *Service) WriteFile(key string, filename string, f multipart.File) error
 	if err != nil {
 		return errors.Wrap(err, "unable to read file ["+p+"]")
 	}
-	return s.files.WriteFile(p, []byte(content), true)
+	return s.files.WriteFile(p, content, true)
 }

@@ -1,6 +1,9 @@
 package cli
 
 import (
+	"os"
+	"strings"
+
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
 	"emperror.dev/handler/logur"
@@ -11,8 +14,6 @@ import (
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
 	log "logur.dev/logur"
-	"os"
-	"strings"
 )
 
 func Run(a string, p uint16, platform string, dir string, version string, commitHash string) (uint16, error) {

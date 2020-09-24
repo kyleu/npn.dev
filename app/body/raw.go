@@ -3,19 +3,19 @@ package body
 const KeyRaw = "raw"
 
 type Raw struct {
-	bytes []byte `json:"bytes"`
+	Content []byte `json:"content"`
 }
 
 func NewRaw(bytes []byte) *Body {
-	return &Body{Type: KeyRaw, Config: &Raw{bytes: bytes}}
+	return &Body{Type: KeyRaw, Config: &Raw{Content: bytes}}
 }
 
 func (r *Raw) ContentLength() int64 {
-	return int64(len(r.bytes))
+	return int64(len(r.Content))
 }
 
 func (r *Raw) Bytes() []byte {
-	return r.bytes
+	return r.Content
 }
 
 func (r *Raw) MimeType() string {
@@ -23,5 +23,5 @@ func (r *Raw) MimeType() string {
 }
 
 func (r *Raw) String() string {
-	return string(r.bytes)
+	return string(r.Content)
 }

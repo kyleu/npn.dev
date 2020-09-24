@@ -2,13 +2,14 @@ package transform
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/request"
 	"strings"
+
+	"github.com/kyleu/npn/app/request"
 )
 
 type CURL struct {
-  Silent bool
-  Multiline bool
+	Silent    bool
+	Multiline bool
 }
 
 func (c *CURL) Key() string {

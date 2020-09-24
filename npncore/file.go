@@ -106,7 +106,7 @@ func (f *FileLoader) ListExtension(path string, ext string) []string {
 	glob := "*." + ext
 	matches, err := filepath.Glob(f.getPath(path, glob))
 	if err != nil {
-		f.logger.Warn(fmt.Sprintf("cannot list [" + ext + "] in path ["+path+"]: %+v", err))
+		f.logger.Warn(fmt.Sprintf("cannot list ["+ext+"] in path ["+path+"]: %+v", err))
 	}
 	ret := make([]string, 0, len(matches))
 	for _, j := range matches {
@@ -114,7 +114,7 @@ func (f *FileLoader) ListExtension(path string, ext string) []string {
 		if idx > 0 {
 			j = j[idx+1:]
 		}
-		ret = append(ret, strings.TrimSuffix(j, "." + ext))
+		ret = append(ret, strings.TrimSuffix(j, "."+ext))
 	}
 	return ret
 }

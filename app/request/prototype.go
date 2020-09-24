@@ -2,10 +2,11 @@ package request
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/npn/app/body"
 	"github.com/kyleu/npn/app/header"
-	"net/http"
 )
 
 type Prototype struct {
@@ -41,24 +42,23 @@ func (p *Prototype) Normalize() *Prototype {
 func (p *Prototype) Host() string {
 	if p.Port == 0 {
 		return p.Domain
-	} else {
-		return fmt.Sprintf("%v:%v", p.Domain, p.Port)
 	}
+	return fmt.Sprintf("%v:%v", p.Domain, p.Port)
 }
 
 func (p *Prototype) ToHTTP() *http.Request {
 	ret := &http.Request{
-		Method:           p.Method.Key,
-		URL:              p.URL(),
-		Header:           p.FinalHeaders().ToHTTP(),
-		Body:             p.Body.ToHTTP(),
-		Close:            false,
-		Host:             p.Host(),
+		Method: p.Method.Key,
+		URL:    p.URL(),
+		Header: p.FinalHeaders().ToHTTP(),
+		Body:   p.Body.ToHTTP(),
+		Close:  false,
+		Host:   p.Host(),
 	}
 
 	cl := p.ContentLength()
 	if cl > 0 {
-	  ret.ContentLength = cl
+		ret.ContentLength = cl
 	}
 
 	return ret

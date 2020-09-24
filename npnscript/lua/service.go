@@ -1,12 +1,12 @@
 package lua
 
 import (
-	"github.com/yuin/gopher-lua"
+	lua "github.com/yuin/gopher-lua"
 	"logur.dev/logur"
 )
 
 type Service struct {
-	l *lua.LState
+	l      *lua.LState
 	logger logur.Logger
 }
 

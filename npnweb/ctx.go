@@ -2,11 +2,12 @@ package npnweb
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
+
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
-	"net/http"
-	"net/url"
 
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"

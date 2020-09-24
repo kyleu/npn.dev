@@ -34,7 +34,7 @@ type bodyJSON struct {
 	Config json.RawMessage `json:"config"`
 }
 
-func (w *Body) UnmarshalJSON(data []byte) error {
+func (b *Body) UnmarshalJSON(data []byte) error {
 	x := &bodyJSON{}
 	err := json.Unmarshal(data, &x)
 	if err != nil {
@@ -43,36 +43,36 @@ func (w *Body) UnmarshalJSON(data []byte) error {
 	if x == nil {
 		return nil
 	}
-	w.Type = x.Type
-	switch w.Type {
+	b.Type = x.Type
+	switch b.Type {
 	case KeyJSON:
 		js := &JSON{}
 		err = json.Unmarshal(x.Config, &js)
 		if err != nil {
 			return err
 		}
-		w.Config = js
+		b.Config = js
 	case KeyLarge:
 		l := &Large{}
 		err = json.Unmarshal(x.Config, &l)
 		if err != nil {
 			return err
 		}
-		w.Config = l
+		b.Config = l
 	case KeyError:
 		e := &Error{}
 		err = json.Unmarshal(x.Config, &e)
 		if err != nil {
 			return err
 		}
-		w.Config = e
+		b.Config = e
 	case KeyRaw:
 		raw := &Raw{}
 		err = json.Unmarshal(x.Config, &raw)
 		if err != nil {
 			return err
 		}
-		w.Config = raw
+		b.Config = raw
 	case "":
 		return nil
 	default:

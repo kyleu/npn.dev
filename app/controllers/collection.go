@@ -1,13 +1,14 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/gen/templates"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npnweb"
-	"net/http"
 )
 
 const KeyCollection = "collection"

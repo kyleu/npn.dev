@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/request"
@@ -9,7 +11,6 @@ import (
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
-	"net/http"
 )
 
 const KeyRequest = "request"

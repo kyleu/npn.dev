@@ -1,8 +1,9 @@
 package lib
 
 import (
-	"emperror.dev/errors"
 	"fmt"
+
+	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/cli"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"

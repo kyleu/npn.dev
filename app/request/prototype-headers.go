@@ -2,9 +2,10 @@ package request
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/header"
 	"strconv"
 	"strings"
+
+	"github.com/kyleu/npn/app/header"
 )
 
 func (p *Prototype) FinalHeaders() header.Headers {
@@ -20,8 +21,8 @@ func (p *Prototype) FinalHeaders() header.Headers {
 		}
 	}
 
-	check("Host", func() string { return p.Host() })
-	check("Content-Type", func() string { return p.ContentType() })
+	check("Host", p.Host)
+	check("Content-Type", p.ContentType)
 	check("Content-Length", func() string {
 		cl := p.Body.ContentLength()
 		if cl > 0 {

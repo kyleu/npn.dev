@@ -3,9 +3,9 @@ package body
 const KeyLarge = "large"
 
 type Large struct {
-	Filename string `json:"filename"`
+	Filename    string `json:"filename"`
 	ContentType string `json:"contentType"`
-	Length   int64  `json:"length"`
+	Length      int64  `json:"length"`
 }
 
 func NewLarge(filename string, contentType string, length int64) *Body {

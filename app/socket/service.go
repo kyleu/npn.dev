@@ -1,8 +1,9 @@
 package socket
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
+
+	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
@@ -26,7 +27,7 @@ func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, 
 	case "collection":
 		err = handleCollectionMessage(s, c, cmd, param)
 	case npncore.KeySystem:
-		err = handleSystemMessage(s, c, cmd, param)
+		err = handleSystemMessage(cmd)
 	default:
 		err = errors.New(npncore.IDErrorString(npncore.KeyService, svc))
 	}

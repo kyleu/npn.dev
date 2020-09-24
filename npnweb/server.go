@@ -1,13 +1,14 @@
 package npnweb
 
 import (
-	"emperror.dev/errors"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/kyleu/npn/npncore"
 	"net"
 	"net/http"
 	"strconv"
+
+	"emperror.dev/errors"
+	"github.com/gorilla/mux"
+	"github.com/kyleu/npn/npncore"
 )
 
 func MakeServer(info AppInfo, r *mux.Router, address string, port uint16) (uint16, error) {

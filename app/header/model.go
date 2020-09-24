@@ -49,8 +49,6 @@ func (h Headers) ToHTTP() http.Header {
 
 func (h Headers) Clone() Headers {
 	ret := make(Headers, len(h))
-	for i, hx := range h {
-		ret[i] = hx
-	}
+	copy(ret, h)
 	return ret
 }

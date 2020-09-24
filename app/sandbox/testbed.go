@@ -1,11 +1,6 @@
 package sandbox
 
 import (
-	"github.com/kyleu/npn/app"
-	"github.com/kyleu/npn/app/body"
-	"github.com/kyleu/npn/app/call"
-	"github.com/kyleu/npn/app/header"
-	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npnweb"
 )
 
@@ -13,17 +8,15 @@ var Testbed = Sandbox{
 	Key:         "testbed",
 	Title:       "Testbed",
 	Description: "This could do anything, be careful",
-	Resolve: func(ctx *npnweb.RequestContext) (string, interface{}, error) {
-		// return noop()
-		return req(ctx)
-	},
+	Resolve:     noop,
 }
 
-func noop() (string, interface{}, error) {
+func noop(ctx *npnweb.RequestContext) (string, interface{}, error) {
 	ret := "Testbed!"
 	return "Testbed", ret, nil
 }
 
+/* Req
 type reqrsp struct {
 	Req   *request.Request
 	Final header.Headers
@@ -43,8 +36,9 @@ func req(ctx *npnweb.RequestContext) (string, interface{}, error) {
 
 	return "Request", ret, nil
 }
+*/
 
-/*
+/* JavaScript
 func callJS(ctx *npnweb.RequestContext) (string, interface{}, error) {
 	jssvc := js.NewService(ctx.Logger)
 
@@ -62,7 +56,9 @@ func callJS(ctx *npnweb.RequestContext) (string, interface{}, error) {
 	}
 	return "JavaScript", ret, nil
 }
+*/
 
+/* Lua
 func callLua(ctx *npnweb.RequestContext) (string, interface{}, error) {
 	luasvc := lua.NewService(ctx.Logger)
 

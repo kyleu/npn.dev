@@ -1,11 +1,12 @@
 package imprt
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
+	"strings"
+
+	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"
-	"strings"
 )
 
 func parse(filename string, contentType string, content []byte) (string, interface{}, error) {
@@ -41,7 +42,7 @@ func parsePhase(p *phase, depth int) *phase {
 		ret = parseString(p.Value.(string))
 	}
 	if ret == nil {
-		return errorPhase(errors.New("import for [" + p.Key + "] didn't return a phase"), p.Value)
+		return errorPhase(errors.New("import for ["+p.Key+"] didn't return a phase"), p.Value)
 	}
 	if ret.Error != nil {
 		return ret
@@ -49,7 +50,7 @@ func parsePhase(p *phase, depth int) *phase {
 	if ret.Final {
 		return ret
 	}
-	return parsePhase(ret, depth + 1)
+	return parsePhase(ret, depth+1)
 }
 
 func parseJSON(content []byte) *phase {

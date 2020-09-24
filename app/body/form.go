@@ -28,7 +28,7 @@ func (f FormData) String() string {
 
 type Form struct {
 	Data FormData `json:"data"`
-	str string
+	str  string
 }
 
 func NewForm(data ...*FormEntry) *Body {

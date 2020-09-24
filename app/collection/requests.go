@@ -1,13 +1,14 @@
 package collection
 
 import (
-	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/request"
-	"github.com/kyleu/npn/npncore"
 	"os"
 	"path"
 	"strings"
 	"time"
+
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/npncore"
 )
 
 const shouldSaveHistory = true
@@ -57,14 +58,14 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 		n := path.Join(s.files.Root(), p)
 		err := os.Rename(o, n)
 		if err != nil {
-			return errors.Wrap(err, "unable to rename original request [" + originalKey + "] in path [" + o + "]")
+			return errors.Wrap(err, "unable to rename original request ["+originalKey+"] in path ["+o+"]")
 		}
 	}
 
 	if shouldSaveHistory {
 		hp := historyPath(coll, req.Key)
 		now := time.Now()
-		hfn := path.Join(hp, npncore.ToDateString(&now) + ".json")
+		hfn := path.Join(hp, npncore.ToDateString(&now)+".json")
 		err := s.files.CopyFile(p, hfn)
 		if err != nil {
 			return errors.Wrap(err, "unable to create request history ["+hp+"]")

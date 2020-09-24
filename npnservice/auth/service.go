@@ -18,9 +18,9 @@ type Service struct {
 	Enabled          bool
 	EnabledProviders Providers
 	redir            string
-	db     *npndatabase.Service
-	logger logur.Logger
-	users  user.Service
+	db               *npndatabase.Service
+	logger           logur.Logger
+	users            user.Service
 }
 
 func NewService(enabled bool, redir string /* actions *action.Service, */, db *npndatabase.Service, logger logur.Logger, users user.Service) *Service {
@@ -36,9 +36,9 @@ func NewService(enabled bool, redir string /* actions *action.Service, */, db *n
 	svc := Service{
 		Enabled: enabled,
 		redir:   redir,
-		db:     db,
-		logger: logger,
-		users:  users,
+		db:      db,
+		logger:  logger,
+		users:   users,
 	}
 
 	for _, p := range AllProviders {

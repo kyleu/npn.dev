@@ -2,9 +2,10 @@ package call
 
 import (
 	"crypto/tls"
-	"github.com/kyleu/npn/npncore"
 	"net/http/httptrace"
 	"time"
+
+	"github.com/kyleu/npn/npncore"
 )
 
 type TimingSection struct {

@@ -30,7 +30,7 @@ func FileRoot(w http.ResponseWriter, r *http.Request) {
 		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple("", npncore.KeyFile)
 		files, err := ioutil.ReadDir(FileBrowseRoot)
 		if err != nil {
-			return EResp(err, "cannot read path [" + FileBrowseRoot + "]")
+			return EResp(err, "cannot read path ["+FileBrowseRoot+"]")
 		}
 		return T(npntemplate.FileBrowse([]string{}, files, ctx, w))
 	})

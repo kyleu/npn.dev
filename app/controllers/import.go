@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/imprt"
@@ -8,7 +10,6 @@ import (
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
-	"net/http"
 )
 
 func ImportForm(w http.ResponseWriter, r *http.Request) {
@@ -40,7 +41,7 @@ func ImportUpload(w http.ResponseWriter, r *http.Request) {
 
 		v := r.MultipartForm.File["file"]
 
-		files := make([]imprt.File, 0, 0)
+		files := make([]imprt.File, 0)
 		for _, file := range v {
 			ct, ok := file.Header["Content-Type"]
 			if !ok || len(ct) == 0 {
@@ -63,11 +64,11 @@ func ImportUpload(w http.ResponseWriter, r *http.Request) {
 		for _, file := range v {
 			f, err := file.Open()
 			if err != nil {
-				return npncontroller.EResp(err, "unable to open uploaded file [" + file.Filename + "]")
+				return npncontroller.EResp(err, "unable to open uploaded file ["+file.Filename+"]")
 			}
 			err = svc.Import.WriteFile(importKey, file.Filename, f)
 			if err != nil {
-				return npncontroller.EResp(err, "unable to write import file [" + file.Filename + "]")
+				return npncontroller.EResp(err, "unable to write import file ["+file.Filename+"]")
 			}
 		}
 

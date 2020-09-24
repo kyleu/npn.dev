@@ -1,19 +1,20 @@
 package auth
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
 	"fmt"
+
+	"emperror.dev/errors"
 )
 
-type AuthConfig interface {
+type Config interface {
 	GetType() string
 	String() string
 }
 
 type Auth struct {
-	Type   string     `json:"type"`
-	Config AuthConfig `json:"config"`
+	Type   string `json:"type"`
+	Config Config `json:"config"`
 }
 
 func (a *Auth) String() string {
@@ -29,21 +30,21 @@ type authJSON struct {
 	Config json.RawMessage `json:"config"`
 }
 
-func (w *Auth) UnmarshalJSON(data []byte) error {
+func (a *Auth) UnmarshalJSON(data []byte) error {
 	x := &authJSON{}
 	err := json.Unmarshal(data, &x)
 	if err != nil {
 		return err
 	}
-	w.Type = x.Type
-	switch w.Type {
+	a.Type = x.Type
+	switch a.Type {
 	case KeyBasic:
 		basic := &Basic{}
 		err = json.Unmarshal(x.Config, &basic)
 		if err != nil {
 			return err
 		}
-		w.Config = basic
+		a.Config = basic
 	default:
 		return errors.New("invalid auth type [" + x.Type + "]")
 	}
