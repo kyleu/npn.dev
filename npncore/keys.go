@@ -46,6 +46,7 @@ const (
 	KeyProvider   = "provider"
 	KeyQuery      = "query"
 	KeyReport     = "report"
+	KeyRequest    = "request"
 	KeyRole       = "role"
 	KeyRoutes     = "routes"
 	KeySandbox    = "sandbox"

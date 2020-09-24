@@ -36,6 +36,9 @@ func (p *Prototype) Normalize() *Prototype {
 	if len(p.Protocol.Key) == 0 {
 		p.Protocol = ProtocolHTTPS
 	}
+	if p.Options == nil {
+		p.Options = &Options{}
+	}
 	return p
 }
 

@@ -3,14 +3,19 @@ namespace command {
     ping: "ping",
     connect: "connect",
     getCollections: "getCollections",
-    getCollection: "getCollection"
+    getCollection: "getCollection",
+    requestCall: "requestCall"
   };
 
   export const server = {
+    error: "error",
+
     pong: "pong",
     connected: "connected",
+
     collections: "collections",
-    detail: "detail",
-    error: "error"
+    collectionDetail: "collectionDetail",
+
+    callResult: "callResult"
   };
 }

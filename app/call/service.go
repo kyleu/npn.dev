@@ -19,11 +19,11 @@ func NewService(logger logur.Logger) *Service {
 	return &Service{logger: logger}
 }
 
-func (s *Service) Call(p *request.Prototype) *Result {
+func (s *Service) Call(coll string, req string, p *request.Prototype) *Result {
 	if p == nil {
-		return &Result{Status: "error", Error: "no request"}
+		return NewErrorResult(coll, req, "no request")
 	}
-	return call(getClient(p), p, s.logger)
+	return call(coll, req, getClient(p), p, s.logger)
 }
 
 func getClient(p *request.Prototype) *http.Client {
@@ -37,12 +37,12 @@ func getClient(p *request.Prototype) *http.Client {
 	}
 }
 
-func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
-	req := p.ToHTTP()
+func call(coll string, req string, client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
+	httpReq := p.ToHTTP()
 	timing := &Timing{}
-	req = req.WithContext(httptrace.WithClientTrace(req.Context(), timing.Trace()))
+	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
 	timing.Begin()
-	hr, err := client.Do(req)
+	hr, err := client.Do(httpReq)
 
 	status := "ok"
 	var errStr string = ""
@@ -60,5 +60,10 @@ func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
 
 	timing.Complete()
 
-	return &Result{Status: status, Response: rsp, Timing: timing, Error: errStr}
+	ret := NewResult(coll, req, status)
+	ret.RequestHeaders = p.FinalHeaders()
+	ret.Response = rsp
+	ret.Timing = timing
+	ret.Error = errStr
+	return ret
 }

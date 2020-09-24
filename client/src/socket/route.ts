@@ -5,7 +5,7 @@ namespace socket {
     console.info("nav: " + parts.join(" -> "));
 
     if (parts.length === 0 || parts[0].length === 0) {
-      ui.setPanels();
+      ui.setPanels(undefined, undefined, undefined, []);
       return; // index
     }
     const svc = parts[0];
@@ -21,7 +21,7 @@ namespace socket {
         }
         request.cache.setActiveRequest(req);
         request.cache.setActiveAction(act, extra);
-        ui.setPanels(coll, req, act);
+        ui.setPanels(coll, req, act, extra);
         break;
       default:
         console.info("unhandled svc [" + svc + "]");

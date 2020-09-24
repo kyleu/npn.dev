@@ -2,6 +2,7 @@ package request
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"strconv"
 	"strings"
 
@@ -21,7 +22,9 @@ func (p *Prototype) FinalHeaders() header.Headers {
 		}
 	}
 
-	check("Host", p.Host)
+	check("Accept", func() string { return "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" })
+	check("Accept-Encoding", func() string { return "gzip, deflate" })
+	check("Connection", func() string { return "keep-alive" })
 	check("Content-Type", p.ContentType)
 	check("Content-Length", func() string {
 		cl := p.Body.ContentLength()
@@ -30,6 +33,8 @@ func (p *Prototype) FinalHeaders() header.Headers {
 		}
 		return ""
 	})
+	check("Host", p.Host)
+	check("User-Agent", func() string { return npncore.AppName })
 
 	return ret
 }

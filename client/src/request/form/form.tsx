@@ -15,9 +15,8 @@ namespace request.form {
         </div>
         <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
           {renderSwitcher(r)}
-          <div class="uk-margin-top">
+          <div class="uk-margin-top hidden">
             <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
-            {nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true)}
           </div>
         </div>
         <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden">

@@ -62,15 +62,23 @@ namespace request {
   }
 
   function renderActiveAction(coll: string, req: request.Request, action: string | undefined, extra: string[]) {
-    log.info("Action: " + action)
+    log.info(`new action: ${action} (${extra})`)
+    const re = dom.req(".request-editor");
+    const ra = dom.req(".request-action");
     switch (action) {
       case undefined:
-        dom.setContent("#request-action", request.renderEmpty(req));
+        dom.setContent(ra, renderActionEmpty(req));
+        break;
+      case "call":
+        call.prepare(coll, req);
+        dom.setContent(ra, renderActionCall(coll, req));
         break;
       default:
         console.warn("unhandled request action [" + action + "]")
-        dom.setContent("#request-action", request.renderSplash(req));
+        dom.setContent(ra, request.renderActionUnknown(action, extra, req));
     }
+    dom.setDisplay(re, action === undefined)
+    dom.setDisplay(ra, action !== undefined)
   }
 
   function getActiveRequest() {

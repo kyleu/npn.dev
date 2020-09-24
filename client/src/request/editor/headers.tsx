@@ -4,7 +4,7 @@ namespace request.editor {
     parent.appendChild(createHeadersEditor(el));
   }
 
-  export function setHeaders(cache: Cache, headers: Header[] | undefined) {
+  export function setHeaders(cache: Cache, headers: header.Header[] | undefined) {
 
   }
 
@@ -25,7 +25,7 @@ namespace request.editor {
     </li>;
 
     const updateFn = function() {
-      const curr = JSON.parse(el.value) as Header[];
+      const curr = JSON.parse(el.value) as header.Header[];
       container.innerText = ""
       container.appendChild(header);
       if (curr) {
@@ -40,7 +40,7 @@ namespace request.editor {
     return container;
   }
 
-  function addChild(container: HTMLElement, h: Header) {
+  export function addChild(container: HTMLElement, h: header.Header) {
     container.appendChild(<li>
       <div data-uk-grid="">
         <div class="uk-width-1-4">{h.k}</div>

@@ -77,4 +77,14 @@ namespace request {
         return ""
     }
   }
+
+  export function onRequestMessage(cmd: string, param: any) {
+    switch (cmd) {
+      case command.server.callResult:
+        call.setResult(param);
+        break;
+      default:
+        console.warn(`unhandled request command [${cmd}]`);
+    }
+  }
 }

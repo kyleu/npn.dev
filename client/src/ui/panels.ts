@@ -1,17 +1,10 @@
 namespace ui {
-  export function setPanels(coll?: string, req?: string, act?: string) {
+  export function setPanels(coll: string | undefined, req: string | undefined, act: string | undefined, extra: string[]) {
     dom.setDisplay("#welcome-panel", coll === undefined);
     dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
     dom.setDisplay("#request-panel", req !== undefined && req.length > 0);
 
-    const hasAction = act !== undefined && act.length > 0
-    const optEl = dom.opt("#request-editor");
-    if (optEl) {
-      dom.setDisplay(optEl, !hasAction);
-      dom.setDisplay("#action-panel", hasAction);
-    }
-
-    setBreadcrumbs(coll, req, act);
+    setBreadcrumbs(coll, req, act, extra);
     setTitle(coll, req, act);
   }
 

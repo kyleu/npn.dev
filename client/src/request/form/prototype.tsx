@@ -40,7 +40,7 @@ namespace request.form {
     </li>;
   }
 
-  function renderHeaders(key: String, hs: request.Header[] | undefined) {
+  function renderHeaders(key: String, hs: header.Header[] | undefined) {
     return <li class="request-headers-panel">
       <div class="uk-margin-top">
         <label class="uk-form-label" for={key + "-headers"}>Headers</label>

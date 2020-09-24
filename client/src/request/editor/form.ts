@@ -1,11 +1,11 @@
 namespace request.editor {
   export interface Cache {
-    readonly url: HTMLInputElement
-    readonly auth: HTMLTextAreaElement
-    readonly qp: HTMLTextAreaElement
-    readonly headers: HTMLTextAreaElement
-    readonly body: HTMLTextAreaElement
-    readonly options: HTMLTextAreaElement
+    readonly url: HTMLInputElement;
+    readonly auth: HTMLTextAreaElement;
+    readonly qp: HTMLTextAreaElement;
+    readonly headers: HTMLTextAreaElement;
+    readonly body: HTMLTextAreaElement;
+    readonly options: HTMLTextAreaElement;
   }
 
   export function wireForm(prefix: string) {
@@ -68,7 +68,7 @@ namespace request.editor {
     });
 
     events(cache.headers, function () {
-      let h: Header[]
+      let h: header.Header[]
       try {
         h = JSON.parse(cache.headers.value);
       } catch (e) {

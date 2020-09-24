@@ -33,6 +33,28 @@ var npn;
     }
     npn.testbed = testbed;
 })(npn || (npn = {}));
+var call;
+(function (call) {
+    function prepare(coll, r) {
+        const param = { "coll": coll, "req": r.key };
+        socket.send({ svc: services.request.key, cmd: command.client.requestCall, param: param });
+    }
+    call.prepare = prepare;
+    function setResult(param) {
+        const result = param;
+        const container = dom.req(`#${result.collection}--${result.request}-call`);
+        dom.setContent(container, call.renderResult(result));
+    }
+    call.setResult = setResult;
+})(call || (call = {}));
+var call;
+(function (call) {
+    function renderResult(r) {
+        return JSX("div", { style: "overflow: auto;max-width: 820px;" },
+            JSX("pre", null, json.str(r)));
+    }
+    call.renderResult = renderResult;
+})(call || (call = {}));
 var collection;
 (function (collection_1) {
     class Cache {
@@ -84,16 +106,14 @@ var collection;
         switch (cmd) {
             case command.server.collections:
                 collection.cache.collections = param;
-                if (!collection.cache.collections) {
-                }
-                else {
+                if (collection.cache.collections) {
                     log.info(`processing [${collection.cache.collections.length}] collections`);
                     dom.els(".collection-list").forEach(el => {
                         dom.setContent(el, collection.renderCollections(collection.cache.collections));
                     });
                 }
                 break;
-            case command.server.detail:
+            case command.server.collectionDetail:
                 const d = param;
                 log.info(`processing [${d.requests.length}] requests for collection [${d.collection.key}]`);
                 collection.cache.updateCollection(d.collection);
@@ -651,16 +671,92 @@ var tags;
     }
     tags.renderTagsView = renderTagsView;
 })(tags || (tags = {}));
+var header;
+(function (header) {
+    function nch(key, description, req, rsp, link) {
+        return { "key": key, "description": description, "req": req, "rsp": rsp, "link": link };
+    }
+    function snch(key, description, req, rsp) {
+        return nch(key, description, req, rsp, mdnLink(key));
+    }
+    function mdnLink(s) {
+        return "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/" + s;
+    }
+    header.commonHeaders = [
+        snch("Accept", "Informs the server about the types of data that can be sent back.", true, false),
+        snch("Access-Control-Allow-Headers", "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request.", false, true),
+        snch("Access-Control-Allow-Methods", "Specifies the methods allowed when accessing the resource in response to a preflight request.", false, true),
+        snch("Access-Control-Allow-Origin", "Indicates whether the response can be shared.", false, true),
+        snch("Authorization", "Contains the credentials to authenticate a user-agent with a server.", true, false),
+        snch("Connection", "Controls whether the network connection stays open after the current transaction finishes.", true, false),
+        snch("Content-Encoding", "Used to specify the compression algorithm.", true, true),
+        snch("Content-Length", "The size of the resource, in decimal number of bytes.", true, true),
+        snch("Content-Type", "Indicates the media type of the resource.", true, true),
+        snch("Cookie", "Contains stored HTTP cookies previously sent by the server with the Set-Cookie header.", true, false),
+        snch("ETag", "A unique string identifying the version of the resource.", false, true),
+        snch("Expires", "The date/time after which the response is considered stale.", false, true),
+        snch("Host", "Specifies the domain name of the server (for virtual hosting), and (optionally) the TCP port number on which the server is listening.", true, false),
+        snch("Last-Modified", "The last modification date of the resource, used to compare several versions of the same resource.", false, true),
+        snch("Location", "Indicates the URL to redirect a page to. ", false, true),
+        snch("Origin", "Indicates where a fetch originates from.", true, false),
+        snch("Referer", "The address of the previous web page from which a link to the currently requested page was followed.", true, false),
+        snch("Server", "Contains information about the software used by the origin server to handle the request.", false, true),
+        snch("Set-Cookie", "Send cookies from the server to the user-agent.", false, true),
+        snch("User-Agent", "Contains a characteristic string that allows the network protocol peers to identify the application", true, false)
+    ];
+    header.commonHeadersByName = new Map();
+    for (const ch of header.commonHeaders) {
+        header.commonHeadersByName.set(ch.key, ch);
+    }
+    function dumpCommonHeaders() {
+        const dump = function (title, req, rsp) {
+            let matched = false;
+            console.log("\n::: " + title + " Headers");
+            header.commonHeaders.forEach(ch => {
+                if (ch.req == req && ch.rsp == rsp) {
+                    matched = true;
+                    console.log(`${ch.key}: ${ch.link}`);
+                    console.log(`  - ${ch.description}`);
+                }
+            });
+            if (!matched) {
+                console.log("none");
+            }
+        };
+        dump("Common", true, true);
+        dump("Request", true, false);
+        dump("Response", false, true);
+        dump("Invalid", false, false);
+    }
+    header.dumpCommonHeaders = dumpCommonHeaders;
+})(header || (header = {}));
 var request;
 (function (request) {
-    function renderEmpty(r) {
+    function renderActionEmpty(r) {
         return JSX("div", null);
     }
-    request.renderEmpty = renderEmpty;
-    function renderSplash(r) {
-        return JSX("div", null, "Actions: TODO");
+    request.renderActionEmpty = renderActionEmpty;
+    function renderActionUnknown(key, extra, r) {
+        return JSX("div", null,
+            renderClose(r),
+            "unknown action: ",
+            key,
+            " (",
+            extra,
+            ")");
     }
-    request.renderSplash = renderSplash;
+    request.renderActionUnknown = renderActionUnknown;
+    function renderActionCall(coll, r) {
+        return JSX("div", { id: coll + "--" + r.key + "-call" },
+            renderClose(r),
+            JSX("div", { class: "call-title" }, "Loading..."),
+            JSX("div", { class: "call-result" }));
+    }
+    request.renderActionCall = renderActionCall;
+    function renderClose(r) {
+        return JSX("div", { class: "right" },
+            JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate(`/c/${collection.cache.active}/${request.cache.active}`);return false;", title: "close collection" }));
+    }
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -721,15 +817,23 @@ var request;
         request.editor.wireForm(req.key);
     }
     function renderActiveAction(coll, req, action, extra) {
-        log.info("Action: " + action);
+        log.info(`new action: ${action} (${extra})`);
+        const re = dom.req(".request-editor");
+        const ra = dom.req(".request-action");
         switch (action) {
             case undefined:
-                dom.setContent("#request-action", request.renderEmpty(req));
+                dom.setContent(ra, request.renderActionEmpty(req));
+                break;
+            case "call":
+                call.prepare(coll, req);
+                dom.setContent(ra, request.renderActionCall(coll, req));
                 break;
             default:
                 console.warn("unhandled request action [" + action + "]");
-                dom.setContent("#request-action", request.renderSplash(req));
+                dom.setContent(ra, request.renderActionUnknown(action, extra, req));
         }
+        dom.setDisplay(re, action === undefined);
+        dom.setDisplay(ra, action !== undefined);
     }
     function getActiveRequest() {
         const coll = collection.cache.active;
@@ -859,6 +963,16 @@ var request;
                 return "";
         }
     }
+    function onRequestMessage(cmd, param) {
+        switch (cmd) {
+            case command.server.callResult:
+                call.setResult(param);
+                break;
+            default:
+                console.warn(`unhandled request command [${cmd}]`);
+        }
+    }
+    request.onRequestMessage = onRequestMessage;
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -1083,6 +1197,7 @@ var request;
                                 JSX("span", { "data-uk-icon": "icon: close" }))),
                         h.desc ? h.desc : ""))));
         }
+        editor.addChild = addChild;
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
@@ -1216,9 +1331,8 @@ var request;
                         renderActions(coll, r)),
                     JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
                         form.renderSwitcher(r),
-                        JSX("div", { class: "uk-margin-top" },
-                            JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"),
-                            nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true))),
+                        JSX("div", { class: "uk-margin-top hidden" },
+                            JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"))),
                     JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }, "ACTION!")));
         }
         form.renderFormPanel = renderFormPanel;
@@ -1319,6 +1433,7 @@ var request;
     var form;
     (function (form) {
         function renderURL(r) {
+            const click = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
             return JSX("div", { class: "uk-margin-top" },
                 JSX("div", { class: "left", style: "width:120px;" },
                     JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
@@ -1330,7 +1445,7 @@ var request;
                         }
                     }))),
                 JSX("div", { class: "uk-inline right", style: "width:calc(100% - 120px);" },
-                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: "return false;", "uk-icon": "icon: refresh" }),
+                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: click, "uk-icon": "icon: refresh" }),
                     JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" })),
                 JSX("div", { class: "clear" }));
         }
@@ -1344,7 +1459,7 @@ var socket;
         parts = parts.filter(x => x.length > 0);
         console.info("nav: " + parts.join(" -> "));
         if (parts.length === 0 || parts[0].length === 0) {
-            ui.setPanels();
+            ui.setPanels(undefined, undefined, undefined, []);
             return; // index
         }
         const svc = parts[0];
@@ -1360,7 +1475,7 @@ var socket;
                 }
                 request.cache.setActiveRequest(req);
                 request.cache.setActiveAction(act, extra);
-                ui.setPanels(coll, req, act);
+                ui.setPanels(coll, req, act, extra);
                 break;
             default:
                 console.info("unhandled svc [" + svc + "]");
@@ -1433,6 +1548,9 @@ var socket;
             case services.collection.key:
                 collection.onCollectionMessage(msg.cmd, msg.param);
                 break;
+            case services.request.key:
+                request.onRequestMessage(msg.cmd, msg.param);
+                break;
             default:
                 console.warn(`unhandled message for service [${msg.svc}]`);
         }
@@ -1480,6 +1598,9 @@ var system;
 (function (system) {
     function onSystemMessage(cmd, param) {
         switch (cmd) {
+            case command.server.error:
+                console.warn("error from server: " + param);
+                break;
             case command.server.connected:
                 system.cache.apply(param);
                 break;
@@ -1491,20 +1612,28 @@ var system;
 })(system || (system = {}));
 var ui;
 (function (ui) {
-    function setBreadcrumbs(coll, req, act) {
+    function setBreadcrumbs(coll, req, act, extra) {
         const el = dom.req("#breadcrumbs");
         reset(el);
         if (coll) {
             el.appendChild(sep());
-            el.appendChild(bcForColl(coll));
-        }
-        if (req) {
-            el.appendChild(sep());
-            el.appendChild(bcForReq(coll, req));
-        }
-        if (act) {
-            el.appendChild(sep());
-            el.appendChild(bcForAct(coll, req, act));
+            el.appendChild(bcFor(coll, "c", coll));
+            if (req) {
+                el.appendChild(sep());
+                el.appendChild(bcFor(req, "c", coll, req));
+                if (act) {
+                    el.appendChild(sep());
+                    el.appendChild(bcFor(act, "c", coll, req, act));
+                    if (extra && extra.length > 0) {
+                        for (let i = 0; i < extra.length; i++) {
+                            el.appendChild(sep());
+                            const ret = [coll, req, act];
+                            ret.push(...extra.slice(0, i));
+                            el.appendChild(bcFor(extra[i], ...ret));
+                        }
+                    }
+                }
+            }
         }
     }
     ui.setBreadcrumbs = setBreadcrumbs;
@@ -1520,38 +1649,21 @@ var ui;
     function sep() {
         return JSX("span", { class: "uk-navbar-item dynamic", style: "padding: 0 8px;" }, " / ");
     }
-    function bcForColl(coll) {
-        return bcFor(coll, coll);
+    function bcForExtra(coll, req, act, extra) {
+        return bcFor(act, "c", coll, req, act);
     }
-    function bcForReq(coll, req) {
-        return bcFor(req, coll, req);
-    }
-    function bcForAct(coll, req, act) {
-        return bcFor(act, coll, req, act);
-    }
-    function bcFor(title, coll, req, act) {
-        if (act) {
-            return nav.link("/c/" + coll + "/" + req + "/" + act, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
-        }
-        if (req) {
-            return nav.link("/c/" + coll + "/" + req, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
-        }
-        return nav.link("/c/" + coll, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
+    function bcFor(title, ...parts) {
+        const path = parts.map(s => "/" + s).join("");
+        return nav.link(path, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
     }
 })(ui || (ui = {}));
 var ui;
 (function (ui) {
-    function setPanels(coll, req, act) {
+    function setPanels(coll, req, act, extra) {
         dom.setDisplay("#welcome-panel", coll === undefined);
         dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
         dom.setDisplay("#request-panel", req !== undefined && req.length > 0);
-        const hasAction = act !== undefined && act.length > 0;
-        const optEl = dom.opt("#request-editor");
-        if (optEl) {
-            dom.setDisplay(optEl, !hasAction);
-            dom.setDisplay("#action-panel", hasAction);
-        }
-        ui.setBreadcrumbs(coll, req, act);
+        ui.setBreadcrumbs(coll, req, act, extra);
         setTitle(coll, req, act);
     }
     ui.setPanels = setPanels;
@@ -1620,14 +1732,16 @@ var command;
         ping: "ping",
         connect: "connect",
         getCollections: "getCollections",
-        getCollection: "getCollection"
+        getCollection: "getCollection",
+        requestCall: "requestCall"
     };
     command.server = {
+        error: "error",
         pong: "pong",
         connected: "connected",
         collections: "collections",
-        detail: "detail",
-        error: "error"
+        collectionDetail: "collectionDetail",
+        callResult: "callResult"
     };
 })(command || (command = {}));
 var date;
@@ -1900,6 +2014,7 @@ var services;
 (function (services) {
     services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
     services.collection = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
+    services.request = { key: "request", title: "Request", plural: "Requests", icon: "file-text" };
     const allServices = [services.system, services.collection];
     function fromKey(key) {
         const ret = allServices.find(s => s.key === key);

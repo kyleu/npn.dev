@@ -1,6 +1,11 @@
 package sandbox
 
 import (
+	"github.com/kyleu/npn/app"
+	"github.com/kyleu/npn/app/body"
+	"github.com/kyleu/npn/app/call"
+	"github.com/kyleu/npn/app/header"
+	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npnweb"
 )
 
@@ -8,7 +13,7 @@ var Testbed = Sandbox{
 	Key:         "testbed",
 	Title:       "Testbed",
 	Description: "This could do anything, be careful",
-	Resolve:     noop,
+	Resolve:     req,
 }
 
 func noop(ctx *npnweb.RequestContext) (string, interface{}, error) {
@@ -16,7 +21,7 @@ func noop(ctx *npnweb.RequestContext) (string, interface{}, error) {
 	return "Testbed", ret, nil
 }
 
-/* Req
+// Req
 type reqrsp struct {
 	Req   *request.Request
 	Final header.Headers
@@ -28,15 +33,16 @@ func req(ctx *npnweb.RequestContext) (string, interface{}, error) {
 	req.Prototype.Method = request.MethodPost
 	// req.Prototype.Body = body.NewJSON(map[string]string{"a": "x", "b": "y", "c": "z"})
 	req.Prototype.Body = body.NewForm(&body.FormEntry{K: "title", V: "DEBUG!"})
+	req.Prototype.Options.ExcludeDefaultHeaders = []string{"user-agent"}
 	// req.Prototype.Auth = auth.Auths{auth.NewBasic("kyle", "kyleu", true)}
 
-	rsp := app.Svc(ctx.App).Caller.Call(req.Prototype)
+	rsp := app.Svc(ctx.App).Caller.Call("adhoc", "adhoc", req.Prototype)
 
 	ret := reqrsp{Req: req, Final: req.Prototype.FinalHeaders(), Rsp: rsp}
 
 	return "Request", ret, nil
 }
-*/
+//
 
 /* JavaScript
 func callJS(ctx *npnweb.RequestContext) (string, interface{}, error) {

@@ -8,6 +8,7 @@ namespace services {
 
   export const system: Service = { key: "system", title: "System", plural: "systems", icon: "close" };
   export const collection: Service = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
+  export const request: Service = { key: "request", title: "Request", plural: "Requests", icon: "file-text" };
 
   const allServices = [system, collection];
 

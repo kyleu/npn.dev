@@ -55,6 +55,6 @@ func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param
 		return errors.Wrap(err, fmt.Sprintf("error retrieving requests for collection [%v]: %+v", key, err))
 	}
 	cd := collDetails{Collection: coll, Requests: reqs}
-	msg := npnconnection.NewMessage("collection", "detail", &cd)
+	msg := npnconnection.NewMessage("collection", "collectionDetail", &cd)
 	return s.WriteMessage(c.ID, msg)
 }

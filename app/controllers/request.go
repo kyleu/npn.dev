@@ -31,7 +31,7 @@ func RequestCall(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return npncontroller.EResp(err)
 		}
-		result := app.Svc(ctx.App).Caller.Call(req.Prototype)
+		result := app.Svc(ctx.App).Caller.Call(coll, req.Key, req.Prototype)
 		return npncontroller.T(templates.CallDetail(coll, req, result, ctx, w))
 	})
 }

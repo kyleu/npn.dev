@@ -5,12 +5,6 @@ namespace request {
     readonly desc?: string;
   }
 
-  export interface Header {
-    readonly k: string;
-    readonly v: string;
-    readonly desc?: string;
-  }
-
   export interface Options {
     readonly timeout?: number;
     readonly ignoreRedirects?: boolean;
@@ -49,7 +43,7 @@ namespace request {
     readonly path?: string;
     readonly query?: QueryParam[];
     readonly fragment?: string;
-    readonly headers?: Header[];
+    readonly headers?: header.Header[];
     readonly auth?: auth.Auth[];
     readonly body?: body.Body;
     readonly options?: Options;
