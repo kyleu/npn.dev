@@ -4,7 +4,12 @@ const KeyLarge = "large"
 
 type Large struct {
 	Filename string `json:"filename"`
+	ContentType string `json:"contentType"`
 	Length   int64  `json:"length"`
+}
+
+func NewLarge(filename string, contentType string, length int64) *Body {
+	return &Body{Type: KeyLarge, Config: &Large{Filename: filename, ContentType: contentType, Length: length}}
 }
 
 func (l *Large) ContentLength() int64 {

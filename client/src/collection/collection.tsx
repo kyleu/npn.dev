@@ -19,8 +19,22 @@ namespace collection {
       </div>
       <h3 class="uk-card-title">{cn}</h3>
       <div id="request-list" class="uk-margin-top">
-        {request.view.renderRequests(coll.key, requests)}
+        {renderRequests(coll.key, requests)}
       </div>
     </div>
+  }
+
+  function renderRequests(coll: string, rs: request.Request[]) {
+    return <ul class="uk-list uk-list-divider">
+      {rs.map(r => renderRequestLink(coll, r))}
+    </ul>
+  }
+
+  function renderRequestLink(coll: string, r: request.Request) {
+    let title = r.title;
+    if (!title || r.title.length === 0) {
+      title = r.key;
+    }
+    return <li>{nav.link("/c/" + coll + "/" + r.key, title)}</li>;
   }
 }

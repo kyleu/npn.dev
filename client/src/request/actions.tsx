@@ -1,6 +1,6 @@
 namespace request {
   export function renderEmpty(r: request.Request) {
-    return <div></div>;
+    return <div/>;
   }
 
   export function renderSplash(r: request.Request) {

@@ -7,7 +7,10 @@ import (
 	"os"
 	"path"
 	"strings"
+	"time"
 )
+
+const shouldSaveHistory = true
 
 func (s *Service) ListRequests(c string) (request.Requests, error) {
 	p := path.Join(rootDir, c, "requests")
@@ -58,6 +61,16 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 		}
 	}
 
+	if shouldSaveHistory {
+		hp := historyPath(coll, req.Key)
+		now := time.Now()
+		hfn := path.Join(hp, npncore.ToDateString(&now) + ".json")
+		err := s.files.CopyFile(p, hfn)
+		if err != nil {
+			return errors.Wrap(err, "unable to create request history ["+hp+"]")
+		}
+	}
+
 	msg := npncore.ToJSON(req, s.logger)
 	err := s.files.WriteFile(p, []byte(msg), true)
 	if err != nil {
@@ -69,6 +82,10 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 
 func requestPath(coll string, key string) string {
 	return path.Join(rootDir, coll, "requests", key+".json")
+}
+
+func historyPath(coll string, key string) string {
+	return path.Join(rootDir, coll, "history", "requests", key)
 }
 
 func (s *Service) DeleteRequest(coll string, key string) error {

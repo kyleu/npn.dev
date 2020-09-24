@@ -4,20 +4,6 @@ namespace request.editor {
     parent.appendChild(createOptionsEditor(el));
   }
 
-  function inputBool(key: string, v: boolean) {
-    if (v) {
-      return <div>
-        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={key} value="true" checked/> True</label>
-        <label><input class="uk-radio" type="radio" name={key} value="false"/> False</label>
-      </div>
-    } else {
-      return <div>
-        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={key} value="true"/> True</label>
-        <label><input class="uk-radio" type="radio" name={key} value="false" checked/> False</label>
-      </div>
-    }
-  }
-
   function createOptionsEditor(el: HTMLTextAreaElement) {
     let opts = JSON.parse(el.value) as Options;
 
@@ -32,19 +18,19 @@ namespace request.editor {
       </div>
       <div class="uk-margin-top">
         <label class="uk-form-label" for={el.id + "-ignoreRedirects"}>Ignore Redirects</label>
-        {inputBool(el.id + "-ignoreRedirects", opts.ignoreRedirects || false)}
+        {inputBool(el.id, "ignoreRedirects", opts.ignoreRedirects || false)}
       </div>
       <div class="uk-margin-top">
-        <label class="uk-form-label" for="<%= key %>-opt-ignoreReferrer">Ignore Referrer</label>
-        {inputBool(el.id + "ignoreReferrer", opts.ignoreReferrer || false)}
+        <label class="uk-form-label" for="<%= key %>-ignoreReferrer">Ignore Referrer</label>
+        {inputBool(el.id, "ignoreReferrer", opts.ignoreReferrer || false)}
       </div>
       <div class="uk-margin-top">
-        <label class="uk-form-label" for="<%= key %>-opt-ignoreCerts">Ignore Certs</label>
-        {inputBool(el.id + "ignoreCerts", opts.ignoreCerts || false)}
+        <label class="uk-form-label" for={el.id + "-ignoreCerts"}>Ignore Certs</label>
+        {inputBool(el.id, "ignoreCerts", opts.ignoreCerts || false)}
       </div>
       <div class="uk-margin-top">
-        <label class="uk-form-label" for="<%= key %>-opt-ignoreCookies">Ignore Cookies</label>
-        {inputBool(el.id + "ignoreCookies", opts.ignoreCookies || false)}
+        <label class="uk-form-label" for={el.id + "-ignoreCookies"}>Ignore Cookies</label>
+        {inputBool(el.id, "ignoreCookies", opts.ignoreCookies || false)}
       </div>
       <div class="uk-margin-top">
         <label class="uk-form-label" for={el.id + "-excludeDefaultHeaders"}>Exclude Default Headers</label>
@@ -67,5 +53,21 @@ namespace request.editor {
         <input class="uk-input" id={el.id + "-userAgentOverride"} name="opt-userAgentOverride" type="text" value={opts.userAgentOverride}/>
       </div>
     </div>;
+  }
+
+  function inputBool(key: string, prop: string, v: boolean) {
+    const n = "opt-" + prop;
+    const id = key + "-" + prop;
+    if (v) {
+      return <div>
+        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={n} value="true" checked/> True</label>
+        <label><input class="uk-radio" type="radio" name={n} value="false"/> False</label>
+      </div>
+    } else {
+      return <div>
+        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={n} value="true"/> True</label>
+        <label><input class="uk-radio" type="radio" name={n} value="false" checked/> False</label>
+      </div>
+    }
   }
 }

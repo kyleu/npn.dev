@@ -13,7 +13,7 @@ namespace request {
           if (this.active === req.key) {
             renderActiveRequest(collection.cache.active, req);
             if (this.action) {
-              renderActiveAction(collection.cache.active, req, this.action);
+              renderActiveAction(collection.cache.active, req, this.action, this.extra);
             }
           }
         }
@@ -44,19 +44,14 @@ namespace request {
         return;
       }
 
-      if (this.action !== act) {
+      const sameExtra = this.extra.length === extra.length && this.extra.every(function(value, index) { return value === extra[index]});
+      if (this.active && (this.action !== act || !sameExtra)) {
         this.action = act;
+        this.extra = extra;
         const r = getActiveRequest()
         if (r) {
-          renderActiveAction(collection.cache.active, r, this.action);
+          renderActiveAction(collection.cache.active, r, this.action, this.extra);
         }
-      }
-      if (this.extra.length === extra.length && this.extra.every(function(value, index) { return value === extra[index]})) {
-        // same
-      } else {
-        this.extra = extra;
-        log.info("Extra: " + this.extra);
-        // TODO setActionExtra(this.action, this.extra);
       }
     }
   }
@@ -66,7 +61,7 @@ namespace request {
     request.editor.wireForm(req.key);
   }
 
-  function renderActiveAction(coll: string, req: request.Request, action: string | undefined) {
+  function renderActiveAction(coll: string, req: request.Request, action: string | undefined, extra: string[]) {
     log.info("Action: " + action)
     switch (action) {
       case undefined:

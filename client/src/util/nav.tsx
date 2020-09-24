@@ -21,7 +21,6 @@ namespace nav {
       locPath = locPath.substr(1);
     }
     if (locPath !== path) {
-      console.warn("PUSH:" + path);
       history.pushState(path, "", "/" + path);
     }
     handler(path);

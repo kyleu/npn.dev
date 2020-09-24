@@ -6,6 +6,10 @@ type HTML struct {
 	Content string `json:"content"`
 }
 
+func NewHTML(content string) *Body {
+	return &Body{Type: KeyHTML, Config: &HTML{Content: content}}
+}
+
 func (l *HTML) ContentLength() int64 {
 	return int64(len(l.Content))
 }

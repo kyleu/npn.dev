@@ -21,21 +21,20 @@ func NewService(logger logur.Logger) *Service {
 
 func (s *Service) Call(p *request.Prototype) *Result {
 	if p == nil {
-		e := "no request"
-		return &Result{
-			Status: "error",
-			Error:  &e,
-		}
+		return &Result{Status: "error", Error: "no request"}
 	}
-	tr := &http.Transport{}
-	client := &http.Client{
-		Transport: tr,
-		Timeout:   60 * time.Second,
+	return call(getClient(p), p, s.logger)
+}
+
+func getClient(p *request.Prototype) *http.Client {
+	timeout := 60 * time.Second
+	if p.Options != nil && p.Options.Timeout > 0 {
+		timeout = time.Duration(p.Options.Timeout) * time.Second
 	}
-
-	ret := call(client, p, s.logger)
-
-	return ret
+	return &http.Client{
+		Transport: &http.Transport{},
+		Timeout:   timeout,
+	}
 }
 
 func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
@@ -46,11 +45,10 @@ func call(client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
 	hr, err := client.Do(req)
 
 	status := "ok"
-	var errStr *string = nil
+	var errStr string = ""
 	if err != nil {
 		status = "error"
-		es := err.Error()
-		errStr = &es
+		errStr = err.Error()
 	}
 
 	timing.CompleteHeaders()

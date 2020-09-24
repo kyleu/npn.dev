@@ -2,8 +2,15 @@ namespace ui {
   export function setPanels(coll?: string, req?: string, act?: string) {
     dom.setDisplay("#welcome-panel", coll === undefined);
     dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
-    dom.setDisplay("#request-panel", req !== undefined && req.length > 0 && act === undefined);
-    dom.setDisplay("#action-panel", act !== undefined && act.length > 0);
+    dom.setDisplay("#request-panel", req !== undefined && req.length > 0);
+
+    const hasAction = act !== undefined && act.length > 0
+    const optEl = dom.opt("#request-editor");
+    if (optEl) {
+      dom.setDisplay(optEl, !hasAction);
+      dom.setDisplay("#action-panel", hasAction);
+    }
+
     setBreadcrumbs(coll, req, act);
     setTitle(coll, req, act);
   }

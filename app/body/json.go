@@ -5,12 +5,16 @@ import "github.com/kyleu/npn/npncore"
 const KeyJSON = "json"
 
 type JSON struct {
-	Msg    interface{} `json:"msg"`
-	Length int64       `json:"length"`
+	Msg interface{} `json:"msg"`
+	str string
+}
+
+func NewJSON(msg interface{}) *Body {
+	return &Body{Type: KeyJSON, Config: &JSON{Msg: msg}}
 }
 
 func (j *JSON) ContentLength() int64 {
-	return j.Length
+	return int64(len(j.Bytes()))
 }
 
 func (j *JSON) Bytes() []byte {
@@ -22,5 +26,8 @@ func (j *JSON) MimeType() string {
 }
 
 func (j *JSON) String() string {
-	return string(npncore.ToJSON(j.Msg, nil))
+	if len(j.str) == 0 {
+		j.str = npncore.ToJSON(j.Msg, nil)
+	}
+	return j.str
 }

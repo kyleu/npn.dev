@@ -81,6 +81,23 @@ func (f *FileLoader) WriteFile(path string, content []byte, overwrite bool) erro
 	return nil
 }
 
+func (f *FileLoader) CopyFile(src string, tgt string) error {
+	sp := f.getPath(src)
+	tp := f.getPath(tgt)
+	_, err := os.Stat(tgt)
+	if os.IsExist(err) {
+		return errors.New("file [" + tgt + "] exists, will not overwrite")
+	}
+
+	input, err := ioutil.ReadFile(sp)
+	if err != nil {
+		return err
+	}
+
+	err = ioutil.WriteFile(tp, input, 0644)
+	return err
+}
+
 func (f *FileLoader) ListJSON(path string) []string {
 	return f.ListExtension(path, "json")
 }

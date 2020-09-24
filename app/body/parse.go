@@ -49,5 +49,5 @@ func tryParseJson(b []byte) (Config, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &JSON{Msg: x, Length: int64(len(b))}, nil
+	return &JSON{Msg: x}, nil
 }

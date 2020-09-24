@@ -64,9 +64,19 @@ var collection;
             JSX("div", { class: "right" },
                 JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
             JSX("h3", { class: "uk-card-title" }, cn),
-            JSX("div", { id: "request-list", class: "uk-margin-top" }, request.view.renderRequests(coll.key, requests)));
+            JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests)));
     }
     collection.renderCollection = renderCollection;
+    function renderRequests(coll, rs) {
+        return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
+    }
+    function renderRequestLink(coll, r) {
+        let title = r.title;
+        if (!title || r.title.length === 0) {
+            title = r.key;
+        }
+        return JSX("li", null, nav.link("/c/" + coll + "/" + r.key, title));
+    }
 })(collection || (collection = {}));
 var collection;
 (function (collection) {
@@ -667,7 +677,7 @@ var request;
                     if (this.active === req.key) {
                         renderActiveRequest(collection.cache.active, req);
                         if (this.action) {
-                            renderActiveAction(collection.cache.active, req, this.action);
+                            renderActiveAction(collection.cache.active, req, this.action, this.extra);
                         }
                     }
                 }
@@ -695,20 +705,14 @@ var request;
                 console.warn("no active collection");
                 return;
             }
-            if (this.action !== act) {
+            const sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
+            if (this.active && (this.action !== act || !sameExtra)) {
                 this.action = act;
+                this.extra = extra;
                 const r = getActiveRequest();
                 if (r) {
-                    renderActiveAction(collection.cache.active, r, this.action);
+                    renderActiveAction(collection.cache.active, r, this.action, this.extra);
                 }
-            }
-            if (this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; })) {
-                // same
-            }
-            else {
-                this.extra = extra;
-                log.info("Extra: " + this.extra);
-                // TODO setActionExtra(this.action, this.extra);
             }
         }
     }
@@ -716,7 +720,7 @@ var request;
         dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
         request.editor.wireForm(req.key);
     }
-    function renderActiveAction(coll, req, action) {
+    function renderActiveAction(coll, req, action, extra) {
         log.info("Action: " + action);
         switch (action) {
             case undefined:
@@ -1090,26 +1094,6 @@ var request;
             parent.appendChild(createOptionsEditor(el));
         }
         editor.initOptionsEditor = initOptionsEditor;
-        function inputBool(key, v) {
-            if (v) {
-                return JSX("div", null,
-                    JSX("label", { class: "uk-margin-small-right" },
-                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "true", checked: true }),
-                        " True"),
-                    JSX("label", null,
-                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "false" }),
-                        " False"));
-            }
-            else {
-                return JSX("div", null,
-                    JSX("label", { class: "uk-margin-small-right" },
-                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "true" }),
-                        " True"),
-                    JSX("label", null,
-                        JSX("input", { class: "uk-radio", type: "radio", name: key, value: "false", checked: true }),
-                        " False"));
-            }
-        }
         function createOptionsEditor(el) {
             let opts = JSON.parse(el.value);
             if (!opts) {
@@ -1121,16 +1105,16 @@ var request;
                     JSX("input", { class: "uk-input", id: el.id + "-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-ignoreRedirects" }, "Ignore Redirects"),
-                    inputBool(el.id + "-ignoreRedirects", opts.ignoreRedirects || false)),
+                    inputBool(el.id, "ignoreRedirects", opts.ignoreRedirects || false)),
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: "<%= key %>-opt-ignoreReferrer" }, "Ignore Referrer"),
-                    inputBool(el.id + "ignoreReferrer", opts.ignoreReferrer || false)),
+                    JSX("label", { class: "uk-form-label", for: "<%= key %>-ignoreReferrer" }, "Ignore Referrer"),
+                    inputBool(el.id, "ignoreReferrer", opts.ignoreReferrer || false)),
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: "<%= key %>-opt-ignoreCerts" }, "Ignore Certs"),
-                    inputBool(el.id + "ignoreCerts", opts.ignoreCerts || false)),
+                    JSX("label", { class: "uk-form-label", for: el.id + "-ignoreCerts" }, "Ignore Certs"),
+                    inputBool(el.id, "ignoreCerts", opts.ignoreCerts || false)),
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: "<%= key %>-opt-ignoreCookies" }, "Ignore Cookies"),
-                    inputBool(el.id + "ignoreCookies", opts.ignoreCookies || false)),
+                    JSX("label", { class: "uk-form-label", for: el.id + "-ignoreCookies" }, "Ignore Cookies"),
+                    inputBool(el.id, "ignoreCookies", opts.ignoreCookies || false)),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-excludeDefaultHeaders" }, "Exclude Default Headers"),
                     JSX("input", { class: "uk-input", id: el.id + "-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
@@ -1146,6 +1130,28 @@ var request;
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-userAgentOverride" }, "User Agent Override"),
                     JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
+        }
+        function inputBool(key, prop, v) {
+            const n = "opt-" + prop;
+            const id = key + "-" + prop;
+            if (v) {
+                return JSX("div", null,
+                    JSX("label", { class: "uk-margin-small-right" },
+                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "true", checked: true }),
+                        " True"),
+                    JSX("label", null,
+                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "false" }),
+                        " False"));
+            }
+            else {
+                return JSX("div", null,
+                    JSX("label", { class: "uk-margin-small-right" },
+                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "true" }),
+                        " True"),
+                    JSX("label", null,
+                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "false", checked: true }),
+                        " False"));
+            }
         }
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
@@ -1204,29 +1210,46 @@ var request;
                     JSX("legend", { class: "hidden" }, "request form"),
                     JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
                         JSX("div", { class: "right" },
-                            JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
+                            JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
                         JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
-                        form.renderURL(r)),
-                    JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+                        form.renderURL(r),
+                        renderActions(coll, r)),
+                    JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
                         form.renderSwitcher(r),
                         JSX("div", { class: "uk-margin-top" },
                             JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"),
-                            nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true)))));
+                            nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true))),
+                    JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }, "ACTION!")));
         }
         form.renderFormPanel = renderFormPanel;
         function renderDetails(r) {
             return JSX("li", { class: "request-details-panel" },
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: r.key + "-key" }, "Key"),
-                    JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "" })),
+                    JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "", "data-lpignore": "true" })),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: r.key + "-title" }, "Title"),
-                    JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "" })),
+                    JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "", "data-lpignore": "true" })),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
-                    JSX("input", { class: "uk-input", id: r.key + "-description", name: "description", type: "text", value: r.description || "" })));
+                    JSX("input", { class: "uk-input", id: r.key + "-description", name: "description", type: "text", value: r.description || "", "data-lpignore": "true" })));
         }
         form.renderDetails = renderDetails;
+        const transforms = {
+            "http": "HTTP",
+            "json": "JSON",
+            "curl": "curl"
+        };
+        function renderActions(coll, r) {
+            const path = "/c/" + coll + "/" + r.key;
+            return JSX("div", { class: "uk-margin-top" },
+                nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-small-right", "", true),
+                JSX("div", { class: "uk-inline" },
+                    JSX("button", { type: "button", class: "uk-button uk-button-default uk-margin-small-right" }, "Export"),
+                    JSX("div", { id: "export-dropdown", "uk-dropdown": "mode: click" },
+                        JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(k => JSX("li", null, nav.link(path + "/transform/" + k, transforms[k], "", "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);")))))),
+                nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-small-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }", true));
+        }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
 var request;
@@ -1313,146 +1336,6 @@ var request;
         }
         form.renderURL = renderURL;
     })(form = request.form || (request.form = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var view;
-    (function (view) {
-        function renderAuth(auth) {
-            if (!auth || auth.length === 0) {
-                return JSX("em", null, "no authentication");
-            }
-            return JSX("div", null, auth.map(a => JSX("div", { "data-uk-grid": "" },
-                JSX("div", { class: "uk-width-1-4" }, a.type),
-                JSX("div", { class: "uk-width-3-4" },
-                    JSX("pre", null, json.str(a.config))))));
-        }
-        view.renderAuth = renderAuth;
-    })(view = request.view || (request.view = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var view;
-    (function (view) {
-        function renderBody(b) {
-            if (!b) {
-                return JSX("em", null, "no body");
-            }
-            return JSX("div", { "data-uk-grid": "" },
-                JSX("div", { class: "uk-width-1-4" }, (b === null || b === void 0 ? void 0 : b.type) || "?"),
-                JSX("div", { class: "uk-width-3-4" },
-                    JSX("pre", null, json.str(b.config))));
-        }
-        view.renderBody = renderBody;
-    })(view = request.view || (request.view = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var view;
-    (function (view) {
-        function renderPrototype(p) {
-            return JSX("div", { class: "prototype" },
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "URL"),
-                    JSX("div", { class: "uk-width-3-4" },
-                        JSX("div", { class: "url" }, request.prototypeToHTML(p)))),
-                JSX("hr", null),
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "Query Params"),
-                    JSX("div", { class: "uk-width-3-4" }, renderQueryParams(p.query))),
-                JSX("hr", null),
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "Auth"),
-                    JSX("div", { class: "uk-width-3-4" }, view.renderAuth(p.auth))),
-                JSX("hr", null),
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "Body"),
-                    JSX("div", { class: "uk-width-3-4" }, view.renderBody(p.body))),
-                JSX("hr", null),
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "Options"),
-                    JSX("div", { class: "uk-width-3-4" }, renderOptions(p.options))));
-        }
-        view.renderPrototype = renderPrototype;
-        function renderQueryParams(query) {
-            if (!query || query.length === 0) {
-                return JSX("em", null, "no query params");
-            }
-            return JSX("div", null, query.map(qp => JSX("div", { "data-uk-grid": "" },
-                JSX("div", { class: "uk-width-1-4" }, qp.k),
-                JSX("div", { class: "uk-width-3-4" }, qp.v))));
-        }
-        function renderOptions(o) {
-            if (!o || !(o.timeout || o.ignoreRedirects || o.ignoreReferrer || o.ignoreCerts || o.ignoreCookies ||
-                o.excludeDefaultHeaders || o.readCookieJars || o.writeCookieJar || o.sslCert || o.userAgentOverride)) {
-                return JSX("em", null, "no options");
-            }
-            const section = function (title, v) {
-                if (!v) {
-                    return JSX("div", null);
-                }
-                return JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, title),
-                    JSX("div", { class: "uk-width-3-4" }, v));
-            };
-            return JSX("div", null,
-                section("Timeout", o.timeout),
-                section("ignoreRedirects", o.ignoreRedirects),
-                section("ignoreReferrer", o.ignoreReferrer),
-                section("ignoreCerts", o.ignoreCerts),
-                section("ignoreCookies", o.ignoreCookies),
-                section("excludeDefaultHeaders", o.excludeDefaultHeaders),
-                section("readCookieJars", o.readCookieJars),
-                section("writeCookieJar", o.writeCookieJar),
-                section("sslCert", o.sslCert),
-                section("userAgentOverride", o.userAgentOverride));
-        }
-    })(view = request.view || (request.view = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var view;
-    (function (view) {
-        function renderRequests(coll, rs) {
-            return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
-        }
-        view.renderRequests = renderRequests;
-        function renderRequestLink(coll, r) {
-            let title = r.title;
-            if (!title || r.title.length === 0) {
-                title = r.key;
-            }
-            return JSX("li", null, nav.link("/c/" + coll + "/" + r.key, title));
-        }
-        view.renderRequestLink = renderRequestLink;
-        function renderRequestDetail(coll, r) {
-            const path = "/c/" + coll + "/" + r.key;
-            return JSX("div", { class: "req", id: "req-" + r.key },
-                JSX("div", null,
-                    JSX("div", { "data-uk-grid": "" },
-                        JSX("div", { class: "uk-width-1-4" }, "Actions"),
-                        JSX("div", { class: "uk-width-3-4" },
-                            nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-right", "", true),
-                            nav.link(path + "/transform", "Transform", "uk-button uk-button-default uk-margin-right", "", true),
-                            nav.link(path + "/edit", "Edit", "uk-button uk-button-default uk-margin-right", "", true),
-                            nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }", true))),
-                    JSX("hr", null),
-                    JSX("div", { "data-uk-grid": "" },
-                        JSX("div", { class: "uk-width-1-4" }, "Key"),
-                        JSX("div", { class: "uk-width-3-4" }, r.key)),
-                    JSX("hr", null),
-                    JSX("div", { "data-uk-grid": "" },
-                        JSX("div", { class: "uk-width-1-4" }, "Title"),
-                        JSX("div", { class: "uk-width-3-4" }, r.title || "")),
-                    JSX("hr", null),
-                    JSX("div", { "data-uk-grid": "" },
-                        JSX("div", { class: "uk-width-1-4" }, "Description"),
-                        JSX("div", { class: "uk-width-3-4" }, r.description || "")),
-                    JSX("hr", null)),
-                view.renderPrototype(r.prototype));
-        }
-        view.renderRequestDetail = renderRequestDetail;
-    })(view = request.view || (request.view = {}));
 })(request || (request = {}));
 var socket;
 (function (socket) {
@@ -1661,8 +1544,13 @@ var ui;
     function setPanels(coll, req, act) {
         dom.setDisplay("#welcome-panel", coll === undefined);
         dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
-        dom.setDisplay("#request-panel", req !== undefined && req.length > 0 && act === undefined);
-        dom.setDisplay("#action-panel", act !== undefined && act.length > 0);
+        dom.setDisplay("#request-panel", req !== undefined && req.length > 0);
+        const hasAction = act !== undefined && act.length > 0;
+        const optEl = dom.opt("#request-editor");
+        if (optEl) {
+            dom.setDisplay(optEl, !hasAction);
+            dom.setDisplay("#action-panel", hasAction);
+        }
         ui.setBreadcrumbs(coll, req, act);
         setTitle(coll, req, act);
     }
@@ -1946,7 +1834,6 @@ var nav;
             locPath = locPath.substr(1);
         }
         if (locPath !== path) {
-            console.warn("PUSH:" + path);
             history.pushState(path, "", "/" + path);
         }
         handler(path);
