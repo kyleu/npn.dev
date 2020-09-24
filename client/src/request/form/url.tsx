@@ -1,6 +1,6 @@
 namespace request.form {
   export function renderURL(r: request.Request) {
-    return <div>
+    return <div class="uk-margin-top">
       <div class="left" style="width:120px;">
         <select class="uk-select" id={r.key + "-method"} name="method">
           {request.allMethods.map(m => {

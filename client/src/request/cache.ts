@@ -62,9 +62,7 @@ namespace request {
   }
 
   function renderActiveRequest(coll: string, req: request.Request) {
-    log.info("Request: " + req.key)
-    dom.setText("#active-request-title", req.title ? req.title : req.key);
-    dom.setContent("#active-request", request.form.renderForm(coll, req));
+    dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
     request.editor.wireForm(req.key);
   }
 

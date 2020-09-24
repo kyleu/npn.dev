@@ -2,7 +2,7 @@ namespace request.form {
   export function renderSwitcher(r: request.Request) {
     const key = r.key;
     const p = r.prototype;
-    return <div class="uk-margin-top">
+    return <div>
       <ul data-uk-tab="">
         <li><a href="#">Details</a></li>
         <li><a href="#">Query</a></li>

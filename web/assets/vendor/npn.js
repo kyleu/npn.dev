@@ -64,7 +64,7 @@ var collection;
             JSX("div", { class: "right" },
                 JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
             JSX("h3", { class: "uk-card-title" }, cn),
-            JSX("div", { id: "request-list", class: "uk-margin-top" }, request.view.renderRequests(cn, requests)));
+            JSX("div", { id: "request-list", class: "uk-margin-top" }, request.view.renderRequests(coll.key, requests)));
     }
     collection.renderCollection = renderCollection;
 })(collection || (collection = {}));
@@ -713,9 +713,7 @@ var request;
         }
     }
     function renderActiveRequest(coll, req) {
-        log.info("Request: " + req.key);
-        dom.setText("#active-request-title", req.title ? req.title : req.key);
-        dom.setContent("#active-request", request.form.renderForm(coll, req));
+        dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
         request.editor.wireForm(req.key);
     }
     function renderActiveAction(coll, req, action) {
@@ -1198,20 +1196,24 @@ var request;
 (function (request) {
     var form;
     (function (form) {
-        function renderForm(coll, r) {
+        function renderFormPanel(coll, r) {
             return JSX("form", { class: "uk-form-stacked", action: "/browse/" + coll + "/" + r.key + "/save", method: "post", onsubmit: "return false;" },
                 JSX("input", { type: "hidden", name: "coll", value: coll }),
                 JSX("input", { type: "hidden", name: "originalKey", value: r.key }),
                 JSX("fieldset", { class: "uk-fieldset" },
                     JSX("legend", { class: "hidden" }, "request form"),
-                    form.renderURL(r),
-                    JSX("hr", null),
-                    form.renderSwitcher(r),
-                    JSX("div", { class: "uk-margin-top" },
-                        JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"),
-                        nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true))));
+                    JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+                        JSX("div", { class: "right" },
+                            JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
+                        JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
+                        form.renderURL(r)),
+                    JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+                        form.renderSwitcher(r),
+                        JSX("div", { class: "uk-margin-top" },
+                            JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"),
+                            nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true)))));
         }
-        form.renderForm = renderForm;
+        form.renderFormPanel = renderFormPanel;
         function renderDetails(r) {
             return JSX("li", { class: "request-details-panel" },
                 JSX("div", { class: "uk-margin-top" },
@@ -1234,7 +1236,7 @@ var request;
         function renderSwitcher(r) {
             const key = r.key;
             const p = r.prototype;
-            return JSX("div", { class: "uk-margin-top" },
+            return JSX("div", null,
                 JSX("ul", { "data-uk-tab": "" },
                     JSX("li", null,
                         JSX("a", { href: "#" }, "Details")),
@@ -1294,7 +1296,7 @@ var request;
     var form;
     (function (form) {
         function renderURL(r) {
-            return JSX("div", null,
+            return JSX("div", { class: "uk-margin-top" },
                 JSX("div", { class: "left", style: "width:120px;" },
                     JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
                         if (m.key === r.prototype.method) {

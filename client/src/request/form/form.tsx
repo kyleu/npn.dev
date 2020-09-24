@@ -1,19 +1,26 @@
 namespace request.form {
-  export function renderForm(coll: string, r: request.Request) {
+  export function renderFormPanel(coll: string, r: request.Request) {
     return <form class="uk-form-stacked" action={"/browse/" + coll + "/" + r.key + "/save"} method="post" onsubmit="return false;">
       <input type="hidden" name="coll" value={coll} />
       <input type="hidden" name="originalKey" value={r.key} />
       <fieldset class="uk-fieldset">
         <legend class="hidden">request form</legend>
-        {renderURL(r)}
-        <hr />
-        {renderSwitcher(r)}
-        <div class="uk-margin-top">
-          <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
-          {nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true)}
+        <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+          <div class="right">
+            <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close collection" />
+          </div>
+          <h3 class="uk-card-title">{r.title ? r.title : r.key}</h3>
+          {renderURL(r)}
+        </div>
+        <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+          {renderSwitcher(r)}
+          <div class="uk-margin-top">
+            <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
+            {nav.link("/c/" + coll, "Cancel", "right uk-button uk-button-default uk-margin-top uk-margin-right", undefined, true)}
+          </div>
         </div>
       </fieldset>
-    </form>;
+    </form>
   }
 
   export function renderDetails(r: request.Request) {

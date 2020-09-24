@@ -15,6 +15,7 @@ require (
 	github.com/kyleu/npn/npnconnection v1.0.0
 	github.com/kyleu/npn/npncontroller v1.0.0
 	github.com/kyleu/npn/npncore v1.0.0
+	github.com/kyleu/npn/npnscript v1.0.0
 	github.com/kyleu/npn/npnservice v1.0.0
 	github.com/kyleu/npn/npntemplate v1.0.0
 	github.com/kyleu/npn/npnuser v1.0.0
@@ -41,6 +42,8 @@ replace github.com/kyleu/npn/npndatabase => ./npndatabase
 replace github.com/kyleu/npn/npngraphql => ./npngraphql
 
 replace github.com/kyleu/npn/npnservice => ./npnservice
+
+replace github.com/kyleu/npn/npnscript => ./npnscript
 
 replace github.com/kyleu/npn/npnuser => ./npnuser
 

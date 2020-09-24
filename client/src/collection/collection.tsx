@@ -19,7 +19,7 @@ namespace collection {
       </div>
       <h3 class="uk-card-title">{cn}</h3>
       <div id="request-list" class="uk-margin-top">
-        {request.view.renderRequests(cn, requests)}
+        {request.view.renderRequests(coll.key, requests)}
       </div>
     </div>
   }
