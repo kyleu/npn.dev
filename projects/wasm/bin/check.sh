@@ -5,9 +5,11 @@ while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 cd "$DIR"
 
-mkdir -p ./build
+echo "vetting [wasm-test]"
+cd cmd/wasm-test
+go vet
 
-go build -o ./build/ ./cmd/wasm-test
-
+echo "vetting [wasm-npn]"
+cd ../../
 cd cmd/wasm-npn
-GOOS=js GOARCH=wasm go build -o ../../assets/npn.wasm
+go vet
