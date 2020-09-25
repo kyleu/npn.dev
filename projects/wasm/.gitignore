@@ -1,1 +1,6 @@
-assets/npn.wasm
+/.vscode
+/.idea
+/.scannerwork
+/build
+
+/assets/npn.wasm

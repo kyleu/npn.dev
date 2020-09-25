@@ -1,14 +1,14 @@
 package body
 
 import (
-	"io"
-	"io/ioutil"
-
+	"compress/gzip"
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"
+	"io"
+	"io/ioutil"
 )
 
-func Parse(contentType string, contentLength int64, rd io.ReadCloser) (*Body, error) {
+func Parse(contentEncoding string, contentType string, charset string, contentLength int64, rd io.ReadCloser) (*Body, error) {
 	defer func() { _ = rd.Close() }()
 
 	if contentLength > 1024*1024 {
@@ -16,7 +16,18 @@ func Parse(contentType string, contentLength int64, rd io.ReadCloser) (*Body, er
 		return &Body{Type: KeyLarge, Config: cfg}, nil
 	}
 
-	b, err := ioutil.ReadAll(rd)
+	var b []byte
+	var err error
+	contentEncoding, _ = npncore.SplitStringLast(contentEncoding, ';', true)
+	switch contentEncoding {
+	case "", "identity":
+		b, err = ioutil.ReadAll(rd)
+	case "gzip", "deflate":
+		zr, _ := gzip.NewReader(rd)
+		b, err = ioutil.ReadAll(zr)
+	default:
+		return nil, errors.New("unhandled encoding [" + contentEncoding + "]")
+	}
 	if err != nil {
 		return nil, errors.Wrap(err, "can't read body")
 	}
@@ -25,15 +36,15 @@ func Parse(contentType string, contentLength int64, rd io.ReadCloser) (*Body, er
 		return nil, nil
 	}
 
-	return detect(contentType, b), nil
+	return detect(contentType, charset, b), nil
 }
 
-func detect(contentType string, b []byte) *Body {
+func detect(contentType string, charset string, b []byte) *Body {
 	switch contentType {
 	case "application/json":
 		cfg, err := tryParseJSON(b)
 		if err != nil {
-			return detect("", b)
+			return detect("", charset, b)
 		}
 		return &Body{Type: KeyJSON, Config: cfg}
 	case "text/html":

@@ -7,10 +7,10 @@ echo "Building [android]..."
 
 mkdir -p build/android/
 
-go-embed -input web/assets -output app/assets/assets.go
+bin/asset-embed.sh
 echo "gomobile..."
 gomobile bind -o build/android/npn.aar -target=android github.com/kyleu/npn/lib
-git checkout app/assets/assets.go
+bin/asset-reset.sh
 
 cd  projects/android/npn/app/libs
 rm -f npn.aar npn-sources.jar

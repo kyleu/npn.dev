@@ -50,17 +50,11 @@ namespace call {
     if (!t) {
       return <div>No timing</div>;
     }
+
     const sections = timingSections(t);
-
-    // return <div class="timelines-chart" />
-
     return <div class="timing-panel">
       {sections.map(sc => <div>{sc.key}: {sc.start} - {sc.end}</div>)}
-    </div>
-
-    // return <ul class="uk-list uk-list-divider">
-    //   {sections.map(sc => <li>{sc.key}: {sc.start} - {sc.end}</li>)}
-    // </ul>
+    </div>;
   }
 
   function section(k: string, v: string | JSX.Element | undefined) {

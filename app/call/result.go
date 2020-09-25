@@ -1,8 +1,13 @@
 package call
 
-import "github.com/kyleu/npn/app/header"
+import (
+	"github.com/gofrs/uuid"
+	"github.com/kyleu/npn/app/header"
+	"github.com/kyleu/npn/npncore"
+)
 
 type Result struct {
+	ID             uuid.UUID      `json:"id,omitempty"`
 	Collection     string         `json:"collection,omitempty"`
 	Request        string         `json:"request,omitempty"`
 	RequestHeaders header.Headers `json:"requestHeaders,omitempty"`
@@ -13,7 +18,7 @@ type Result struct {
 }
 
 func NewResult(coll string, req string, status string) *Result {
-	return &Result{Collection: coll, Request: req, Status: status}
+	return &Result{ID: npncore.UUID(), Collection: coll, Request: req, Status: status}
 }
 
 func NewErrorResult(coll string, req string, err string) *Result {

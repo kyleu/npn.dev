@@ -1,7 +1,7 @@
 /.vscode
 /.idea
 /.scannerwork
-build
+/build
 /data
 /gen
 /npntemplate/gen

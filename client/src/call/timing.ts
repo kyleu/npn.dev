@@ -1,5 +1,6 @@
 namespace call {
   export interface Timing {
+    readonly began: number,
     readonly dnsStart: number,
     readonly dnsEnd: number,
     readonly connectStart: number,
@@ -15,6 +16,7 @@ namespace call {
 
   export interface TimingSection {
     readonly key: string;
+    readonly group: string;
     readonly start: number;
     readonly end: number;
   }
@@ -22,24 +24,26 @@ namespace call {
   export function timingSections(t: Timing): TimingSection[] {
     const ret: TimingSection[] = [];
 
-    const add = function(k: string, s: number, e: number) {
-      ret.push({key: k, start: s, end: e});
+    const add = function(k: string, g: string, s: number, e: number) {
+      ret.push({key: k, group: g, start: s, end: e});
     }
 
-    add("dns", t.dnsStart, t.dnsEnd);
-    add("connect", t.connectStart, t.connectEnd);
+    add("dns", "connect", t.dnsStart, t.dnsEnd);
+    add("connect", "connect", t.connectStart, t.connectEnd);
 
     let cc = t.connectEnd;
     if ((t.tlsEnd || 0) > 0) {
       cc = t.tlsEnd || 0;
-      add("tls", t.tlsStart || 0, cc);
+      add("tls", "connect", t.tlsStart || 0, cc);
     }
 
-    add("reqheaders", cc, t.wroteHeaders);
-    add("reqbody", t.wroteHeaders, t.wroteRequest);
-    add("rspwait", t.wroteRequest, t.firstResponseByte);
-    add("rspheaders", t.firstResponseByte, t.responseHeaders);
-    add("rspbody", t.responseHeaders, t.completed);
+    add("reqheaders", "request", cc, t.wroteHeaders);
+    if ((t.wroteRequest - t.wroteHeaders) > 2) {
+      add("reqbody", "request", t.wroteHeaders, t.wroteRequest);
+    }
+    add("rspwait", "response", t.wroteRequest, t.firstResponseByte);
+    add("rspheaders", "response", t.firstResponseByte, t.responseHeaders);
+    add("rspbody", "response", t.responseHeaders, t.completed);
     return ret;
   }
 }

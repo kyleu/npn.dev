@@ -34,7 +34,8 @@ func ResponseFromHTTP(r *http.Response) *Response {
 		}
 	}
 	ct, charset := parseCT(headers.GetValue("Content-Type"))
-	bod, err := body.Parse(ct, r.ContentLength, r.Body)
+	ce := headers.GetValue("Content-Encoding")
+	bod, err := body.Parse(ce, ct, charset, r.ContentLength, r.Body)
 	var es *string = nil
 	if err != nil {
 		ex := err.Error()

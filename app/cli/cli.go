@@ -12,12 +12,12 @@ var port uint16
 var dataDir string
 var platform string
 
-func Configure(version string, commitHash string) cobra.Command {
+func Configure() cobra.Command {
 	rootCmd := cobra.Command{
 		Use:   npncore.AppKey,
 		Short: "Command line interface for " + npncore.AppName,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			actualPort, err := Run(addr, port, platform, dataDir, version, commitHash)
+			actualPort, err := Run(addr, port, platform, dataDir)
 			if actualPort > 0 {
 				port = actualPort
 			}

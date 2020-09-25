@@ -5,10 +5,6 @@ while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
 DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
 cd "$DIR"
 
-mkdir -p ./build
-
-cd cmd/wasm-npn
-GOOS=js GOARCH=wasm go build -o ../../assets/npn.wasm
-
-cd ../..
-go build -o ./build/ ./cmd/wasm-test
+echo "Resetting assets..."
+git checkout npnasset/assets/assets.go
+git checkout app/assets/assets.go

@@ -34,23 +34,25 @@ require (
 
 replace github.com/kyleu/npn/npnasset => ./npnasset
 
-replace github.com/kyleu/npn/npncontroller => ./npncontroller
-
 replace github.com/kyleu/npn/npnconnection => ./npnconnection
+
+replace github.com/kyleu/npn/npncontroller => ./npncontroller
 
 replace github.com/kyleu/npn/npncore => ./npncore
 
 replace github.com/kyleu/npn/npndatabase => ./npndatabase
 
+replace github.com/kyleu/npn/npnexport => ./npnexport
+
 replace github.com/kyleu/npn/npngraphql => ./npngraphql
+
+replace github.com/kyleu/npn/npnscript => ./npnscript
 
 replace github.com/kyleu/npn/npnservice => ./npnservice
 
-replace github.com/kyleu/npn/npnservice-fs => ./npnservice-fs
-
 replace github.com/kyleu/npn/npnservice-db => ./npnservice-db
 
-replace github.com/kyleu/npn/npnscript => ./npnscript
+replace github.com/kyleu/npn/npnservice-fs => ./npnservice-fs
 
 replace github.com/kyleu/npn/npnuser => ./npnuser
 

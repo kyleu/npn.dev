@@ -7,15 +7,8 @@ import (
 	"github.com/kyleu/npn/app/cli"
 )
 
-// Provisioned by ldflags
-// nolint: gochecknoglobals
-var (
-	version    string
-	commitHash string
-)
-
 func main() {
-	cmd := cli.Configure(version, commitHash)
+	cmd := cli.Configure()
 
 	err := cmd.Execute()
 	if err != nil {

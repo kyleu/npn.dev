@@ -7,10 +7,10 @@ echo "Building [ios]..."
 
 mkdir -p build/ios/
 
-go-embed -input web/assets -output app/assets/assets.go
+bin/asset-embed.sh
 echo "gomobile..."
 gomobile bind -o build/ios/NpnServer.framework -target=ios github.com/kyleu/npn/lib
-git checkout app/assets/assets.go
+bin/asset-reset.sh
 
 echo "Building [ios] app..."
 

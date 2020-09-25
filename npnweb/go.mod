@@ -15,8 +15,6 @@ require (
 
 replace github.com/kyleu/npn/npncore => ../npncore
 
-replace github.com/kyleu/npn/npndatabase => ../npndatabase
-
 replace github.com/kyleu/npn/npnservice => ../npnservice
 
 replace github.com/kyleu/npn/npnuser => ../npnuser

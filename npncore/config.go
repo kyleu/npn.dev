@@ -1,8 +1,11 @@
 package npncore
 
-var AppKey = "SetAppKey"
-var AppName = "SetAppName"
-var AppPlatform = "SetAppName"
+var (
+	AppKey = "SetAppKey"
+  AppName = "SetAppName"
+  AppPlatform = "SetAppName"
+  AppVersion = "0"
+)
 
 type key int
 

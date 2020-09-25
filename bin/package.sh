@@ -12,7 +12,7 @@ mkdir -p ./build/stage
 rm -rf ./build/package
 mkdir -p ./build/package
 
-cd build/stage
+cd "$DIR/build/stage"
 
 # cp -R "$DIR/data" ./data
 
@@ -21,21 +21,21 @@ pkg () {
   cp "$DIR/build/$1/$2/$3" "./$3"
 
   if [ $2 = "amd64" ]; then
-    zip -r "$DIR/build/package/npn.$4.zip" *
+    zip -r "$DIR/build/package/npn.server.$4.zip" *
   else
-    zip -r "$DIR/build/package/npn.$4.$2.zip" *
+    zip -r "$DIR/build/package/npn.server.$4.$2.zip" *
   fi
 
   rm "./$3"
 }
 
 # macOS
-pkg darwin amd64 npn macos
+pkg darwin amd64 npn macos.server
 
 echo "macOS app..."
 cd ../darwin
-zip -r "npn.macos.zip" npn.app
-mv "npn.macos.zip" "../package"
+zip -r "npn.app.macos.zip" npn.app
+mv "npn.app.macos.zip" "../package"
 cd ../stage
 
 # Linux
@@ -58,23 +58,30 @@ pkg windows arm npn.exe windows
 
 # Docker
 echo "docker..."
-cp "$DIR/build/docker/npn.docker.tar.gz" "$DIR/build/package/npn.docker.tar.gz"
+cp "$DIR/build/docker/npn.docker.tar.gz" "$DIR/build/package/npn.server.docker.tar.gz"
 
 # WASM
 echo "wasm..."
 cp "$DIR/build/js/wasm/npn.wasm" ./npn.wasm
-zip -r "$DIR/build/package/npn.wasm.zip" *
+zip -r "$DIR/build/package/npn.server.wasm.zip" *
 rm ./npn.wasm
+
+# HTML
+echo "html..."
+pwd
+cd "$DIR/projects/wasm/assets"
+zip -r "$DIR/build/package/npn.server.html.zip" *
+cd "$DIR/build/stage"
 
 # Android
 echo "android library..."
 cp "$DIR/build/android/npn.aar" ./npn.aar
-zip -r "$DIR/build/package/npn.android.aar.zip" npn.aar
+zip -r "$DIR/build/package/npn.server.android.zip" npn.aar
 rm ./npn.aar
 
 echo "android app..."
 cp "$DIR/build/android/npn.apk" ./npn.apk
-zip -r "$DIR/build/package/npn.android.apk.zip" npn.apk
+zip -r "$DIR/build/package/npn.app.android.zip" npn.apk
 rm ./npn.apk
 
 # iOS
@@ -90,13 +97,13 @@ cp -R Versions/A/* .
 rm -rf Versions
 cd ..
 
-zip -r "$DIR/build/package/npn.ios.framework.zip" *
+zip -r "$DIR/build/package/npn.server.ios.zip" *
 rm  -rf ./NpnServer.framework
 
 echo "ios app..."
 cd ../ios
-zip -r "npn.ios.app.zip" npn.app
-mv "npn.ios.app.zip" "../package"
+zip -r "npn.app.ios.zip" npn.app
+mv "npn.app.ios.zip" "../package"
 cd ../stage
 
 rm -rf "$DIR/build/stage"

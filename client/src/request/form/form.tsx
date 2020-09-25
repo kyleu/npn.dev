@@ -15,9 +15,7 @@ namespace request.form {
           <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
         </div>
       </div>
-      <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden">
-        ACTION!
-      </div>
+      <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden"/>
     </div>
   }
 

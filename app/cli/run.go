@@ -16,8 +16,10 @@ import (
 	log "logur.dev/logur"
 )
 
-func Run(a string, p uint16, platform string, dir string, version string, commitHash string) (uint16, error) {
-	info, r, err := Start(platform, dir, version, commitHash)
+const Version = "0.0.1"
+
+func Run(a string, p uint16, platform string, dir string) (uint16, error) {
+	info, r, err := Start(platform, dir)
 	if err != nil {
 		return p, err
 	}
@@ -25,8 +27,8 @@ func Run(a string, p uint16, platform string, dir string, version string, commit
 	return npnweb.MakeServer(info, r, a, p)
 }
 
-func Start(platform string, dir string, version string, commitHash string) (npnweb.AppInfo, *mux.Router, error) {
-	info := InitApp(platform, dir, version, commitHash)
+func Start(platform string, dir string) (npnweb.AppInfo, *mux.Router, error) {
+	info := InitApp(platform, dir)
 
 	r, err := controllers.BuildRouter(info)
 	if err != nil {
@@ -38,17 +40,18 @@ func Start(platform string, dir string, version string, commitHash string) (npnw
 	return info, r, nil
 }
 
-func InitApp(platform string, dir string, version string, commitHash string) npnweb.AppInfo {
+func InitApp(platform string, dir string) npnweb.AppInfo {
 	_ = os.Setenv("TZ", "UTC")
 
 	npncore.AppKey = "npn"
 	npncore.AppName = npncore.AppKey
 	npncore.AppPlatform = platform
+	npncore.AppVersion = Version
 
 	npncontroller.FileBrowseRoot = "./data"
 
 	logger := npncore.InitLogging(verbose)
-	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": version, "commit": commitHash})
+	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": Version})
 
 	errorHandler := logur.New(logger)
 	defer emperror.HandleRecover(errorHandler)
@@ -58,5 +61,5 @@ func InitApp(platform string, dir string, version string, commitHash string) npn
 		dir = defaultDirectory()
 	}
 
-	return app.NewService(verbose, dir, version, commitHash, logger)
+	return app.NewService(verbose, dir, logger)
 }

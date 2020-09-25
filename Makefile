@@ -1,20 +1,20 @@
 OS = $(shell uname | tr A-Z a-z)
 
 BUILD_DIR ?= build
-VERSION ?= $(shell git describe --tags --exact-match 2>/dev/null || git symbolic-ref -q --short HEAD)
-COMMIT_HASH ?= $(shell git rev-parse --short HEAD 2>/dev/null)
 DATE_FMT = +%FT%T%z
 ifdef SOURCE_DATE_EPOCH
     BUILD_DATE ?= $(shell date -u -d "@$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u -r "$(SOURCE_DATE_EPOCH)" "$(DATE_FMT)" 2>/dev/null || date -u "$(DATE_FMT)")
 else
     BUILD_DATE ?= $(shell date "$(DATE_FMT)")
 endif
-LDFLAGS += -X main.version=${VERSION} -X main.commitHash=${COMMIT_HASH} -X main.buildDate=${BUILD_DATE}
+
 export CGO_ENABLED ?= 0
+
 ifeq (${VERBOSE}, 1)
 ifeq ($(filter -v,${GOARGS}),)
 	GOARGS += -v
 endif
+
 TEST_FORMAT = short-verbose
 endif
 
@@ -56,23 +56,19 @@ ifeq (${VERBOSE}, 1)
 endif
 
 	@mkdir -p ${BUILD_DIR}
-	go build ${GOARGS} -tags "${GOTAGS}" -ldflags "${LDFLAGS}" -o ${BUILD_DIR}/ ./cmd/...
+	go build ${GOARGS} -tags "${GOTAGS}" -o ${BUILD_DIR}/ ./cmd/...
 
 .PHONY: build-release
 build-release: goversion compile-templates ## Build all binaries without debug information
-	@go-embed -input npnasset/vendor -output npnasset/assets/assets.go
-	@go-embed -input web/assets -output app/assets/assets.go
-	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} LDFLAGS="-w ${LDFLAGS}" GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
-	@git checkout npnasset/assets/assets.go
-	@git checkout app/assets/assets.go
+	@bin/asset-embed.sh
+	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
+	@bin/asset-reset.sh
 
 .PHONY: build-release-force
 build-release-force: goversion compile-templates-force ## Build all binaries without debug information
-	@go-embed -input npnasset/vendor -output npnasset/assets/assets.go
-	@go-embed -input web/assets -output app/assets/assets.go
-	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} LDFLAGS="-w ${LDFLAGS}" GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
-	@git checkout npnasset/assets/assets.go
-	@git checkout app/assets/assets.go
+	@bin/asset-embed.sh
+	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
+	@bin/asset-reset.sh
 
 .PHONY: build-debug
 build-debug: goversion compile-templates ## Build all binaries with remote debugging capabilities
@@ -80,7 +76,7 @@ build-debug: goversion compile-templates ## Build all binaries with remote debug
 
 .PHONY: lint
 lint: ## Run linter
-	bash bin/check.sh
+	@bin/check.sh
 
 .PHONY: help
 help:

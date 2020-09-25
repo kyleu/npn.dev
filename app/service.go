@@ -20,8 +20,6 @@ type Service struct {
 	files      *npncore.FileLoader
 	user       user.Service
 	auth       auth.Service
-	version    string
-	commit     string
 	logger     logur.Logger
 	Collection *collection.Service
 	Import     *imprt.Service
@@ -29,7 +27,7 @@ type Service struct {
 	Socket     *npnconnection.Service
 }
 
-func NewService(debug bool, dataDir string, version string, commitHash string, logger logur.Logger) *Service {
+func NewService(debug bool, dataDir string, logger logur.Logger) *Service {
 	files := npncore.NewFileLoader(dataDir, logger)
 	us := userfs.NewServiceFilesystem(false, files, logger)
 	collSvc := collection.NewService(files, logger)
@@ -40,8 +38,6 @@ func NewService(debug bool, dataDir string, version string, commitHash string, l
 		user:       us,
 		// auth:       authdb.NewServiceDatabase(false, "", nil, logger, us),
 		auth:       authfs.NewServiceNoop(),
-		version:    version,
-		commit:     commitHash,
 		logger:     logger,
 		Collection: collSvc,
 		Import:     imprt.NewService(files, logger),
@@ -64,14 +60,6 @@ func (c *Service) User() user.Service {
 
 func (c *Service) Auth() auth.Service {
 	return c.auth
-}
-
-func (c *Service) Version() string {
-	return c.version
-}
-
-func (c *Service) Commit() string {
-	return c.commit
 }
 
 func (c *Service) Logger() logur.Logger {

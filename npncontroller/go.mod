@@ -17,6 +17,10 @@ replace github.com/kyleu/npn/npndatabase => ../npndatabase
 
 replace github.com/kyleu/npn/npnservice => ../npnservice
 
+replace github.com/kyleu/npn/npnservice-fs => ./npnservice-fs
+
+replace github.com/kyleu/npn/npnservice-db => ./npnservice-db
+
 replace github.com/kyleu/npn/npnuser => ../npnuser
 
 replace github.com/kyleu/npn/npntemplate => ../npntemplate

@@ -12,8 +12,6 @@ type AppInfo interface {
 	Files() *npncore.FileLoader
 	User() user.Service
 	Auth() auth.Service
-	Version() string
-	Commit() string
 	Logger() logur.Logger
 	Valid() bool
 }

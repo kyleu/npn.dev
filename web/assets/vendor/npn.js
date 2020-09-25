@@ -86,6 +86,15 @@ var call;
         dom.setContent(container, call.renderResult(result));
     }
     call.setResult = setResult;
+    function help(x) {
+        console.log(x);
+        let title = "";
+        switch (x.label) {
+            default:
+                title = x.label;
+        }
+        return title + ": " + (x.labelVal / 1000) + "ms";
+    }
 })(call || (call = {}));
 var call;
 (function (call) {
@@ -141,16 +150,12 @@ var call;
             return JSX("div", null, "No timing");
         }
         const sections = call.timingSections(t);
-        // return <div class="timelines-chart" />
         return JSX("div", { class: "timing-panel" }, sections.map(sc => JSX("div", null,
             sc.key,
             ": ",
             sc.start,
             " - ",
             sc.end)));
-        // return <ul class="uk-list uk-list-divider">
-        //   {sections.map(sc => <li>{sc.key}: {sc.start} - {sc.end}</li>)}
-        // </ul>
     }
     function section(k, v) {
         if (!v) {
@@ -166,21 +171,23 @@ var call;
 (function (call) {
     function timingSections(t) {
         const ret = [];
-        const add = function (k, s, e) {
-            ret.push({ key: k, start: s, end: e });
+        const add = function (k, g, s, e) {
+            ret.push({ key: k, group: g, start: s, end: e });
         };
-        add("dns", t.dnsStart, t.dnsEnd);
-        add("connect", t.connectStart, t.connectEnd);
+        add("dns", "connect", t.dnsStart, t.dnsEnd);
+        add("connect", "connect", t.connectStart, t.connectEnd);
         let cc = t.connectEnd;
         if ((t.tlsEnd || 0) > 0) {
             cc = t.tlsEnd || 0;
-            add("tls", t.tlsStart || 0, cc);
+            add("tls", "connect", t.tlsStart || 0, cc);
         }
-        add("reqheaders", cc, t.wroteHeaders);
-        add("reqbody", t.wroteHeaders, t.wroteRequest);
-        add("rspwait", t.wroteRequest, t.firstResponseByte);
-        add("rspheaders", t.firstResponseByte, t.responseHeaders);
-        add("rspbody", t.responseHeaders, t.completed);
+        add("reqheaders", "request", cc, t.wroteHeaders);
+        if ((t.wroteRequest - t.wroteHeaders) > 2) {
+            add("reqbody", "request", t.wroteHeaders, t.wroteRequest);
+        }
+        add("rspwait", "response", t.wroteRequest, t.firstResponseByte);
+        add("rspheaders", "response", t.firstResponseByte, t.responseHeaders);
+        add("rspbody", "response", t.responseHeaders, t.completed);
         return ret;
     }
     call.timingSections = timingSections;
@@ -1504,7 +1511,7 @@ var request;
                     form.renderSwitcher(r),
                     JSX("div", { class: "uk-margin-top hidden" },
                         JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"))),
-                JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }, "ACTION!"));
+                JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }));
         }
         form.renderFormPanel = renderFormPanel;
         function renderDetails(r) {
