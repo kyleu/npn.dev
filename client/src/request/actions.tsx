@@ -14,7 +14,7 @@ namespace request {
     return <div id={coll + "--" + r.key + "-call"}>
       {renderClose(r)}
       <div class="call-title">Loading...</div>
-      <div class="call-result"/>
+      <div class="call-result" />
     </div>;
   }
 

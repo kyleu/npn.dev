@@ -13,13 +13,22 @@ namespace collection {
 
   export function renderCollection(coll: collection.Collection, requests: request.Request[]) {
     const cn = coll.title ? coll.title : coll.key;
-    return <div class="uk-card uk-card-body uk-card-default uk-margin-top">
-      <div class="right">
-        <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close collection" />
+    return <div>
+      <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+        <div class="right">
+          <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close collection" />
+        </div>
+        <h3 class="uk-card-title">{cn}</h3>
+        <p>{coll.description || ""}</p>
       </div>
-      <h3 class="uk-card-title">{cn}</h3>
-      <div id="request-list" class="uk-margin-top">
-        {renderRequests(coll.key, requests)}
+      <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+        <h3 class="uk-card-title">Requests</h3>
+        <form>
+          <input class="uk-input" placeholder="add a request by url" />
+        </form>
+        <div id="request-list" class="uk-margin-top">
+          {renderRequests(coll.key, requests)}
+        </div>
       </div>
     </div>
   }

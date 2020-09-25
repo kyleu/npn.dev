@@ -1,29 +1,24 @@
 namespace request.form {
   export function renderFormPanel(coll: string, r: request.Request) {
-    return <form class="uk-form-stacked" action={"/browse/" + coll + "/" + r.key + "/save"} method="post" onsubmit="return false;">
-      <input type="hidden" name="coll" value={coll} />
-      <input type="hidden" name="originalKey" value={r.key} />
-      <fieldset class="uk-fieldset">
-        <legend class="hidden">request form</legend>
-        <div class="uk-card uk-card-body uk-card-default uk-margin-top">
-          <div class="right">
-            <a class="theme uk-icon" data-uk-icon="close" href="" onclick={"nav.navigate('/c/" + coll + "');return false;"} title="close request" />
-          </div>
-          <h3 class="uk-card-title">{r.title ? r.title : r.key}</h3>
-          {renderURL(r)}
-          {renderActions(coll, r)}
+    return <div>
+      <div class="uk-card uk-card-body uk-card-default">
+        <div class="right">
+          <a class="theme uk-icon" data-uk-icon="close" href="" onclick={"nav.navigate('/c/" + coll + "');return false;"} title="close request" />
         </div>
-        <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
-          {renderSwitcher(r)}
-          <div class="uk-margin-top hidden">
-            <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
-          </div>
+        <h3 class="uk-card-title">{r.title ? r.title : r.key}</h3>
+        {renderURL(r)}
+        {renderActions(coll, r)}
+      </div>
+      <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
+        {renderSwitcher(r)}
+        <div class="uk-margin-top hidden">
+          <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
         </div>
-        <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden">
-          ACTION!
-        </div>
-      </fieldset>
-    </form>
+      </div>
+      <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden">
+        ACTION!
+      </div>
+    </div>
   }
 
   export function renderDetails(r: request.Request) {

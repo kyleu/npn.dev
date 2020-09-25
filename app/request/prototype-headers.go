@@ -34,6 +34,12 @@ func (p *Prototype) FinalHeaders() header.Headers {
 		return ""
 	})
 	check("Host", p.Host)
+	check("Origin", func() string {
+		if p.Method == MethodPost {
+			return p.Protocol.Key + "://" + p.Host();
+		}
+		return "";
+	})
 	check("User-Agent", func() string { return npncore.AppName })
 
 	return ret

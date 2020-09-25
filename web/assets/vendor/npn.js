@@ -20,7 +20,7 @@ var npn;
     }
     npn.init = init;
     function debug() {
-        const dump = function (k, v) {
+        const dump = (k, v) => {
             console.warn(`${k}: ${v}`);
         };
         dump("Active Collection", collection.cache.active);
@@ -33,6 +33,46 @@ var npn;
     }
     npn.testbed = testbed;
 })(npn || (npn = {}));
+var body;
+(function (body) {
+    function renderBody(b) {
+        if (!b) {
+            return JSX("div", null, "No body");
+        }
+        switch (b.type) {
+            case "json":
+                return renderJSON(b.config);
+            case "html":
+                return renderHTML(b.config);
+            default:
+                return JSX("div", null,
+                    "TODO: ",
+                    b.type);
+        }
+    }
+    body.renderBody = renderBody;
+    function renderHTML(h) {
+        return JSX("div", null,
+            JSX("em", null, "HTML"),
+            JSX("pre", { style: "overflow: auto; max-height: 720px;" }, h.content));
+    }
+    function renderJSON(j) {
+        return JSX("div", null,
+            JSX("em", null, "JSON"),
+            JSX("pre", null, json.str(j.msg)));
+    }
+})(body || (body = {}));
+var body;
+(function (body) {
+    body.AllTypes = [
+        { key: "error", title: "Error", hidden: true },
+        { key: "form", title: "Form", hidden: false },
+        { key: "html", title: "HTML", hidden: false },
+        { key: "json", title: "JSON", hidden: false },
+        { key: "large", title: "Large File", hidden: false },
+        { key: "raw", title: "Raw", hidden: true }
+    ];
+})(body || (body = {}));
 var call;
 (function (call) {
     function prepare(coll, r) {
@@ -50,10 +90,100 @@ var call;
 var call;
 (function (call) {
     function renderResult(r) {
-        return JSX("div", { style: "overflow: auto;max-width: 820px;" },
-            JSX("pre", null, json.str(r)));
+        var _a;
+        const statusEl = JSX("div", null,
+            r.status,
+            ": ",
+            (((_a = r.timing) === null || _a === void 0 ? void 0 : _a.completed) || 0) / 1000,
+            "ms");
+        return [
+            JSX("div", { class: "right" },
+                JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
+            section("Result", statusEl),
+            JSX("hr", null),
+            JSX("div", null, renderHeaders("Final Request Headers", r.requestHeaders)),
+            JSX("hr", null),
+            ...renderResponse(r.response),
+            JSX("hr", null),
+            section("Timing", renderTiming(r.timing))
+        ];
     }
     call.renderResult = renderResult;
+    function renderResponse(r) {
+        if (!r) {
+            return [JSX("div", null, "No response")];
+        }
+        return [
+            section("Status", r.status),
+            JSX("hr", null),
+            section("Protocol", r.proto),
+            JSX("hr", null),
+            JSX("div", null, renderHeaders("Response Headers", r.headers)),
+            JSX("hr", null),
+            section("Content", `${r.contentType} (${r.contentLength} bytes)`),
+            JSX("hr", null),
+            section("Body", body.renderBody(r.body)),
+        ];
+    }
+    function renderHeaders(title, headers) {
+        if (!headers) {
+            return section(title, "No headers");
+        }
+        return JSX("div", { class: "uk-overflow-auto" },
+            JSX("h4", null, title),
+            JSX("table", { class: "uk-table uk-table-divider uk-text-left uk-table-small uk-table-justify" },
+                JSX("tbody", null, headers.map(h => JSX("tr", { title: h.desc },
+                    JSX("td", { class: "uk-text-nowrap" }, h.k),
+                    JSX("td", { class: "uk-text-nowrap" }, h.v))))));
+    }
+    function renderTiming(t) {
+        if (!t) {
+            return JSX("div", null, "No timing");
+        }
+        const sections = call.timingSections(t);
+        // return <div class="timelines-chart" />
+        return JSX("div", { class: "timing-panel" }, sections.map(sc => JSX("div", null,
+            sc.key,
+            ": ",
+            sc.start,
+            " - ",
+            sc.end)));
+        // return <ul class="uk-list uk-list-divider">
+        //   {sections.map(sc => <li>{sc.key}: {sc.start} - {sc.end}</li>)}
+        // </ul>
+    }
+    function section(k, v) {
+        if (!v) {
+            v = "undefined";
+        }
+        return JSX("div", null,
+            JSX("h4", null, k),
+            " ",
+            v);
+    }
+})(call || (call = {}));
+var call;
+(function (call) {
+    function timingSections(t) {
+        const ret = [];
+        const add = function (k, s, e) {
+            ret.push({ key: k, start: s, end: e });
+        };
+        add("dns", t.dnsStart, t.dnsEnd);
+        add("connect", t.connectStart, t.connectEnd);
+        let cc = t.connectEnd;
+        if ((t.tlsEnd || 0) > 0) {
+            cc = t.tlsEnd || 0;
+            add("tls", t.tlsStart || 0, cc);
+        }
+        add("reqheaders", cc, t.wroteHeaders);
+        add("reqbody", t.wroteHeaders, t.wroteRequest);
+        add("rspwait", t.wroteRequest, t.firstResponseByte);
+        add("rspheaders", t.firstResponseByte, t.responseHeaders);
+        add("rspbody", t.responseHeaders, t.completed);
+        return ret;
+    }
+    call.timingSections = timingSections;
 })(call || (call = {}));
 var collection;
 (function (collection_1) {
@@ -82,11 +212,17 @@ var collection;
     }
     function renderCollection(coll, requests) {
         const cn = coll.title ? coll.title : coll.key;
-        return JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
-            JSX("div", { class: "right" },
-                JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
-            JSX("h3", { class: "uk-card-title" }, cn),
-            JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests)));
+        return JSX("div", null,
+            JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+                JSX("div", { class: "right" },
+                    JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
+                JSX("h3", { class: "uk-card-title" }, cn),
+                JSX("p", null, coll.description || "")),
+            JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+                JSX("h3", { class: "uk-card-title" }, "Requests"),
+                JSX("form", null,
+                    JSX("input", { class: "uk-input", placeholder: "add a request by url" })),
+                JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests))));
     }
     collection.renderCollection = renderCollection;
     function renderRequests(coll, rs) {
@@ -613,13 +749,13 @@ var tags;
         dom.setDisplay(valueEl, false);
         dom.setDisplay(editorEl, true);
         const input = tags.renderInput(valueEl.innerText);
-        input.onblur = function () {
+        input.onblur = () => {
             valueEl.innerText = input.value;
             dom.setDisplay(valueEl, true);
             dom.setDisplay(editorEl, false);
             updateEditor(el.parentElement);
         };
-        input.onkeypress = function (e) {
+        input.onkeypress = (e) => {
             if (e.key === "Enter") {
                 input.blur();
                 return false;
@@ -693,6 +829,7 @@ var header;
         snch("Content-Length", "The size of the resource, in decimal number of bytes.", true, true),
         snch("Content-Type", "Indicates the media type of the resource.", true, true),
         snch("Cookie", "Contains stored HTTP cookies previously sent by the server with the Set-Cookie header.", true, false),
+        snch("Date", "The Date general HTTP header contains the date and time at which the message was originated.", false, true),
         snch("ETag", "A unique string identifying the version of the resource.", false, true),
         snch("Expires", "The date/time after which the response is considered stale.", false, true),
         snch("Host", "Specifies the domain name of the server (for virtual hosting), and (optionally) the TCP port number on which the server is listening.", true, false),
@@ -709,7 +846,7 @@ var header;
         header.commonHeadersByName.set(ch.key, ch);
     }
     function dumpCommonHeaders() {
-        const dump = function (title, req, rsp) {
+        const dump = (title, req, rsp) => {
             let matched = false;
             console.log("\n::: " + title + " Headers");
             header.commonHeaders.forEach(ch => {
@@ -903,7 +1040,7 @@ var request;
     request.prototypeToHTML = prototypeToHTML;
     function prototypeToURLParts(p) {
         const ret = [];
-        let push = function (t, v) {
+        let push = (t, v) => {
             ret.push({ t: t, v: v });
         };
         push("protocol", p.protocol);
@@ -1002,7 +1139,7 @@ var request;
         function updateBasicAuth(cache, auth) {
             let currentAuth = [];
             try {
-                currentAuth = JSON.parse(cache.auth.value);
+                currentAuth = json.parse(cache.auth.value);
             }
             catch (e) {
                 console.log("invalid auth JSON [" + cache.auth.value + "]");
@@ -1060,8 +1197,46 @@ var request;
     var editor;
     (function (editor) {
         function initBodyEditor(el) {
+            const parent = el.parentElement;
+            parent.appendChild(createBodyEditor(el));
         }
         editor.initBodyEditor = initBodyEditor;
+        function createBodyEditor(el) {
+            const b = json.parse(el.value);
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("select", { class: "uk-select" },
+                    JSX("option", { value: "" }, "No body"),
+                    body.AllTypes.filter(t => !t.hidden).map(t => {
+                        if (b && b.type === t.key) {
+                            return JSX("option", { value: t.key, selected: "selected" }, t.title);
+                        }
+                        else {
+                            return JSX("option", { value: t.key }, t.title);
+                        }
+                    }),
+                    "\u02D9"),
+                body.AllTypes.filter(t => !t.hidden).map(t => {
+                    let cfg = (b && b.type == t.key) ? b.config : null;
+                    return configEditor(t.key, cfg, t.key === (b ? b.type : ""));
+                }));
+        }
+        function configEditor(key, config, active) {
+            let cls = "uk-margin-top body-editor-" + key;
+            if (!active) {
+                cls += " hidden";
+            }
+            switch (key) {
+                case "json":
+                    const j = config;
+                    return JSX("div", { class: cls },
+                        JSX("textarea", { class: "uk-textarea" }, json.str(j ? j.msg : null)));
+                default:
+                    return JSX("div", { class: cls },
+                        "Unimplemented [",
+                        key,
+                        "] editor");
+            }
+        }
         function setBody(cache, body) {
         }
         editor.setBody = setBody;
@@ -1072,7 +1247,7 @@ var request;
     var editor;
     (function (editor) {
         function wireForm(prefix) {
-            const id = function (k) {
+            const id = (k) => {
                 return "#" + prefix + "-" + k;
             };
             const cache = {
@@ -1107,7 +1282,7 @@ var request;
             events(cache.auth, function () {
                 let auth;
                 try {
-                    auth = JSON.parse(cache.auth.value);
+                    auth = json.parse(cache.auth.value);
                 }
                 catch (e) {
                     console.log("invalid auth JSON [" + cache.auth.value + "]");
@@ -1118,7 +1293,7 @@ var request;
             events(cache.qp, function () {
                 let qp;
                 try {
-                    qp = JSON.parse(cache.qp.value);
+                    qp = json.parse(cache.qp.value);
                 }
                 catch (e) {
                     console.log("invalid qp JSON [" + cache.qp.value + "]");
@@ -1129,7 +1304,7 @@ var request;
             events(cache.headers, function () {
                 let h;
                 try {
-                    h = JSON.parse(cache.headers.value);
+                    h = json.parse(cache.headers.value);
                 }
                 catch (e) {
                     console.log("invalid headers JSON [" + cache.headers.value + "]");
@@ -1140,7 +1315,7 @@ var request;
             events(cache.body, function () {
                 let b;
                 try {
-                    b = JSON.parse(cache.body.value);
+                    b = json.parse(cache.body.value);
                 }
                 catch (e) {
                     console.log("invalid body JSON [" + cache.body.value + "]");
@@ -1173,8 +1348,8 @@ var request;
                             JSX("a", { class: style.linkColor, href: "", onclick: "request.editor.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
                                 JSX("span", { "data-uk-icon": "icon: plus" }))),
                         "Description")));
-            const updateFn = function () {
-                const curr = JSON.parse(el.value);
+            const updateFn = () => {
+                const curr = json.parse(el.value);
                 container.innerText = "";
                 container.appendChild(header);
                 if (curr) {
@@ -1210,7 +1385,7 @@ var request;
         }
         editor.initOptionsEditor = initOptionsEditor;
         function createOptionsEditor(el) {
-            let opts = JSON.parse(el.value);
+            let opts = json.parse(el.value);
             if (!opts) {
                 opts = {};
             }
@@ -1318,22 +1493,18 @@ var request;
     var form;
     (function (form) {
         function renderFormPanel(coll, r) {
-            return JSX("form", { class: "uk-form-stacked", action: "/browse/" + coll + "/" + r.key + "/save", method: "post", onsubmit: "return false;" },
-                JSX("input", { type: "hidden", name: "coll", value: coll }),
-                JSX("input", { type: "hidden", name: "originalKey", value: r.key }),
-                JSX("fieldset", { class: "uk-fieldset" },
-                    JSX("legend", { class: "hidden" }, "request form"),
-                    JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
-                        JSX("div", { class: "right" },
-                            JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
-                        JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
-                        form.renderURL(r),
-                        renderActions(coll, r)),
-                    JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
-                        form.renderSwitcher(r),
-                        JSX("div", { class: "uk-margin-top hidden" },
-                            JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"))),
-                    JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }, "ACTION!")));
+            return JSX("div", null,
+                JSX("div", { class: "uk-card uk-card-body uk-card-default" },
+                    JSX("div", { class: "right" },
+                        JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
+                    JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
+                    form.renderURL(r),
+                    renderActions(coll, r)),
+                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
+                    form.renderSwitcher(r),
+                    JSX("div", { class: "uk-margin-top hidden" },
+                        JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"))),
+                JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }, "ACTION!"));
         }
         form.renderFormPanel = renderFormPanel;
         function renderDetails(r) {
@@ -1434,7 +1605,7 @@ var request;
     (function (form) {
         function renderURL(r) {
             const click = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
-            return JSX("div", { class: "uk-margin-top" },
+            return JSX("div", { class: "uk-margin-top uk-panel" },
                 JSX("div", { class: "left", style: "width:120px;" },
                     JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
                         if (m.key === r.prototype.method) {
@@ -1446,8 +1617,7 @@ var request;
                     }))),
                 JSX("div", { class: "uk-inline right", style: "width:calc(100% - 120px);" },
                     JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: click, "uk-icon": "icon: refresh" }),
-                    JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" })),
-                JSX("div", { class: "clear" }));
+                    JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" })));
         }
         form.renderURL = renderURL;
     })(form = request.form || (request.form = {}));
@@ -1512,7 +1682,7 @@ var socket;
         connectTime = Date.now();
         sock = new WebSocket(socketUrl());
         sock.onopen = onSocketOpen;
-        sock.onmessage = (event) => onSocketMessage(JSON.parse(event.data));
+        sock.onmessage = (event) => onSocketMessage(json.parse(event.data));
         sock.onerror = (event) => npn.onError("socket", event.type);
         sock.onclose = onSocketClose;
     }
@@ -1857,6 +2027,10 @@ var json;
         return JSON.stringify(x, null, 2);
     }
     json.str = str;
+    function parse(s) {
+        return JSON.parse(s);
+    }
+    json.parse = parse;
 })(json || (json = {}));
 var log;
 (function (log) {
@@ -1927,12 +2101,12 @@ var log;
 })(log || (log = {}));
 var nav;
 (function (nav) {
-    let handler = function (p) {
+    let handler = (p) => {
         console.info("default nav handler called: " + p);
     };
     function init(f) {
         handler = f;
-        window.onpopstate = function (event) {
+        window.onpopstate = (event) => {
             f(event.state === null ? "" : event.state);
         };
         let path = location.pathname;

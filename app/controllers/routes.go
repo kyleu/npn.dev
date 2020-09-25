@@ -60,6 +60,11 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(requestPath + "/transform").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RequestTransform))).Name(routes.Name("request", "transform"))
 	r.Path(requestPath + "/delete").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RequestDelete))).Name(routes.Name("request", "delete"))
 
+	// Test
+	test := r.Path(routes.Path(npncore.KeyTest)).Subrouter()
+	test.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(TestIndex))).Name(routes.Name(npncore.KeyTest))
+	r.PathPrefix(routes.Path("test/")).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path("test"), http.HandlerFunc(TestCall)))).Name(routes.Name(npncore.KeyTest, "run"))
+
 	// Sandbox
 	sandbox := r.Path(routes.Path(npncore.KeySandbox)).Subrouter()
 	sandbox.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(SandboxList))).Name(routes.Name(npncore.KeySandbox))

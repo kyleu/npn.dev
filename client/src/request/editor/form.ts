@@ -9,7 +9,7 @@ namespace request.editor {
   }
 
   export function wireForm(prefix: string) {
-    const id = function (k: string): string {
+    const id = (k: string): string => {
       return "#" + prefix + "-" + k;
     }
 
@@ -48,7 +48,7 @@ namespace request.editor {
     events(cache.auth, function () {
       let auth: auth.Auth[];
       try {
-        auth = JSON.parse(cache.auth.value);
+        auth = json.parse(cache.auth.value);
       } catch (e) {
         console.log("invalid auth JSON [" + cache.auth.value + "]")
         auth = [];
@@ -59,7 +59,7 @@ namespace request.editor {
     events(cache.qp, function () {
       let qp: QueryParam[]
       try {
-        qp = JSON.parse(cache.qp.value);
+        qp = json.parse(cache.qp.value);
       } catch (e) {
         console.log("invalid qp JSON [" + cache.qp.value + "]")
         qp = [];
@@ -70,7 +70,7 @@ namespace request.editor {
     events(cache.headers, function () {
       let h: header.Header[]
       try {
-        h = JSON.parse(cache.headers.value);
+        h = json.parse(cache.headers.value);
       } catch (e) {
         console.log("invalid headers JSON [" + cache.headers.value + "]")
         h = [];
@@ -81,7 +81,7 @@ namespace request.editor {
     events(cache.body, function () {
       let b: body.Body | undefined
       try {
-        b = JSON.parse(cache.body.value);
+        b = json.parse(cache.body.value);
       } catch (e) {
         console.log("invalid body JSON [" + cache.body.value + "]")
       }

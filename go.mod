@@ -15,11 +15,11 @@ require (
 	github.com/kyleu/npn/npnconnection v1.0.0
 	github.com/kyleu/npn/npncontroller v1.0.0
 	github.com/kyleu/npn/npncore v1.0.0
-	github.com/kyleu/npn/npnscript v1.0.0
 	github.com/kyleu/npn/npnservice v1.0.0
 	github.com/kyleu/npn/npntemplate v1.0.0
 	github.com/kyleu/npn/npnuser v1.0.0
 	github.com/kyleu/npn/npnweb v1.0.0
+	github.com/mccutchen/go-httpbin v1.1.1
 	github.com/pyros2097/go-embed v0.0.0-20200430035352-0689b0033fd1 // indirect
 	github.com/sagikazarmark/ocmux v0.2.0
 	github.com/shiyanhui/hero v0.0.2

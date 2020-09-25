@@ -1,11 +1,28 @@
 namespace call {
+  export interface Response {
+    readonly status: string;
+    readonly statusCode?: number;
+    readonly proto?: string;
+    readonly protoMajor?: number;
+    readonly protoMinor?: number;
+    readonly headers?: header.Header[];
+    readonly contentLength?: number;
+    readonly contentType?: string;
+    readonly charset?: string;
+    readonly transferEncoding?: string[];
+    readonly close?: boolean;
+    readonly uncompressed?: boolean;
+    readonly body?: body.Body;
+    readonly error?: string;
+  }
+
   export interface Result {
     readonly collection: string;
     readonly request: string;
-    readonly requestHeaders: header.Header[];
+    readonly requestHeaders?: header.Header[];
     readonly status: string;
-    readonly response: string;
-    readonly timing: string;
+    readonly response?: Response;
+    readonly timing?: Timing;
     readonly error?: string;
   }
 

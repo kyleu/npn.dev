@@ -2,6 +2,7 @@ package call
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/kyleu/npn/app/body"
 	"github.com/kyleu/npn/app/header"
@@ -9,7 +10,7 @@ import (
 )
 
 type Response struct {
-	Status           string         `json:"status,omitempty"`
+	Status           string         `json:"status"`
 	StatusCode       int            `json:"statusCode,omitempty"`
 	Proto            string         `json:"proto,omitempty"`
 	ProtoMajor       int            `json:"protoMajor,omitempty"`
@@ -61,5 +62,7 @@ func ResponseFromHTTP(r *http.Response) *Response {
 }
 
 func parseCT(h string) (string, string) {
-	return npncore.SplitString(h, ';', true)
+	ct, cs := npncore.SplitString(h, ';', true)
+	cs = strings.TrimSpace(strings.TrimPrefix(strings.TrimPrefix(strings.TrimSpace(cs), "charset"), "="))
+	return strings.TrimSpace(ct), cs
 }

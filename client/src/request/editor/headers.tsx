@@ -24,8 +24,8 @@ namespace request.editor {
       </div>
     </li>;
 
-    const updateFn = function() {
-      const curr = JSON.parse(el.value) as header.Header[];
+    const updateFn = () => {
+      const curr = json.parse(el.value) as header.Header[];
       container.innerText = ""
       container.appendChild(header);
       if (curr) {

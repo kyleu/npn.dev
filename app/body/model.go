@@ -45,6 +45,27 @@ func (b *Body) UnmarshalJSON(data []byte) error {
 	}
 	b.Type = x.Type
 	switch b.Type {
+	case KeyError:
+		e := &Error{}
+		err = json.Unmarshal(x.Config, &e)
+		if err != nil {
+			return err
+		}
+		b.Config = e
+	case KeyForm:
+		f := &Form{}
+		err = json.Unmarshal(x.Config, &f)
+		if err != nil {
+			return err
+		}
+		b.Config = f
+	case KeyHTML:
+		h := &HTML{}
+		err = json.Unmarshal(x.Config, &h)
+		if err != nil {
+			return err
+		}
+		b.Config = h
 	case KeyJSON:
 		js := &JSON{}
 		err = json.Unmarshal(x.Config, &js)
@@ -59,13 +80,6 @@ func (b *Body) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		b.Config = l
-	case KeyError:
-		e := &Error{}
-		err = json.Unmarshal(x.Config, &e)
-		if err != nil {
-			return err
-		}
-		b.Config = e
 	case KeyRaw:
 		raw := &Raw{}
 		err = json.Unmarshal(x.Config, &raw)

@@ -10,15 +10,10 @@
       </div>
       <div class="uk-navbar-right">
         <ul class="uk-navbar-nav">
-          <%== npnweb.NavbarContent %>
-          <li class="uk-margin-small-right">
-            <% if len(ctx.Profile.Picture) == 0 || ctx.Profile.Picture == "none" { %>
-            <a href="<%= ctx.Route(npncore.KeyProfile) %>" data-uk-icon="icon:user" title="Profile"></a>
-            <% } else { %>
-            <a href="<%= ctx.Route(npncore.KeyProfile) %>" title="Profile">
+          <%== npnweb.NavbarContent %><li class="uk-margin-small-right">
+            <% if len(ctx.Profile.Picture) == 0 || ctx.Profile.Picture == "none" { %><a href="<%= ctx.Route(npncore.KeyProfile) %>" data-uk-icon="icon:user" title="Profile"></a><% } else { %><a href="<%= ctx.Route(npncore.KeyProfile) %>" title="Profile">
               <img class="uk-border-circle" alt="user profile" src="<%= ctx.Profile.Picture %>" />
-            </a>
-            <% } %>
+            </a><% } %>
           </li>
         </ul>
         <% if showToggle { %><a href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a><% } %>

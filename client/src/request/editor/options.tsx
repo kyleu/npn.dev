@@ -5,7 +5,7 @@ namespace request.editor {
   }
 
   function createOptionsEditor(el: HTMLTextAreaElement) {
-    let opts = JSON.parse(el.value) as Options;
+    let opts = json.parse(el.value) as Options;
 
     if(!opts) {
       opts = {} as Options
@@ -61,11 +61,11 @@ namespace request.editor {
     if (v) {
       return <div>
         <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={n} value="true" checked/> True</label>
-        <label><input class="uk-radio" type="radio" name={n} value="false"/> False</label>
+        <label><input class="uk-radio" type="radio" name={n} value="false" /> False</label>
       </div>
     } else {
       return <div>
-        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={n} value="true"/> True</label>
+        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={n} value="true" /> True</label>
         <label><input class="uk-radio" type="radio" name={n} value="false" checked/> False</label>
       </div>
     }

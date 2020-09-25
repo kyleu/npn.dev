@@ -1,6 +1,6 @@
 package body
 
-const KeyHTML = "HTML"
+const KeyHTML = "html"
 
 type HTML struct {
 	Content string `json:"content"`

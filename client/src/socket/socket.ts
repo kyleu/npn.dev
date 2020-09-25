@@ -37,7 +37,7 @@ namespace socket {
 
     sock = new WebSocket(socketUrl());
     sock.onopen = onSocketOpen;
-    sock.onmessage = (event) => onSocketMessage(JSON.parse(event.data));
+    sock.onmessage = (event) => onSocketMessage(json.parse(event.data));
     sock.onerror = (event) => npn.onError("socket", event.type);
     sock.onclose = onSocketClose;
   }

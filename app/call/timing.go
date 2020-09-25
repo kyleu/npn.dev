@@ -15,22 +15,22 @@ type TimingSection struct {
 }
 
 type Timing struct {
-	began             int64
-	DNSStart          int `json:"dnsStart,omitempty"`
-	DNSEnd            int `json:"dnsEnd,omitempty"`
-	ConnectStart      int `json:"connectStart,omitempty"`
-	ConnectEnd        int `json:"connectEnd,omitempty"`
-	TLSStart          int `json:"tlsStart,omitempty"`
-	TLSEnd            int `json:"tlsEnd,omitempty"`
-	WroteHeaders      int `json:"wroteHeaders,omitempty"`
-	WroteRequest      int `json:"wroteRequest,omitempty"`
-	FirstResponseByte int `json:"firstResponseByte,omitempty"`
-	ResponseHeaders   int `json:"responseHeaders,omitempty"`
-	Completed         int `json:"complete,omitempty"`
+	Began             int64 `json:"began,omitempty"`
+	DNSStart          int   `json:"dnsStart,omitempty"`
+	DNSEnd            int   `json:"dnsEnd,omitempty"`
+	ConnectStart      int   `json:"connectStart,omitempty"`
+	ConnectEnd        int   `json:"connectEnd,omitempty"`
+	TLSStart          int   `json:"tlsStart,omitempty"`
+	TLSEnd            int   `json:"tlsEnd,omitempty"`
+	WroteHeaders      int   `json:"wroteHeaders,omitempty"`
+	WroteRequest      int   `json:"wroteRequest,omitempty"`
+	FirstResponseByte int   `json:"firstResponseByte,omitempty"`
+	ResponseHeaders   int   `json:"responseHeaders,omitempty"`
+	Completed         int   `json:"completed,omitempty"`
 }
 
 func (t *Timing) Begin() {
-	t.began = time.Now().UnixNano()
+	t.Began = time.Now().UnixNano()
 }
 
 func (t *Timing) DNS() (int, int) {
@@ -56,8 +56,48 @@ func (t *Timing) ConnectComplete() int {
 	return t.ConnectEnd
 }
 
+func (t *Timing) CompleteHeaders() {
+	t.ResponseHeaders = int((npncore.StartTimer() - t.Began) / 1000)
+}
+
+func (t *Timing) Complete() {
+	t.Completed = int((npncore.StartTimer() - t.Began) / 1000)
+}
+
 func (t *Timing) Duration() int {
 	return t.Completed
+}
+
+func (t *Timing) Trace() *httptrace.ClientTrace {
+	return &httptrace.ClientTrace{
+		DNSStart: func(httptrace.DNSStartInfo) {
+			t.DNSStart = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		DNSDone: func(httptrace.DNSDoneInfo) {
+			t.DNSEnd = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		ConnectStart: func(string, string) {
+			t.ConnectStart = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		ConnectDone: func(string, string, error) {
+			t.ConnectEnd = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		TLSHandshakeStart: func() {
+			t.TLSStart = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		TLSHandshakeDone: func(tls.ConnectionState, error) {
+			t.TLSEnd = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		WroteHeaders: func() {
+			t.WroteHeaders = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		WroteRequest: func(httptrace.WroteRequestInfo) {
+			t.WroteRequest = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+		GotFirstResponseByte: func() {
+			t.FirstResponseByte = int((npncore.StartTimer() - t.Began) / 1000)
+		},
+	}
 }
 
 func (t *Timing) Sections() []*TimingSection {
@@ -76,44 +116,4 @@ func (t *Timing) Sections() []*TimingSection {
 	add("rspheaders", t.FirstResponseByte, t.ResponseHeaders)
 	add("rspbody", t.ResponseHeaders, t.Completed)
 	return ret
-}
-
-func (t *Timing) Trace() *httptrace.ClientTrace {
-	return &httptrace.ClientTrace{
-		DNSStart: func(httptrace.DNSStartInfo) {
-			t.DNSStart = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		DNSDone: func(httptrace.DNSDoneInfo) {
-			t.DNSEnd = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		ConnectStart: func(string, string) {
-			t.ConnectStart = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		ConnectDone: func(string, string, error) {
-			t.ConnectEnd = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		TLSHandshakeStart: func() {
-			t.TLSStart = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		TLSHandshakeDone: func(tls.ConnectionState, error) {
-			t.TLSEnd = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		WroteHeaders: func() {
-			t.WroteHeaders = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		WroteRequest: func(httptrace.WroteRequestInfo) {
-			t.WroteRequest = int((npncore.StartTimer() - t.began) / 1000)
-		},
-		GotFirstResponseByte: func() {
-			t.FirstResponseByte = int((npncore.StartTimer() - t.began) / 1000)
-		},
-	}
-}
-
-func (t *Timing) CompleteHeaders() {
-	t.ResponseHeaders = int((npncore.StartTimer() - t.began) / 1000)
-}
-
-func (t *Timing) Complete() {
-	t.Completed = int((npncore.StartTimer() - t.began) / 1000)
 }

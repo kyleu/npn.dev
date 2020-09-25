@@ -14,7 +14,7 @@ namespace request {
 
   function prototypeToURLParts(p: Prototype): Part[] {
     const ret: Part[] = []
-    let push = function(t: string, v: string) {
+    let push = (t: string, v: string) => {
       ret.push({t: t, v: v});
     }
 

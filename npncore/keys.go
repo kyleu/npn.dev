@@ -58,6 +58,7 @@ const (
 	KeyStatus     = "status"
 	KeySvc        = "svc"
 	KeySystem     = "system"
+	KeyTest       = "test"
 	KeyTheme      = "theme"
 	KeyTitle      = "title"
 	KeyTranscript = "transcript"

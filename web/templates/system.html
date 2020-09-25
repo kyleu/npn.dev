@@ -6,12 +6,8 @@
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-card-default">
       <h3 class="uk-card-title">
-        <span class="right">
-          <a class="theme uk-icon-button uk-margin-left" data-uk-icon="question" href="<%= ctx.Route(`about`) %>" title="about <%= npncore.AppName %>"></a>
-        </span>
         <%= npncore.AppName %>
       </h3>
-      <p>Coming soon!</p>
     </div>
     <div class="uk-grid-small uk-grid-match uk-child-width-expand@s" data-uk-grid>
       <div>
@@ -19,16 +15,18 @@
           <ul class="uk-list uk-list-divider">
             <li><a class="theme" href="<%= ctx.Route(`collection`) %>">Collections</a></li>
             <li><a class="theme" href="<%= ctx.Route(`import.form`) %>">Import</a></li>
-            <li><a class="theme" href="<%= ctx.Route(npncore.KeySandbox) %>"><%= npncore.PluralTitle(npncore.KeySandbox) %></a></li>
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeyTest) %>">HTTP Tests</a></li>
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeyFile + `.root`) %>">File System</a></li>
           </ul>
         </div>
       </div>
       <div>
         <div class="uk-card uk-card-body uk-card-default uk-margin-top">
           <ul class="uk-list uk-list-divider">
+            <li><a class="theme" href="<%= ctx.Route(npncore.KeySandbox) %>"><%= npncore.PluralTitle(npncore.KeySandbox) %></a></li>
             <li><a class="theme" href="<%= ctx.Route(npncore.KeyRoutes) %>">Routes</a></li>
             <li><a class="theme" href="<%= ctx.Route(npncore.KeyModules) %>">Modules</a></li>
-            <li><a class="theme" href="<%= ctx.Route(npncore.KeyFile + `.root`) %>">File System</a></li>
+            <li><a class="theme" href="<%= ctx.Route(`about`) %>">About</a></li>
           </ul>
         </div>
       </div>

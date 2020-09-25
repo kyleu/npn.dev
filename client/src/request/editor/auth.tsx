@@ -25,7 +25,7 @@ namespace request.editor {
   export function updateBasicAuth(cache: Cache, auth: auth.Auth[] | undefined) {
     let currentAuth: auth.Auth[] = [];
     try {
-      currentAuth = JSON.parse(cache.auth.value);
+      currentAuth = json.parse(cache.auth.value);
     } catch (e) {
       console.log("invalid auth JSON [" + cache.auth.value + "]")
     }

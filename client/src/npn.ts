@@ -21,7 +21,7 @@ namespace npn {
   }
 
   export function debug() {
-    const dump = function(k: string, v?: string) {
+    const dump = (k: string, v?: string) => {
       console.warn(`${k}: ${v}`);
     }
     dump("Active Collection", collection.cache.active);

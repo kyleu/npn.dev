@@ -30,13 +30,13 @@ namespace tags {
     dom.setDisplay(valueEl, false);
     dom.setDisplay(editorEl, true);
     const input = renderInput(valueEl.innerText) as HTMLInputElement;
-    input.onblur = function() {
+    input.onblur = () => {
       valueEl.innerText = input.value;
       dom.setDisplay(valueEl, true);
       dom.setDisplay(editorEl, false);
       updateEditor(el.parentElement!);
     };
-    input.onkeypress = function(e) {
+    input.onkeypress = (e) => {
       if (e.key === "Enter") {
         input.blur();
         return false;

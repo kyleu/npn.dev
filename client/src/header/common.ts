@@ -30,6 +30,7 @@ namespace header {
     snch("Content-Length", "The size of the resource, in decimal number of bytes.", true, true),
     snch("Content-Type", "Indicates the media type of the resource.", true, true),
     snch("Cookie", "Contains stored HTTP cookies previously sent by the server with the Set-Cookie header.", true, false),
+    snch("Date", "The Date general HTTP header contains the date and time at which the message was originated.", false, true),
     snch("ETag", "A unique string identifying the version of the resource.", false, true),
     snch("Expires", "The date/time after which the response is considered stale.", false, true),
     snch("Host", "Specifies the domain name of the server (for virtual hosting), and (optionally) the TCP port number on which the server is listening.", true, false),
@@ -48,7 +49,7 @@ namespace header {
   }
 
   export function dumpCommonHeaders() {
-    const dump = function(title: string, req: boolean, rsp: boolean) {
+    const dump = (title: string, req: boolean, rsp: boolean) => {
       let matched = false;
       console.log("\n::: " + title + " Headers");
       commonHeaders.forEach(ch => {

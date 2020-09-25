@@ -1,11 +1,11 @@
 namespace nav {
-  let handler = function (p: string) {
+  let handler = (p: string) => {
     console.info("default nav handler called: " + p);
   }
 
   export function init(f: (p: string) => void) {
     handler = f;
-    window.onpopstate = function (event: PopStateEvent) {
+    window.onpopstate = (event: PopStateEvent) => {
       f(event.state === null ? "" : (event.state as string));
     }
     let path = location.pathname;
