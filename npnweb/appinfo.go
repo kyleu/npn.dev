@@ -11,7 +11,7 @@ type AppInfo interface {
 	Debug() bool
 	Files() *npncore.FileLoader
 	User() user.Service
-	Auth() *auth.Service
+	Auth() auth.Service
 	Version() string
 	Commit() string
 	Logger() logur.Logger

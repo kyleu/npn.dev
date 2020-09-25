@@ -73,7 +73,7 @@ func ProfileSave(w http.ResponseWriter, r *http.Request) {
 
 func ProfilePic(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		if !ctx.App.Auth().Enabled {
+		if !ctx.App.Auth().Enabled() {
 			return "", auth.ErrorAuthDisabled
 		}
 		id, err := npnweb.IDFromParams(npncore.KeyID, mux.Vars(r))

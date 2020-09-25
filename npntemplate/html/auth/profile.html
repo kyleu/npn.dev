@@ -7,7 +7,7 @@
     <div class="uk-grid-match uk-grid-small" data-uk-grid>
       <%
         var width = "1-1"
-        if ctx.App.Auth().Enabled {
+        if ctx.App.Auth().Enabled() {
           width = "2-3"
         }
       %>
@@ -48,7 +48,7 @@
           </form>
         </div>
       </div>
-      <% if ctx.App.Auth().Enabled { %>
+      <% if ctx.App.Auth().Enabled() { %>
         <div class="uk-width-1-3@m">
           <% AuthSigninList(auths, ctx, _buffer) %>
         </div>

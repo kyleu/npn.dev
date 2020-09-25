@@ -1,7 +1,8 @@
-package user
+package userfs
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npnservice/user"
 	"time"
 
 	"golang.org/x/text/language"
@@ -13,7 +14,7 @@ import (
 	"logur.dev/logur"
 )
 
-var systemUser = &SystemUser{
+var systemUser = &user.SystemUser{
 	UserID:    uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000"),
 	Name:      "Guest",
 	Role:      "admin",
@@ -36,17 +37,17 @@ func NewServiceFilesystem(multiuser bool, files *npncore.FileLoader, logger logu
 	return &ServiceFilesystem{Multiuser: multiuser, files: files, logger: logger}
 }
 
-func (s *ServiceFilesystem) new(userID uuid.UUID) (*SystemUser, error) {
+func (s *ServiceFilesystem) new(userID uuid.UUID) (*user.SystemUser, error) {
 	s.logger.Info("creating user [" + userID.String() + "]")
 	np := npnuser.NewUserProfile(userID, "Guest")
 	p, err := s.SaveProfile(np)
-	return FromProfile(p, time.Now()), err
+	return user.FromProfile(p, time.Now()), err
 }
 
-func (s *ServiceFilesystem) List(params *npncore.Params) SystemUsers {
+func (s *ServiceFilesystem) List(params *npncore.Params) user.SystemUsers {
 	params = npncore.ParamsWithDefaultOrdering(npncore.KeyUser, params, npncore.DefaultCreatedOrdering...)
 
-	var ret SystemUsers
+	var ret user.SystemUsers
 
 	if s.Multiuser {
 		// TODO s.files.ListDirectories("/users")
@@ -57,7 +58,7 @@ func (s *ServiceFilesystem) List(params *npncore.Params) SystemUsers {
 	return ret
 }
 
-func (s *ServiceFilesystem) GetByID(userID uuid.UUID, addIfMissing bool) *SystemUser {
+func (s *ServiceFilesystem) GetByID(userID uuid.UUID, addIfMissing bool) *user.SystemUser {
 	tgt := &npnuser.UserProfile{}
 	fn := s.filenameFor(userID)
 	exists, _ := s.files.Exists(fn)
@@ -79,11 +80,11 @@ func (s *ServiceFilesystem) GetByID(userID uuid.UUID, addIfMissing bool) *System
 	} else {
 		return nil
 	}
-	return FromProfile(tgt, time.Now())
+	return user.FromProfile(tgt, time.Now())
 }
 
-func (s *ServiceFilesystem) GetByCreated(d *time.Time, params *npncore.Params) SystemUsers {
-	var ret SystemUsers
+func (s *ServiceFilesystem) GetByCreated(d *time.Time, params *npncore.Params) user.SystemUsers {
+	var ret user.SystemUsers
 	// TODO maybe
 	return ret
 }

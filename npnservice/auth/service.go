@@ -1,87 +1,53 @@
 package auth
 
 import (
-	"fmt"
+	"emperror.dev/errors"
+	"github.com/gofrs/uuid"
+	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnuser"
+	"golang.org/x/oauth2"
 	"io/ioutil"
 	"net/http"
-	"strings"
-
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npndatabase"
-	"github.com/kyleu/npn/npnservice/user"
-
-	"github.com/gofrs/uuid"
-	"logur.dev/logur"
 )
 
-type Service struct {
-	Enabled          bool
-	EnabledProviders Providers
-	redir            string
-	db               *npndatabase.Service
-	logger           logur.Logger
-	users            user.Service
+type Service interface {
+	Enabled() bool
+	EnabledProviders() Providers
+
+	URLFor(state string, prv *Provider) string
+	FullURL(path string) string
+	GetToken(prv *Provider, code string) (*oauth2.Token, error)
+	Handle(profile *npnuser.UserProfile, prv *Provider, code string) (*Record, error)
+
+	List(params *npncore.Params) Records
+	GetByID(authID uuid.UUID) *Record
+	GetByUserID(userID uuid.UUID, params *npncore.Params) Records
+	GetDisplayByUserID(userID uuid.UUID, params *npncore.Params) (Records, Displays)
+	Delete(authID uuid.UUID) error
 }
 
-func NewService(enabled bool, redir string /* actions *action.Service, */, db *npndatabase.Service, logger logur.Logger, users user.Service) *Service {
-	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyAuth})
-
-	if !strings.HasPrefix(redir, "http") {
-		redir = "https://" + redir
-	}
-	if !strings.HasSuffix(redir, "/") {
-		redir += "/"
-	}
-
-	svc := Service{
-		Enabled: enabled,
-		redir:   redir,
-		db:      db,
-		logger:  logger,
-		users:   users,
-	}
-
-	for _, p := range AllProviders {
-		cfg := svc.getConfig(p)
-		if cfg != nil {
-			svc.EnabledProviders = append(svc.EnabledProviders, p)
-		}
-	}
-	if len(svc.EnabledProviders) == 0 {
-		svc.Enabled = false
-	} else {
-		logger.Info("auth service started for [" + strings.Join(svc.EnabledProviders.Names(), ", ") + "]")
-	}
-
-	return &svc
-}
-
-func (s *Service) GetDisplayByUserID(userID uuid.UUID, params *npncore.Params) (Records, Displays) {
-	if !s.Enabled {
-		return nil, nil
-	}
-
-	params = npncore.ParamsWithDefaultOrdering(npncore.KeyAuth, params, npncore.DefaultCreatedOrdering...)
-	var dtos []recordDTO
-	q := npndatabase.SQLSelect("*", npncore.KeyAuth, "user_id = $1", params.OrderByString(), params.Limit, params.Offset)
-	err := s.db.Select(&dtos, q, nil, userID)
+func DecodeRecord(s Service, prv *Provider, code string) (*Record, error) {
+	tok, err := s.GetToken(prv, code)
 	if err != nil {
-		s.logger.Error(fmt.Sprintf("error retrieving auth entries for user [%v]: %+v", userID, err))
+		return nil, errors.Wrap(err, "error getting token")
+	}
+
+	switch prv {
+	case &ProviderGoogle:
+		return googleAuth(tok)
+	case &ProviderGitHub:
+		return githubAuth(tok)
+	case &ProviderSlack:
+		return slackAuth(tok)
+	case &ProviderFacebook:
+		return facebookAuth(tok)
+	case &ProviderAmazon:
+		return amazonAuth(tok)
+	case &ProviderMicrosoft:
+		return microsoftAuth(tok)
+	default:
 		return nil, nil
 	}
-	rec := make(Records, 0, len(dtos))
-	for _, dto := range dtos {
-		rec = append(rec, dto.toRecord())
-	}
-	disp := make(Displays, 0, len(rec))
-	for _, r := range rec {
-		disp = append(disp, r.ToDisplay())
-	}
-	return rec, disp
-}
-
-func (s *Service) FullURL(path string) string {
-	return s.redir + strings.TrimPrefix(path, "/")
 }
 
 func callHTTP(url string, auth string) ([]byte, error) {

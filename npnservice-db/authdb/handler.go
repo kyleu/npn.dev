@@ -1,13 +1,14 @@
-package auth
+package authdb
 
 import (
 	"emperror.dev/errors"
+	"github.com/kyleu/npn/npnservice/auth"
 	"github.com/kyleu/npn/npnuser"
 )
 
-func (s *Service) Handle(profile *npnuser.UserProfile, prv *Provider, code string) (*Record, error) {
-	if !s.Enabled {
-		return nil, ErrorAuthDisabled
+func (s *ServiceDatabase) Handle(profile *npnuser.UserProfile, prv *auth.Provider, code string) (*auth.Record, error) {
+	if !s.Enabled() {
+		return nil, auth.ErrorAuthDisabled
 	}
 
 	if profile == nil {
@@ -19,7 +20,7 @@ func (s *Service) Handle(profile *npnuser.UserProfile, prv *Provider, code strin
 		return nil, errors.New("no auth config for [" + prv.Key + "]")
 	}
 
-	record, err := s.decodeRecord(prv, code)
+	record, err := auth.DecodeRecord(s, prv, code)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving auth profile")
 	}
@@ -56,7 +57,7 @@ func (s *Service) Handle(profile *npnuser.UserProfile, prv *Provider, code strin
 	return s.mergeProfile(profile, record)
 }
 
-func (s *Service) mergeProfile(p *npnuser.UserProfile, record *Record) (*Record, error) {
+func (s *ServiceDatabase) mergeProfile(p *npnuser.UserProfile, record *auth.Record) (*auth.Record, error) {
 	p.Name = record.Name
 	if len(p.Name) == 0 {
 		p.Name = record.Provider.Title + " User"

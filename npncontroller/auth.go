@@ -24,7 +24,7 @@ func RoutesAuth(app npnweb.AppInfo, r *mux.Router) {
 
 func AuthSubmit(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		if !ctx.App.Auth().Enabled {
+		if !ctx.App.Auth().Enabled() {
 			return "", auth.ErrorAuthDisabled
 		}
 		prv := auth.ProviderFromString(mux.Vars(r)[npncore.KeyKey])
@@ -47,7 +47,7 @@ func AuthSubmit(w http.ResponseWriter, r *http.Request) {
 
 func AuthCallback(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		if !ctx.App.Auth().Enabled {
+		if !ctx.App.Auth().Enabled() {
 			return "", auth.ErrorAuthDisabled
 		}
 		_, _ = ctx.App.User().SaveProfile(ctx.Profile)
@@ -73,7 +73,7 @@ func AuthCallback(w http.ResponseWriter, r *http.Request) {
 
 func AuthSignout(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		if !ctx.App.Auth().Enabled {
+		if !ctx.App.Auth().Enabled() {
 			return "", auth.ErrorAuthDisabled
 		}
 		id, err := npnweb.IDFromParams(npncore.KeyAuth, mux.Vars(r))

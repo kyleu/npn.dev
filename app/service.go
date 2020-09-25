@@ -7,7 +7,9 @@ import (
 	"github.com/kyleu/npn/app/socket"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnservice-fs/userfs"
 	"github.com/kyleu/npn/npnservice/auth"
+	"github.com/kyleu/npn/npnservice-fs/authfs"
 	"github.com/kyleu/npn/npnservice/user"
 	"github.com/kyleu/npn/npnweb"
 	"logur.dev/logur"
@@ -17,7 +19,7 @@ type Service struct {
 	debug      bool
 	files      *npncore.FileLoader
 	user       user.Service
-	auth       *auth.Service
+	auth       auth.Service
 	version    string
 	commit     string
 	logger     logur.Logger
@@ -29,14 +31,15 @@ type Service struct {
 
 func NewService(debug bool, dataDir string, version string, commitHash string, logger logur.Logger) *Service {
 	files := npncore.NewFileLoader(dataDir, logger)
-	us := user.NewServiceFilesystem(false, files, logger)
+	us := userfs.NewServiceFilesystem(false, files, logger)
 	collSvc := collection.NewService(files, logger)
 	callSvc := call.NewService(logger)
 	return &Service{
 		debug:      debug,
 		files:      files,
 		user:       us,
-		auth:       auth.NewService(false, "", nil, logger, us),
+		// auth:       authdb.NewServiceDatabase(false, "", nil, logger, us),
+		auth:       authfs.NewServiceNoop(),
 		version:    version,
 		commit:     commitHash,
 		logger:     logger,
@@ -59,7 +62,7 @@ func (c *Service) User() user.Service {
 	return c.user
 }
 
-func (c *Service) Auth() *auth.Service {
+func (c *Service) Auth() auth.Service {
 	return c.auth
 }
 

@@ -1,8 +1,9 @@
-package user
+package userdb
 
 import (
 	"database/sql"
 	"fmt"
+	"github.com/kyleu/npn/npnservice/user"
 	"time"
 
 	"github.com/kyleu/npn/npncore"
@@ -18,14 +19,14 @@ type ServiceDatabase struct {
 	logger logur.Logger
 }
 
-func NewServiceDatabase(db *npndatabase.Service, logger logur.Logger) *ServiceDatabase {
+func NewServiceDatabase(db *npndatabase.Service, logger logur.Logger) user.Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyUser})
 	return &ServiceDatabase{db: db, logger: logger}
 }
 
 const userTable = "system_user"
 
-func (s *ServiceDatabase) new(id uuid.UUID) (*SystemUser, error) {
+func (s *ServiceDatabase) new(id uuid.UUID) (*user.SystemUser, error) {
 	s.logger.Info("creating user [" + id.String() + "]")
 
 	q := npndatabase.SQLInsert(userTable, []string{npncore.KeyID, npncore.KeyName, npncore.KeyRole, npncore.KeyTheme, "nav_color", "link_color", "picture", "locale", npncore.KeyCreated}, 1)
@@ -39,10 +40,10 @@ func (s *ServiceDatabase) new(id uuid.UUID) (*SystemUser, error) {
 	return s.GetByID(id, false), nil
 }
 
-func (s *ServiceDatabase) List(params *npncore.Params) SystemUsers {
+func (s *ServiceDatabase) List(params *npncore.Params) user.SystemUsers {
 	params = npncore.ParamsWithDefaultOrdering(npncore.KeyUser, params, npncore.DefaultCreatedOrdering...)
 
-	var ret SystemUsers
+	var ret user.SystemUsers
 
 	q := npndatabase.SQLSelect("*", userTable, "", params.OrderByString(), params.Limit, params.Offset)
 	err := s.db.Select(&ret, q, nil)
@@ -55,8 +56,8 @@ func (s *ServiceDatabase) List(params *npncore.Params) SystemUsers {
 	return ret
 }
 
-func (s *ServiceDatabase) GetByID(id uuid.UUID, addIfMissing bool) *SystemUser {
-	ret := &SystemUser{}
+func (s *ServiceDatabase) GetByID(id uuid.UUID, addIfMissing bool) *user.SystemUser {
+	ret := &user.SystemUser{}
 	q := npndatabase.SQLSelectSimple("*", userTable, npncore.KeyID+" = $1")
 	err := s.db.Get(ret, q, nil, id)
 	if err == sql.ErrNoRows {
@@ -76,9 +77,9 @@ func (s *ServiceDatabase) GetByID(id uuid.UUID, addIfMissing bool) *SystemUser {
 	return ret
 }
 
-func (s *ServiceDatabase) GetByCreated(d *time.Time, params *npncore.Params) SystemUsers {
+func (s *ServiceDatabase) GetByCreated(d *time.Time, params *npncore.Params) user.SystemUsers {
 	params = npncore.ParamsWithDefaultOrdering(userTable, params, npncore.DefaultCreatedOrdering...)
-	var ret SystemUsers
+	var ret user.SystemUsers
 	q := npndatabase.SQLSelect("*", userTable, "created between $1 and $2", params.OrderByString(), params.Limit, params.Offset)
 	err := s.db.Select(&ret, q, nil, d, d.Add(npncore.HoursInDay*time.Hour))
 	if err != nil {

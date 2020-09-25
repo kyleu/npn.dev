@@ -8,16 +8,14 @@
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
 
-<% if ctx.App.Debug() { %>
-<link rel="stylesheet" media="screen" href="/vendor/uikit/uikit.css">
-<link rel="stylesheet" media="screen" href="/assets/vendor/<%= npncore.AppKey %>.css">
-<script src="/vendor/uikit/uikit.js"></script>
-<script src="/vendor/uikit/uikit-icons.js"></script>
-<script src="/assets/vendor/<%= npncore.AppKey %>.js"></script>
-<% } else { %>
-<link rel="stylesheet" media="screen" href="/vendor/uikit/uikit.min.css")>
-<link rel="stylesheet" media="screen" href="/assets/vendor/<%= npncore.AppKey %>.min.css")>
+<link rel="stylesheet" media="screen" href="/vendor/uikit/uikit.min.css">
 <script src="/vendor/uikit/uikit.min.js"></script>
 <script src="/vendor/uikit/uikit-icons.min.js"></script>
+
+<% if ctx.App.Debug() { %>
+<link rel="stylesheet" media="screen" href="/assets/vendor/<%= npncore.AppKey %>.css">
+<script src="/assets/vendor/<%= npncore.AppKey %>.js"></script>
+<% } else { %>
+<link rel="stylesheet" media="screen" href="/assets/vendor/<%= npncore.AppKey %>.min.css")>
 <script src="/assets/vendor/<%= npncore.AppKey %>.min.js"></script>
 <% } %>
