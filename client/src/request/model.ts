@@ -23,30 +23,30 @@ namespace request {
     readonly description?: string;
   }
 
-  const MethodGet     = {"key": "GET", "description": ""}
-  const MethodHead    = {"key": "HEAD", "description": ""}
-  const MethodPost    = {"key": "POST", "description": ""}
-  const MethodPut     = {"key": "PUT", "description": ""}
-  const MethodPatch   = {"key": "PATCH", "description": ""}
-  const MethodDelete  = {"key": "DELETE", "description": ""}
-  const MethodConnect = {"key": "CONNECT", "description": ""}
-  const MethodOptions = {"key": "OPTIONS", "description": ""}
-  const MethodTrace   = {"key": "TRACE", "description": ""}
+  export const MethodGet     = {"key": "GET", "description": ""}
+  export const MethodHead    = {"key": "HEAD", "description": ""}
+  export const MethodPost    = {"key": "POST", "description": ""}
+  export const MethodPut     = {"key": "PUT", "description": ""}
+  export const MethodPatch   = {"key": "PATCH", "description": ""}
+  export const MethodDelete  = {"key": "DELETE", "description": ""}
+  export const MethodConnect = {"key": "CONNECT", "description": ""}
+  export const MethodOptions = {"key": "OPTIONS", "description": ""}
+  export const MethodTrace   = {"key": "TRACE", "description": ""}
 
   export const allMethods: Method[] = [MethodGet, MethodHead, MethodPost, MethodPut, MethodPatch, MethodDelete, MethodConnect, MethodOptions, MethodTrace];
 
   export interface Prototype {
-    readonly method: string;
+    method: string;
     readonly protocol: string;
     readonly domain: string;
     readonly port?: number;
     readonly path?: string;
-    readonly query?: QueryParam[];
+    query?: QueryParam[];
     readonly fragment?: string;
-    readonly headers?: header.Header[];
-    readonly auth?: auth.Auth[];
-    readonly body?: body.Body;
-    readonly options?: Options;
+    headers?: header.Header[];
+    auth?: auth.Auth[];
+    body?: body.Body;
+    options?: Options;
   }
 
   export interface Request {

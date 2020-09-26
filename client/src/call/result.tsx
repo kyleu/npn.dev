@@ -1,17 +1,29 @@
 namespace call {
   export function renderResult(r: Result) {
-    const statusEl = <div>{r.status}: {(r.timing?.completed || 0) / 1000}ms</div>;
     return [
       <div class="right">
         <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close result" />
       </div>,
-      section("Result", statusEl),
-      <hr/>,
-      <div>{renderHeaders("Final Request Headers", r.requestHeaders)}</div>,
-      <hr/>,
-      ...renderResponse(r.response),
-      <hr/>,
-      section("Timing", renderTiming(r.timing))
+      <div class="clear" />,
+      <div>
+        <ul data-uk-tab="">
+          <li><a href="#result">Result</a></li>
+          <li><a href="#headers">Response Headers</a></li>
+          <li><a href="#body">Body</a></li>
+          <li><a href="#request">Request Headers</a></li>
+          <li><a href="#timing">Timing</a></li>
+        </ul>
+        <ul class="uk-switcher uk-margin">
+          <li>
+            <div>{r.status}: {(r.timing?.completed || 0) / 1000}ms</div>
+            {r.response?.proto || ""} {`${r.response?.contentType || ""} (${r.response?.contentLength || "no"} bytes)`}
+          </li>
+          <li>{renderHeaders("Response Headers", r.response?.headers)}</li>
+          <li>{body.renderBody(r.response?.body)}</li>
+          <li>{renderHeaders("Final Request Headers", r.requestHeaders)}</li>
+          <li>{renderTiming(r.timing)}</li>
+        </ul>
+      </div>
     ];
   }
 
@@ -20,15 +32,12 @@ namespace call {
       return [<div>No response</div>];
     }
     return [
-      section("Status", r.status),
       <hr/>,
-      section("Protocol", r.proto),
+      <div></div>,
       <hr/>,
-      <div>{renderHeaders("Response Headers", r.headers)}</div>,
+      ,
       <hr/>,
-      section("Content", `${r.contentType} (${r.contentLength} bytes)`),
-      <hr/>,
-      section("Body", body.renderBody(r.body)),
+      ,
     ];
   }
 

@@ -7,13 +7,11 @@ namespace request.form {
         </div>
         <h3 class="uk-card-title">{r.title ? r.title : r.key}</h3>
         {renderURL(r)}
+        {renderSavePanel(r)}
         {renderActions(coll, r)}
       </div>
       <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
         {renderSwitcher(r)}
-        <div class="uk-margin-top hidden">
-          <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
-        </div>
       </div>
       <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden"/>
     </div>
@@ -33,7 +31,7 @@ namespace request.form {
 
       <div class="uk-margin-top">
         <label class="uk-form-label" for={r.key + "-description"}>Description</label>
-        <input class="uk-input" id={r.key + "-description"} name="description" type="text" value={ r.description || "" } data-lpignore="true" />
+        <textarea class="uk-textarea" id={r.key + "-description"} name="description" data-lpignore="true">{ r.description || "" }</textarea>
       </div>
     </li>;
   }
@@ -44,19 +42,29 @@ namespace request.form {
     "curl": "curl"
   };
 
+  function renderSavePanel(r: request.Request) {
+    return <div id="save-panel" class="right hiddenX">
+      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick="console.log('TODO!');">Reset</button>
+      <button class="uk-button uk-button-default uk-margin-top" onclick="console.log(request.form.getRequest());">Save Changes</button>
+    </div>;
+  }
+
   function renderActions(coll: string, r: request.Request) {
     const path = "/c/" + coll + "/" + r.key;
-    return <div class="uk-margin-top">
-      {nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-small-right", "", true)}
+    const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top"
+    const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }"
+
+    return <div>
+      {nav.link(path + "/call", "Call", btnClass, "", true)}
       <div class="uk-inline">
-        <button type="button" class="uk-button uk-button-default uk-margin-small-right">Export</button>
+        <button type="button" class={btnClass}>Export</button>
         <div id="export-dropdown" uk-dropdown="mode: click">
           <ul class="uk-list uk-list-divider" style="margin-bottom: 0;">
             {Object.keys(transforms).map(k => <li>{nav.link(path + "/transform/" + k, transforms[k], "", "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);")}</li>)}
           </ul>
         </div>
       </div>
-      {nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-small-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }", true)}
+      {nav.link(path + "/delete", "Delete", btnClass, delWarn, true)}
     </div>
   }
 }

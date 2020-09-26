@@ -937,6 +937,18 @@ input {
   border-bottom: 1px solid #e5e5e5;
 }
 
+.nav-icon {
+  float: left;
+  margin-right: 4px;
+  margin-top: 2px;
+}
+
+.nav-icon-h3 {
+  float: left;
+  margin-right: 6px;
+  margin-top: 8px;
+}
+
 #log-container {
   position: fixed;
   bottom: 0;

@@ -99,22 +99,37 @@ var call;
 var call;
 (function (call) {
     function renderResult(r) {
-        var _a;
-        const statusEl = JSX("div", null,
-            r.status,
-            ": ",
-            (((_a = r.timing) === null || _a === void 0 ? void 0 : _a.completed) || 0) / 1000,
-            "ms");
+        var _a, _b, _c, _d, _e, _f;
         return [
             JSX("div", { class: "right" },
                 JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
-            section("Result", statusEl),
-            JSX("hr", null),
-            JSX("div", null, renderHeaders("Final Request Headers", r.requestHeaders)),
-            JSX("hr", null),
-            ...renderResponse(r.response),
-            JSX("hr", null),
-            section("Timing", renderTiming(r.timing))
+            JSX("div", { class: "clear" }),
+            JSX("div", null,
+                JSX("ul", { "data-uk-tab": "" },
+                    JSX("li", null,
+                        JSX("a", { href: "#result" }, "Result")),
+                    JSX("li", null,
+                        JSX("a", { href: "#headers" }, "Response Headers")),
+                    JSX("li", null,
+                        JSX("a", { href: "#body" }, "Body")),
+                    JSX("li", null,
+                        JSX("a", { href: "#request" }, "Request Headers")),
+                    JSX("li", null,
+                        JSX("a", { href: "#timing" }, "Timing"))),
+                JSX("ul", { class: "uk-switcher uk-margin" },
+                    JSX("li", null,
+                        JSX("div", null,
+                            r.status,
+                            ": ",
+                            (((_a = r.timing) === null || _a === void 0 ? void 0 : _a.completed) || 0) / 1000,
+                            "ms"),
+                        ((_b = r.response) === null || _b === void 0 ? void 0 : _b.proto) || "",
+                        " ",
+                        `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`),
+                    JSX("li", null, renderHeaders("Response Headers", (_e = r.response) === null || _e === void 0 ? void 0 : _e.headers)),
+                    JSX("li", null, body.renderBody((_f = r.response) === null || _f === void 0 ? void 0 : _f.body)),
+                    JSX("li", null, renderHeaders("Final Request Headers", r.requestHeaders)),
+                    JSX("li", null, renderTiming(r.timing))))
         ];
     }
     call.renderResult = renderResult;
@@ -123,15 +138,12 @@ var call;
             return [JSX("div", null, "No response")];
         }
         return [
-            section("Status", r.status),
             JSX("hr", null),
-            section("Protocol", r.proto),
+            JSX("div", null),
             JSX("hr", null),
-            JSX("div", null, renderHeaders("Response Headers", r.headers)),
+            ,
             JSX("hr", null),
-            section("Content", `${r.contentType} (${r.contentLength} bytes)`),
-            JSX("hr", null),
-            section("Body", body.renderBody(r.body)),
+            ,
         ];
     }
     function renderHeaders(title, headers) {
@@ -215,7 +227,7 @@ var collection;
         if (!title || c.title.length === 0) {
             title = c.key;
         }
-        return JSX("div", { class: "nav-item" }, nav.link("/c/" + c.key, title));
+        return JSX("div", { class: "nav-item" }, nav.link("/c/" + c.key, title, "", "", false, "folder"));
     }
     function renderCollection(coll, requests) {
         const cn = coll.title ? coll.title : coll.key;
@@ -223,15 +235,26 @@ var collection;
             JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
                 JSX("div", { class: "right" },
                     JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
-                JSX("h3", { class: "uk-card-title" }, cn),
+                JSX("h3", { class: "uk-card-title" },
+                    JSX("span", { class: "nav-icon-h3", "data-uk-icon": "icon: folder" }),
+                    cn),
                 JSX("p", null, coll.description || "")),
             JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
                 JSX("h3", { class: "uk-card-title" }, "Requests"),
-                JSX("form", null,
-                    JSX("input", { class: "uk-input", placeholder: "add a request by url" })),
+                JSX("form", { onsubmit: "collection.addRequestURL();return false;" },
+                    JSX("input", { id: "coll-request-add-url", class: "uk-input", placeholder: "add a request by url" })),
                 JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests))));
     }
     collection.renderCollection = renderCollection;
+    function addRequestURL() {
+        const input = dom.req("#coll-request-add-url");
+        const url = input.value.trim();
+        if (url && url.length > 0) {
+            input.value = "";
+            console.log(url);
+        }
+    }
+    collection.addRequestURL = addRequestURL;
     function renderRequests(coll, rs) {
         return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
     }
@@ -240,7 +263,10 @@ var collection;
         if (!title || r.title.length === 0) {
             title = r.key;
         }
-        return JSX("li", null, nav.link("/c/" + coll + "/" + r.key, title));
+        return JSX("li", null,
+            nav.link("/c/" + coll + "/" + r.key, title),
+            r.description && r.description.length ? JSX("div", null,
+                JSX("em", null, r.description)) : JSX("span", null));
     }
 })(collection || (collection = {}));
 var collection;
@@ -995,16 +1021,16 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
-    const MethodGet = { "key": "GET", "description": "" };
-    const MethodHead = { "key": "HEAD", "description": "" };
-    const MethodPost = { "key": "POST", "description": "" };
-    const MethodPut = { "key": "PUT", "description": "" };
-    const MethodPatch = { "key": "PATCH", "description": "" };
-    const MethodDelete = { "key": "DELETE", "description": "" };
-    const MethodConnect = { "key": "CONNECT", "description": "" };
-    const MethodOptions = { "key": "OPTIONS", "description": "" };
-    const MethodTrace = { "key": "TRACE", "description": "" };
-    request.allMethods = [MethodGet, MethodHead, MethodPost, MethodPut, MethodPatch, MethodDelete, MethodConnect, MethodOptions, MethodTrace];
+    request.MethodGet = { "key": "GET", "description": "" };
+    request.MethodHead = { "key": "HEAD", "description": "" };
+    request.MethodPost = { "key": "POST", "description": "" };
+    request.MethodPut = { "key": "PUT", "description": "" };
+    request.MethodPatch = { "key": "PATCH", "description": "" };
+    request.MethodDelete = { "key": "DELETE", "description": "" };
+    request.MethodConnect = { "key": "CONNECT", "description": "" };
+    request.MethodOptions = { "key": "OPTIONS", "description": "" };
+    request.MethodTrace = { "key": "TRACE", "description": "" };
+    request.allMethods = [request.MethodGet, request.MethodHead, request.MethodPost, request.MethodPut, request.MethodPatch, request.MethodDelete, request.MethodConnect, request.MethodOptions, request.MethodTrace];
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -1037,6 +1063,18 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
+    function urlToPrototype(url) {
+        const u = new URL(url);
+        return {
+            method: request.MethodGet.key,
+            protocol: u.protocol,
+            domain: u.hostname,
+            port: parseInt(u.port, 10),
+            path: u.pathname,
+            fragment: u.hash
+        };
+    }
+    request.urlToPrototype = urlToPrototype;
     function prototypeToURL(p) {
         return prototypeToURLParts(p).map(x => x.v).join("");
     }
@@ -1499,6 +1537,29 @@ var request;
 (function (request) {
     var form;
     (function (form) {
+        function getRequest() {
+            const key = gv("key");
+            const title = gv("title");
+            const desc = gv("description");
+            let proto = request.urlToPrototype(gv("url"));
+            proto.method = gv("method");
+            proto.query = json.parse(gv("queryparams"));
+            proto.headers = json.parse(gv("headers"));
+            proto.auth = json.parse(gv("auth"));
+            proto.body = json.parse(gv("body"));
+            proto.options = json.parse(gv("options"));
+            return { key: key, title: title, description: desc, prototype: proto };
+        }
+        form.getRequest = getRequest;
+        function gv(k) {
+            return dom.req(`#${request.cache.active}-${k}`).value;
+        }
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
         function renderFormPanel(coll, r) {
             return JSX("div", null,
                 JSX("div", { class: "uk-card uk-card-body uk-card-default" },
@@ -1506,11 +1567,9 @@ var request;
                         JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
                     JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
                     form.renderURL(r),
+                    renderSavePanel(r),
                     renderActions(coll, r)),
-                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
-                    form.renderSwitcher(r),
-                    JSX("div", { class: "uk-margin-top hidden" },
-                        JSX("button", { class: "right uk-button uk-button-default uk-margin-top", type: "submit" }, "Save Changes"))),
+                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" }, form.renderSwitcher(r)),
                 JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }));
         }
         form.renderFormPanel = renderFormPanel;
@@ -1524,7 +1583,7 @@ var request;
                     JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "", "data-lpignore": "true" })),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
-                    JSX("input", { class: "uk-input", id: r.key + "-description", name: "description", type: "text", value: r.description || "", "data-lpignore": "true" })));
+                    JSX("textarea", { class: "uk-textarea", id: r.key + "-description", name: "description", "data-lpignore": "true" }, r.description || "")));
         }
         form.renderDetails = renderDetails;
         const transforms = {
@@ -1532,15 +1591,22 @@ var request;
             "json": "JSON",
             "curl": "curl"
         };
+        function renderSavePanel(r) {
+            return JSX("div", { id: "save-panel", class: "right hiddenX" },
+                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "console.log('TODO!');" }, "Reset"),
+                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "console.log(request.form.getRequest());" }, "Save Changes"));
+        }
         function renderActions(coll, r) {
             const path = "/c/" + coll + "/" + r.key;
-            return JSX("div", { class: "uk-margin-top" },
-                nav.link(path + "/call", "Call", "uk-button uk-button-default uk-margin-small-right", "", true),
+            const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
+            const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }";
+            return JSX("div", null,
+                nav.link(path + "/call", "Call", btnClass, "", true),
                 JSX("div", { class: "uk-inline" },
-                    JSX("button", { type: "button", class: "uk-button uk-button-default uk-margin-small-right" }, "Export"),
+                    JSX("button", { type: "button", class: btnClass }, "Export"),
                     JSX("div", { id: "export-dropdown", "uk-dropdown": "mode: click" },
                         JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(k => JSX("li", null, nav.link(path + "/transform/" + k, transforms[k], "", "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);")))))),
-                nav.link(path + "/delete", "Delete", "uk-button uk-button-default uk-margin-small-right", "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }", true));
+                nav.link(path + "/delete", "Delete", btnClass, delWarn, true));
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
@@ -1554,17 +1620,17 @@ var request;
             return JSX("div", null,
                 JSX("ul", { "data-uk-tab": "" },
                     JSX("li", null,
-                        JSX("a", { href: "#" }, "Details")),
+                        JSX("a", { href: "#details" }, "Details")),
                     JSX("li", null,
-                        JSX("a", { href: "#" }, "Query")),
+                        JSX("a", { href: "#query" }, "Query")),
                     JSX("li", null,
-                        JSX("a", { href: "#" }, "Auth")),
+                        JSX("a", { href: "#auth" }, "Auth")),
                     JSX("li", null,
-                        JSX("a", { href: "#" }, "Headers")),
+                        JSX("a", { href: "#headers" }, "Headers")),
                     JSX("li", null,
-                        JSX("a", { href: "#" }, "Body")),
+                        JSX("a", { href: "#body" }, "Body")),
                     JSX("li", null,
-                        JSX("a", { href: "#" }, "Options"))),
+                        JSX("a", { href: "#options" }, "Options"))),
                 JSX("ul", { class: "uk-switcher uk-margin" },
                     form.renderDetails(r),
                     renderQueryParams(key, p.query),
@@ -1632,6 +1698,7 @@ var request;
 var socket;
 (function (socket) {
     function route(p) {
+        console.log("NAV: " + p);
         let parts = p.split("/");
         parts = parts.filter(x => x.length > 0);
         console.info("nav: " + parts.join(" -> "));
@@ -2146,7 +2213,7 @@ var nav;
         navigate(`/c/${collection.cache.active}/${request.cache.active}`);
     }
     nav.navActiveRequest = navActiveRequest;
-    function link(path, title, cls, onclk, isButton) {
+    function link(path, title, cls, onclk, isButton, icon) {
         let href = path;
         if (!href.startsWith("/")) {
             href = "/" + href;
@@ -2156,6 +2223,10 @@ var nav;
         }
         else {
             cls = "";
+        }
+        let i = JSX("span", null);
+        if (icon) {
+            i = JSX("span", { class: "nav-icon", "data-uk-icon": `icon: ${icon}` });
         }
         if (onclk) {
             if (!onclk.endsWith(";")) {
@@ -2168,7 +2239,9 @@ var nav;
         if (!isButton) {
             cls = style.linkColor + cls;
         }
-        return JSX("a", { class: cls, href: href, onclick: onclk + "nav.navigate('" + path + "', '" + title + "');return false;" }, title);
+        return JSX("a", { class: cls, href: href, onclick: onclk + "nav.navigate('" + path + "', '" + title + "');return false;" },
+            i,
+            title);
     }
     nav.link = link;
 })(nav || (nav = {}));

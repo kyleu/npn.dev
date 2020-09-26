@@ -38,7 +38,7 @@ namespace nav {
     navigate(`/c/${collection.cache.active}/${request.cache.active}`);
   }
 
-  export function link(path: string, title: string, cls?: string, onclk?: string, isButton?: boolean) {
+  export function link(path: string, title: string, cls?: string, onclk?: string, isButton?: boolean, icon?: string) {
     let href = path;
     if (!href.startsWith("/")) {
       href = "/" + href;
@@ -47,6 +47,10 @@ namespace nav {
       cls = " " + cls.trim();
     } else {
       cls = "";
+    }
+    let i = <span />;
+    if (icon) {
+      i = <span class="nav-icon" data-uk-icon={`icon: ${icon}`} />;
     }
     if (onclk) {
       if (!onclk.endsWith(";")) {
@@ -58,6 +62,6 @@ namespace nav {
     if (!isButton) {
       cls = style.linkColor + cls;
     }
-    return <a class={cls} href={href} onclick={onclk + "nav.navigate('" + path + "', '" + title + "');return false;"}>{title}</a>;
+    return <a class={cls} href={href} onclick={onclk + "nav.navigate('" + path + "', '" + title + "');return false;"}>{i}{title}</a>;
   }
 }

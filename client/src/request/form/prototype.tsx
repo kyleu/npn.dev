@@ -4,12 +4,12 @@ namespace request.form {
     const p = r.prototype;
     return <div>
       <ul data-uk-tab="">
-        <li><a href="#">Details</a></li>
-        <li><a href="#">Query</a></li>
-        <li><a href="#">Auth</a></li>
-        <li><a href="#">Headers</a></li>
-        <li><a href="#">Body</a></li>
-        <li><a href="#">Options</a></li>
+        <li><a href="#details">Details</a></li>
+        <li><a href="#query">Query</a></li>
+        <li><a href="#auth">Auth</a></li>
+        <li><a href="#headers">Headers</a></li>
+        <li><a href="#body">Body</a></li>
+        <li><a href="#options">Options</a></li>
       </ul>
       <ul class="uk-switcher uk-margin">
         {renderDetails(r)}

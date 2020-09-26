@@ -1,4 +1,16 @@
 namespace request {
+  export function urlToPrototype(url: string): Prototype {
+    const u = new URL(url);
+    return {
+      method: MethodGet.key,
+      protocol: u.protocol,
+      domain: u.hostname,
+      port: parseInt(u.port, 10),
+      path: u.pathname,
+      fragment: u.hash
+    };
+  }
+
   export function prototypeToURL(p: Prototype): string {
     return prototypeToURLParts(p).map(x => x.v).join("");
   }

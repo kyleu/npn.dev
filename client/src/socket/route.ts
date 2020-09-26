@@ -1,5 +1,6 @@
 namespace socket {
   export function route(p: string) {
+    console.log("NAV: " + p);
     let parts = p.split("/");
     parts = parts.filter(x => x.length > 0);
     console.info("nav: " + parts.join(" -> "));
