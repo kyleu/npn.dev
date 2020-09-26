@@ -84,17 +84,10 @@ var call;
         const result = param;
         const container = dom.req(`#${result.collection}--${result.request}-call`);
         dom.setContent(container, call.renderResult(result));
+        const el = dom.req(".result-timing-graph", container);
+        el.innerHTML = call.timingGraph(result.timing);
     }
     call.setResult = setResult;
-    function help(x) {
-        console.log(x);
-        let title = "";
-        switch (x.label) {
-            default:
-                title = x.label;
-        }
-        return title + ": " + (x.labelVal / 1000) + "ms";
-    }
 })(call || (call = {}));
 var call;
 (function (call) {
@@ -125,7 +118,9 @@ var call;
                             "ms"),
                         ((_b = r.response) === null || _b === void 0 ? void 0 : _b.proto) || "",
                         " ",
-                        `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`),
+                        `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`,
+                        JSX("hr", null),
+                        JSX("div", { class: "result-timing-graph uk-inline" })),
                     JSX("li", null, renderHeaders("Response Headers", (_e = r.response) === null || _e === void 0 ? void 0 : _e.headers)),
                     JSX("li", null, body.renderBody((_f = r.response) === null || _f === void 0 ? void 0 : _f.body)),
                     JSX("li", null, renderHeaders("Final Request Headers", r.requestHeaders)),
@@ -133,19 +128,6 @@ var call;
         ];
     }
     call.renderResult = renderResult;
-    function renderResponse(r) {
-        if (!r) {
-            return [JSX("div", null, "No response")];
-        }
-        return [
-            JSX("hr", null),
-            JSX("div", null),
-            JSX("hr", null),
-            ,
-            JSX("hr", null),
-            ,
-        ];
-    }
     function renderHeaders(title, headers) {
         if (!headers) {
             return section(title, "No headers");
@@ -203,6 +185,72 @@ var call;
         return ret;
     }
     call.timingSections = timingSections;
+    function timingGraph(t) {
+        const msg = "Still busted...";
+        const rowHeight = 32;
+        const sections = timingSections(t);
+        const h = (sections.length + 1) * rowHeight;
+        let step = t.completed / 10;
+        if (step > 1000000) {
+            step = 1000000;
+        }
+        else if (step > 100000) {
+            step = 100000;
+        }
+        else if (step > 10000) {
+            step = 10000;
+        }
+        else if (step > 1000) {
+            step = 1000;
+        }
+        else if (step > 100) {
+            step = 100;
+        }
+        const secLines = [];
+        for (let idx = step; idx < t.completed; idx += step) {
+            secLines.push(`<line x1="${idx}" y1="0" x2="${idx}" y2="${h}" stroke="#666" />`);
+        }
+        secLines.push(`<line x1="${t.completed - 1}" y1="0" x2="${t.completed - 1}" y2="${h}" stroke="#666" />`);
+        const secHTML = [];
+        const f = (x) => (x / 1000) + "ms";
+        for (let idx = 0; idx < sections.length; idx++) {
+            const section = sections[idx];
+            const cy = rowHeight * (idx + 1);
+            const pc = Math.round(((section.end - section.start) / t.completed) * 10000) / 100;
+            secHTML.push(`<rect x="0" y="${cy}" width="${t.completed}" height="${rowHeight}" fill="transparent" />`);
+            secHTML.push(`<rect x="${section.start}" y="${cy}" width="${section.end - section.start}" height="${rowHeight}" class="${colorForSection(section.key)}-fill">
+        <title>${section.key}: ${pc}%\n${f(section.start)} - ${f(section.end)}</title>
+      </rect>`);
+        }
+        return `<svg height="${h}" width="100%" preserveAspectRatio="none" viewBox="0 0 ${t.completed} ${h}">
+      ${secLines.join("\n")}
+      ${secHTML.join("\n")}
+      ${msg}
+    </svg><div class="chart-tooltip"></div>`;
+    }
+    call.timingGraph = timingGraph;
+    function colorForSection(key) {
+        switch (key) {
+            case "dns":
+                return "bluegrey";
+            case "connect":
+                return "bluegrey";
+            case "tls":
+                return "orange";
+            case "reqheaders":
+                return "green";
+            case "reqbody":
+                return "green";
+            case "rspwait":
+                return "blue";
+            case "rspheaders":
+                return "blue";
+            case "rspbody":
+                return "blue";
+            default:
+                return "blue";
+        }
+    }
 })(call || (call = {}));
 var collection;
 (function (collection_1) {
@@ -232,7 +280,7 @@ var collection;
     function renderCollection(coll, requests) {
         const cn = coll.title ? coll.title : coll.key;
         return JSX("div", null,
-            JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+            JSX("div", { class: "uk-card uk-card-body uk-card-default" },
                 JSX("div", { class: "right" },
                     JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
                 JSX("h3", { class: "uk-card-title" },
@@ -1677,7 +1725,7 @@ var request;
     var form;
     (function (form) {
         function renderURL(r) {
-            const click = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
+            const call = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
             return JSX("div", { class: "uk-margin-top uk-panel" },
                 JSX("div", { class: "left", style: "width:120px;" },
                     JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
@@ -1689,8 +1737,9 @@ var request;
                         }
                     }))),
                 JSX("div", { class: "uk-inline right", style: "width:calc(100% - 120px);" },
-                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: click, "uk-icon": "icon: refresh" }),
-                    JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" })));
+                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: call, title: "send request", "uk-icon": "icon: play" }),
+                    JSX("form", { onsubmit: call },
+                        JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" }))));
         }
         form.renderURL = renderURL;
     })(form = request.form || (request.form = {}));

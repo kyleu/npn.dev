@@ -17,6 +17,8 @@ namespace call {
           <li>
             <div>{r.status}: {(r.timing?.completed || 0) / 1000}ms</div>
             {r.response?.proto || ""} {`${r.response?.contentType || ""} (${r.response?.contentLength || "no"} bytes)`}
+            <hr />
+            <div class="result-timing-graph uk-inline"/>
           </li>
           <li>{renderHeaders("Response Headers", r.response?.headers)}</li>
           <li>{body.renderBody(r.response?.body)}</li>
@@ -24,20 +26,6 @@ namespace call {
           <li>{renderTiming(r.timing)}</li>
         </ul>
       </div>
-    ];
-  }
-
-  function renderResponse(r?: Response) {
-    if (!r) {
-      return [<div>No response</div>];
-    }
-    return [
-      <hr/>,
-      <div></div>,
-      <hr/>,
-      ,
-      <hr/>,
-      ,
     ];
   }
 

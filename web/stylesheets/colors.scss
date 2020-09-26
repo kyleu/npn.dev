@@ -134,6 +134,37 @@ $x-dark: #000000;
     background: $x !important;
   }
 
+  .clear-fill {
+    fill: $clear !important;
+  }
+  .grey-fill {
+    fill: $grey !important;
+  }
+  .bluegrey-fill {
+    fill: $bluegrey !important;
+  }
+  .red-fill {
+    fill: $red !important;
+  }
+  .orange-fill {
+    fill: $orange !important;
+  }
+  .yellow-fill {
+    fill: $yellow !important;
+  }
+  .green-fill {
+    fill: $green !important;
+  }
+  .blue-fill {
+    fill: $blue !important;
+  }
+  .purple-fill {
+    fill: $purple !important;
+  }
+  .x-fill {
+    fill: $x !important;
+  }
+
   .clear-border {
     border-color: $clear-text !important;
   }
@@ -257,6 +288,37 @@ $x-dark: #000000;
   }
   .x-bg {
     background: $x-dark !important;
+  }
+
+  .clear-fill {
+    fill: $clear-dark !important;
+  }
+  .grey-fill {
+    fill: $grey-dark !important;
+  }
+  .bluegrey-fill {
+    fill: $bluegrey-dark !important;
+  }
+  .red-fill {
+    fill: $red-dark !important;
+  }
+  .orange-fill {
+    fill: $orange-dark !important;
+  }
+  .yellow-fill {
+    fill: $yellow-dark !important;
+  }
+  .green-fill {
+    fill: $green-dark !important;
+  }
+  .blue-fill {
+    fill: $blue-dark !important;
+  }
+  .purple-fill {
+    fill: $purple-dark !important;
+  }
+  .x-fill {
+    fill: $x-dark !important;
   }
 
   .clear-border {

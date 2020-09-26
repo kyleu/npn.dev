@@ -14,7 +14,7 @@ namespace collection {
   export function renderCollection(coll: collection.Collection, requests: request.Request[]) {
     const cn = coll.title ? coll.title : coll.key;
     return <div>
-      <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+      <div class="uk-card uk-card-body uk-card-default">
         <div class="right">
           <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close collection" />
         </div>
