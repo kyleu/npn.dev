@@ -36,8 +36,5 @@ namespace call {
     const result = param as Result;
     const container = dom.req(`#${result.collection}--${result.request}-call`);
     dom.setContent(container, renderResult(result));
-
-    const el = dom.req(".result-timing-graph", container);
-    el.innerHTML = timingGraph(result.timing!);
   }
 }

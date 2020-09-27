@@ -2,6 +2,7 @@ package request
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncontroller"
 	"net/http"
 
 	"github.com/kyleu/npn/app/auth"
@@ -10,17 +11,17 @@ import (
 )
 
 type Prototype struct {
-	Method   Method         `json:"method"`
-	Protocol Protocol       `json:"protocol"`
-	Domain   string         `json:"domain"`
-	Port     int            `json:"port,omitempty"`
-	Path     string         `json:"path,omitempty"`
-	Query    QueryParams    `json:"query,omitempty"`
-	Fragment string         `json:"fragment,omitempty"`
-	Headers  header.Headers `json:"headers,omitempty"`
-	Auth     auth.Auths     `json:"auth,omitempty"`
-	Body     *body.Body     `json:"body,omitempty"`
-	Options  *Options       `json:"options,omitempty"`
+	Method   Method                    `json:"method"`
+	Protocol Protocol                  `json:"protocol"`
+	Domain   string                    `json:"domain"`
+	Port     int                       `json:"port,omitempty"`
+	Path     string                    `json:"path,omitempty"`
+	Query    npncontroller.QueryParams `json:"query,omitempty"`
+	Fragment string                    `json:"fragment,omitempty"`
+	Headers  header.Headers            `json:"headers,omitempty"`
+	Auth     auth.Auths                `json:"auth,omitempty"`
+	Body     *body.Body                `json:"body,omitempty"`
+	Options  *Options                  `json:"options,omitempty"`
 }
 
 func NewPrototype() *Prototype {

@@ -1,6 +1,7 @@
 package request
 
 import (
+	"github.com/kyleu/npn/npncontroller"
 	"net/url"
 	"strconv"
 	"strings"
@@ -29,7 +30,7 @@ func PrototypeFromURL(u *url.URL) *Prototype {
 		Domain:   domain,
 		Port:     port,
 		Path:     u.Path,
-		Query:    QueryParamsFromRaw(u.RawQuery),
+		Query:    npncontroller.QueryParamsFromRaw(u.RawQuery),
 		Fragment: u.Fragment,
 		Auth:     auths,
 	}
@@ -71,7 +72,7 @@ func PrototypeFromString(u string) *Prototype {
 		Domain:   host,
 		Port:     port,
 		Path:     path,
-		Query:    QueryParamsFromRaw(query),
+		Query:    npncontroller.QueryParamsFromRaw(query),
 		Fragment: frag,
 		Auth:     auths,
 	}

@@ -71,7 +71,7 @@ func ENew(msg string) (string, error) {
 }
 
 func RespondJSON(w http.ResponseWriter, filename string, body interface{}, logger logur.Logger) (string, error) {
-	return RespondMIME(filename, "application/json", "pdf", npncore.ToJSONBytes(body, logger, true), w)
+	return RespondMIME(filename, "application/json", "json", npncore.ToJSONBytes(body, logger, true), w)
 }
 
 func RespondMIME(filename string, mime string, ext string, ba []byte, w http.ResponseWriter) (string, error) {

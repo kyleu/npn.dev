@@ -47,69 +47,16 @@ namespace call {
     return ret;
   }
 
-  export function timingGraph(t: call.Timing) {
-    const msg = "Still busted...";
-    const rowHeight = 32
-    const sections = timingSections(t);
-    const h = (sections.length + 1) * rowHeight;
-
-    let step = t.completed / 10;
-    if (step > 1000000) {
-      step = 1000000;
-    } else if (step > 100000) {
-      step = 100000;
-    } else if (step > 10000) {
-      step = 10000;
-    } else if (step > 1000) {
-      step = 1000;
-    } else if (step > 100) {
-      step = 100;
+  export function timingGraph(ts: TimingSection[]) {
+    const ret: string[] = [];
+    for (const t of ts) {
+      if (t.group.length > 0) {
+        ret.push(encodeURIComponent(t.key + ".g") + '=' + encodeURIComponent(t.group));
+      }
+      ret.push(encodeURIComponent(t.key + ".s") + '=' + encodeURIComponent(t.start));
+      ret.push(encodeURIComponent(t.key + ".e") + '=' + encodeURIComponent(t.end));
     }
 
-    const secLines: string[] = [];
-    for (let idx = step; idx < t.completed; idx += step) {
-      secLines.push(`<line x1="${idx}" y1="0" x2="${idx}" y2="${h}" stroke="#666" />`);
-    }
-    secLines.push(`<line x1="${t.completed - 1}" y1="0" x2="${t.completed - 1}" y2="${h}" stroke="#666" />`);
-    const secHTML: string[] = [];
-    const f = (x: number) => (x / 1000) + "ms";
-    for (let idx = 0; idx < sections.length; idx++) {
-      const section = sections[idx]
-      const cy = rowHeight * (idx + 1);
-      const pc = Math.round(((section.end - section.start) / t.completed) * 10000) / 100;
-      secHTML.push(`<rect x="0" y="${cy}" width="${t.completed}" height="${rowHeight}" fill="transparent" />`);
-      secHTML.push(`<rect x="${section.start}" y="${cy}" width="${section.end - section.start}" height="${rowHeight}" class="${colorForSection(section.key)}-fill">
-        <title>${section.key}: ${pc}%\n${f(section.start)} - ${f(section.end)}</title>
-      </rect>`);
-    }
-
-    return `<svg height="${h}" width="100%" preserveAspectRatio="none" viewBox="0 0 ${t.completed} ${h}">
-      ${secLines.join("\n")}
-      ${secHTML.join("\n")}
-      ${msg}
-    </svg><div class="chart-tooltip"></div>`;
-  }
-
-  function colorForSection(key: string) {
-    switch (key) {
-      case "dns":
-        return "bluegrey";
-      case "connect":
-        return "bluegrey";
-      case "tls":
-        return "orange";
-      case "reqheaders":
-        return "green";
-      case "reqbody":
-        return "green";
-      case "rspwait":
-        return "blue";
-      case "rspheaders":
-        return "blue";
-      case "rspbody":
-        return "blue";
-      default:
-        return "blue";
-    }
+    return "/svg/gantt?" + ret.join("&");
   }
 }

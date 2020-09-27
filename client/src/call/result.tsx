@@ -18,7 +18,12 @@ namespace call {
             <div>{r.status}: {(r.timing?.completed || 0) / 1000}ms</div>
             {r.response?.proto || ""} {`${r.response?.contentType || ""} (${r.response?.contentLength || "no"} bytes)`}
             <hr />
-            <div class="result-timing-graph uk-inline"/>
+            {r.timing ? function() {
+              const secs = timingSections(r.timing);
+              return <div class="result-timing-graph">
+                <object type="image/svg+xml" style={"width: 100%; height: " + (secs.length * 24) + "px"} data={timingGraph(secs)}>SVG not supported</object>
+              </div>
+            }() : <div><em>No timing</em></div>}
           </li>
           <li>{renderHeaders("Response Headers", r.response?.headers)}</li>
           <li>{body.renderBody(r.response?.body)}</li>

@@ -84,8 +84,6 @@ var call;
         const result = param;
         const container = dom.req(`#${result.collection}--${result.request}-call`);
         dom.setContent(container, call.renderResult(result));
-        const el = dom.req(".result-timing-graph", container);
-        el.innerHTML = call.timingGraph(result.timing);
     }
     call.setResult = setResult;
 })(call || (call = {}));
@@ -120,7 +118,12 @@ var call;
                         " ",
                         `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`,
                         JSX("hr", null),
-                        JSX("div", { class: "result-timing-graph uk-inline" })),
+                        r.timing ? function () {
+                            const secs = call.timingSections(r.timing);
+                            return JSX("div", { class: "result-timing-graph" },
+                                JSX("object", { type: "image/svg+xml", style: "width: 100%; height: " + (secs.length * 24) + "px", data: call.timingGraph(secs) }, "SVG not supported"));
+                        }() : JSX("div", null,
+                            JSX("em", null, "No timing"))),
                     JSX("li", null, renderHeaders("Response Headers", (_e = r.response) === null || _e === void 0 ? void 0 : _e.headers)),
                     JSX("li", null, body.renderBody((_f = r.response) === null || _f === void 0 ? void 0 : _f.body)),
                     JSX("li", null, renderHeaders("Final Request Headers", r.requestHeaders)),
@@ -185,72 +188,18 @@ var call;
         return ret;
     }
     call.timingSections = timingSections;
-    function timingGraph(t) {
-        const msg = "Still busted...";
-        const rowHeight = 32;
-        const sections = timingSections(t);
-        const h = (sections.length + 1) * rowHeight;
-        let step = t.completed / 10;
-        if (step > 1000000) {
-            step = 1000000;
+    function timingGraph(ts) {
+        const ret = [];
+        for (const t of ts) {
+            if (t.group.length > 0) {
+                ret.push(encodeURIComponent(t.key + ".g") + '=' + encodeURIComponent(t.group));
+            }
+            ret.push(encodeURIComponent(t.key + ".s") + '=' + encodeURIComponent(t.start));
+            ret.push(encodeURIComponent(t.key + ".e") + '=' + encodeURIComponent(t.end));
         }
-        else if (step > 100000) {
-            step = 100000;
-        }
-        else if (step > 10000) {
-            step = 10000;
-        }
-        else if (step > 1000) {
-            step = 1000;
-        }
-        else if (step > 100) {
-            step = 100;
-        }
-        const secLines = [];
-        for (let idx = step; idx < t.completed; idx += step) {
-            secLines.push(`<line x1="${idx}" y1="0" x2="${idx}" y2="${h}" stroke="#666" />`);
-        }
-        secLines.push(`<line x1="${t.completed - 1}" y1="0" x2="${t.completed - 1}" y2="${h}" stroke="#666" />`);
-        const secHTML = [];
-        const f = (x) => (x / 1000) + "ms";
-        for (let idx = 0; idx < sections.length; idx++) {
-            const section = sections[idx];
-            const cy = rowHeight * (idx + 1);
-            const pc = Math.round(((section.end - section.start) / t.completed) * 10000) / 100;
-            secHTML.push(`<rect x="0" y="${cy}" width="${t.completed}" height="${rowHeight}" fill="transparent" />`);
-            secHTML.push(`<rect x="${section.start}" y="${cy}" width="${section.end - section.start}" height="${rowHeight}" class="${colorForSection(section.key)}-fill">
-        <title>${section.key}: ${pc}%\n${f(section.start)} - ${f(section.end)}</title>
-      </rect>`);
-        }
-        return `<svg height="${h}" width="100%" preserveAspectRatio="none" viewBox="0 0 ${t.completed} ${h}">
-      ${secLines.join("\n")}
-      ${secHTML.join("\n")}
-      ${msg}
-    </svg><div class="chart-tooltip"></div>`;
+        return "/svg/gantt?" + ret.join("&");
     }
     call.timingGraph = timingGraph;
-    function colorForSection(key) {
-        switch (key) {
-            case "dns":
-                return "bluegrey";
-            case "connect":
-                return "bluegrey";
-            case "tls":
-                return "orange";
-            case "reqheaders":
-                return "green";
-            case "reqbody":
-                return "green";
-            case "rspwait":
-                return "blue";
-            case "rspheaders":
-                return "blue";
-            case "rspbody":
-                return "blue";
-            default:
-                return "blue";
-        }
-    }
 })(call || (call = {}));
 var collection;
 (function (collection_1) {
