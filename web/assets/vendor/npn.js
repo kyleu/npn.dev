@@ -202,15 +202,15 @@ var call;
         }
         const sections = call.timingSections(t);
         return JSX("div", { class: "timing-panel" },
+            JSX("div", { class: "result-timing-graph" },
+                JSX("object", { type: "image/svg+xml", style: "width: 100%; height: " + (sections.length * 24) + "px", data: call.timingGraph(sections) }, "SVG not supported")),
+            JSX("hr", null),
             sections.map(sc => JSX("div", null,
                 sc.key,
                 ": ",
                 sc.start,
                 " - ",
-                sc.end)),
-            JSX("hr", null),
-            JSX("div", { class: "result-timing-graph" },
-                JSX("object", { type: "image/svg+xml", style: "width: 100%; height: " + (sections.length * 24) + "px", data: call.timingGraph(sections) }, "SVG not supported")));
+                sc.end)));
     }
     function section(k, v) {
         if (!v) {

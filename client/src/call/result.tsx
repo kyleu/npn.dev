@@ -54,11 +54,11 @@ namespace call {
 
     const sections = timingSections(t);
     return <div class="timing-panel">
-      {sections.map(sc => <div>{sc.key}: {sc.start} - {sc.end}</div>)}
-      <hr />
       <div class="result-timing-graph">
         <object type="image/svg+xml" style={"width: 100%; height: " + (sections.length * 24) + "px"} data={timingGraph(sections)}>SVG not supported</object>
       </div>
+      <hr />
+      {sections.map(sc => <div>{sc.key}: {sc.start} - {sc.end}</div>)}
     </div>;
   }
 
