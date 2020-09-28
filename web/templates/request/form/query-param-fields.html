@@ -1,4 +1,4 @@
-<%: func QueryParamFields(key string, q request.QueryParams, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
+<%: func QueryParamFields(key string, q npncontroller.QueryParams, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <div class="uk-margin-top">
   <label class="uk-form-label" for="<%= key %>-queryparams">Query Params</label>
   <textarea class="uk-textarea" id="<%= key %>-queryparams" name="queryparams"><%= npncore.ToJSON(q, ctx.Logger) %></textarea>

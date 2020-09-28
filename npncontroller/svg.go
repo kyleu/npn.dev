@@ -5,6 +5,7 @@ import (
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
 	"golang.org/x/text/language"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -20,8 +21,8 @@ type ganttSection struct {
 func Gantt(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		rowHeight := 24
-		sections, completed := parseGanttRequest(r)
-		var pc = func(n int) float64 {return (float64(n) / float64(completed)) * 100 }
+		sections, completed, theme := parseGanttRequest(r)
+		var pc = func(n int) float64 {return math.Floor((float64(n) / float64(completed)) * 10000)/100 }
 
 		ret := make([]string, 0, len(sections) + 2)
 		var ap = func(s string) {
@@ -32,12 +33,15 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 		svgDecl := `<svg version="1.1" baseProfile="full" height="%v" width="100" preserveAspectRatio="none" viewBox="0 0 100 %v" xmlns="http://www.w3.org/2000/svg">`
 		ap(fmt.Sprintf(svgDecl, totalHeight, totalHeight))
 
-		lineMsg := `<line x1="%v" y1="0" x2="%v" y2="%v" stroke="#666" stroke-width="0.5" />`
-		ap(fmt.Sprintf(lineMsg, 1, 1, totalHeight));
-		for idx := 1; idx < 10; idx ++ {
+		lineMsg := `<line x1="%v" y1="0" x2="%v" y2="%v" stroke="#666" stroke-width="0.1" />`
+		for idx := 0; idx < 11; idx ++ {
 			ap(fmt.Sprintf(lineMsg, idx * 10, idx * 10, totalHeight));
 		}
-		ap(fmt.Sprintf(lineMsg, 99, 99, totalHeight));
+
+		bg := `<rect x="0" y="%v" width="100" height="%v" fill="transparent">%v</rect>`
+		// bgLine := `<line x1="0" y1="%v" x2="100" y2="%v" stroke="#666" stroke-width="0.1" />`
+		rect := `<rect x="%v" y="%v" width="%v" height="%v" style="fill: %v">%v</rect>`
+		title := "<title>%v: %v%%\n%v - %v</title>"
 
 		for idx, section := range sections {
 			cy := rowHeight * idx
@@ -46,12 +50,10 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 			startTitle := npncore.MicrosToMillis(language.AmericanEnglish, section.Start)
 			width := pc(section.End - section.Start)
 			endTitle := npncore.MicrosToMillis(language.AmericanEnglish, section.End)
-			color := colorForSection(section.Key)
+			color := colorForSection(section.Key, theme)
 
-			ap(fmt.Sprintf(`<rect x="0" y="%v" width="100" height="%v" fill="transparent" />`, cy, rowHeight))
-
-			rectTitle := fmt.Sprintf("<title>%v: %v\n%v - %v</title>", section.Key, per, startTitle, endTitle)
-			rect := `<rect x="%v" y="%v" width="%v" height="%v" style="fill: %v">%v</rect>`
+			rectTitle := fmt.Sprintf(title, section.Key, per, startTitle, endTitle)
+			ap(fmt.Sprintf(bg, cy, rowHeight, rectTitle))
 			ap(fmt.Sprintf(rect, start, cy, width, rowHeight, color, rectTitle))
 		}
 
@@ -60,9 +62,10 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func parseGanttRequest(r *http.Request) ([]*ganttSection, int) {
+func parseGanttRequest(r *http.Request) ([]*ganttSection, int, string) {
 	qps := QueryParamsFromRaw(r.URL.RawQuery)
 	width := -1
+	theme := "light"
 	ret := make([]*ganttSection, 0)
 	var get = func(k string) *ganttSection {
 		for _, s := range ret {
@@ -77,6 +80,9 @@ func parseGanttRequest(r *http.Request) ([]*ganttSection, int) {
 	for _, qp := range qps {
 		if qp.Key == "w" {
 			width, _ = strconv.Atoi(qp.Value)
+		}
+		if qp.Key == "t" {
+			theme = qp.Value
 		}
 		if strings.Contains(qp.Key, ".") {
 			k, t := npncore.SplitStringLast(qp.Key, '.', true)
@@ -98,28 +104,55 @@ func parseGanttRequest(r *http.Request) ([]*ganttSection, int) {
 			}
 		}
 	}
-	return ret, width
+	return ret, width, theme
 }
 
-func colorForSection(key string) string {
+func colorForSection(key string, theme string) string {
 	switch (key) {
 	case "dns":
+		if theme == "dark" {
+			return "#30444e";
+		}
 		return "#89b6cc";
 	case "connect":
+		if theme == "dark" {
+			return "#30444e";
+		}
 		return "#89b6cc";
 	case "tls":
+		if theme == "dark" {
+			return "#462206";
+		}
 		return "#c96112";
 	case "reqheaders":
+		if theme == "dark" {
+			return "#072918";
+		}
 		return "#177245";
 	case "reqbody":
+		if theme == "dark" {
+			return "#072918";
+		}
 		return "#177245";
 	case "rspwait":
+		if theme == "dark" {
+			return "#101e33";
+		}
 		return "#397adb"
 	case "rspheaders":
+		if theme == "dark" {
+			return "#101e33";
+		}
 		return "#397adb"
 	case "rspbody":
+		if theme == "dark" {
+			return "#101e33";
+		}
 		return "#397adb"
 	default:
+		if theme == "dark" {
+			return "#101e33";
+		}
 		return "#397adb"
 	}
 }

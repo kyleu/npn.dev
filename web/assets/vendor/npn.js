@@ -91,6 +91,8 @@ var call;
 (function (call) {
     function renderResult(r) {
         var _a, _b, _c, _d, _e, _f;
+        /// TODO REMOVE
+        const sections = call.timingSections(r.timing);
         return [
             JSX("div", { class: "right" },
                 JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
@@ -116,14 +118,7 @@ var call;
                             "ms"),
                         ((_b = r.response) === null || _b === void 0 ? void 0 : _b.proto) || "",
                         " ",
-                        `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`,
-                        JSX("hr", null),
-                        r.timing ? function () {
-                            const secs = call.timingSections(r.timing);
-                            return JSX("div", { class: "result-timing-graph" },
-                                JSX("object", { type: "image/svg+xml", style: "width: 100%; height: " + (secs.length * 24) + "px", data: call.timingGraph(secs) }, "SVG not supported"));
-                        }() : JSX("div", null,
-                            JSX("em", null, "No timing"))),
+                        `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`),
                     JSX("li", null, renderHeaders("Response Headers", (_e = r.response) === null || _e === void 0 ? void 0 : _e.headers)),
                     JSX("li", null, body.renderBody((_f = r.response) === null || _f === void 0 ? void 0 : _f.body)),
                     JSX("li", null, renderHeaders("Final Request Headers", r.requestHeaders)),
@@ -147,12 +142,16 @@ var call;
             return JSX("div", null, "No timing");
         }
         const sections = call.timingSections(t);
-        return JSX("div", { class: "timing-panel" }, sections.map(sc => JSX("div", null,
-            sc.key,
-            ": ",
-            sc.start,
-            " - ",
-            sc.end)));
+        return JSX("div", { class: "timing-panel" },
+            sections.map(sc => JSX("div", null,
+                sc.key,
+                ": ",
+                sc.start,
+                " - ",
+                sc.end)),
+            JSX("hr", null),
+            JSX("div", { class: "result-timing-graph" },
+                JSX("object", { type: "image/svg+xml", style: "width: 100%; height: " + (sections.length * 24) + "px", data: call.timingGraph(sections) }, "SVG not supported")));
     }
     function section(k, v) {
         if (!v) {
@@ -189,6 +188,7 @@ var call;
     }
     call.timingSections = timingSections;
     function timingGraph(ts) {
+        var _a;
         const ret = [];
         for (const t of ts) {
             if (t.group.length > 0) {
@@ -197,6 +197,7 @@ var call;
             ret.push(encodeURIComponent(t.key + ".s") + '=' + encodeURIComponent(t.start));
             ret.push(encodeURIComponent(t.key + ".e") + '=' + encodeURIComponent(t.end));
         }
+        ret.push("t=" + ((_a = system.cache.profile) === null || _a === void 0 ? void 0 : _a.theme) || "light");
         return "/svg/gantt?" + ret.join("&");
     }
     call.timingGraph = timingGraph;

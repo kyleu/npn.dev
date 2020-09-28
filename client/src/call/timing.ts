@@ -56,6 +56,7 @@ namespace call {
       ret.push(encodeURIComponent(t.key + ".s") + '=' + encodeURIComponent(t.start));
       ret.push(encodeURIComponent(t.key + ".e") + '=' + encodeURIComponent(t.end));
     }
+    ret.push("t=" + system.cache.profile?.theme || "light");
 
     return "/svg/gantt?" + ret.join("&");
   }

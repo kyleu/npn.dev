@@ -1,5 +1,11 @@
 namespace call {
   export function renderResult(r: Result) {
+
+
+    /// TODO REMOVE
+    const sections = timingSections(r.timing!);
+
+
     return [
       <div class="right">
         <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close result" />
@@ -17,13 +23,6 @@ namespace call {
           <li>
             <div>{r.status}: {(r.timing?.completed || 0) / 1000}ms</div>
             {r.response?.proto || ""} {`${r.response?.contentType || ""} (${r.response?.contentLength || "no"} bytes)`}
-            <hr />
-            {r.timing ? function() {
-              const secs = timingSections(r.timing);
-              return <div class="result-timing-graph">
-                <object type="image/svg+xml" style={"width: 100%; height: " + (secs.length * 24) + "px"} data={timingGraph(secs)}>SVG not supported</object>
-              </div>
-            }() : <div><em>No timing</em></div>}
           </li>
           <li>{renderHeaders("Response Headers", r.response?.headers)}</li>
           <li>{body.renderBody(r.response?.body)}</li>
@@ -56,6 +55,10 @@ namespace call {
     const sections = timingSections(t);
     return <div class="timing-panel">
       {sections.map(sc => <div>{sc.key}: {sc.start} - {sc.end}</div>)}
+      <hr />
+      <div class="result-timing-graph">
+        <object type="image/svg+xml" style={"width: 100%; height: " + (sections.length * 24) + "px"} data={timingGraph(sections)}>SVG not supported</object>
+      </div>
     </div>;
   }
 
