@@ -24,6 +24,10 @@ namespace log {
     </li>;
     if (!list) {
       list = dom.req("#log-list");
+      if (!list) {
+        console.log(`${level}: ${msg}`);
+        return;
+      }
     }
     list.appendChild(el);
     if (!content) {

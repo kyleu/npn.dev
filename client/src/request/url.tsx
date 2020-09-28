@@ -19,6 +19,17 @@ namespace request {
     return <span>{prototypeToURLParts(p).map(x => <span title={x.t} class={urlColor(x.t)}>{ x.v }</span>)}</span>;
   }
 
+  export function prototypeBaseURL(p: Prototype | undefined) {
+    if (!p) {
+      return "invalid";
+    }
+    let d = p.domain;
+    if (p.port && p.port > 0) {
+      d += `:${p.port}`;
+    }
+    return `${p.protocol}://${d}/`;
+  }
+
   interface Part {
     readonly t: string;
     readonly v: string;

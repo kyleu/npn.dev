@@ -82,12 +82,12 @@ namespace request {
   }
 
   function getActiveRequest() {
-    const coll = collection.cache.active;
-    if (!coll) {
-      return undefined
-    }
+    return getRequest(collection.cache.active!, cache.active!);
+  }
+
+  export function getRequest(coll: string, key: string) {
     for (let req of cache.requests.get(coll) || []) {
-      if (req.key === cache.active) {
+      if (req.key === key) {
         return req
       }
     }

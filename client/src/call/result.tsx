@@ -25,7 +25,7 @@ namespace call {
             {r.response?.proto || ""} {`${r.response?.contentType || ""} (${r.response?.contentLength || "no"} bytes)`}
           </li>
           <li>{renderHeaders("Response Headers", r.response?.headers)}</li>
-          <li>{body.renderBody(r.response?.body)}</li>
+          <li>{rbody.renderBody(r.request, r.response?.body)}</li>
           <li>{renderHeaders("Final Request Headers", r.requestHeaders)}</li>
           <li>{renderTiming(r.timing)}</li>
         </ul>

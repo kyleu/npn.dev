@@ -12,7 +12,7 @@ namespace call {
     readonly transferEncoding?: string[];
     readonly close?: boolean;
     readonly uncompressed?: boolean;
-    readonly body?: body.Body;
+    readonly body?: rbody.Body;
     readonly error?: string;
   }
 

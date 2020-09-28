@@ -45,7 +45,7 @@ namespace request {
     readonly fragment?: string;
     headers?: header.Header[];
     auth?: auth.Auth[];
-    body?: body.Body;
+    body?: rbody.Body;
     options?: Options;
   }
 

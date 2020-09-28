@@ -79,7 +79,7 @@ namespace request.editor {
     });
 
     events(cache.body, function () {
-      let b: body.Body | undefined
+      let b: rbody.Body | undefined
       try {
         b = json.parse(cache.body.value);
       } catch (e) {

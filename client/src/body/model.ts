@@ -1,4 +1,4 @@
-namespace body {
+namespace rbody {
   export interface BodyType {
     readonly key: string;
     readonly title: string;

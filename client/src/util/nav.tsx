@@ -13,6 +13,9 @@ namespace nav {
   }
 
   export function navigate(path: string) {
+    if (path.startsWith("text/html;")) {
+      return "";
+    }
     if (path.startsWith("/")) {
       path = path.substr(1);
     }

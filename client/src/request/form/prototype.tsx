@@ -49,7 +49,7 @@ namespace request.form {
     </li>;
   }
 
-  function renderBody(key: String, b: body.Body | undefined) {
+  function renderBody(key: String, b: rbody.Body | undefined) {
     return <li class="request-body-panel">
       <div class="uk-margin-top">
         <label class="uk-form-label" for={key + "-body"}>Body</label>

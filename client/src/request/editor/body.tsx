@@ -5,12 +5,12 @@ namespace request.editor {
   }
 
   function createBodyEditor(el: HTMLTextAreaElement) {
-    const b = json.parse(el.value) as body.Body;
+    const b = json.parse(el.value) as rbody.Body;
 
     return <div class="uk-margin-top">
       <select class="uk-select">
         <option value="">No body</option>
-        {body.AllTypes.filter(t => !t.hidden).map(t => {
+        {rbody.AllTypes.filter(t => !t.hidden).map(t => {
           if (b && b.type === t.key) {
             return <option value={t.key} selected="selected">{t.title}</option>;
           } else {
@@ -18,7 +18,7 @@ namespace request.editor {
           }
         })}˙
       </select>
-      {body.AllTypes.filter(t => !t.hidden).map(t => {
+      {rbody.AllTypes.filter(t => !t.hidden).map(t => {
         let cfg = (b && b.type == t.key) ? b.config : null;
         return configEditor(t.key,  cfg, t.key === (b ? b.type : ""));
       })}
@@ -32,14 +32,14 @@ namespace request.editor {
     }
     switch (key) {
       case "json":
-        const j = config as body.JSONConfig
+        const j = config as rbody.JSONConfig
         return <div class={cls}><textarea class="uk-textarea">{json.str(j ? j.msg : null)}</textarea></div>;
       default:
         return <div class={cls}>Unimplemented [{key}] editor</div>;
     }
   }
 
-  export function setBody(cache: Cache, body: body.Body | undefined) {
+  export function setBody(cache: Cache, body: rbody.Body | undefined) {
 
   }
 }

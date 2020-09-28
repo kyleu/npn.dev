@@ -33,9 +33,9 @@ var npn;
     }
     npn.testbed = testbed;
 })(npn || (npn = {}));
-var body;
-(function (body) {
-    function renderBody(b) {
+var rbody;
+(function (rbody) {
+    function renderBody(requestKey, b) {
         if (!b) {
             return JSX("div", null, "No body");
         }
@@ -43,28 +43,87 @@ var body;
             case "json":
                 return renderJSON(b.config);
             case "html":
-                return renderHTML(b.config);
+                const req = request.getRequest(collection.cache.active, requestKey);
+                const baseURL = request.prototypeBaseURL(req === null || req === void 0 ? void 0 : req.prototype);
+                console.log(baseURL);
+                return renderHTML(b.config, baseURL);
             default:
                 return JSX("div", null,
                     "TODO: ",
                     b.type);
         }
     }
-    body.renderBody = renderBody;
-    function renderHTML(h) {
-        return JSX("div", null,
+    rbody.renderBody = renderBody;
+    function renderHTML(h, baseURL) {
+        return JSX("div", { class: "html-body" },
+            JSX("span", { class: "base-url hidden" }, baseURL),
+            JSX("span", { class: "preview-link right" },
+                "(",
+                JSX("a", { class: style.linkColor, href: "", onclick: "rbody.renderHTMLPreview(this);return false" }, "preview"),
+                ")"),
+            JSX("span", { class: "text-link right hidden" },
+                "(",
+                JSX("a", { class: style.linkColor, href: "", onclick: "rbody.renderHTMLText(this);return false" }, "text"),
+                ")"),
             JSX("em", null, "HTML"),
-            JSX("pre", { style: "overflow: auto; max-height: 720px;" }, h.content));
+            JSX("pre", { class: "text-content", style: "overflow: auto; max-height: 720px;" }, h.content),
+            JSX("div", { class: "preview-content hidden", style: "overflow: auto; max-height: 720px;" }));
     }
     function renderJSON(j) {
         return JSX("div", null,
             JSX("em", null, "JSON"),
             JSX("pre", null, json.str(j.msg)));
     }
-})(body || (body = {}));
-var body;
-(function (body) {
-    body.AllTypes = [
+    function renderHTMLPreview(el) {
+        const container = editorContent(el, true);
+        const iframe = document.createElement("iframe");
+        iframe.style.width = "100%";
+        iframe.style.minHeight = "720px";
+        const html = previewHTMLFor(container[1], container[0]);
+        // iframe.src = "data:text/html;charset=utf-8," + encodeURI(html);
+        container[2].innerHTML = "";
+        container[2].appendChild(iframe);
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(html);
+        iframe.contentWindow.document.close();
+    }
+    rbody.renderHTMLPreview = renderHTMLPreview;
+    function renderHTMLText(el) {
+        editorContent(el, false);
+    }
+    rbody.renderHTMLText = renderHTMLText;
+    function editorContent(el, preview) {
+        const container = el.parentElement.parentElement;
+        if (!container.classList.contains("html-body")) {
+            throw "container is not class [html-body]";
+        }
+        const baseURLEl = dom.req(".base-url", container);
+        const tLink = dom.req(".text-link", container);
+        const tContent = dom.req(".text-content", container);
+        const pLink = dom.req(".preview-link", container);
+        const pContent = dom.req(".preview-content", container);
+        dom.setDisplay(tLink, preview);
+        dom.setDisplay(tContent, !preview);
+        dom.setDisplay(pLink, !preview);
+        dom.setDisplay(pContent, preview);
+        return [baseURLEl.innerText, tContent, pContent];
+    }
+    function previewHTMLFor(e, baseURL) {
+        let ret = e.innerText;
+        const headIdx = ret.indexOf("<head");
+        if (headIdx > -1) {
+            const headEnd = ret.indexOf(">", headIdx);
+            if (headEnd > -1) {
+                const base = `<base href="${baseURL}" target="_blank">`;
+                ret = ret.substr(0, headEnd + 1) + base + ret.substr(headEnd + 1);
+            }
+        }
+        return ret;
+    }
+})(rbody || (rbody = {}));
+var rbody;
+(function (rbody) {
+    rbody.AllTypes = [
         { key: "error", title: "Error", hidden: true },
         { key: "form", title: "Form", hidden: false },
         { key: "html", title: "HTML", hidden: false },
@@ -72,7 +131,7 @@ var body;
         { key: "large", title: "Large File", hidden: false },
         { key: "raw", title: "Raw", hidden: true }
     ];
-})(body || (body = {}));
+})(rbody || (rbody = {}));
 var call;
 (function (call) {
     function prepare(coll, r) {
@@ -120,7 +179,7 @@ var call;
                         " ",
                         `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`),
                     JSX("li", null, renderHeaders("Response Headers", (_e = r.response) === null || _e === void 0 ? void 0 : _e.headers)),
-                    JSX("li", null, body.renderBody((_f = r.response) === null || _f === void 0 ? void 0 : _f.body)),
+                    JSX("li", null, rbody.renderBody(r.request, (_f = r.response) === null || _f === void 0 ? void 0 : _f.body)),
                     JSX("li", null, renderHeaders("Final Request Headers", r.requestHeaders)),
                     JSX("li", null, renderTiming(r.timing))))
         ];
@@ -1004,17 +1063,17 @@ var request;
         dom.setDisplay(ra, action !== undefined);
     }
     function getActiveRequest() {
-        const coll = collection.cache.active;
-        if (!coll) {
-            return undefined;
-        }
+        return getRequest(collection.cache.active, request.cache.active);
+    }
+    function getRequest(coll, key) {
         for (let req of request.cache.requests.get(coll) || []) {
-            if (req.key === request.cache.active) {
+            if (req.key === key) {
                 return req;
             }
         }
         return undefined;
     }
+    request.getRequest = getRequest;
     request.cache = new Cache();
 })(request || (request = {}));
 var request;
@@ -1081,6 +1140,17 @@ var request;
         return JSX("span", null, prototypeToURLParts(p).map(x => JSX("span", { title: x.t, class: urlColor(x.t) }, x.v)));
     }
     request.prototypeToHTML = prototypeToHTML;
+    function prototypeBaseURL(p) {
+        if (!p) {
+            return "invalid";
+        }
+        let d = p.domain;
+        if (p.port && p.port > 0) {
+            d += `:${p.port}`;
+        }
+        return `${p.protocol}://${d}/`;
+    }
+    request.prototypeBaseURL = prototypeBaseURL;
     function prototypeToURLParts(p) {
         const ret = [];
         let push = (t, v) => {
@@ -1249,7 +1319,7 @@ var request;
             return JSX("div", { class: "uk-margin-top" },
                 JSX("select", { class: "uk-select" },
                     JSX("option", { value: "" }, "No body"),
-                    body.AllTypes.filter(t => !t.hidden).map(t => {
+                    rbody.AllTypes.filter(t => !t.hidden).map(t => {
                         if (b && b.type === t.key) {
                             return JSX("option", { value: t.key, selected: "selected" }, t.title);
                         }
@@ -1258,7 +1328,7 @@ var request;
                         }
                     }),
                     "\u02D9"),
-                body.AllTypes.filter(t => !t.hidden).map(t => {
+                rbody.AllTypes.filter(t => !t.hidden).map(t => {
                     let cfg = (b && b.type == t.key) ? b.config : null;
                     return configEditor(t.key, cfg, t.key === (b ? b.type : ""));
                 }));
@@ -2132,6 +2202,10 @@ var log;
             msg);
         if (!list) {
             list = dom.req("#log-list");
+            if (!list) {
+                console.log(`${level}: ${msg}`);
+                return;
+            }
         }
         list.appendChild(el);
         if (!content) {
@@ -2187,6 +2261,9 @@ var nav;
     }
     nav.init = init;
     function navigate(path) {
+        if (path.startsWith("text/html;")) {
+            return "";
+        }
         if (path.startsWith("/")) {
             path = path.substr(1);
         }
