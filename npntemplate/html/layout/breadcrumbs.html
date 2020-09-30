@@ -1,5 +1,5 @@
 <%: func BreadcrumbDisplay(ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove" href="<%= ctx.Route(`home`) %>"><%= npncore.AppName %></a>
+        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" href="<%= ctx.Route(`home`) %>"><%= npncore.AppName %></a>
 <% for _, b := range ctx.Breadcrumbs { %>
         <span class="uk-navbar-item" style="padding: 0 8px;"> / </span>
-        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove" href="<%= b.Path %>"><%= b.Title %></a><% } %>
+        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" href="<%= b.Path %>"><%= b.Title %></a><% } %>

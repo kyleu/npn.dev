@@ -18,22 +18,23 @@ namespace call {
 
   export interface Result {
     readonly id: string;
+    readonly url: string;
     readonly collection: string;
     readonly request: string;
     readonly requestHeaders?: header.Header[];
     readonly status: string;
+    readonly redirectedFrom?: Result;
     readonly response?: Response;
     readonly timing?: Timing;
     readonly error?: string;
   }
 
   export function prepare(coll: string, r: request.Request) {
-    const param = {"coll": coll, "req": r.key};
-    socket.send({svc: services.request.key, cmd: command.client.requestCall, param: param});
+    const param = {coll: coll, req: r.key, proto: r.prototype};
+    socket.send({svc: services.request.key, cmd: command.client.call, param: param});
   }
 
-  export function setResult(param: any) {
-    const result = param as Result;
+  export function setResult(result: Result) {
     const container = dom.req(`#${result.collection}--${result.request}-call`);
     dom.setContent(container, renderResult(result));
   }

@@ -1,10 +1,12 @@
 namespace call {
   export function renderResult(r: Result) {
+    let rspDetail = <div>no result</div>
 
-
-    /// TODO REMOVE
-    const sections = timingSections(r.timing!);
-
+    if (r.response) {
+      const ct = r.response.contentType || "";
+      const cl = (r.response.contentLength && r.response.contentLength > -1) ? `(${r.response.contentLength} bytes)` : "";
+      rspDetail = <div>{r.response.proto} <em>{r.response.status}</em><div>{ct} {cl}</div></div>;
+    }
 
     return [
       <div class="right">
@@ -14,27 +16,30 @@ namespace call {
       <div>
         <ul data-uk-tab="">
           <li><a href="#result">Result</a></li>
-          <li><a href="#headers">Response Headers</a></li>
+          <li><a href="#request">Request</a></li>
+          <li><a href="#headers">Response</a></li>
           <li><a href="#body">Body</a></li>
-          <li><a href="#request">Request Headers</a></li>
           <li><a href="#timing">Timing</a></li>
         </ul>
         <ul class="uk-switcher uk-margin">
           <li>
             <div>{r.status}: {(r.timing?.completed || 0) / 1000}ms</div>
-            {r.response?.proto || ""} {`${r.response?.contentType || ""} (${r.response?.contentLength || "no"} bytes)`}
+            {rspDetail}
+          </li>
+          <li>
+            <h3 class="uk-margin-small-bottom">{r.url}</h3>
+            {renderHeaders("Final Request Headers", r.requestHeaders)}
           </li>
           <li>{renderHeaders("Response Headers", r.response?.headers)}</li>
-          <li>{rbody.renderBody(r.request, r.response?.body)}</li>
-          <li>{renderHeaders("Final Request Headers", r.requestHeaders)}</li>
+          <li>{rbody.renderBody(r.url, r.response?.body)}</li>
           <li>{renderTiming(r.timing)}</li>
         </ul>
       </div>
     ];
   }
 
-  function renderHeaders(title: string, headers?: header.Header[]) {
-    if (!headers) {
+  function renderHeaders(title: string, headers: header.Header[] = []) {
+    if (headers.length === 0) {
       return section(title, "No headers");
     }
     return <div class="uk-overflow-auto">

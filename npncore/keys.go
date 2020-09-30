@@ -14,6 +14,7 @@ const (
 	KeyAuth       = "auth"
 	KeyCategory   = "category"
 	KeyChoice     = "choice"
+	KeyCollection = "collection"
 	KeyComment    = "comment"
 	KeyConnection = "connection"
 	KeyContent    = "content"

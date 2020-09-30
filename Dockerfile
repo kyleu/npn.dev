@@ -17,18 +17,20 @@ ADD ./.git            /npn/.git
 ADD ./go.mod          /npn/go.mod
 ADD ./go.sum          /npn/go.sum
 ADD ./app             /npn/app
+ADD ./bin             /npn/bin
 ADD ./client          /npn/client
 ADD ./cmd             /npn/cmd
+ADD ./Makefile        /npn/Makefile
 ADD ./npnasset        /npn/npnasset
 ADD ./npnconnection   /npn/npnconnection
 ADD ./npncontroller   /npn/npncontroller
 ADD ./npncore         /npn/npncore
-ADD ./npndatabase     /npn/npndatabase
-ADD ./npnexport       /npn/npnexport
-ADD ./npngraphql      /npn/npngraphql
+# ADD ./npndatabase     /npn/npndatabase
+# ADD ./npnexport       /npn/npnexport
+# ADD ./npngraphql      /npn/npngraphql
 ADD ./npnscript       /npn/npnscript
 ADD ./npnservice      /npn/npnservice
-ADD ./npnservice-db   /npn/npnservice-db
+# ADD ./npnservice-db   /npn/npnservice-db
 ADD ./npnservice-fs   /npn/npnservice-fs
 ADD ./npntemplate     /npn/npntemplate
 ADD ./npnuser         /npn/npnuser
@@ -37,12 +39,10 @@ ADD ./web             /npn/web
 
 ARG BUILD_TARGET
 
-COPY go.* /npn/
+COPY go.mod /npn/
 RUN go mod download
 
-ADD ./bin             /npn/bin
-ADD ./Makefile        /npn/Makefile
-
+RUN set -xe && make clean
 RUN set -xe && make build-release-force
 
 RUN mv build/release /build

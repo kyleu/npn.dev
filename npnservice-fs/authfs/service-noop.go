@@ -9,7 +9,7 @@ import (
 	"golang.org/x/oauth2"
 )
 
-type ServiceNoop struct {}
+type ServiceNoop struct{}
 
 func (s *ServiceNoop) FullURL(path string) string {
 	return path

@@ -3,8 +3,9 @@ package authdb
 import (
 	"database/sql"
 	"fmt"
-	"github.com/kyleu/npn/npnservice/auth"
 	"time"
+
+	"github.com/kyleu/npn/npnservice/auth"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npndatabase"

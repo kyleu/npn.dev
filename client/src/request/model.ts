@@ -55,4 +55,12 @@ namespace request {
     readonly description: string;
     readonly prototype: Prototype;
   }
+
+  export interface Summary {
+    readonly key: string;
+    readonly title: string;
+    readonly description: string;
+    readonly url: string;
+    readonly order: number;
+  }
 }

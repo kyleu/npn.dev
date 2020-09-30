@@ -9,7 +9,6 @@ import (
 
 func main() {
 	cmd := cli.Configure()
-
 	err := cmd.Execute()
 	if err != nil {
 		fmt.Println(err)

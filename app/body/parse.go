@@ -1,11 +1,13 @@
 package body
 
 import (
+	"compress/flate"
 	"compress/gzip"
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"
 	"io"
 	"io/ioutil"
+	"strings"
 )
 
 func Parse(contentEncoding string, contentType string, charset string, contentLength int64, rd io.ReadCloser) (*Body, error) {
@@ -22,7 +24,10 @@ func Parse(contentEncoding string, contentType string, charset string, contentLe
 	switch contentEncoding {
 	case "", "identity":
 		b, err = ioutil.ReadAll(rd)
-	case "gzip", "deflate":
+	case "deflate":
+		dr := flate.NewReader(rd)
+		b, err = ioutil.ReadAll(dr)
+	case "gzip":
 		zr, _ := gzip.NewReader(rd)
 		b, err = ioutil.ReadAll(zr)
 	default:
@@ -40,26 +45,18 @@ func Parse(contentEncoding string, contentType string, charset string, contentLe
 }
 
 func detect(contentType string, charset string, b []byte) *Body {
-	switch contentType {
-	case "application/json":
-		cfg, err := tryParseJSON(b)
-		if err != nil {
-			return detect("", charset, b)
-		}
-		return &Body{Type: KeyJSON, Config: cfg}
-	case "text/html":
-		cfg := &HTML{Content: string(b)}
-		return &Body{Type: KeyHTML, Config: cfg}
+	switch {
+	case contentType == "application/json":
+		return parseJSON(contentType, charset, b)
+	case contentType == "text/html":
+		return parseHTML(b)
+	case strings.HasPrefix(contentType, "image/"):
+		return parseImage(contentType, b)
 	default:
-		return &Body{Type: KeyError, Config: &Error{Message: "unhandled content type [" + contentType + "]"}}
+		return parseRaw(b)
 	}
 }
 
-func tryParseJSON(b []byte) (Config, error) {
-	var x interface{}
-	err := npncore.FromJSON(b, &x)
-	if err != nil {
-		return nil, err
-	}
-	return &JSON{Msg: x}, nil
+func parseRaw(b []byte) *Body {
+	return NewRaw(b)
 }

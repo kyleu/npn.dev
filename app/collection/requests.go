@@ -1,8 +1,10 @@
 package collection
 
 import (
+	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -13,16 +15,43 @@ import (
 
 const shouldSaveHistory = true
 
-func (s *Service) ListRequests(c string) (request.Requests, error) {
+type RequestSummary struct {
+	Key         string             `json:"key,omitempty"`
+	Title       string             `json:"title,omitempty"`
+	Description string             `json:"description,omitempty"`
+	URL         string             `json:"url,omitempty"`
+	Order       int                `json:"order,omitempty"`
+}
+
+func (r *RequestSummary) TitleWithFallback() string {
+	if len(r.Title) == 0 {
+		return r.Key
+	}
+	return r.Title
+}
+
+type RequestSummaries []*RequestSummary
+
+func (s *Service) ListRequests(c string) (RequestSummaries, error) {
 	p := path.Join(rootDir, c, "requests")
 	files := s.files.ListJSON(p)
-	ret := make(request.Requests, 0, len(files))
-	for _, rk := range files {
+	ret := make(RequestSummaries, 0, len(files))
+	for idx, rk := range files {
 		r, err := s.LoadRequest(c, rk)
 		if err != nil {
 			return nil, errors.Wrap(err, "error loading request ["+rk+"]")
 		}
-		ret = append(ret, r)
+		url := ""
+		if r.Prototype != nil {
+			url = r.Prototype.URLString()
+		}
+		ret = append(ret, &RequestSummary{
+			Key:         r.Key,
+			Title:       r.Title,
+			Description: r.Description,
+			URL:         url,
+			Order:       idx,
+		})
 	}
 	return ret, nil
 }
@@ -42,6 +71,13 @@ func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
 }
 
 func (s *Service) SaveRequest(coll string, originalKey string, req *request.Request) error {
+	originalKey = npncore.Slugify(originalKey)
+	slug := npncore.Slugify(req.Key)
+	if slug != req.Key {
+		s.logger.Debug(fmt.Sprintf("renaming request key from [%v] to [%v]", req.Key, slug))
+		req.Key = slug
+	}
+
 	shouldDelete := len(originalKey) > 0 && req.Key != originalKey
 
 	if shouldDelete {
@@ -62,17 +98,29 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 		}
 	}
 
+	msg := npncore.ToJSON(req, s.logger)
+
 	if shouldSaveHistory {
 		hp := historyPath(coll, req.Key)
 		now := time.Now()
 		hfn := path.Join(hp, npncore.ToDateString(&now)+".json")
-		err := s.files.CopyFile(p, hfn)
+		hd := filepath.Dir(hfn)
+		err := s.files.CreateDirectory(hd)
+		if err != nil {
+			return errors.Wrap(err, "unable to create request history directory ["+hd+"]")
+		}
+
+		x, _ := os.Stat(p)
+		if x == nil {
+			err = s.files.WriteFile(p, []byte(msg), true)
+		} else {
+			err = s.files.CopyFile(p, hfn)
+		}
 		if err != nil {
 			return errors.Wrap(err, "unable to create request history ["+hp+"]")
 		}
 	}
 
-	msg := npncore.ToJSON(req, s.logger)
 	err := s.files.WriteFile(p, []byte(msg), true)
 	if err != nil {
 		return errors.Wrap(err, "unable to write file")

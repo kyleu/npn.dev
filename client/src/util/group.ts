@@ -47,4 +47,45 @@ namespace group {
     a.forEach(v => ret.push(...v));
     return ret;
   }
+
+  export function sort<T, S>(a: T[] | undefined, matchFn: (t: T) => S): T[] {
+    if (!a) {
+      return [];
+    }
+    a.sort((l, r) => {
+      const lv = matchFn(l);
+      const rv = matchFn(r);
+      if (lv > rv) {
+        return 1;
+      }
+      if (lv < rv) {
+        return -1;
+      }
+      return 0;
+    })
+    return a;
+  }
+
+  export function update<T, S>(a: T[] | undefined, v: T, matchFn: (t: T) => S): T[] {
+    if (!a) {
+      return [v];
+    }
+    let matched = false;
+    const key = matchFn(v);
+    for (const idx in a) {
+      const c = a[idx]
+      if (matchFn(c) == key) {
+        matched = true;
+        a[idx] = v;
+      }
+    }
+    if (!matched) {
+      a.push(v);
+    }
+    return a;
+  }
+
+  export function updateAndSort<T, S>(a: T[] | undefined, v: T, matchFn: (t: T) => S): T[] {
+    return sort(update(a, v, matchFn), matchFn);
+  }
 }

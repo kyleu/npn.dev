@@ -2,9 +2,10 @@ package authdb
 
 import (
 	"context"
+	"os"
+
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnservice/auth"
-	"os"
 
 	"emperror.dev/errors"
 	"golang.org/x/oauth2"
@@ -50,7 +51,6 @@ func (s *ServiceDatabase) GetToken(prv *auth.Provider, code string) (*oauth2.Tok
 	ctx := context.Background()
 	return cfg.Exchange(ctx, code)
 }
-
 
 func envsFor(prv *auth.Provider) (string, string) {
 	var id = npncore.AppKey + "_client_id_" + prv.Key

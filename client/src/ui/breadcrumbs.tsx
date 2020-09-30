@@ -1,7 +1,10 @@
 namespace ui {
+  const bcCls = "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic";
+
   export function setBreadcrumbs(coll: string | undefined, req: string | undefined, act: string | undefined, extra: string[]) {
     const el = dom.req("#breadcrumbs");
     reset(el);
+    el.appendChild(nav.link({path: "/", title: "npn", cls: bcCls}));
     if (coll) {
       el.appendChild(sep());
       el.appendChild(bcFor(coll, "c", coll));
@@ -43,6 +46,6 @@ namespace ui {
 
   function bcFor(title: string, ...parts: string[]) {
     const path = parts.map(s => "/" + s).join("");
-    return nav.link(path, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
+    return nav.link({path: path, title: title, cls: bcCls});
   }
 }

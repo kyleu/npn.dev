@@ -7,7 +7,7 @@ namespace header {
     readonly link?: string;
   }
 
-  function nch(key: string, description: string, req?: boolean, rsp?: boolean, link?: string): CommonHeader {
+  function nch(key: string, description: string, req: boolean, rsp: boolean, link: string): CommonHeader {
     return {"key": key, "description": description, "req": req, "rsp": rsp, "link": link};
   }
 

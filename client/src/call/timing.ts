@@ -24,8 +24,10 @@ namespace call {
   export function timingSections(t: Timing): TimingSection[] {
     const ret: TimingSection[] = [];
 
-    const add = function(k: string, g: string, s: number, e: number) {
-      ret.push({key: k, group: g, start: s, end: e});
+    const add = (k: string, g: string, s?: number, e?: number) => {
+      if (s && e) {
+        ret.push({key: k, group: g, start: s, end: e});
+      }
     }
 
     add("dns", "connect", t.dnsStart, t.dnsEnd);

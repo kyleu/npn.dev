@@ -1,4 +1,4 @@
-<%: func CollectionDetail(c *collection.Collection, requests request.Requests, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%: func CollectionDetail(c *collection.Collection, requests collection.RequestSummaries, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
 <%~ "layout/basic.html" %>
 <%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
 <%@ body { %>

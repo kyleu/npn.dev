@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+
 	"github.com/kyleu/npn/app/call"
 
 	"emperror.dev/errors"
@@ -19,7 +20,7 @@ type services struct {
 func NewService(collectionSvc *collection.Service, callSvc *call.Service, logger logur.Logger) *npnconnection.Service {
 	ctx := &services{
 		Collection: collectionSvc,
-		Caller: callSvc,
+		Caller:     callSvc,
 	}
 	return npnconnection.NewService(logger, onOpen, handler, onClose, ctx)
 }
@@ -27,7 +28,7 @@ func NewService(collectionSvc *collection.Service, callSvc *call.Service, logger
 func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, cmd string, param json.RawMessage) error {
 	var err error
 	switch svc {
-	case "collection":
+	case npncore.KeyCollection:
 		err = handleCollectionMessage(s, c, cmd, param)
 	case npncore.KeySystem:
 		err = handleSystemMessage(cmd)
@@ -41,7 +42,7 @@ func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, 
 
 func onOpen(s *npnconnection.Service, c *npnconnection.Connection) error {
 	p := connected{Profile: c.Profile}
-	msg := npnconnection.NewMessage(npncore.KeySystem, "connected", p)
+	msg := npnconnection.NewMessage(npncore.KeySystem, ServerMessageConnected, p)
 	err := s.WriteMessage(c.ID, msg)
 	if err != nil {
 		return errors.Wrap(err, "unable to write to socket")

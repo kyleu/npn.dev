@@ -2,8 +2,9 @@ package userfs
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npnservice/user"
 	"time"
+
+	"github.com/kyleu/npn/npnservice/user"
 
 	"golang.org/x/text/language"
 

@@ -2,8 +2,9 @@ package request
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npncontroller"
 	"net/http"
+
+	"github.com/kyleu/npn/npncontroller"
 
 	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/npn/app/body"

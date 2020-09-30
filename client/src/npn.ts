@@ -9,6 +9,12 @@ namespace npn {
   }
 
   export function init(svc: string, id: string) {
+    if (inIframe()) {
+      document.body.innerHTML = "";
+      document.body.appendChild(rbody.iframeError());
+      return;
+    }
+
     log.init();
 
     window.onbeforeunload = () => {
@@ -21,7 +27,7 @@ namespace npn {
   }
 
   export function debug() {
-    const dump = (k: string, v?: string) => {
+    const dump = (k: string, v: string = "") => {
       console.warn(`${k}: ${v}`);
     }
     dump("Active Collection", collection.cache.active);
@@ -31,5 +37,13 @@ namespace npn {
 
   export function testbed() {
     log.info("Testbed!");
+  }
+
+  function inIframe () {
+    try {
+      return window.self !== window.top;
+    } catch (e) {
+      return true;
+    }
   }
 }

@@ -15,7 +15,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	ctx := npnweb.ExtractContext(w, r, false)
 	ctx.Title = "Not Found"
 	ctx.Breadcrumbs = npnweb.BreadcrumbsSimple(r.URL.Path, "not found")
-	ctx.Logger.Info(fmt.Sprintf("[%v %v] returned [%d]", r.Method, r.URL.Path, http.StatusNotFound))
+	ctx.Logger.Info(fmt.Sprintf("%v %v returned [%d]", r.Method, r.URL.Path, http.StatusNotFound))
 	_, _ = npntemplate.NotFound(r, ctx, w)
 }
 

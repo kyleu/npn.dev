@@ -4,7 +4,7 @@ namespace notify {
   }
 
   export function confirm(msg: string, f: () => void) {
-    UIkit.modal.confirm(msg).then(f)
+    UIkit.modal.confirm(msg).then(f);
   }
 
   export function modal(key: string) {
@@ -12,6 +12,6 @@ namespace notify {
     if (!m) {
       console.warn(`no modal available with key [${key}]`);
     }
-    return m
+    return m;
   }
 }

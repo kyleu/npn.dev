@@ -25,3 +25,8 @@ func (l *HTML) MimeType() string {
 func (l *HTML) String() string {
 	return l.Content
 }
+
+func parseHTML(b []byte) *Body {
+	cfg := &HTML{Content: string(b)}
+	return &Body{Type: KeyHTML, Config: cfg}
+}

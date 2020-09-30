@@ -58,6 +58,9 @@ func (s *Service) Load(key string) (*Collection, error) {
 }
 
 func (s *Service) Save(originalKey string, newKey string, title string, description string) error {
+	originalKey = npncore.Slugify(originalKey)
+	newKey = npncore.Slugify(newKey)
+
 	orig, err := s.Load(originalKey)
 	if err != nil {
 		return errors.Wrap(err, "unable to load original collection ["+originalKey+"]")
@@ -82,6 +85,7 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 		n.Owner = "system"
 	} else {
 		n.Owner = orig.Owner
+		n.RequestOrder = orig.RequestOrder
 	}
 	n.Path = newKey
 

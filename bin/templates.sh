@@ -11,7 +11,9 @@ FORCE="$1"
 
 function tmpl {
   echo "updating [$2] templates"
-  mv "$ftgt" "$fsrc"
+  if test -f "$ftgt"; then
+    mv "$ftgt" "$fsrc"
+  fi
   if [ "$1" = "npntemplate" ]; then
     cd npntemplate
     rm -rf gen
@@ -30,6 +32,8 @@ function check {
   if [ ! -d "$3" ]; then
     rm -f "$fsrc"
   fi
+
+  mkdir -p tmp/
 
   find "$2" -type f -exec md5sum {} \; | md5sum > "$ftgt"
 

@@ -1,11 +1,12 @@
 package collection
 
 type Collection struct {
-	Key         string `json:"key"`
-	Title       string `json:"title,omitempty"`
-	Description string `json:"description,omitempty"`
-	Owner       string `json:"owner,omitempty"`
-	Path        string `json:"path,omitempty"`
+	Key          string   `json:"key"`
+	Title        string   `json:"title,omitempty"`
+	Description  string   `json:"description,omitempty"`
+	Owner        string   `json:"owner,omitempty"`
+	Path         string   `json:"path,omitempty"`
+	RequestOrder []string `json:"requestOrder,omitempty"`
 }
 
 func (c *Collection) TitleWithFallback() string {

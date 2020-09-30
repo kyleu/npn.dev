@@ -3,11 +3,11 @@ namespace request {
     const u = new URL(url);
     return {
       method: MethodGet.key,
-      protocol: u.protocol,
+      protocol: str.trimSuffix(u.protocol, ":"),
       domain: u.hostname,
       port: parseInt(u.port, 10),
-      path: u.pathname,
-      fragment: u.hash
+      path: str.trimPrefix(u.pathname, "/"),
+      fragment: str.trimPrefix(u.hash, "#")
     };
   }
 
@@ -17,6 +17,10 @@ namespace request {
 
   export function prototypeToHTML(p: Prototype) {
     return <span>{prototypeToURLParts(p).map(x => <span title={x.t} class={urlColor(x.t)}>{ x.v }</span>)}</span>;
+  }
+
+  export function baseURL(s: string) {
+    return prototypeBaseURL(urlToPrototype(s))
   }
 
   export function prototypeBaseURL(p: Prototype | undefined) {
@@ -98,16 +102,6 @@ namespace request {
         return "purple-fg"
       default:
         return ""
-    }
-  }
-
-  export function onRequestMessage(cmd: string, param: any) {
-    switch (cmd) {
-      case command.server.callResult:
-        call.setResult(param);
-        break;
-      default:
-        console.warn(`unhandled request command [${cmd}]`);
     }
   }
 }

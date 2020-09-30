@@ -17,20 +17,13 @@ namespace request.editor {
         <input class="uk-input" id={el.id + "-timeout"} name="opt-timeout" type="number" value={opts.timeout}/>
       </div>
       <div class="uk-margin-top">
-        <label class="uk-form-label" for={el.id + "-ignoreRedirects"}>Ignore Redirects</label>
-        {inputBool(el.id, "ignoreRedirects", opts.ignoreRedirects || false)}
-      </div>
-      <div class="uk-margin-top">
-        <label class="uk-form-label" for="<%= key %>-ignoreReferrer">Ignore Referrer</label>
-        {inputBool(el.id, "ignoreReferrer", opts.ignoreReferrer || false)}
-      </div>
-      <div class="uk-margin-top">
-        <label class="uk-form-label" for={el.id + "-ignoreCerts"}>Ignore Certs</label>
-        {inputBool(el.id, "ignoreCerts", opts.ignoreCerts || false)}
-      </div>
-      <div class="uk-margin-top">
-        <label class="uk-form-label" for={el.id + "-ignoreCookies"}>Ignore Cookies</label>
-        {inputBool(el.id, "ignoreCookies", opts.ignoreCookies || false)}
+        <label class="uk-form-label">Ignore</label>
+        <div>
+          {inputCheckbox(el.id, "ignoreRedirects", "Redirects", opts.ignoreRedirects || false)}
+          {inputCheckbox(el.id, "ignoreReferrer", "Referrer", opts.ignoreReferrer || false)}
+          {inputCheckbox(el.id, "ignoreCerts", "Certs", opts.ignoreCerts || false)}
+          {inputCheckbox(el.id, "ignoreCookies", "Cookies", opts.ignoreCookies || false)}
+        </div>
       </div>
       <div class="uk-margin-top">
         <label class="uk-form-label" for={el.id + "-excludeDefaultHeaders"}>Exclude Default Headers</label>
@@ -55,19 +48,13 @@ namespace request.editor {
     </div>;
   }
 
-  function inputBool(key: string, prop: string, v: boolean) {
+  function inputCheckbox(key: string, prop: string, title: string, v: boolean) {
     const n = "opt-" + prop;
     const id = key + "-" + prop;
     if (v) {
-      return <div>
-        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={n} value="true" checked/> True</label>
-        <label><input class="uk-radio" type="radio" name={n} value="false" /> False</label>
-      </div>
+      return <label class="uk-margin-right"><input type="checkbox" name={n} value="true" checked /> {title}</label>;
     } else {
-      return <div>
-        <label class="uk-margin-small-right"><input class="uk-radio" type="radio" name={n} value="true" /> True</label>
-        <label><input class="uk-radio" type="radio" name={n} value="false" checked/> False</label>
-      </div>
+      return <label class="uk-margin-right"><input type="checkbox" name={n} value="true" /> {title}</label>;
     }
   }
 }

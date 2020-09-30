@@ -45,7 +45,7 @@ namespace request.form {
   function renderSavePanel(r: request.Request) {
     return <div id="save-panel" class="right hiddenX">
       <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick="console.log('TODO!');">Reset</button>
-      <button class="uk-button uk-button-default uk-margin-top" onclick="console.log(request.form.getRequest());">Save Changes</button>
+      <button class="uk-button uk-button-default uk-margin-top" onclick="console.log(request.form.extractRequest());">Save Changes</button>
     </div>;
   }
 
@@ -55,16 +55,16 @@ namespace request.form {
     const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }"
 
     return <div>
-      {nav.link(path + "/call", "Call", btnClass, "", true)}
+      {nav.link({path: path + "/call", title: "Call", cls: btnClass, isButton: true})}
       <div class="uk-inline">
         <button type="button" class={btnClass}>Export</button>
         <div id="export-dropdown" uk-dropdown="mode: click">
           <ul class="uk-list uk-list-divider" style="margin-bottom: 0;">
-            {Object.keys(transforms).map(k => <li>{nav.link(path + "/transform/" + k, transforms[k], "", "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);")}</li>)}
+            {Object.keys(transforms).map(k => <li>{nav.link({path: path + "/transform/" + k, title: transforms[k], onclk: "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);"})}</li>)}
           </ul>
         </div>
       </div>
-      {nav.link(path + "/delete", "Delete", btnClass, delWarn, true)}
+      {nav.link({path: path + "/delete", title: "Delete", cls: btnClass, onclk: delWarn, isButton: true})}
     </div>
   }
 }

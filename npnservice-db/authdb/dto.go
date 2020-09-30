@@ -1,9 +1,10 @@
 package authdb
 
 import (
+	"time"
+
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/npnservice/auth"
-	"time"
 )
 
 type recordDTO struct {
@@ -37,4 +38,3 @@ func (dto *recordDTO) toRecord() *auth.Record {
 		Created:      dto.Created,
 	}
 }
-

@@ -1,10 +1,11 @@
 package request
 
 import (
-	"github.com/kyleu/npn/npncontroller"
 	"net/url"
 	"strconv"
 	"strings"
+
+	"github.com/kyleu/npn/npncontroller"
 
 	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/npn/npncore"

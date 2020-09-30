@@ -1,13 +1,14 @@
 package auth
 
 import (
+	"io/ioutil"
+	"net/http"
+
 	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
 	"golang.org/x/oauth2"
-	"io/ioutil"
-	"net/http"
 )
 
 type Service interface {

@@ -3,6 +3,7 @@ package npncore
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"runtime"
 	"strings"
 
@@ -15,7 +16,12 @@ type appFormatter struct {
 	nested *logrus.TextFormatter
 }
 
+var root, _ = filepath.Abs(".")
+
 func (a *appFormatter) Format(entry *logrus.Entry) ([]byte, error) {
+
+	println(root)
+
 	entry.Message = "\n" + entry.Message + "\n\n"
 	b, err := a.nested.Format(entry)
 	if err != nil {
@@ -32,10 +38,14 @@ func (a *appFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 				idx++
 			} else {
 				file, line = f, l
+				file = strings.TrimPrefix(file, root + "/")
 				break
 			}
 		}
-		ret = append(ret, fmt.Sprintf("%v%v:%v", header, file, line))
+
+		footer := strings.TrimSpace(lines[len(lines)-2])
+
+		ret = append(ret, fmt.Sprintf(" :: %v%v:%v [%v]", header, file, line, footer))
 
 		content := lines[1 : len(lines)-2]
 		for _, s := range content {
@@ -43,9 +53,6 @@ func (a *appFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 				ret = append(ret, s)
 			}
 		}
-
-		footer := strings.TrimSpace(lines[len(lines)-2])
-		ret = append(ret, footer)
 
 		ret = append(ret, lines[len(lines)-1])
 	}

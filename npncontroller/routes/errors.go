@@ -47,7 +47,7 @@ func internalServerError(router *mux.Router, info npnweb.AppInfo, w http.Respons
 		}
 
 		_, _ = npntemplate.InternalServerError(npncore.GetErrorDetail(e), r, ctx, w)
-		ctx.Logger.Warn(fmt.Sprintf("[%v %v] returned [%d]: %+v", r.Method, r.URL.Path, st, e))
+		ctx.Logger.Warn(fmt.Sprintf("%v %v returned [%d]: %+v", r.Method, r.URL.Path, st, e))
 	}
 }
 

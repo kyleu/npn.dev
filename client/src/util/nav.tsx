@@ -1,15 +1,29 @@
 namespace nav {
   let handler = (p: string) => {
-    console.info("default nav handler called: " + p);
+    let msg = "default nav handler called: " + p;
+    console.info(msg);
   }
 
   export function init(f: (p: string) => void) {
     handler = f;
     window.onpopstate = (event: PopStateEvent) => {
-      f(event.state === null ? "" : (event.state as string));
+      if (event.state) {
+        let s = event.state as string;
+        handler(s);
+      } else {
+        handler("");
+      }
     }
     let path = location.pathname;
     navigate(path);
+  }
+
+  export function pop() {
+    let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
+    if (p === '/c') {
+      p = "";
+    }
+    navigate(p);
   }
 
   export function navigate(path: string) {
@@ -24,47 +38,49 @@ namespace nav {
       locPath = locPath.substr(1);
     }
     if (locPath !== path) {
-      history.pushState(path, "", "/" + path);
+      let final = path;
+      history.pushState(final, "", "/" + final);
     }
     handler(path);
-  }
-
-  export function pop() {
-    let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
-    if (p === '/c') {
-      p = "";
-    }
-    navigate(p);
   }
 
   export function navActiveRequest() {
     navigate(`/c/${collection.cache.active}/${request.cache.active}`);
   }
 
-  export function link(path: string, title: string, cls?: string, onclk?: string, isButton?: boolean, icon?: string) {
-    let href = path;
+  export interface LinkOpts {
+    path: string;
+    title: string;
+    cls?: string;
+    onclk?: string;
+    isButton?: boolean;
+    icon?: string;
+  }
+
+  export function link(o: LinkOpts) {
+    let href = o.path;
     if (!href.startsWith("/")) {
       href = "/" + href;
     }
-    if (cls) {
-      cls = " " + cls.trim();
+    if (o.cls) {
+      o.cls = " " + o.cls.trim();
     } else {
-      cls = "";
+      o.cls = "";
     }
     let i = <span />;
-    if (icon) {
-      i = <span class="nav-icon" data-uk-icon={`icon: ${icon}`} />;
+    if (o.icon) {
+      i = <span class="nav-icon" data-uk-icon={`icon: ${o.icon}`} />;
     }
-    if (onclk) {
-      if (!onclk.endsWith(";")) {
-        onclk += ";"
+    if (o.onclk) {
+      if (!o.onclk.endsWith(";")) {
+        o.onclk += ";"
       }
     } else {
-      onclk = "";
+      o.onclk = "";
     }
-    if (!isButton) {
-      cls = style.linkColor + cls;
+    if (!o.isButton) {
+      o.cls = style.linkColor + o.cls;
     }
-    return <a class={cls} href={href} onclick={onclk + "nav.navigate('" + path + "', '" + title + "');return false;"}>{i}{title}</a>;
+    return <a class={o.cls} href={href} onclick={o.onclk + "nav.navigate('" + o.path + "', '" + o.title + "');return false;"}>{i}{o.title}</a>;
   }
 }

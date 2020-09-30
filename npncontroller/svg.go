@@ -2,29 +2,30 @@ package npncontroller
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
-	"golang.org/x/text/language"
 	"math"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
+	"golang.org/x/text/language"
 )
 
 type ganttSection struct {
-	Key   string  `json:"key"`
-	Group string  `json:"group,omitempty"`
-	Start int `json:"start"`
-	End   int `json:"end"`
+	Key   string `json:"key"`
+	Group string `json:"group,omitempty"`
+	Start int    `json:"start"`
+	End   int    `json:"end"`
 }
 
 func Gantt(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		rowHeight := 24
 		sections, completed, theme := parseGanttRequest(r)
-		var pc = func(n int) float64 {return math.Floor((float64(n) / float64(completed)) * 10000)/100 }
+		var pc = func(n int) float64 { return math.Floor((float64(n)/float64(completed))*10000) / 100 }
 
-		ret := make([]string, 0, len(sections) + 2)
+		ret := make([]string, 0, len(sections)+2)
 		var ap = func(s string) {
 			ret = append(ret, s)
 		}
@@ -34,8 +35,8 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 		ap(fmt.Sprintf(svgDecl, totalHeight, totalHeight))
 
 		lineMsg := `<line x1="%v" y1="0" x2="%v" y2="%v" stroke="#666" stroke-width="0.1" />`
-		for idx := 0; idx < 11; idx ++ {
-			ap(fmt.Sprintf(lineMsg, idx * 10, idx * 10, totalHeight));
+		for idx := 0; idx < 11; idx++ {
+			ap(fmt.Sprintf(lineMsg, idx*10, idx*10, totalHeight))
 		}
 
 		bg := `<rect x="0" y="%v" width="100" height="%v" fill="transparent">%v</rect>`
@@ -108,50 +109,50 @@ func parseGanttRequest(r *http.Request) ([]*ganttSection, int, string) {
 }
 
 func colorForSection(key string, theme string) string {
-	switch (key) {
+	switch key {
 	case "dns":
 		if theme == "dark" {
-			return "#30444e";
+			return "#30444e"
 		}
-		return "#89b6cc";
+		return "#89b6cc"
 	case "connect":
 		if theme == "dark" {
-			return "#30444e";
+			return "#30444e"
 		}
-		return "#89b6cc";
+		return "#89b6cc"
 	case "tls":
 		if theme == "dark" {
-			return "#462206";
+			return "#462206"
 		}
-		return "#c96112";
+		return "#c96112"
 	case "reqheaders":
 		if theme == "dark" {
-			return "#072918";
+			return "#072918"
 		}
-		return "#177245";
+		return "#177245"
 	case "reqbody":
 		if theme == "dark" {
-			return "#072918";
+			return "#072918"
 		}
-		return "#177245";
+		return "#177245"
 	case "rspwait":
 		if theme == "dark" {
-			return "#101e33";
+			return "#101e33"
 		}
 		return "#397adb"
 	case "rspheaders":
 		if theme == "dark" {
-			return "#101e33";
+			return "#101e33"
 		}
 		return "#397adb"
 	case "rspbody":
 		if theme == "dark" {
-			return "#101e33";
+			return "#101e33"
 		}
 		return "#397adb"
 	default:
 		if theme == "dark" {
-			return "#101e33";
+			return "#101e33"
 		}
 		return "#397adb"
 	}

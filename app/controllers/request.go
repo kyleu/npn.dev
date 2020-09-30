@@ -58,8 +58,8 @@ func loadRequest(r *http.Request, ctx *npnweb.RequestContext, action string) (st
 	ctx.Title = fmt.Sprintf("%v/%v", c, key)
 
 	bc := append(
-		npnweb.BreadcrumbsSimple(ctx.Route(KeyCollection), "collections"),
-		npnweb.Breadcrumb{Path: ctx.Route(KeyCollection+".detail", "c", c), Title: c},
+		npnweb.BreadcrumbsSimple(ctx.Route(npncore.KeyCollection), "collections"),
+		npnweb.Breadcrumb{Path: ctx.Route(npncore.KeyCollection+".detail", "c", c), Title: c},
 	)
 
 	if len(action) == 0 {

@@ -1,19 +1,20 @@
 namespace request {
   class Cache {
+    summaries: Map<string, Summary[]> = new Map();
     requests: Map<string, Request[]> = new Map();
     active?: string;
     action?: string;
     extra: string[] = [];
 
-    setCollectionRequests(coll: collection.Collection, requests: request.Request[]) {
-      this.requests.set(coll.key, requests);
+    setCollectionRequests(coll: collection.Collection, summs: request.Summary[]) {
+      this.summaries.set(coll.key, summs);
       if (coll.key === collection.cache.active) {
-        dom.setContent("#collection-panel", collection.renderCollection(coll, requests));
-        for (let req of requests) {
+        dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
+        for (let req of summs) {
           if (this.active === req.key) {
-            renderActiveRequest(collection.cache.active, req);
+            renderActiveRequest(collection.cache.active);
             if (this.action) {
-              renderActiveAction(collection.cache.active, req, this.action, this.extra);
+              renderAction(collection.cache.active, req.key, this.action, this.extra);
             }
           }
         }
@@ -22,16 +23,12 @@ namespace request {
 
     setActiveRequest(key: string | undefined) {
       if (!collection.cache.active) {
-        console.warn("no active collection");
         return;
       }
       if (this.active !== key) {
         this.active = key;
         if (this.active) {
-          const r = getActiveRequest()
-          if (r) {
-            renderActiveRequest(collection.cache.active, r);
-          }
+          renderActiveRequest(collection.cache.active);
         } else {
 
         }
@@ -40,7 +37,6 @@ namespace request {
 
     setActiveAction(act: string | undefined, extra: string[]) {
       if (!collection.cache.active) {
-        console.warn("no active collection");
         return;
       }
 
@@ -48,50 +44,18 @@ namespace request {
       if (this.active && (this.action !== act || !sameExtra)) {
         this.action = act;
         this.extra = extra;
-        const r = getActiveRequest()
-        if (r) {
-          renderActiveAction(collection.cache.active, r, this.action, this.extra);
-        }
+        renderAction(collection.cache.active, this.active, this.action, this.extra);
       }
     }
-  }
 
-  function renderActiveRequest(coll: string, req: request.Request) {
-    dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
-    request.editor.wireForm(req.key);
-  }
-
-  function renderActiveAction(coll: string, req: request.Request, action: string | undefined, extra: string[]) {
-    log.info(`new action: ${action} (${extra})`)
-    const re = dom.req(".request-editor");
-    const ra = dom.req(".request-action");
-    switch (action) {
-      case undefined:
-        dom.setContent(ra, renderActionEmpty(req));
-        break;
-      case "call":
-        call.prepare(coll, req);
-        dom.setContent(ra, renderActionCall(coll, req));
-        break;
-      default:
-        console.warn("unhandled request action [" + action + "]")
-        dom.setContent(ra, request.renderActionUnknown(action, extra, req));
-    }
-    dom.setDisplay(re, action === undefined)
-    dom.setDisplay(ra, action !== undefined)
-  }
-
-  function getActiveRequest() {
-    return getRequest(collection.cache.active!, cache.active!);
-  }
-
-  export function getRequest(coll: string, key: string) {
-    for (let req of cache.requests.get(coll) || []) {
-      if (req.key === key) {
-        return req
+    updateRequest(r: request.Request) {
+      if (!collection.cache.active) {
+        return;
       }
+      const curr = this.requests.get(collection.cache.active);
+      const updated = group.update(curr, r, x => x.key);
+      this.requests.set(collection.cache.active, updated);
     }
-    return undefined
   }
 
   export const cache = new Cache();

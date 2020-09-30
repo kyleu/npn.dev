@@ -7,9 +7,9 @@ import (
 	"github.com/kyleu/npn/app/socket"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnservice-fs/authfs"
 	"github.com/kyleu/npn/npnservice-fs/userfs"
 	"github.com/kyleu/npn/npnservice/auth"
-	"github.com/kyleu/npn/npnservice-fs/authfs"
 	"github.com/kyleu/npn/npnservice/user"
 	"github.com/kyleu/npn/npnweb"
 	"logur.dev/logur"
@@ -33,9 +33,9 @@ func NewService(debug bool, dataDir string, logger logur.Logger) *Service {
 	collSvc := collection.NewService(files, logger)
 	callSvc := call.NewService(logger)
 	return &Service{
-		debug:      debug,
-		files:      files,
-		user:       us,
+		debug: debug,
+		files: files,
+		user:  us,
 		// auth:       authdb.NewServiceDatabase(false, "", nil, logger, us),
 		auth:       authfs.NewServiceNoop(),
 		logger:     logger,

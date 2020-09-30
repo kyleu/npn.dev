@@ -5,10 +5,10 @@
   color: #777;
 }
 .uk-dark .grey-fg {
-  color: #dddddd;
+  color: #888888;
 }
 .uk-dark .grey-fg:hover {
-  color: #dddddd;
+  color: #888888;
 }
 .uk-dark .bluegrey-fg {
   color: #3f7592;
@@ -62,7 +62,7 @@
   background: #fff !important;
 }
 .uk-dark .grey-bg {
-  background: #dddddd !important;
+  background: #bbbbbb !important;
 }
 .uk-dark .bluegrey-bg {
   background: #89b6cc !important;
@@ -92,7 +92,7 @@
   fill: #fff !important;
 }
 .uk-dark .grey-fill {
-  fill: #dddddd !important;
+  fill: #bbbbbb !important;
 }
 .uk-dark .bluegrey-fill {
   fill: #89b6cc !important;
@@ -122,7 +122,7 @@
   border-color: #777 !important;
 }
 .uk-dark .grey-border {
-  border-color: #dddddd !important;
+  border-color: #888888 !important;
 }
 .uk-dark .bluegrey-border {
   border-color: #3f7592 !important;
@@ -156,10 +156,10 @@
   color: #fff;
 }
 .uk-light .grey-fg {
-  color: #dddddd;
+  color: #bbbbbb;
 }
 .uk-light .grey-fg:hover {
-  color: #dddddd;
+  color: #bbbbbb;
 }
 .uk-light .bluegrey-fg {
   color: #89b6cc;
@@ -273,7 +273,7 @@
   border-color: #fff !important;
 }
 .uk-light .grey-border {
-  border-color: #dddddd !important;
+  border-color: #bbbbbb !important;
 }
 .uk-light .bluegrey-border {
   border-color: #89b6cc !important;
@@ -307,10 +307,10 @@
   color: #777;
 }
 .uk-dark .grey-fg {
-  color: #dddddd;
+  color: #888888;
 }
 .uk-dark .grey-fg:hover {
-  color: #dddddd;
+  color: #888888;
 }
 .uk-dark .bluegrey-fg {
   color: #3f7592;
@@ -364,7 +364,7 @@
   background: #fff !important;
 }
 .uk-dark .grey-bg {
-  background: #dddddd !important;
+  background: #bbbbbb !important;
 }
 .uk-dark .bluegrey-bg {
   background: #89b6cc !important;
@@ -394,7 +394,7 @@
   fill: #fff !important;
 }
 .uk-dark .grey-fill {
-  fill: #dddddd !important;
+  fill: #bbbbbb !important;
 }
 .uk-dark .bluegrey-fill {
   fill: #89b6cc !important;
@@ -424,7 +424,7 @@
   border-color: #777 !important;
 }
 .uk-dark .grey-border {
-  border-color: #dddddd !important;
+  border-color: #888888 !important;
 }
 .uk-dark .bluegrey-border {
   border-color: #3f7592 !important;
@@ -458,10 +458,10 @@
   color: #fff;
 }
 .uk-light .grey-fg {
-  color: #dddddd;
+  color: #bbbbbb;
 }
 .uk-light .grey-fg:hover {
-  color: #dddddd;
+  color: #bbbbbb;
 }
 .uk-light .bluegrey-fg {
   color: #89b6cc;
@@ -575,7 +575,7 @@
   border-color: #fff !important;
 }
 .uk-light .grey-border {
-  border-color: #dddddd !important;
+  border-color: #bbbbbb !important;
 }
 .uk-light .bluegrey-border {
   border-color: #89b6cc !important;
@@ -1023,6 +1023,10 @@ input {
     padding-left: 240px;
   }
 }
+.collection-link.active {
+  background-color: #61A151;
+}
+
 #nav-left {
   position: fixed;
   top: 54px;

@@ -31,3 +31,16 @@ func (j *JSON) String() string {
 	}
 	return j.str
 }
+
+func parseJSON(ct string, charset string, b []byte) *Body {
+	var x interface{}
+	err := npncore.FromJSON(b, &x)
+	if err != nil {
+		if ct == "" {
+			return NewError(err.Error())
+		}
+		return detect("", charset, b)
+	}
+
+	return &Body{Type: KeyJSON, Config: &JSON{Msg: x}}
+}

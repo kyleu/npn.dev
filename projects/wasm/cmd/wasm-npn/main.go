@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"syscall/js"
+
 	"github.com/kyleu/npn/app/cli"
 	"github.com/kyleu/npn/npncore"
-	"syscall/js"
 )
 
 var exitChannel = make(chan bool)
@@ -29,5 +30,5 @@ func main() {
 
 	js.Global().Set("npn", ret)
 
-	<- exitChannel
+	<-exitChannel
 }

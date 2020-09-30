@@ -31,7 +31,7 @@ func RequestDelete(w http.ResponseWriter, r *http.Request) {
 		}
 
 		msg := "deleted request [" + key + "] from this collection"
-		return npncontroller.FlashAndRedir(true, msg, ctx.Route(KeyCollection+".detail", "c", coll), w, r, ctx)
+		return npncontroller.FlashAndRedir(true, msg, ctx.Route(npncore.KeyCollection+".detail", "c", coll), w, r, ctx)
 	})
 }
 

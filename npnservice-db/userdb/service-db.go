@@ -3,8 +3,9 @@ package userdb
 import (
 	"database/sql"
 	"fmt"
-	"github.com/kyleu/npn/npnservice/user"
 	"time"
+
+	"github.com/kyleu/npn/npnservice/user"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npndatabase"

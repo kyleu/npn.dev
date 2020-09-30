@@ -2,9 +2,10 @@ package request
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npncore"
 	"strconv"
 	"strings"
+
+	"github.com/kyleu/npn/npncore"
 
 	"github.com/kyleu/npn/app/header"
 )
@@ -17,7 +18,7 @@ func (p *Prototype) FinalHeaders() header.Headers {
 			s := f()
 			if len(s) > 0 {
 				h := &header.Header{Key: k, Value: s}
-				ret = append(header.Headers{h}, ret...)
+				ret = append(ret, h)
 			}
 		}
 	}
@@ -36,9 +37,9 @@ func (p *Prototype) FinalHeaders() header.Headers {
 	check("Host", p.Host)
 	check("Origin", func() string {
 		if p.Method == MethodPost {
-			return p.Protocol.Key + "://" + p.Host();
+			return p.Protocol.Key + "://" + p.Host()
 		}
-		return "";
+		return ""
 	})
 	check("User-Agent", func() string { return npncore.AppName })
 

@@ -24,6 +24,13 @@ namespace rbody {
   }
 
   export interface HTMLConfig {
-    readonly content: any;
+    readonly content: string;
+  }
+
+  export interface RawConfig {
+    readonly type: string | undefined;
+    readonly content: string;
+    readonly length: number;
+    readonly binary: boolean | undefined;
   }
 }

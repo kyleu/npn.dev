@@ -55,7 +55,7 @@ func ConnectionDetail(w http.ResponseWriter, r *http.Request) {
 		bc = append(bc, npnweb.BreadcrumbSelf(str[0:8]))
 		ctx.Breadcrumbs = bc
 
-		msg := npnconnection.NewMessage(npncore.KeySystem, "test", nil)
+		msg := npnconnection.NewMessage(npncore.KeySystem, npncore.KeyTest, nil)
 		return T(npntemplate.ConnectionDetail(connection, msg, ctx, w))
 	})
 }

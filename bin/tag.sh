@@ -1,0 +1,15 @@
+git tag $1
+git tag npnasset/$1
+git tag npnconnection/$1
+git tag npncontroller/$1
+git tag npncore/$1
+git tag npndatabase/$1
+git tag npnexport/$1
+git tag npngraphql/$1
+git tag npnscript/$1
+git tag npnservice/$1
+git tag npnservice-db/$1
+git tag npnservice-fs/$1
+git tag npntemplate/$1
+git tag npnuser/$1
+git tag npnweb/$1

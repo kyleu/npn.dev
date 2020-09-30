@@ -11,6 +11,11 @@ var npn;
     }
     npn.onError = onError;
     function init(svc, id) {
+        if (inIframe()) {
+            document.body.innerHTML = "";
+            document.body.appendChild(rbody.iframeError());
+            return;
+        }
         log.init();
         window.onbeforeunload = () => {
             socket.setAppUnloading();
@@ -20,7 +25,7 @@ var npn;
     }
     npn.init = init;
     function debug() {
-        const dump = (k, v) => {
+        const dump = (k, v = "") => {
             console.warn(`${k}: ${v}`);
         };
         dump("Active Collection", collection.cache.active);
@@ -32,10 +37,18 @@ var npn;
         log.info("Testbed!");
     }
     npn.testbed = testbed;
+    function inIframe() {
+        try {
+            return window.self !== window.top;
+        }
+        catch (e) {
+            return true;
+        }
+    }
 })(npn || (npn = {}));
 var rbody;
 (function (rbody) {
-    function renderBody(requestKey, b) {
+    function renderBody(url, b) {
         if (!b) {
             return JSX("div", null, "No body");
         }
@@ -43,14 +56,19 @@ var rbody;
             case "json":
                 return renderJSON(b.config);
             case "html":
-                const req = request.getRequest(collection.cache.active, requestKey);
-                const baseURL = request.prototypeBaseURL(req === null || req === void 0 ? void 0 : req.prototype);
-                console.log(baseURL);
+                const baseURL = request.baseURL(url);
                 return renderHTML(b.config, baseURL);
+            case "image":
+                return renderImage(b.config);
+            case "raw":
+                return renderRaw(b.config);
+            case "error":
+                return renderError(b.config);
             default:
                 return JSX("div", null,
-                    "TODO: ",
-                    b.type);
+                    "unhandled body type [",
+                    b.type,
+                    "]");
         }
     }
     rbody.renderBody = renderBody;
@@ -67,13 +85,30 @@ var rbody;
                 ")"),
             JSX("em", null, "HTML"),
             JSX("pre", { class: "text-content", style: "overflow: auto; max-height: 720px;" }, h.content),
-            JSX("div", { class: "preview-content hidden", style: "overflow: auto; max-height: 720px;" }));
+            JSX("div", { class: "preview-content uk-margin-top hidden", style: "overflow: auto; max-height: 720px; border: 1px solid #666;" }));
     }
     function renderJSON(j) {
         return JSX("div", null,
             JSX("em", null, "JSON"),
             JSX("pre", null, json.str(j.msg)));
     }
+    function renderImage(i) {
+        const dataURL = `data:${i.type};base64,${i.content}`;
+        return JSX("img", { alt: "response image", src: dataURL });
+    }
+    function renderRaw(r) {
+        return JSX("div", null,
+            JSX("em", null, r.type ? r.type : "Unknown Type"),
+            JSX("pre", null, json.str(r)));
+    }
+    function renderError(err) {
+        return JSX("div", null,
+            JSX("em", null, "Error"),
+            JSX("pre", null, err.message));
+    }
+})(rbody || (rbody = {}));
+var rbody;
+(function (rbody) {
     function renderHTMLPreview(el) {
         const container = editorContent(el, true);
         const iframe = document.createElement("iframe");
@@ -83,9 +118,10 @@ var rbody;
         // iframe.src = "data:text/html;charset=utf-8," + encodeURI(html);
         container[2].innerHTML = "";
         container[2].appendChild(iframe);
-        iframe.contentWindow.document.open();
-        iframe.contentWindow.document.write(html);
-        iframe.contentWindow.document.close();
+        const idoc = iframe.contentDocument || iframe.contentWindow.document;
+        idoc.open();
+        idoc.write(html);
+        idoc.close();
     }
     rbody.renderHTMLPreview = renderHTMLPreview;
     function renderHTMLText(el) {
@@ -120,6 +156,13 @@ var rbody;
         }
         return ret;
     }
+    function iframeError() {
+        return JSX("div", { class: "uk-container" },
+            JSX("div", { class: "uk-section uk-section-small" },
+                JSX("h3", null, "Rendering Error"),
+                JSX("p", null, "This page indicates that the HTML preview was unable to render.")));
+    }
+    rbody.iframeError = iframeError;
 })(rbody || (rbody = {}));
 var rbody;
 (function (rbody) {
@@ -135,12 +178,11 @@ var rbody;
 var call;
 (function (call) {
     function prepare(coll, r) {
-        const param = { "coll": coll, "req": r.key };
-        socket.send({ svc: services.request.key, cmd: command.client.requestCall, param: param });
+        const param = { coll: coll, req: r.key, proto: r.prototype };
+        socket.send({ svc: services.request.key, cmd: command.client.call, param: param });
     }
     call.prepare = prepare;
-    function setResult(param) {
-        const result = param;
+    function setResult(result) {
         const container = dom.req(`#${result.collection}--${result.request}-call`);
         dom.setContent(container, call.renderResult(result));
     }
@@ -149,9 +191,20 @@ var call;
 var call;
 (function (call) {
     function renderResult(r) {
-        var _a, _b, _c, _d, _e, _f;
-        /// TODO REMOVE
-        const sections = call.timingSections(r.timing);
+        var _a, _b, _c;
+        let rspDetail = JSX("div", null, "no result");
+        if (r.response) {
+            const ct = r.response.contentType || "";
+            const cl = (r.response.contentLength && r.response.contentLength > -1) ? `(${r.response.contentLength} bytes)` : "";
+            rspDetail = JSX("div", null,
+                r.response.proto,
+                " ",
+                JSX("em", null, r.response.status),
+                JSX("div", null,
+                    ct,
+                    " ",
+                    cl));
+        }
         return [
             JSX("div", { class: "right" },
                 JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
@@ -161,11 +214,11 @@ var call;
                     JSX("li", null,
                         JSX("a", { href: "#result" }, "Result")),
                     JSX("li", null,
-                        JSX("a", { href: "#headers" }, "Response Headers")),
+                        JSX("a", { href: "#request" }, "Request")),
+                    JSX("li", null,
+                        JSX("a", { href: "#headers" }, "Response")),
                     JSX("li", null,
                         JSX("a", { href: "#body" }, "Body")),
-                    JSX("li", null,
-                        JSX("a", { href: "#request" }, "Request Headers")),
                     JSX("li", null,
                         JSX("a", { href: "#timing" }, "Timing"))),
                 JSX("ul", { class: "uk-switcher uk-margin" },
@@ -175,18 +228,18 @@ var call;
                             ": ",
                             (((_a = r.timing) === null || _a === void 0 ? void 0 : _a.completed) || 0) / 1000,
                             "ms"),
-                        ((_b = r.response) === null || _b === void 0 ? void 0 : _b.proto) || "",
-                        " ",
-                        `${((_c = r.response) === null || _c === void 0 ? void 0 : _c.contentType) || ""} (${((_d = r.response) === null || _d === void 0 ? void 0 : _d.contentLength) || "no"} bytes)`),
-                    JSX("li", null, renderHeaders("Response Headers", (_e = r.response) === null || _e === void 0 ? void 0 : _e.headers)),
-                    JSX("li", null, rbody.renderBody(r.request, (_f = r.response) === null || _f === void 0 ? void 0 : _f.body)),
-                    JSX("li", null, renderHeaders("Final Request Headers", r.requestHeaders)),
+                        rspDetail),
+                    JSX("li", null,
+                        JSX("h3", { class: "uk-margin-small-bottom" }, r.url),
+                        renderHeaders("Final Request Headers", r.requestHeaders)),
+                    JSX("li", null, renderHeaders("Response Headers", (_b = r.response) === null || _b === void 0 ? void 0 : _b.headers)),
+                    JSX("li", null, rbody.renderBody(r.url, (_c = r.response) === null || _c === void 0 ? void 0 : _c.body)),
                     JSX("li", null, renderTiming(r.timing))))
         ];
     }
     call.renderResult = renderResult;
-    function renderHeaders(title, headers) {
-        if (!headers) {
+    function renderHeaders(title, headers = []) {
+        if (headers.length === 0) {
             return section(title, "No headers");
         }
         return JSX("div", { class: "uk-overflow-auto" },
@@ -226,8 +279,10 @@ var call;
 (function (call) {
     function timingSections(t) {
         const ret = [];
-        const add = function (k, g, s, e) {
-            ret.push({ key: k, group: g, start: s, end: e });
+        const add = (k, g, s, e) => {
+            if (s && e) {
+                ret.push({ key: k, group: g, start: s, end: e });
+            }
         };
         add("dns", "connect", t.dnsStart, t.dnsEnd);
         add("connect", "connect", t.connectStart, t.connectEnd);
@@ -264,11 +319,18 @@ var call;
 var collection;
 (function (collection_1) {
     class Cache {
+        constructor() {
+            this.collections = [];
+        }
         updateCollection(collection) {
-            // TODO
+            this.collections = group.updateAndSort(this.collections, collection, t => t.key);
+            collection_1.renderCollections(this.collections);
         }
         setActiveCollection(key) {
-            this.active = key;
+            if (this.active !== key) {
+                this.active = key;
+                collection_1.renderCollections(this.collections);
+            }
         }
     }
     collection_1.cache = new Cache();
@@ -276,15 +338,26 @@ var collection;
 var collection;
 (function (collection) {
     function renderCollections(cs) {
-        return cs.map(renderCollectionLink);
+        return dom.els(".collection-list").forEach(el => {
+            dom.setContent(el, cs.map(c => renderCollectionLink(c)));
+        });
     }
     collection.renderCollections = renderCollections;
     function renderCollectionLink(c) {
         let title = c.title;
-        if (!title || c.title.length === 0) {
+        if (!title || title.length === 0) {
             title = c.key;
         }
-        return JSX("div", { class: "nav-item" }, nav.link("/c/" + c.key, title, "", "", false, "folder"));
+        let link = nav.link({ path: "/c/" + c.key, title: title, icon: "folder" });
+        if (collection.cache.active === c.key) {
+            const summs = request.cache.summaries.get(c.key);
+            if (summs) {
+                link = JSX("div", null,
+                    nav.link({ path: "/", title: title, icon: "album" }),
+                    summs.map(s => JSX("div", { class: "uk-margin-small-left" }, nav.link({ path: "/c/" + c.key + "/" + s.key, title: (s.title && s.title.length > 0) ? s.title : s.key, icon: "link" }))));
+            }
+        }
+        return JSX("div", { class: "nav-item collection-link collection-link-" + c.key }, link);
     }
     function renderCollection(coll, requests) {
         const cn = coll.title ? coll.title : coll.key;
@@ -293,13 +366,15 @@ var collection;
                 JSX("div", { class: "right" },
                     JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
                 JSX("h3", { class: "uk-card-title" },
-                    JSX("span", { class: "nav-icon-h3", "data-uk-icon": "icon: folder" }),
+                    JSX("span", { class: "nav-icon-h3", "data-uk-icon": "icon: album" }),
                     cn),
                 JSX("p", null, coll.description || "")),
             JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
                 JSX("h3", { class: "uk-card-title" }, "Requests"),
                 JSX("form", { onsubmit: "collection.addRequestURL();return false;" },
-                    JSX("input", { id: "coll-request-add-url", class: "uk-input", placeholder: "add a request by url" })),
+                    JSX("div", { class: "uk-margin-top uk-inline uk-width-expand" },
+                        JSX("button", { class: "uk-form-icon uk-form-icon-flip", type: "submit", title: "add request", "uk-icon": "icon: plus" }),
+                        JSX("input", { id: "coll-request-add-url", class: "uk-input", placeholder: "add a request by url", "data-lpignore": "true" }))),
                 JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests))));
     }
     collection.renderCollection = renderCollection;
@@ -308,11 +383,14 @@ var collection;
         const url = input.value.trim();
         if (url && url.length > 0) {
             input.value = "";
-            console.log(url);
+            const param = { "coll": collection.cache.active, "url": url };
+            socket.send({ svc: services.collection.key, cmd: command.client.addURL, param: param });
         }
+        console.log("adding request [" + url + "]");
     }
     collection.addRequestURL = addRequestURL;
     function renderRequests(coll, rs) {
+        rs = group.sort(rs, x => x.order);
         return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
     }
     function renderRequestLink(coll, r) {
@@ -321,7 +399,7 @@ var collection;
             title = r.key;
         }
         return JSX("li", null,
-            nav.link("/c/" + coll + "/" + r.key, title),
+            nav.link({ path: "/c/" + coll + "/" + r.key, title: title }),
             r.description && r.description.length ? JSX("div", null,
                 JSX("em", null, r.description)) : JSX("span", null));
     }
@@ -331,19 +409,16 @@ var collection;
     function onCollectionMessage(cmd, param) {
         switch (cmd) {
             case command.server.collections:
-                collection.cache.collections = param;
-                if (collection.cache.collections) {
-                    log.info(`processing [${collection.cache.collections.length}] collections`);
-                    dom.els(".collection-list").forEach(el => {
-                        dom.setContent(el, collection.renderCollections(collection.cache.collections));
-                    });
-                }
+                collection.cache.collections = group.sort(param, c => c.key);
+                log.info(`processing [${collection.cache.collections.length}] collections`);
+                collection.renderCollections(collection.cache.collections);
                 break;
             case command.server.collectionDetail:
                 const d = param;
                 log.info(`processing [${d.requests.length}] requests for collection [${d.collection.key}]`);
                 collection.cache.updateCollection(d.collection);
                 request.cache.setCollectionRequests(d.collection, d.requests);
+                collection.renderCollections(collection.cache.collections);
                 break;
             default:
                 console.warn(`unhandled collection command [${cmd}]`);
@@ -959,13 +1034,13 @@ var header;
 })(header || (header = {}));
 var request;
 (function (request) {
-    function renderActionEmpty(r) {
+    function renderActionEmpty() {
         return JSX("div", null);
     }
     request.renderActionEmpty = renderActionEmpty;
-    function renderActionUnknown(key, extra, r) {
+    function renderActionUnknown(key, extra) {
         return JSX("div", null,
-            renderClose(r),
+            renderActionClose(),
             "unknown action: ",
             key,
             " (",
@@ -973,14 +1048,21 @@ var request;
             ")");
     }
     request.renderActionUnknown = renderActionUnknown;
-    function renderActionCall(coll, r) {
-        return JSX("div", { id: coll + "--" + r.key + "-call" },
-            renderClose(r),
+    function renderActionCall(coll, req) {
+        return JSX("div", { id: coll + "--" + req + "-call" },
+            renderActionClose(),
             JSX("div", { class: "call-title" }, "Loading..."),
             JSX("div", { class: "call-result" }));
     }
     request.renderActionCall = renderActionCall;
-    function renderClose(r) {
+    function renderActionTransform(coll, req, format) {
+        return JSX("div", { id: coll + "--" + req + "-transform" },
+            renderActionClose(),
+            JSX("div", { class: "transform-title" }, format),
+            JSX("div", { class: "transform-result" }));
+    }
+    request.renderActionTransform = renderActionTransform;
+    function renderActionClose() {
         return JSX("div", { class: "right" },
             JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate(`/c/${collection.cache.active}/${request.cache.active}`);return false;", title: "close collection" }));
     }
@@ -989,18 +1071,19 @@ var request;
 (function (request) {
     class Cache {
         constructor() {
+            this.summaries = new Map();
             this.requests = new Map();
             this.extra = [];
         }
-        setCollectionRequests(coll, requests) {
-            this.requests.set(coll.key, requests);
+        setCollectionRequests(coll, summs) {
+            this.summaries.set(coll.key, summs);
             if (coll.key === collection.cache.active) {
-                dom.setContent("#collection-panel", collection.renderCollection(coll, requests));
-                for (let req of requests) {
+                dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
+                for (let req of summs) {
                     if (this.active === req.key) {
-                        renderActiveRequest(collection.cache.active, req);
+                        request.renderActiveRequest(collection.cache.active);
                         if (this.action) {
-                            renderActiveAction(collection.cache.active, req, this.action, this.extra);
+                            request.renderAction(collection.cache.active, req.key, this.action, this.extra);
                         }
                     }
                 }
@@ -1008,16 +1091,12 @@ var request;
         }
         setActiveRequest(key) {
             if (!collection.cache.active) {
-                console.warn("no active collection");
                 return;
             }
             if (this.active !== key) {
                 this.active = key;
                 if (this.active) {
-                    const r = getActiveRequest();
-                    if (r) {
-                        renderActiveRequest(collection.cache.active, r);
-                    }
+                    request.renderActiveRequest(collection.cache.active);
                 }
                 else {
                 }
@@ -1025,46 +1104,125 @@ var request;
         }
         setActiveAction(act, extra) {
             if (!collection.cache.active) {
-                console.warn("no active collection");
                 return;
             }
             const sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
             if (this.active && (this.action !== act || !sameExtra)) {
                 this.action = act;
                 this.extra = extra;
-                const r = getActiveRequest();
-                if (r) {
-                    renderActiveAction(collection.cache.active, r, this.action, this.extra);
-                }
+                request.renderAction(collection.cache.active, this.active, this.action, this.extra);
             }
         }
-    }
-    function renderActiveRequest(coll, req) {
-        dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
-        request.editor.wireForm(req.key);
-    }
-    function renderActiveAction(coll, req, action, extra) {
-        log.info(`new action: ${action} (${extra})`);
-        const re = dom.req(".request-editor");
-        const ra = dom.req(".request-action");
-        switch (action) {
-            case undefined:
-                dom.setContent(ra, request.renderActionEmpty(req));
-                break;
-            case "call":
-                call.prepare(coll, req);
-                dom.setContent(ra, request.renderActionCall(coll, req));
-                break;
-            default:
-                console.warn("unhandled request action [" + action + "]");
-                dom.setContent(ra, request.renderActionUnknown(action, extra, req));
+        updateRequest(r) {
+            if (!collection.cache.active) {
+                return;
+            }
+            const curr = this.requests.get(collection.cache.active);
+            const updated = group.update(curr, r, x => x.key);
+            this.requests.set(collection.cache.active, updated);
         }
-        dom.setDisplay(re, action === undefined);
-        dom.setDisplay(ra, action !== undefined);
     }
+    request.cache = new Cache();
+})(request || (request = {}));
+var request;
+(function (request) {
+    function diff(l, r) {
+        const ret = [];
+        const p = (k, lv, rv) => ret.push({ k: k, l: lv, r: rv });
+        const comp = (k, lv, rv) => {
+            if (lv !== rv) {
+                p(k, lv, rv);
+            }
+        };
+        const checkNull = (k, lv, rv) => {
+            if (!l) {
+                if (r) {
+                    p(k, null, "(defined)");
+                }
+                return true;
+            }
+            if (!r) {
+                p(k, "(defined)", null);
+                return true;
+            }
+            return false;
+        };
+        if (checkNull("request", l, r)) {
+            return ret;
+        }
+        comp("key", l.key, r.key);
+        comp("title", l.title, r.title);
+        comp("description", l.description, r.description);
+        const lp = l.prototype;
+        const rp = r.prototype;
+        comp("method", lp.method, rp.method);
+        comp("protocol", lp.protocol, rp.protocol);
+        comp("domain", lp.domain, rp.domain);
+        comp("port", lp.port, rp.port);
+        comp("path", lp.path, rp.path);
+        if (!checkNull("query", lp.query, rp.query)) {
+            if ((!lp.query) || (!rp.query)) {
+                return ret;
+            }
+            comp("query.length", lp.query.length, rp.query.length);
+        }
+        comp("fragment", lp.fragment, rp.fragment);
+        if (!checkNull("headers", lp.headers, rp.headers)) {
+            if ((!lp.headers) || (!rp.headers)) {
+                return ret;
+            }
+            comp("headers.length", lp.headers.length, rp.headers.length);
+        }
+        if (!checkNull("auth", lp.auth, rp.auth)) {
+            if ((!lp.auth) || (!rp.auth)) {
+                return ret;
+            }
+            comp("auth.length", lp.auth.length, rp.auth.length);
+        }
+        if (!checkNull("body", lp.body, rp.body)) {
+            if ((!lp.body) || (!rp.body)) {
+                return ret;
+            }
+            comp("body.type", lp.body.type, rp.body.type);
+            comp("body.config", lp.body.config, rp.body.config);
+        }
+        const lpo = lp.options;
+        const rpo = rp.options;
+        if (checkNull("options", lpo, rpo)) {
+            return ret;
+        }
+        if ((!lpo) || (!rpo)) {
+            return ret;
+        }
+        comp("timeout", lpo.timeout, rpo.timeout);
+        comp("ignoreRedirects", lpo.ignoreRedirects, rpo.ignoreRedirects);
+        comp("ignoreReferrer", lpo.ignoreReferrer, rpo.ignoreReferrer);
+        comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts);
+        comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies);
+        comp("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
+        comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars);
+        comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar);
+        comp("sslCert", lpo.sslCert, rpo.sslCert);
+        comp("userAgentOverride", lpo.userAgentOverride, rpo.userAgentOverride);
+        return ret;
+    }
+    request.diff = diff;
+})(request || (request = {}));
+var request;
+(function (request) {
     function getActiveRequest() {
         return getRequest(collection.cache.active, request.cache.active);
     }
+    request.getActiveRequest = getActiveRequest;
+    function getSummary(coll, key) {
+        for (let req of request.cache.summaries.get(coll) || []) {
+            if (req.key === key) {
+                return req;
+            }
+        }
+        return undefined;
+    }
+    request.getSummary = getSummary;
     function getRequest(coll, key) {
         for (let req of request.cache.requests.get(coll) || []) {
             if (req.key === key) {
@@ -1074,7 +1232,27 @@ var request;
         return undefined;
     }
     request.getRequest = getRequest;
-    request.cache = new Cache();
+    function onRequestMessage(cmd, param) {
+        switch (cmd) {
+            case command.server.requestDetail:
+                const req = param;
+                request.cache.updateRequest(req);
+                if (request.cache.active === req.key) {
+                    request.renderActiveRequest(collection.cache.active);
+                    request.renderAction(collection.cache.active, request.cache.active, request.cache.action, request.cache.extra);
+                }
+                break;
+            case command.server.callResult:
+                const result = param;
+                call.setResult(result);
+                const path = `r/` + result.id;
+                history.replaceState(path, "", "/" + path);
+                break;
+            default:
+                console.warn(`unhandled request command [${cmd}]`);
+        }
+    }
+    request.onRequestMessage = onRequestMessage;
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -1120,15 +1298,82 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
+    function renderActiveRequest(coll) {
+        if (request.cache.active) {
+            const req = request.getRequest(coll, request.cache.active);
+            if (req) {
+                dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
+                request.editor.wireForm(req.key);
+            }
+            else {
+                const summ = request.getSummary(coll, request.cache.active);
+                if (summ) {
+                    dom.setContent("#request-panel", request.renderSummaryPanel(coll, summ));
+                    const param = { coll: coll, req: summ.key };
+                    socket.send({ svc: services.request.key, cmd: command.client.getRequest, param: param });
+                }
+            }
+        }
+        else {
+            console.warn("no active request");
+        }
+    }
+    request.renderActiveRequest = renderActiveRequest;
+    function renderAction(coll, reqKey, action, extra) {
+        // TODO const req = request.form.getRequest();
+        const re = dom.opt(".request-editor");
+        const ra = dom.opt(".request-action");
+        if (!re || !ra) {
+            return;
+        }
+        switch (action) {
+            case undefined:
+                dom.setContent(ra, request.renderActionEmpty());
+                break;
+            case "call":
+                const req = request.getRequest(coll, reqKey);
+                if (!req) {
+                    return;
+                }
+                call.prepare(coll, request.form.extractRequest());
+                // call.prepare(coll, req);
+                dom.setContent(ra, request.renderActionCall(coll, reqKey));
+                break;
+            case "transform":
+                dom.setContent(ra, request.renderActionTransform(coll, reqKey, extra[0]));
+                break;
+            default:
+                console.warn("unhandled request action [" + action + "]");
+                dom.setContent(ra, request.renderActionUnknown(action, extra));
+        }
+        dom.setDisplay(re, action === undefined);
+        dom.setDisplay(ra, action !== undefined);
+    }
+    request.renderAction = renderAction;
+})(request || (request = {}));
+var request;
+(function (request) {
+    function renderSummaryPanel(coll, r) {
+        return JSX("div", null,
+            JSX("div", { class: "uk-card uk-card-body uk-card-default" },
+                JSX("div", { class: "right" },
+                    JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
+                JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
+                JSX("p", null, "Loading...")));
+    }
+    request.renderSummaryPanel = renderSummaryPanel;
+})(request || (request = {}));
+var request;
+(function (request) {
     function urlToPrototype(url) {
         const u = new URL(url);
         return {
             method: request.MethodGet.key,
-            protocol: u.protocol,
+            protocol: str.trimSuffix(u.protocol, ":"),
             domain: u.hostname,
             port: parseInt(u.port, 10),
-            path: u.pathname,
-            fragment: u.hash
+            path: str.trimPrefix(u.pathname, "/"),
+            fragment: str.trimPrefix(u.hash, "#")
         };
     }
     request.urlToPrototype = urlToPrototype;
@@ -1140,6 +1385,10 @@ var request;
         return JSX("span", null, prototypeToURLParts(p).map(x => JSX("span", { title: x.t, class: urlColor(x.t) }, x.v)));
     }
     request.prototypeToHTML = prototypeToHTML;
+    function baseURL(s) {
+        return prototypeBaseURL(urlToPrototype(s));
+    }
+    request.baseURL = baseURL;
     function prototypeBaseURL(p) {
         if (!p) {
             return "invalid";
@@ -1213,16 +1462,6 @@ var request;
                 return "";
         }
     }
-    function onRequestMessage(cmd, param) {
-        switch (cmd) {
-            case command.server.callResult:
-                call.setResult(param);
-                break;
-            default:
-                console.warn(`unhandled request command [${cmd}]`);
-        }
-    }
-    request.onRequestMessage = onRequestMessage;
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -1507,17 +1746,12 @@ var request;
                     JSX("label", { class: "uk-form-label", for: el.id + "-timeout" }, "Timeout"),
                     JSX("input", { class: "uk-input", id: el.id + "-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-ignoreRedirects" }, "Ignore Redirects"),
-                    inputBool(el.id, "ignoreRedirects", opts.ignoreRedirects || false)),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: "<%= key %>-ignoreReferrer" }, "Ignore Referrer"),
-                    inputBool(el.id, "ignoreReferrer", opts.ignoreReferrer || false)),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-ignoreCerts" }, "Ignore Certs"),
-                    inputBool(el.id, "ignoreCerts", opts.ignoreCerts || false)),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-ignoreCookies" }, "Ignore Cookies"),
-                    inputBool(el.id, "ignoreCookies", opts.ignoreCookies || false)),
+                    JSX("label", { class: "uk-form-label" }, "Ignore"),
+                    JSX("div", null,
+                        inputCheckbox(el.id, "ignoreRedirects", "Redirects", opts.ignoreRedirects || false),
+                        inputCheckbox(el.id, "ignoreReferrer", "Referrer", opts.ignoreReferrer || false),
+                        inputCheckbox(el.id, "ignoreCerts", "Certs", opts.ignoreCerts || false),
+                        inputCheckbox(el.id, "ignoreCookies", "Cookies", opts.ignoreCookies || false))),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-excludeDefaultHeaders" }, "Exclude Default Headers"),
                     JSX("input", { class: "uk-input", id: el.id + "-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
@@ -1534,26 +1768,20 @@ var request;
                     JSX("label", { class: "uk-form-label", for: el.id + "-userAgentOverride" }, "User Agent Override"),
                     JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
         }
-        function inputBool(key, prop, v) {
+        function inputCheckbox(key, prop, title, v) {
             const n = "opt-" + prop;
             const id = key + "-" + prop;
             if (v) {
-                return JSX("div", null,
-                    JSX("label", { class: "uk-margin-small-right" },
-                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "true", checked: true }),
-                        " True"),
-                    JSX("label", null,
-                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "false" }),
-                        " False"));
+                return JSX("label", { class: "uk-margin-right" },
+                    JSX("input", { type: "checkbox", name: n, value: "true", checked: true }),
+                    " ",
+                    title);
             }
             else {
-                return JSX("div", null,
-                    JSX("label", { class: "uk-margin-small-right" },
-                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "true" }),
-                        " True"),
-                    JSX("label", null,
-                        JSX("input", { class: "uk-radio", type: "radio", name: n, value: "false", checked: true }),
-                        " False"));
+                return JSX("label", { class: "uk-margin-right" },
+                    JSX("input", { type: "checkbox", name: n, value: "true" }),
+                    " ",
+                    title);
             }
         }
     })(editor = request.editor || (request.editor = {}));
@@ -1605,20 +1833,22 @@ var request;
 (function (request) {
     var form;
     (function (form) {
-        function getRequest() {
+        function extractRequest() {
             const key = gv("key");
             const title = gv("title");
             const desc = gv("description");
-            let proto = request.urlToPrototype(gv("url"));
+            const url = gv("url");
+            let proto = request.urlToPrototype(url);
             proto.method = gv("method");
             proto.query = json.parse(gv("queryparams"));
             proto.headers = json.parse(gv("headers"));
             proto.auth = json.parse(gv("auth"));
             proto.body = json.parse(gv("body"));
             proto.options = json.parse(gv("options"));
+            console.log(url, proto);
             return { key: key, title: title, description: desc, prototype: proto };
         }
-        form.getRequest = getRequest;
+        form.extractRequest = extractRequest;
         function gv(k) {
             return dom.req(`#${request.cache.active}-${k}`).value;
         }
@@ -1662,19 +1892,19 @@ var request;
         function renderSavePanel(r) {
             return JSX("div", { id: "save-panel", class: "right hiddenX" },
                 JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "console.log('TODO!');" }, "Reset"),
-                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "console.log(request.form.getRequest());" }, "Save Changes"));
+                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "console.log(request.form.extractRequest());" }, "Save Changes"));
         }
         function renderActions(coll, r) {
             const path = "/c/" + coll + "/" + r.key;
             const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
             const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }";
             return JSX("div", null,
-                nav.link(path + "/call", "Call", btnClass, "", true),
+                nav.link({ path: path + "/call", title: "Call", cls: btnClass, isButton: true }),
                 JSX("div", { class: "uk-inline" },
                     JSX("button", { type: "button", class: btnClass }, "Export"),
                     JSX("div", { id: "export-dropdown", "uk-dropdown": "mode: click" },
-                        JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(k => JSX("li", null, nav.link(path + "/transform/" + k, transforms[k], "", "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);")))))),
-                nav.link(path + "/delete", "Delete", btnClass, delWarn, true));
+                        JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(k => JSX("li", null, nav.link({ path: path + "/transform/" + k, title: transforms[k], onclk: "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);" })))))),
+                nav.link({ path: path + "/delete", title: "Delete", cls: btnClass, onclk: delWarn, isButton: true }));
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
@@ -1767,23 +1997,19 @@ var request;
 var socket;
 (function (socket) {
     function route(p) {
-        console.log("NAV: " + p);
         let parts = p.split("/");
         parts = parts.filter(x => x.length > 0);
         console.info("nav: " + parts.join(" -> "));
-        if (parts.length === 0 || parts[0].length === 0) {
-            ui.setPanels(undefined, undefined, undefined, []);
-            return; // index
-        }
-        const svc = parts[0];
+        const svc = (parts.length > 0) ? parts[0] : "c";
         switch (svc) {
             case "c":
-                let coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
-                let req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
-                let act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
-                let extra = (parts.length > 4) ? parts.slice(4) : [];
-                if (coll !== collection.cache.active) {
-                    collection.cache.setActiveCollection(coll);
+                const coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
+                const req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
+                const act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
+                const extra = (parts.length > 4) ? parts.slice(4) : [];
+                const currColl = collection.cache.active;
+                collection.cache.setActiveCollection(coll);
+                if (coll !== currColl && coll) {
                     socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
                 }
                 request.cache.setActiveRequest(req);
@@ -1925,9 +2151,11 @@ var system;
 })(system || (system = {}));
 var ui;
 (function (ui) {
+    const bcCls = "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic";
     function setBreadcrumbs(coll, req, act, extra) {
         const el = dom.req("#breadcrumbs");
         reset(el);
+        el.appendChild(nav.link({ path: "/", title: "npn", cls: bcCls }));
         if (coll) {
             el.appendChild(sep());
             el.appendChild(bcFor(coll, "c", coll));
@@ -1967,7 +2195,7 @@ var ui;
     }
     function bcFor(title, ...parts) {
         const path = parts.map(s => "/" + s).join("");
-        return nav.link(path, title, "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic");
+        return nav.link({ path: path, title: title, cls: bcCls });
     }
 })(ui || (ui = {}));
 var ui;
@@ -2044,9 +2272,12 @@ var command;
     command.client = {
         ping: "ping",
         connect: "connect",
-        getCollections: "getCollections",
+        // Collection
         getCollection: "getCollection",
-        requestCall: "requestCall"
+        addURL: "addURL",
+        // Request
+        getRequest: "getRequest",
+        call: "call"
     };
     command.server = {
         error: "error",
@@ -2054,6 +2285,7 @@ var command;
         connected: "connected",
         collections: "collections",
         collectionDetail: "collectionDetail",
+        requestDetail: "requestDetail",
         callResult: "callResult"
     };
 })(command || (command = {}));
@@ -2160,6 +2392,47 @@ var group;
         return ret;
     }
     group_1.flatten = flatten;
+    function sort(a, matchFn) {
+        if (!a) {
+            return [];
+        }
+        a.sort((l, r) => {
+            const lv = matchFn(l);
+            const rv = matchFn(r);
+            if (lv > rv) {
+                return 1;
+            }
+            if (lv < rv) {
+                return -1;
+            }
+            return 0;
+        });
+        return a;
+    }
+    group_1.sort = sort;
+    function update(a, v, matchFn) {
+        if (!a) {
+            return [v];
+        }
+        let matched = false;
+        const key = matchFn(v);
+        for (const idx in a) {
+            const c = a[idx];
+            if (matchFn(c) == key) {
+                matched = true;
+                a[idx] = v;
+            }
+        }
+        if (!matched) {
+            a.push(v);
+        }
+        return a;
+    }
+    group_1.update = update;
+    function updateAndSort(a, v, matchFn) {
+        return sort(update(a, v, matchFn), matchFn);
+    }
+    group_1.updateAndSort = updateAndSort;
 })(group || (group = {}));
 var json;
 (function (json) {
@@ -2249,17 +2522,32 @@ var log;
 var nav;
 (function (nav) {
     let handler = (p) => {
-        console.info("default nav handler called: " + p);
+        let msg = "default nav handler called: " + p;
+        console.info(msg);
     };
     function init(f) {
         handler = f;
         window.onpopstate = (event) => {
-            f(event.state === null ? "" : event.state);
+            if (event.state) {
+                let s = event.state;
+                handler(s);
+            }
+            else {
+                handler("");
+            }
         };
         let path = location.pathname;
         navigate(path);
     }
     nav.init = init;
+    function pop() {
+        let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
+        if (p === '/c') {
+            p = "";
+        }
+        navigate(p);
+    }
+    nav.pop = pop;
     function navigate(path) {
         if (path.startsWith("text/html;")) {
             return "";
@@ -2272,52 +2560,45 @@ var nav;
             locPath = locPath.substr(1);
         }
         if (locPath !== path) {
-            history.pushState(path, "", "/" + path);
+            let final = path;
+            history.pushState(final, "", "/" + final);
         }
         handler(path);
     }
     nav.navigate = navigate;
-    function pop() {
-        let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
-        if (p === '/c') {
-            p = "";
-        }
-        navigate(p);
-    }
-    nav.pop = pop;
     function navActiveRequest() {
         navigate(`/c/${collection.cache.active}/${request.cache.active}`);
     }
     nav.navActiveRequest = navActiveRequest;
-    function link(path, title, cls, onclk, isButton, icon) {
-        let href = path;
+    function link(o) {
+        let href = o.path;
         if (!href.startsWith("/")) {
             href = "/" + href;
         }
-        if (cls) {
-            cls = " " + cls.trim();
+        if (o.cls) {
+            o.cls = " " + o.cls.trim();
         }
         else {
-            cls = "";
+            o.cls = "";
         }
         let i = JSX("span", null);
-        if (icon) {
-            i = JSX("span", { class: "nav-icon", "data-uk-icon": `icon: ${icon}` });
+        if (o.icon) {
+            i = JSX("span", { class: "nav-icon", "data-uk-icon": `icon: ${o.icon}` });
         }
-        if (onclk) {
-            if (!onclk.endsWith(";")) {
-                onclk += ";";
+        if (o.onclk) {
+            if (!o.onclk.endsWith(";")) {
+                o.onclk += ";";
             }
         }
         else {
-            onclk = "";
+            o.onclk = "";
         }
-        if (!isButton) {
-            cls = style.linkColor + cls;
+        if (!o.isButton) {
+            o.cls = style.linkColor + o.cls;
         }
-        return JSX("a", { class: cls, href: href, onclick: onclk + "nav.navigate('" + path + "', '" + title + "');return false;" },
+        return JSX("a", { class: o.cls, href: href, onclick: o.onclk + "nav.navigate('" + o.path + "', '" + o.title + "');return false;" },
             i,
-            title);
+            o.title);
     }
     nav.link = link;
 })(nav || (nav = {}));
@@ -2355,4 +2636,25 @@ var services;
     }
     services.fromKey = fromKey;
 })(services || (services = {}));
+var str;
+(function (str) {
+    function trimPrefix(s, prefix) {
+        if (s.startsWith(prefix)) {
+            return s.slice(prefix.length);
+        }
+        else {
+            return s;
+        }
+    }
+    str.trimPrefix = trimPrefix;
+    function trimSuffix(s, suffix) {
+        if (s.endsWith(suffix)) {
+            return s.substring(0, s.lastIndexOf(suffix));
+        }
+        else {
+            return s;
+        }
+    }
+    str.trimSuffix = trimSuffix;
+})(str || (str = {}));
 //# sourceMappingURL=npn.js.map

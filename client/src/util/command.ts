@@ -2,9 +2,14 @@ namespace command {
   export const client = {
     ping: "ping",
     connect: "connect",
-    getCollections: "getCollections",
+
+    // Collection
     getCollection: "getCollection",
-    requestCall: "requestCall"
+    addURL: "addURL",
+
+    // Request
+    getRequest: "getRequest",
+    call: "call"
   };
 
   export const server = {
@@ -16,6 +21,7 @@ namespace command {
     collections: "collections",
     collectionDetail: "collectionDetail",
 
+    requestDetail: "requestDetail",
     callResult: "callResult"
   };
 }

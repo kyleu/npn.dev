@@ -22,8 +22,8 @@ endif
 
 .PHONY: clean
 clean: ## Clean builds
-	rm -rf ${BUILD_DIR}/
 	rm -rf gen
+	rm -rf npntemplate/gen
 	rm -rf out
 
 .PHONY: dev
@@ -40,15 +40,6 @@ endif
 compile-templates:
 	@bin/templates.sh
 
-.PHONY: compile-templates-force
-compile-templates-force:
-	echo "updating [npntemplate] templates"
-	cd npntemplate && rm -rf gen
-	cd npntemplate && hero -extensions .html -source "html" -pkgname npntemplate -dest "gen/npntemplate"
-	echo "updating [web/templates] templates"
-	rm -rf gen/components
-	hero -extensions .html -source "web/templates" -pkgname templates -dest gen/templates
-
 .PHONY: build
 build: goversion compile-templates ## Build all binaries
 ifeq (${VERBOSE}, 1)
@@ -59,13 +50,7 @@ endif
 	go build ${GOARGS} -tags "${GOTAGS}" -o ${BUILD_DIR}/ ./cmd/...
 
 .PHONY: build-release
-build-release: goversion compile-templates ## Build all binaries without debug information
-	@bin/asset-embed.sh
-	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
-	@bin/asset-reset.sh
-
-.PHONY: build-release-force
-build-release-force: goversion compile-templates-force ## Build all binaries without debug information
+build-release: goversion clean compile-templates ## Build all binaries without debug information
 	@bin/asset-embed.sh
 	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
 	@bin/asset-reset.sh

@@ -42,6 +42,7 @@ func req(ctx *npnweb.RequestContext) (string, interface{}, error) {
 
 	return "Request", ret, nil
 }
+
 //
 
 /* JavaScript

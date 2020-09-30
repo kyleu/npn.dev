@@ -1,11 +1,10 @@
 package authdb
 
 import (
+	"strings"
+
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/npnservice/auth"
-	"io/ioutil"
-	"net/http"
-	"strings"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npndatabase"
@@ -64,28 +63,6 @@ func (s *ServiceDatabase) EnabledProviders() auth.Providers {
 	return s.enabledProviders
 }
 
-func callHTTP(url string, auth string) ([]byte, error) {
-	client := &http.Client{}
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(auth) > 0 {
-		req.Header.Add("Authorization", "Bearer "+auth)
-	}
-
-	response, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	defer func() { _ = response.Body.Close() }()
-
-	return ioutil.ReadAll(response.Body)
-}
-
 func (s *ServiceDatabase) GetDisplayByUserID(userID uuid.UUID, params *npncore.Params) (auth.Records, auth.Displays) {
 	if !s.Enabled() {
 		return nil, nil
@@ -102,4 +79,3 @@ func (s *ServiceDatabase) GetDisplayByUserID(userID uuid.UUID, params *npncore.P
 func (s *ServiceDatabase) FullURL(path string) string {
 	return s.redir + strings.TrimPrefix(path, "/")
 }
-

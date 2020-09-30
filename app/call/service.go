@@ -21,9 +21,9 @@ func NewService(logger logur.Logger) *Service {
 
 func (s *Service) Call(coll string, req string, p *request.Prototype) *Result {
 	if p == nil {
-		return NewErrorResult(coll, req, "no request")
+		return NewErrorResult(p.URLString(), coll, req, "no request")
 	}
-	return call(coll, req, getClient(p), p, s.logger)
+	return call(coll, req, getClient(p), p, nil, s.logger)
 }
 
 func getClient(p *request.Prototype) *http.Client {
@@ -33,14 +33,19 @@ func getClient(p *request.Prototype) *http.Client {
 	}
 	return &http.Client{
 		Transport: &http.Transport{},
-		Timeout:   timeout,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+		Timeout: timeout,
 	}
 }
 
-func call(coll string, req string, client *http.Client, p *request.Prototype, _ logur.Logger) *Result {
+func call(coll string, req string, client *http.Client, p *request.Prototype, prior *Result, logger logur.Logger) *Result {
 	httpReq := p.ToHTTP()
 	timing := &Timing{}
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
+	url := httpReq.URL.String()
+	logger.Debug("making call to [" + url + "]")
 	timing.Begin()
 	hr, err := client.Do(httpReq)
 
@@ -60,10 +65,13 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, _ 
 
 	timing.Complete()
 
-	ret := NewResult(coll, req, status)
+	ret := NewResult(url, coll, req, status)
+	ret.RedirectedFrom = prior
 	ret.RequestHeaders = p.FinalHeaders()
 	ret.Response = rsp
 	ret.Timing = timing
 	ret.Error = errStr
+
+	// TODO handle redirects, recurse with prior
 	return ret
 }

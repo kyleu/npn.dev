@@ -6,15 +6,19 @@ namespace collection {
   }
 
   class Cache {
-    collections?: Collection[];
+    collections: Collection[] = [];
     active?: string;
 
     updateCollection(collection: collection.Collection) {
-      // TODO
+      this.collections = group.updateAndSort(this.collections, collection, t => t.key);
+      renderCollections(this.collections);
     }
 
     setActiveCollection(key: string | undefined) {
-      this.active = key;
+      if (this.active !== key) {
+        this.active = key;
+        renderCollections(this.collections);
+      }
     }
   }
 

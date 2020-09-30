@@ -30,7 +30,8 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 
 	// Workspace
 	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("home"))
-	r.PathPrefix(routes.Path("c/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("workspace"))
+	r.PathPrefix(routes.Path("c/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("home", "collection"))
+	r.PathPrefix(routes.Path("r/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("home", "result"))
 
 	r.Path(routes.Path("svg", "gantt")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(npncontroller.Gantt))).Name(routes.Name("svg", "gantt"))
 	r.Path(routes.Path("s")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Socket))).Name(routes.Name("websocket"))
@@ -43,13 +44,13 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 
 	// Collections
 	collection := r.Path(routes.Path("browse")).Subrouter()
-	collection.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionList))).Name(routes.Name("collection"))
-	r.Path(routes.Path("browse", "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionNew))).Name(routes.Name("collection", "new"))
+	collection.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionList))).Name(routes.Name(npncore.KeyCollection))
+	r.Path(routes.Path("browse", "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionNew))).Name(routes.Name(npncore.KeyCollection, "new"))
 	collectionPath := routes.Path("browse", collectionParam)
-	r.Path(collectionPath).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionDetail))).Name(routes.Name("collection", "detail"))
-	r.Path(collectionPath + "/act/edit").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionEdit))).Name(routes.Name("collection", "edit"))
-	r.Path(collectionPath + "/act/save").Methods(http.MethodPost).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionSave))).Name(routes.Name("collection", "save"))
-	r.Path(collectionPath + "/act/delete").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionDelete))).Name(routes.Name("collection", "delete"))
+	r.Path(collectionPath).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionDetail))).Name(routes.Name(npncore.KeyCollection, "detail"))
+	r.Path(collectionPath + "/act/edit").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionEdit))).Name(routes.Name(npncore.KeyCollection, "edit"))
+	r.Path(collectionPath + "/act/save").Methods(http.MethodPost).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionSave))).Name(routes.Name(npncore.KeyCollection, "save"))
+	r.Path(collectionPath + "/act/delete").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(CollectionDelete))).Name(routes.Name(npncore.KeyCollection, "delete"))
 
 	// Requests
 	r.Path(routes.Path("browse", collectionParam, "new")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RequestNew))).Name(routes.Name("request", "new"))
@@ -64,7 +65,7 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	// Test
 	test := r.Path(routes.Path(npncore.KeyTest)).Subrouter()
 	test.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(TestIndex))).Name(routes.Name(npncore.KeyTest))
-	r.PathPrefix(routes.Path("test/")).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path("test"), http.HandlerFunc(TestCall)))).Name(routes.Name(npncore.KeyTest, "run"))
+	r.PathPrefix(routes.Path("test/")).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path(npncore.KeyTest), http.HandlerFunc(TestCall)))).Name(routes.Name(npncore.KeyTest, "run"))
 
 	// Sandbox
 	sandbox := r.Path(routes.Path(npncore.KeySandbox)).Subrouter()

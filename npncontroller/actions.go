@@ -128,6 +128,6 @@ func logComplete(startNanos int64, ctx *npnweb.RequestContext, status int, r *ht
 	delta := npncore.EndTimer(startNanos)
 	ms := npncore.MicrosToMillis(language.AmericanEnglish, delta)
 	args := map[string]interface{}{"elapsed": delta, npncore.KeyStatus: status}
-	msg := fmt.Sprintf("[%v %v] returned [%v] in [%v]", r.Method, r.URL.Path, status, ms)
+	msg := fmt.Sprintf("%v %v returned [%v] in [%v]", r.Method, r.URL.Path, status, ms)
 	ctx.Logger.Debug(msg, args)
 }
