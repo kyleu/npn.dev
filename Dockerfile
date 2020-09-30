@@ -43,7 +43,7 @@ COPY go.mod /npn/
 RUN go mod download
 
 RUN set -xe && make clean
-RUN set -xe && make build-release-force
+RUN set -xe && make build-release
 
 RUN mv build/release /build
 
