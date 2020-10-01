@@ -3,10 +3,10 @@ module github.com/kyleu/npn/npncontroller
 go 1.15
 
 require (
-	github.com/kyleu/npn/npnconnection v0.0.10 // npn
-	github.com/kyleu/npn/npncore v0.0.10 // npn
-	github.com/kyleu/npn/npntemplate v0.0.10 // npn
-	github.com/kyleu/npn/npnweb v0.0.10 // npn
+	github.com/kyleu/npn/npnconnection v0.0.11 // npn
+	github.com/kyleu/npn/npncore v0.0.11 // npn
+	github.com/kyleu/npn/npntemplate v0.0.11 // npn
+	github.com/kyleu/npn/npnweb v0.0.11 // npn
 )
 
 replace github.com/kyleu/npn/npnconnection => ../npnconnection
