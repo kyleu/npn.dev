@@ -27,7 +27,7 @@ namespace request.editor {
     try {
       currentAuth = json.parse(cache.auth.value);
     } catch (e) {
-      console.log("invalid auth JSON [" + cache.auth.value + "]")
+      console.warn("invalid auth JSON [" + cache.auth.value + "]")
     }
     let matched = -1;
     if (!currentAuth) {

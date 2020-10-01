@@ -50,7 +50,7 @@ endif
 	go build ${GOARGS} -tags "${GOTAGS}" -o ${BUILD_DIR}/ ./cmd/...
 
 .PHONY: build-release
-build-release: goversion clean compile-templates ## Build all binaries without debug information
+build-release: goversion compile-templates ## Build all binaries without debug information
 	@bin/asset-embed.sh
 	@env GOOS=${GOOS} GOARCH=${GOARCH} ${MAKE} GOARGS="${GOARGS} -trimpath" BUILD_DIR="${BUILD_DIR}/release" build
 	@bin/asset-reset.sh

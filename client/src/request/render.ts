@@ -34,8 +34,8 @@ namespace request {
         if (!req) {
           return;
         }
-        call.prepare(coll, request.form.extractRequest());
-        // call.prepare(coll, req);
+        // call.prepare(coll, request.form.extractRequest());
+        call.prepare(coll, req);
         dom.setContent(ra, renderActionCall(coll, reqKey));
         break;
       case "transform":

@@ -11,7 +11,7 @@ type Image struct {
 
 func NewImage(t string, bytes []byte) *Body {
 	content := base64.StdEncoding.EncodeToString(bytes)
-	return &Body{Type: KeyImage, Config: &Image{Type: t, Content: content}}
+	return NewBody(KeyImage, &Image{Type: t, Content: content})
 }
 
 func (r *Image) ContentLength() int64 {

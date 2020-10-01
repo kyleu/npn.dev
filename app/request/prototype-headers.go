@@ -43,6 +43,11 @@ func (p *Prototype) FinalHeaders() header.Headers {
 	})
 	check("User-Agent", func() string { return npncore.AppName })
 
+	//if npncore.AppPlatform == "wasm" {
+	//	check("js.fetch:mode", func() string { return "no-cors" })
+	//	check("js.fetch:redirect", func() string { return "manual" })
+	//}
+
 	return ret
 }
 

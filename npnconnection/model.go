@@ -16,7 +16,7 @@ import (
 
 type Connection struct {
 	ID      uuid.UUID
-	Profile npnuser.Profile
+	Profile *npnuser.Profile
 	Svc     string
 	ModelID *uuid.UUID
 	Channel *Channel
@@ -24,7 +24,7 @@ type Connection struct {
 	mu      sync.Mutex
 }
 
-func NewConnection(svc string, profile npnuser.Profile, socket *websocket.Conn) *Connection {
+func NewConnection(svc string, profile *npnuser.Profile, socket *websocket.Conn) *Connection {
 	return &Connection{
 		ID:      npncore.UUID(),
 		Profile: profile,

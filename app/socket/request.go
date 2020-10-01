@@ -39,10 +39,14 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 			return errors.Wrap(err, "can't load request param")
 		}
 
-		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto)
+		go func() {
+			rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto)
+			println(rsp.Status)
+			msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
+			println(msg.Cmd)
+			_ = s.WriteMessage(c.ID, msg)
+		}()
 
-		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
-		err = s.WriteMessage(c.ID, msg)
 	default:
 		err = errors.New("invalid request command [" + cmd + "]")
 	}

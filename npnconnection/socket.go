@@ -17,6 +17,13 @@ func (s *Service) Write(connID uuid.UUID, message string) error {
 		s.Logger.Warn(fmt.Sprint(message))
 		return nil
 	}
+	if connID == WASMID {
+		if s.wasmCallback == nil {
+			return errors.New("no callback registered for WASM client")
+		}
+		s.wasmCallback(message)
+		return nil
+	}
 
 	c, ok := s.connections[connID]
 	if !ok {
@@ -73,13 +80,13 @@ func (s *Service) ReadLoop(connID uuid.UUID) error {
 			break
 		}
 
-		var m Message
-		err = json.Unmarshal(message, &m)
+		m := &Message{}
+		err = json.Unmarshal(message, m)
 		if err != nil {
 			return errors.Wrap(err, "error decoding websocket message")
 		}
 
-		err = onMessage(s, connID, m)
+		err = OnMessage(s, connID, m)
 		if err != nil {
 			_ = s.WriteMessage(c.ID, NewMessage(npncore.KeySystem, npncore.KeyError, err.Error()))
 			return errors.Wrap(err, "error handling websocket message")

@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func (s *Service) Register(profile npnuser.Profile, c *websocket.Conn) (uuid.UUID, error) {
+func (s *Service) Register(profile *npnuser.Profile, c *websocket.Conn) (uuid.UUID, error) {
 	conn := &Connection{
 		ID:      npncore.UUID(),
 		Profile: profile,

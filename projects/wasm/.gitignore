@@ -1,6 +1,6 @@
 /.vscode
 /.idea
 /.scannerwork
-/build
-
 /assets/npn.wasm
+/assets/vendor
+/build

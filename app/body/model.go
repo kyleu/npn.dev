@@ -18,7 +18,12 @@ type Config interface {
 
 type Body struct {
 	Type   string `json:"type"`
+	Length int64  `json:"length"`
 	Config Config `json:"config"`
+}
+
+func NewBody(t string, c Config) *Body {
+	return &Body{Type: t, Length: c.ContentLength(), Config: c}
 }
 
 func (b *Body) String() string {

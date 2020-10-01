@@ -1,8 +1,8 @@
-namespace socket {
+namespace routing {
   export function route(p: string) {
     let parts = p.split("/");
     parts = parts.filter(x => x.length > 0);
-    console.info("nav: " + parts.join(" -> "));
+    console.debug("nav: " + parts.join(" -> "));
 
     const svc = (parts.length > 0) ? parts[0] : "c";
     switch (svc) {
@@ -21,7 +21,7 @@ namespace socket {
         ui.setPanels(coll, req, act, extra);
         break;
       default:
-        console.info("unhandled svc [" + svc + "]");
+        console.warn("unhandled svc [" + svc + "]");
     }
   }
 }

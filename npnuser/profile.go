@@ -86,8 +86,8 @@ type Profile struct {
 	Locale    string    `json:"locale,omitempty"`
 }
 
-func (p *UserProfile) ToProfile() Profile {
-	return Profile{
+func (p *UserProfile) ToProfile() *Profile {
+	return &Profile{
 		UserID:    p.UserID,
 		Name:      p.Name,
 		Theme:     p.Theme.String(),

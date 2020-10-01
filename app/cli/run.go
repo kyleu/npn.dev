@@ -18,6 +18,8 @@ import (
 
 const Version = "0.0.1"
 
+var FileLoaderOverride npncore.FileLoader
+
 func Run(a string, p uint16, platform string, dir string) (uint16, error) {
 	info, r, err := Start(platform, dir)
 	if err != nil {
@@ -61,5 +63,17 @@ func InitApp(platform string, dir string) npnweb.AppInfo {
 		dir = defaultDirectory()
 	}
 
-	return app.NewService(verbose, dir, logger)
+	var files npncore.FileLoader
+	if platform == "wasm" {
+		if FileLoaderOverride == nil {
+			logger.Warn("can't load FileLoaderOverride for WASM")
+			files = npncore.NewFileSystem(dir, logger)
+		} else {
+			files = FileLoaderOverride
+		}
+	} else {
+		files = npncore.NewFileSystem(dir, logger)
+	}
+
+	return app.NewService(verbose, files, logger)
 }

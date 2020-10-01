@@ -7,7 +7,7 @@ type Error struct {
 }
 
 func NewError(message string) *Body {
-	return &Body{Type: KeyError, Config: &Error{Message: message}}
+	return NewBody(KeyError, &Error{Message: message})
 }
 
 func (l *Error) ContentLength() int64 {

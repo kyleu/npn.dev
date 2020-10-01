@@ -1,15 +1,50 @@
-git tag $1
-git tag npnasset/$1
-git tag npnconnection/$1
-git tag npncontroller/$1
-git tag npncore/$1
-git tag npndatabase/$1
-git tag npnexport/$1
-git tag npngraphql/$1
-git tag npnscript/$1
-git tag npnservice/$1
-git tag npnservice-db/$1
-git tag npnservice-fs/$1
-git tag npntemplate/$1
-git tag npnuser/$1
-git tag npnweb/$1
+#!/bin/bash
+
+## Updates the go.mod version, deletes go.sum, tags the git repo
+
+set -e
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+project_dir=${dir}/..
+cd $project_dir
+
+TGT=$1
+
+[ "$TGT" ] || (echo "must provide one argument, like \"0.0.1\"" && exit)
+
+rplc () {
+  rm -f go.sum
+  find . -type f -name "go.mod" -print0 | xargs -0 sed -i '' -e "s/v[01]\.[0-9]*[0-9]\.[0-9]*[0-9] \/\/ npn/v${TGT} \/\/ npn/g"
+}
+
+bld () {
+  make build
+  git add .
+  git commit -m "v${TGT}"
+}
+
+gt () {
+  git tag "$1/v${TGT}"
+}
+
+tagall () {
+  git tag "v${TGT}"
+
+  gt "npnasset"
+  gt "npnconnection"
+  gt "npncontroller"
+  gt "npncore"
+  gt "npndatabase"
+  gt "npnexport"
+  gt "npngraphql"
+  gt "npnscript"
+  gt "npnservice"
+  gt "npnservice-db"
+  gt "npnservice-fs"
+  gt "npntemplate"
+  gt "npnuser"
+  gt "npnweb"
+}
+
+rplc
+bld
+tagall

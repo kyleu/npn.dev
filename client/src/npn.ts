@@ -21,9 +21,8 @@ namespace npn {
       socket.setAppUnloading();
     };
 
-    nav.init(socket.route);
-
-    socket.socketConnect(svc, id);
+    nav.init(routing.route);
+    socket.socketConnect(svc, id, svc === "wasm");
   }
 
   export function debug() {

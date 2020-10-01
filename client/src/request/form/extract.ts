@@ -13,8 +13,6 @@ namespace request.form {
     proto.body = json.parse(gv("body"));
     proto.options = json.parse(gv("options"));
 
-    console.log(url, proto);
-
     return {key: key, title: title, description: desc, prototype: proto};
   }
 

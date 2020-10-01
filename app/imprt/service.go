@@ -11,11 +11,11 @@ import (
 )
 
 type Service struct {
-	files  *npncore.FileLoader
+	files  npncore.FileLoader
 	logger logur.Logger
 }
 
-func NewService(files *npncore.FileLoader, logger logur.Logger) *Service {
+func NewService(files npncore.FileLoader, logger logur.Logger) *Service {
 	return &Service{files: files, logger: logger}
 }
 

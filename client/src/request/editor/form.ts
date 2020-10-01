@@ -50,7 +50,7 @@ namespace request.editor {
       try {
         auth = json.parse(cache.auth.value);
       } catch (e) {
-        console.log("invalid auth JSON [" + cache.auth.value + "]")
+        console.warn("invalid auth JSON [" + cache.auth.value + "]")
         auth = [];
       }
       setAuth(cache, auth);
@@ -61,7 +61,7 @@ namespace request.editor {
       try {
         qp = json.parse(cache.qp.value);
       } catch (e) {
-        console.log("invalid qp JSON [" + cache.qp.value + "]")
+        console.warn("invalid qp JSON [" + cache.qp.value + "]")
         qp = [];
       }
       setQueryParams(cache, qp);
@@ -72,7 +72,7 @@ namespace request.editor {
       try {
         h = json.parse(cache.headers.value);
       } catch (e) {
-        console.log("invalid headers JSON [" + cache.headers.value + "]")
+        console.warn("invalid headers JSON [" + cache.headers.value + "]")
         h = [];
       }
       setHeaders(cache, h);
@@ -83,7 +83,7 @@ namespace request.editor {
       try {
         b = json.parse(cache.body.value);
       } catch (e) {
-        console.log("invalid body JSON [" + cache.body.value + "]")
+        console.warn("invalid body JSON [" + cache.body.value + "]")
       }
       setBody(cache, b);
     });

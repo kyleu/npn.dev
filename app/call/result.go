@@ -13,7 +13,6 @@ type Result struct {
 	Request        string         `json:"request,omitempty"`
 	RequestHeaders header.Headers `json:"requestHeaders,omitempty"`
 	Status         string         `json:"status,omitempty"`
-	RedirectedFrom *Result        `json:"redirectedFrom,omitempty"`
 	Response       *Response      `json:"response,omitempty"`
 	Timing         *Timing        `json:"timing,omitempty"`
 	Error          string         `json:"error,omitempty"`

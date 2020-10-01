@@ -44,8 +44,8 @@ namespace request.form {
 
   function renderSavePanel(r: request.Request) {
     return <div id="save-panel" class="right hiddenX">
-      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick="console.log('TODO!');">Reset</button>
-      <button class="uk-button uk-button-default uk-margin-top" onclick="console.log(request.form.extractRequest());">Save Changes</button>
+      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick="console.warn('TODO!');">Reset</button>
+      <button class="uk-button uk-button-default uk-margin-top" onclick="request.form.extractRequest();">Save Changes</button>
     </div>;
   }
 

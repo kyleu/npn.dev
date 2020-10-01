@@ -7,7 +7,7 @@ type HTML struct {
 }
 
 func NewHTML(content string) *Body {
-	return &Body{Type: KeyHTML, Config: &HTML{Content: content}}
+	return NewBody(KeyHTML, &HTML{Content: content})
 }
 
 func (l *HTML) ContentLength() int64 {
@@ -27,6 +27,5 @@ func (l *HTML) String() string {
 }
 
 func parseHTML(b []byte) *Body {
-	cfg := &HTML{Content: string(b)}
-	return &Body{Type: KeyHTML, Config: cfg}
+	return NewHTML(string(b))
 }

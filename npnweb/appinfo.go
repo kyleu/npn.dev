@@ -9,7 +9,7 @@ import (
 
 type AppInfo interface {
 	Debug() bool
-	Files() *npncore.FileLoader
+	Files() npncore.FileLoader
 	User() user.Service
 	Auth() auth.Service
 	Logger() logur.Logger

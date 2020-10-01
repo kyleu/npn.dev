@@ -29,9 +29,8 @@ namespace request {
         this.active = key;
         if (this.active) {
           renderActiveRequest(collection.cache.active);
-        } else {
-
         }
+        collection.renderCollections(collection.cache.collections!);
       }
     }
 

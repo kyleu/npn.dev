@@ -5,7 +5,7 @@ namespace request {
       method: MethodGet.key,
       protocol: str.trimSuffix(u.protocol, ":"),
       domain: u.hostname,
-      port: parseInt(u.port, 10),
+      port: u.port ? parseInt(u.port, 10) : undefined,
       path: str.trimPrefix(u.pathname, "/"),
       fragment: str.trimPrefix(u.hash, "#")
     };

@@ -23,9 +23,9 @@ namespace log {
       {msg}
     </li>;
     if (!list) {
-      list = dom.req("#log-list");
+      list = dom.opt("#log-list");
       if (!list) {
-        console.log(`${level}: ${msg}`);
+        console.warn(`${level}: ${msg}`);
         return;
       }
     }

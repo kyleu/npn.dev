@@ -22,7 +22,7 @@ func NewRaw(bytes []byte) *Body {
 		cfg.Content = base64.StdEncoding.EncodeToString(bytes)
 		cfg.Binary = true
 	}
-	return &Body{Type: KeyRaw, Config: cfg}
+	return NewBody(KeyRaw, cfg)
 }
 
 func (r *Raw) ContentLength() int64 {

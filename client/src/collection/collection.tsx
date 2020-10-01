@@ -12,13 +12,23 @@ namespace collection {
     }
     let link = nav.link({path: "/c/" + c.key, title: title, icon: "folder"});
     if (cache.active === c.key) {
+      const activeReq = request.cache.active;
       const summs = request.cache.summaries.get(c.key);
       if (summs) {
+        let collLink: JSX.Element
+        if (activeReq) {
+          collLink = nav.link({path: "/c/" + c.key, title: title, icon: "album"});
+        } else {
+          collLink = <strong>{nav.link({path: "/", title: title, icon: "album"})}</strong>
+        }
         link = <div>
-          {nav.link({path: "/", title: title, icon: "album"})}
-          {summs.map(s => <div class="uk-margin-small-left">
-            {nav.link({path: "/c/" + c.key + "/" + s.key, title: (s.title && s.title.length > 0) ? s.title : s.key, icon: "link"})}
-          </div>)}
+          {collLink}
+          {summs.map(s => {
+            const l = nav.link({path: "/c/" + c.key + "/" + s.key, title: (s.title && s.title.length > 0) ? s.title : s.key, icon: "link"})
+            return <div class="uk-margin-small-left">
+              {request.cache.active === s.key ? <strong>{l}</strong>: l}
+            </div>
+          })}
         </div>;
       }
     }
@@ -57,8 +67,8 @@ namespace collection {
       input.value = "";
       const param = {"coll": collection.cache.active, "url": url};
       socket.send({svc: services.collection.key, cmd: command.client.addURL, param: param});
+      log.info("adding request [" + url + "]");
     }
-    console.log("adding request [" + url + "]");
   }
 
   function renderRequests(coll: string, rs: request.Summary[]) {

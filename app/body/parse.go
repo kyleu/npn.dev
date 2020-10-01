@@ -14,8 +14,7 @@ func Parse(contentEncoding string, contentType string, charset string, contentLe
 	defer func() { _ = rd.Close() }()
 
 	if contentLength > 1024*1024 {
-		cfg := &Large{Filename: "TODO", Length: contentLength}
-		return &Body{Type: KeyLarge, Config: cfg}, nil
+		return NewLarge("TODO", contentType, contentLength), nil
 	}
 
 	var b []byte

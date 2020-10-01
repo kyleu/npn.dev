@@ -16,6 +16,7 @@ namespace rbody {
 
   export interface Body {
     readonly type: string;
+    readonly length: number;
     readonly config: any;
   }
 

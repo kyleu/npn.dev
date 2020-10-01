@@ -6,8 +6,8 @@ import (
 	"emperror.dev/errors"
 )
 
-type connected struct {
-	Profile npnuser.Profile `json:"profile"`
+type ConnectedResponse struct {
+	Profile *npnuser.Profile `json:"profile"`
 }
 
 func handleSystemMessage(cmd string) error {

@@ -29,11 +29,11 @@ var systemUser = &user.SystemUser{
 
 type ServiceFilesystem struct {
 	Multiuser bool
-	files     *npncore.FileLoader
+	files     npncore.FileLoader
 	logger    logur.Logger
 }
 
-func NewServiceFilesystem(multiuser bool, files *npncore.FileLoader, logger logur.Logger) *ServiceFilesystem {
+func NewServiceFilesystem(multiuser bool, files npncore.FileLoader, logger logur.Logger) *ServiceFilesystem {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyUser})
 	return &ServiceFilesystem{Multiuser: multiuser, files: files, logger: logger}
 }

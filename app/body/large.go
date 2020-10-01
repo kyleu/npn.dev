@@ -9,7 +9,7 @@ type Large struct {
 }
 
 func NewLarge(filename string, contentType string, length int64) *Body {
-	return &Body{Type: KeyLarge, Config: &Large{Filename: filename, ContentType: contentType, Length: length}}
+	return NewBody(KeyLarge, &Large{Filename: filename, ContentType: contentType, Length: length})
 }
 
 func (l *Large) ContentLength() int64 {

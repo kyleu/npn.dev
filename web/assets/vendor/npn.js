@@ -1,4 +1,26 @@
 "use strict";
+var command;
+(function (command) {
+    command.client = {
+        ping: "ping",
+        connect: "connect",
+        // Collection
+        getCollection: "getCollection",
+        addURL: "addURL",
+        // Request
+        getRequest: "getRequest",
+        call: "call"
+    };
+    command.server = {
+        error: "error",
+        pong: "pong",
+        connected: "connected",
+        collections: "collections",
+        collectionDetail: "collectionDetail",
+        requestDetail: "requestDetail",
+        callResult: "callResult"
+    };
+})(command || (command = {}));
 var npn;
 (function (npn) {
     function onError(svc, err) {
@@ -20,8 +42,8 @@ var npn;
         window.onbeforeunload = () => {
             socket.setAppUnloading();
         };
-        nav.init(socket.route);
-        socket.socketConnect(svc, id);
+        nav.init(routing.route);
+        socket.socketConnect(svc, id, svc === "wasm");
     }
     npn.init = init;
     function debug() {
@@ -46,6 +68,49 @@ var npn;
         }
     }
 })(npn || (npn = {}));
+var routing;
+(function (routing) {
+    function route(p) {
+        let parts = p.split("/");
+        parts = parts.filter(x => x.length > 0);
+        console.debug("nav: " + parts.join(" -> "));
+        const svc = (parts.length > 0) ? parts[0] : "c";
+        switch (svc) {
+            case "c":
+                const coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
+                const req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
+                const act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
+                const extra = (parts.length > 4) ? parts.slice(4) : [];
+                const currColl = collection.cache.active;
+                collection.cache.setActiveCollection(coll);
+                if (coll !== currColl && coll) {
+                    socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
+                }
+                request.cache.setActiveRequest(req);
+                request.cache.setActiveAction(act, extra);
+                ui.setPanels(coll, req, act, extra);
+                break;
+            default:
+                console.warn("unhandled svc [" + svc + "]");
+        }
+    }
+    routing.route = route;
+})(routing || (routing = {}));
+var services;
+(function (services) {
+    services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
+    services.collection = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
+    services.request = { key: "request", title: "Request", plural: "Requests", icon: "file-text" };
+    const allServices = [services.system, services.collection];
+    function fromKey(key) {
+        const ret = allServices.find(s => s.key === key);
+        if (!ret) {
+            throw `invalid service [${key}]`;
+        }
+        return ret;
+    }
+    services.fromKey = fromKey;
+})(services || (services = {}));
 var rbody;
 (function (rbody) {
     function renderBody(url, b) {
@@ -193,13 +258,14 @@ var call;
     function renderResult(r) {
         var _a, _b, _c;
         let rspDetail = JSX("div", null, "no result");
-        if (r.response) {
-            const ct = r.response.contentType || "";
-            const cl = (r.response.contentLength && r.response.contentLength > -1) ? `(${r.response.contentLength} bytes)` : "";
+        const rsp = r.response;
+        if (rsp) {
+            const ct = rsp.contentType || "";
+            const cl = (rsp.contentLength && rsp.contentLength > -1) ? `(${rsp.contentLength} bytes)` : ((rsp.body && rsp.body.length > -1) ? `(${rsp.body.length} bytes)` : "");
             rspDetail = JSX("div", null,
-                r.response.proto,
+                rsp.proto,
                 " ",
-                JSX("em", null, r.response.status),
+                JSX("em", null, rsp.status),
                 JSX("div", null,
                     ct,
                     " ",
@@ -350,11 +416,22 @@ var collection;
         }
         let link = nav.link({ path: "/c/" + c.key, title: title, icon: "folder" });
         if (collection.cache.active === c.key) {
+            const activeReq = request.cache.active;
             const summs = request.cache.summaries.get(c.key);
             if (summs) {
+                let collLink;
+                if (activeReq) {
+                    collLink = nav.link({ path: "/c/" + c.key, title: title, icon: "album" });
+                }
+                else {
+                    collLink = JSX("strong", null, nav.link({ path: "/", title: title, icon: "album" }));
+                }
                 link = JSX("div", null,
-                    nav.link({ path: "/", title: title, icon: "album" }),
-                    summs.map(s => JSX("div", { class: "uk-margin-small-left" }, nav.link({ path: "/c/" + c.key + "/" + s.key, title: (s.title && s.title.length > 0) ? s.title : s.key, icon: "link" }))));
+                    collLink,
+                    summs.map(s => {
+                        const l = nav.link({ path: "/c/" + c.key + "/" + s.key, title: (s.title && s.title.length > 0) ? s.title : s.key, icon: "link" });
+                        return JSX("div", { class: "uk-margin-small-left" }, request.cache.active === s.key ? JSX("strong", null, l) : l);
+                    }));
             }
         }
         return JSX("div", { class: "nav-item collection-link collection-link-" + c.key }, link);
@@ -385,8 +462,8 @@ var collection;
             input.value = "";
             const param = { "coll": collection.cache.active, "url": url };
             socket.send({ svc: services.collection.key, cmd: command.client.addURL, param: param });
+            log.info("adding request [" + url + "]");
         }
-        console.log("adding request [" + url + "]");
     }
     collection.addRequestURL = addRequestURL;
     function renderRequests(coll, rs) {
@@ -426,6 +503,1027 @@ var collection;
     }
     collection.onCollectionMessage = onCollectionMessage;
 })(collection || (collection = {}));
+var header;
+(function (header) {
+    function nch(key, description, req, rsp, link) {
+        return { "key": key, "description": description, "req": req, "rsp": rsp, "link": link };
+    }
+    function snch(key, description, req, rsp) {
+        return nch(key, description, req, rsp, mdnLink(key));
+    }
+    function mdnLink(s) {
+        return "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/" + s;
+    }
+    header.commonHeaders = [
+        snch("Accept", "Informs the server about the types of data that can be sent back.", true, false),
+        snch("Access-Control-Allow-Headers", "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request.", false, true),
+        snch("Access-Control-Allow-Methods", "Specifies the methods allowed when accessing the resource in response to a preflight request.", false, true),
+        snch("Access-Control-Allow-Origin", "Indicates whether the response can be shared.", false, true),
+        snch("Authorization", "Contains the credentials to authenticate a user-agent with a server.", true, false),
+        snch("Connection", "Controls whether the network connection stays open after the current transaction finishes.", true, false),
+        snch("Content-Encoding", "Used to specify the compression algorithm.", true, true),
+        snch("Content-Length", "The size of the resource, in decimal number of bytes.", true, true),
+        snch("Content-Type", "Indicates the media type of the resource.", true, true),
+        snch("Cookie", "Contains stored HTTP cookies previously sent by the server with the Set-Cookie header.", true, false),
+        snch("Date", "The Date general HTTP header contains the date and time at which the message was originated.", false, true),
+        snch("ETag", "A unique string identifying the version of the resource.", false, true),
+        snch("Expires", "The date/time after which the response is considered stale.", false, true),
+        snch("Host", "Specifies the domain name of the server (for virtual hosting), and (optionally) the TCP port number on which the server is listening.", true, false),
+        snch("Last-Modified", "The last modification date of the resource, used to compare several versions of the same resource.", false, true),
+        snch("Location", "Indicates the URL to redirect a page to. ", false, true),
+        snch("Origin", "Indicates where a fetch originates from.", true, false),
+        snch("Referer", "The address of the previous web page from which a link to the currently requested page was followed.", true, false),
+        snch("Server", "Contains information about the software used by the origin server to handle the request.", false, true),
+        snch("Set-Cookie", "Send cookies from the server to the user-agent.", false, true),
+        snch("User-Agent", "Contains a characteristic string that allows the network protocol peers to identify the application", true, false)
+    ];
+    header.commonHeadersByName = new Map();
+    for (const ch of header.commonHeaders) {
+        header.commonHeadersByName.set(ch.key, ch);
+    }
+    function dumpCommonHeaders() {
+        const dump = (title, req, rsp) => {
+            let matched = false;
+            console.debug("\n::: " + title + " Headers");
+            header.commonHeaders.forEach(ch => {
+                if (ch.req == req && ch.rsp == rsp) {
+                    matched = true;
+                    console.debug(`${ch.key}: ${ch.link}`);
+                    console.debug(`  - ${ch.description}`);
+                }
+            });
+            if (!matched) {
+                console.debug("none");
+            }
+        };
+        dump("Common", true, true);
+        dump("Request", true, false);
+        dump("Response", false, true);
+        dump("Invalid", false, false);
+    }
+    header.dumpCommonHeaders = dumpCommonHeaders;
+})(header || (header = {}));
+var request;
+(function (request) {
+    function renderActionEmpty() {
+        return JSX("div", null);
+    }
+    request.renderActionEmpty = renderActionEmpty;
+    function renderActionUnknown(key, extra) {
+        return JSX("div", null,
+            renderActionClose(),
+            "unknown action: ",
+            key,
+            " (",
+            extra,
+            ")");
+    }
+    request.renderActionUnknown = renderActionUnknown;
+    function renderActionCall(coll, req) {
+        return JSX("div", { id: coll + "--" + req + "-call" },
+            renderActionClose(),
+            JSX("div", { class: "call-title" }, "Loading..."),
+            JSX("div", { class: "call-result" }));
+    }
+    request.renderActionCall = renderActionCall;
+    function renderActionTransform(coll, req, format) {
+        return JSX("div", { id: coll + "--" + req + "-transform" },
+            renderActionClose(),
+            JSX("div", { class: "transform-title" }, format),
+            JSX("div", { class: "transform-result" }));
+    }
+    request.renderActionTransform = renderActionTransform;
+    function renderActionClose() {
+        return JSX("div", { class: "right" },
+            JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate(`/c/${collection.cache.active}/${request.cache.active}`);return false;", title: "close collection" }));
+    }
+})(request || (request = {}));
+var request;
+(function (request) {
+    class Cache {
+        constructor() {
+            this.summaries = new Map();
+            this.requests = new Map();
+            this.extra = [];
+        }
+        setCollectionRequests(coll, summs) {
+            this.summaries.set(coll.key, summs);
+            if (coll.key === collection.cache.active) {
+                dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
+                for (let req of summs) {
+                    if (this.active === req.key) {
+                        request.renderActiveRequest(collection.cache.active);
+                        if (this.action) {
+                            request.renderAction(collection.cache.active, req.key, this.action, this.extra);
+                        }
+                    }
+                }
+            }
+        }
+        setActiveRequest(key) {
+            if (!collection.cache.active) {
+                return;
+            }
+            if (this.active !== key) {
+                this.active = key;
+                if (this.active) {
+                    request.renderActiveRequest(collection.cache.active);
+                }
+                collection.renderCollections(collection.cache.collections);
+            }
+        }
+        setActiveAction(act, extra) {
+            if (!collection.cache.active) {
+                return;
+            }
+            const sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
+            if (this.active && (this.action !== act || !sameExtra)) {
+                this.action = act;
+                this.extra = extra;
+                request.renderAction(collection.cache.active, this.active, this.action, this.extra);
+            }
+        }
+        updateRequest(r) {
+            if (!collection.cache.active) {
+                return;
+            }
+            const curr = this.requests.get(collection.cache.active);
+            const updated = group.update(curr, r, x => x.key);
+            this.requests.set(collection.cache.active, updated);
+        }
+    }
+    request.cache = new Cache();
+})(request || (request = {}));
+var request;
+(function (request) {
+    function diff(l, r) {
+        const ret = [];
+        const p = (k, lv, rv) => ret.push({ k: k, l: lv, r: rv });
+        const comp = (k, lv, rv) => {
+            if (lv !== rv) {
+                p(k, lv, rv);
+            }
+        };
+        const checkNull = (k, lv, rv) => {
+            if (!l) {
+                if (r) {
+                    p(k, null, "(defined)");
+                }
+                return true;
+            }
+            if (!r) {
+                p(k, "(defined)", null);
+                return true;
+            }
+            return false;
+        };
+        if (checkNull("request", l, r)) {
+            return ret;
+        }
+        comp("key", l.key, r.key);
+        comp("title", l.title, r.title);
+        comp("description", l.description, r.description);
+        const lp = l.prototype;
+        const rp = r.prototype;
+        comp("method", lp.method, rp.method);
+        comp("protocol", lp.protocol, rp.protocol);
+        comp("domain", lp.domain, rp.domain);
+        comp("port", lp.port, rp.port);
+        comp("path", lp.path, rp.path);
+        if (!checkNull("query", lp.query, rp.query)) {
+            if ((!lp.query) || (!rp.query)) {
+                return ret;
+            }
+            comp("query.length", lp.query.length, rp.query.length);
+        }
+        comp("fragment", lp.fragment, rp.fragment);
+        if (!checkNull("headers", lp.headers, rp.headers)) {
+            if ((!lp.headers) || (!rp.headers)) {
+                return ret;
+            }
+            comp("headers.length", lp.headers.length, rp.headers.length);
+        }
+        if (!checkNull("auth", lp.auth, rp.auth)) {
+            if ((!lp.auth) || (!rp.auth)) {
+                return ret;
+            }
+            comp("auth.length", lp.auth.length, rp.auth.length);
+        }
+        if (!checkNull("body", lp.body, rp.body)) {
+            if ((!lp.body) || (!rp.body)) {
+                return ret;
+            }
+            comp("body.type", lp.body.type, rp.body.type);
+            comp("body.config", lp.body.config, rp.body.config);
+        }
+        const lpo = lp.options;
+        const rpo = rp.options;
+        if (checkNull("options", lpo, rpo)) {
+            return ret;
+        }
+        if ((!lpo) || (!rpo)) {
+            return ret;
+        }
+        comp("timeout", lpo.timeout, rpo.timeout);
+        comp("ignoreRedirects", lpo.ignoreRedirects, rpo.ignoreRedirects);
+        comp("ignoreReferrer", lpo.ignoreReferrer, rpo.ignoreReferrer);
+        comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts);
+        comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies);
+        comp("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
+        comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars);
+        comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar);
+        comp("sslCert", lpo.sslCert, rpo.sslCert);
+        comp("userAgentOverride", lpo.userAgentOverride, rpo.userAgentOverride);
+        return ret;
+    }
+    request.diff = diff;
+})(request || (request = {}));
+var request;
+(function (request) {
+    function getActiveRequest() {
+        return getRequest(collection.cache.active, request.cache.active);
+    }
+    request.getActiveRequest = getActiveRequest;
+    function getSummary(coll, key) {
+        for (let req of request.cache.summaries.get(coll) || []) {
+            if (req.key === key) {
+                return req;
+            }
+        }
+        return undefined;
+    }
+    request.getSummary = getSummary;
+    function getRequest(coll, key) {
+        for (let req of request.cache.requests.get(coll) || []) {
+            if (req.key === key) {
+                return req;
+            }
+        }
+        return undefined;
+    }
+    request.getRequest = getRequest;
+    function onRequestMessage(cmd, param) {
+        switch (cmd) {
+            case command.server.requestDetail:
+                const req = param;
+                request.cache.updateRequest(req);
+                if (request.cache.active === req.key) {
+                    request.renderActiveRequest(collection.cache.active);
+                    request.renderAction(collection.cache.active, request.cache.active, request.cache.action, request.cache.extra);
+                }
+                break;
+            case command.server.callResult:
+                debugger;
+                const result = param;
+                call.setResult(result);
+                const path = `r/` + result.id;
+                // TODO history.replaceState(path, "", "/" + path);
+                break;
+            default:
+                console.warn(`unhandled request command [${cmd}]`);
+        }
+    }
+    request.onRequestMessage = onRequestMessage;
+})(request || (request = {}));
+var request;
+(function (request) {
+    request.MethodGet = { "key": "GET", "description": "" };
+    request.MethodHead = { "key": "HEAD", "description": "" };
+    request.MethodPost = { "key": "POST", "description": "" };
+    request.MethodPut = { "key": "PUT", "description": "" };
+    request.MethodPatch = { "key": "PATCH", "description": "" };
+    request.MethodDelete = { "key": "DELETE", "description": "" };
+    request.MethodConnect = { "key": "CONNECT", "description": "" };
+    request.MethodOptions = { "key": "OPTIONS", "description": "" };
+    request.MethodTrace = { "key": "TRACE", "description": "" };
+    request.allMethods = [request.MethodGet, request.MethodHead, request.MethodPost, request.MethodPut, request.MethodPatch, request.MethodDelete, request.MethodConnect, request.MethodOptions, request.MethodTrace];
+})(request || (request = {}));
+var request;
+(function (request) {
+    function newPrototype(protocol, hostname, port, path, qp, fragment, auth) {
+        if (protocol.endsWith(":")) {
+            protocol = protocol.substr(0, protocol.length - 1);
+        }
+        if (fragment.startsWith("#")) {
+            fragment = fragment.substr(1);
+        }
+        return { method: "get", protocol: protocol, domain: hostname, port: port, path: path, query: qp, fragment: fragment, auth: auth };
+    }
+    function prototypeFromURL(u) {
+        const url = new URL(u);
+        const qp = [];
+        for (const [k, v] of url.searchParams) {
+            qp.push({ k: k, v: v });
+        }
+        const auth = [];
+        if (url.username.length > 0) {
+            auth.push({ type: "basic", config: { "username": url.username, "password": url.password, "showPassword": true } });
+        }
+        let port;
+        if (url.port && url.port.length > 0) {
+            port = parseInt(url.port, 10);
+        }
+        return newPrototype(url.protocol, url.hostname, port, url.pathname, qp, url.hash, auth);
+    }
+    request.prototypeFromURL = prototypeFromURL;
+})(request || (request = {}));
+var request;
+(function (request) {
+    function renderActiveRequest(coll) {
+        if (request.cache.active) {
+            const req = request.getRequest(coll, request.cache.active);
+            if (req) {
+                dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
+                request.editor.wireForm(req.key);
+            }
+            else {
+                const summ = request.getSummary(coll, request.cache.active);
+                if (summ) {
+                    dom.setContent("#request-panel", request.renderSummaryPanel(coll, summ));
+                    const param = { coll: coll, req: summ.key };
+                    socket.send({ svc: services.request.key, cmd: command.client.getRequest, param: param });
+                }
+            }
+        }
+        else {
+            console.warn("no active request");
+        }
+    }
+    request.renderActiveRequest = renderActiveRequest;
+    function renderAction(coll, reqKey, action, extra) {
+        // TODO const req = request.form.getRequest();
+        const re = dom.opt(".request-editor");
+        const ra = dom.opt(".request-action");
+        if (!re || !ra) {
+            return;
+        }
+        switch (action) {
+            case undefined:
+                dom.setContent(ra, request.renderActionEmpty());
+                break;
+            case "call":
+                const req = request.getRequest(coll, reqKey);
+                if (!req) {
+                    return;
+                }
+                // call.prepare(coll, request.form.extractRequest());
+                call.prepare(coll, req);
+                dom.setContent(ra, request.renderActionCall(coll, reqKey));
+                break;
+            case "transform":
+                dom.setContent(ra, request.renderActionTransform(coll, reqKey, extra[0]));
+                break;
+            default:
+                console.warn("unhandled request action [" + action + "]");
+                dom.setContent(ra, request.renderActionUnknown(action, extra));
+        }
+        dom.setDisplay(re, action === undefined);
+        dom.setDisplay(ra, action !== undefined);
+    }
+    request.renderAction = renderAction;
+})(request || (request = {}));
+var request;
+(function (request) {
+    function renderSummaryPanel(coll, r) {
+        return JSX("div", null,
+            JSX("div", { class: "uk-card uk-card-body uk-card-default" },
+                JSX("div", { class: "right" },
+                    JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
+                JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
+                JSX("p", null, "Loading...")));
+    }
+    request.renderSummaryPanel = renderSummaryPanel;
+})(request || (request = {}));
+var request;
+(function (request) {
+    function urlToPrototype(url) {
+        const u = new URL(url);
+        return {
+            method: request.MethodGet.key,
+            protocol: str.trimSuffix(u.protocol, ":"),
+            domain: u.hostname,
+            port: u.port ? parseInt(u.port, 10) : undefined,
+            path: str.trimPrefix(u.pathname, "/"),
+            fragment: str.trimPrefix(u.hash, "#")
+        };
+    }
+    request.urlToPrototype = urlToPrototype;
+    function prototypeToURL(p) {
+        return prototypeToURLParts(p).map(x => x.v).join("");
+    }
+    request.prototypeToURL = prototypeToURL;
+    function prototypeToHTML(p) {
+        return JSX("span", null, prototypeToURLParts(p).map(x => JSX("span", { title: x.t, class: urlColor(x.t) }, x.v)));
+    }
+    request.prototypeToHTML = prototypeToHTML;
+    function baseURL(s) {
+        return prototypeBaseURL(urlToPrototype(s));
+    }
+    request.baseURL = baseURL;
+    function prototypeBaseURL(p) {
+        if (!p) {
+            return "invalid";
+        }
+        let d = p.domain;
+        if (p.port && p.port > 0) {
+            d += `:${p.port}`;
+        }
+        return `${p.protocol}://${d}/`;
+    }
+    request.prototypeBaseURL = prototypeBaseURL;
+    function prototypeToURLParts(p) {
+        const ret = [];
+        let push = (t, v) => {
+            ret.push({ t: t, v: v });
+        };
+        push("protocol", p.protocol);
+        push("", "://");
+        if (p.auth) {
+            for (let a of p.auth) {
+                if (a.type === "basic") {
+                    const cfg = a.config;
+                    push("username", cfg.username);
+                    push("", ":");
+                    if (cfg.showPassword) {
+                        push("password", cfg.password);
+                    }
+                    else {
+                        push("password", "****");
+                    }
+                    push("", "@");
+                    break;
+                }
+            }
+        }
+        push("domain", p.domain);
+        if (p.port) {
+            push("", ":");
+            push("port", p.port.toString());
+        }
+        if (p.path && p.path.length > 0) {
+            push("", "/");
+            push("path", p.path);
+        }
+        if (p.query && p.query.length > 0) {
+            push("", "?");
+            var query = p.query.map(k => encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v)).join('&');
+            push("query", query);
+        }
+        if (p.fragment && p.fragment.length > 0) {
+            push("", "#");
+            push("fragment", encodeURIComponent(p.fragment));
+        }
+        return ret;
+    }
+    function urlColor(key) {
+        switch (key) {
+            case "username":
+            case "password":
+            case "protocol":
+            case "auth":
+                return "green-fg";
+            case "domain":
+            case "port":
+                return "blue-fg";
+            case "path":
+                return "bluegrey-fg";
+            case "query":
+                return "purple-fg";
+            default:
+                return "";
+        }
+    }
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function initAuthEditor(el) {
+        }
+        editor.initAuthEditor = initAuthEditor;
+        function setAuth(cache, auth) {
+            const url = new URL(cache.url.value);
+            let u = "";
+            let p = "";
+            if (auth) {
+                for (let a of auth) {
+                    if (a.type === "basic") {
+                        const basic = a.config;
+                        u = encodeURIComponent(basic.username);
+                        p = encodeURIComponent(basic.password);
+                    }
+                }
+            }
+            url.username = u;
+            url.password = p;
+            cache.url.value = url.toString();
+        }
+        editor.setAuth = setAuth;
+        function updateBasicAuth(cache, auth) {
+            let currentAuth = [];
+            try {
+                currentAuth = json.parse(cache.auth.value);
+            }
+            catch (e) {
+                console.warn("invalid auth JSON [" + cache.auth.value + "]");
+            }
+            let matched = -1;
+            if (!currentAuth) {
+                currentAuth = [];
+            }
+            for (let i = 0; i < currentAuth.length; i++) {
+                const x = currentAuth[i];
+                if (x.type === "basic") {
+                    matched = i;
+                }
+            }
+            let basic;
+            if (auth) {
+                for (let i = 0; i < auth.length; i++) {
+                    const x = auth[i];
+                    if (x.type === "basic") {
+                        basic = x.config;
+                    }
+                }
+            }
+            if (matched === -1) {
+                if (basic) {
+                    currentAuth.push({ type: "basic", config: basic });
+                }
+            }
+            else {
+                if (basic) {
+                    let curr = currentAuth[matched].config;
+                    if (curr) {
+                        curr = {
+                            username: basic.username,
+                            password: basic.password,
+                            showPassword: curr.showPassword
+                        };
+                    }
+                    else {
+                        curr = basic;
+                    }
+                    currentAuth[matched] = { type: "basic", config: curr };
+                }
+                else {
+                    currentAuth.splice(matched, 1);
+                }
+            }
+            cache.auth.value = json.str(currentAuth);
+        }
+        editor.updateBasicAuth = updateBasicAuth;
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function initBodyEditor(el) {
+            const parent = el.parentElement;
+            parent.appendChild(createBodyEditor(el));
+        }
+        editor.initBodyEditor = initBodyEditor;
+        function createBodyEditor(el) {
+            const b = json.parse(el.value);
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("select", { class: "uk-select" },
+                    JSX("option", { value: "" }, "No body"),
+                    rbody.AllTypes.filter(t => !t.hidden).map(t => {
+                        if (b && b.type === t.key) {
+                            return JSX("option", { value: t.key, selected: "selected" }, t.title);
+                        }
+                        else {
+                            return JSX("option", { value: t.key }, t.title);
+                        }
+                    }),
+                    "\u02D9"),
+                rbody.AllTypes.filter(t => !t.hidden).map(t => {
+                    let cfg = (b && b.type == t.key) ? b.config : null;
+                    return configEditor(t.key, cfg, t.key === (b ? b.type : ""));
+                }));
+        }
+        function configEditor(key, config, active) {
+            let cls = "uk-margin-top body-editor-" + key;
+            if (!active) {
+                cls += " hidden";
+            }
+            switch (key) {
+                case "json":
+                    const j = config;
+                    return JSX("div", { class: cls },
+                        JSX("textarea", { class: "uk-textarea" }, json.str(j ? j.msg : null)));
+                default:
+                    return JSX("div", { class: cls },
+                        "Unimplemented [",
+                        key,
+                        "] editor");
+            }
+        }
+        function setBody(cache, body) {
+        }
+        editor.setBody = setBody;
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function wireForm(prefix) {
+            const id = (k) => {
+                return "#" + prefix + "-" + k;
+            };
+            const cache = {
+                url: dom.req(id("url")),
+                auth: dom.req(id("auth")),
+                qp: dom.req(id("queryparams")),
+                headers: dom.req(id("headers")),
+                body: dom.req(id("body")),
+                options: dom.req(id("options"))
+            };
+            initEditors(prefix, cache);
+            wireEvents(cache);
+        }
+        editor.wireForm = wireForm;
+        function initEditors(prefix, cache) {
+            editor.initURLEditor(cache.url);
+            editor.initAuthEditor(cache.auth);
+            editor.initQueryParamsEditor(cache.qp);
+            editor.initHeadersEditor(cache.headers);
+            editor.initBodyEditor(cache.body);
+            editor.initOptionsEditor(cache.options);
+        }
+        function events(e, f) {
+            e.onchange = f;
+            e.onkeyup = f;
+            e.onblur = f;
+        }
+        function wireEvents(cache) {
+            events(cache.url, function () {
+                editor.setURL(cache, request.prototypeFromURL(cache.url.value));
+            });
+            events(cache.auth, function () {
+                let auth;
+                try {
+                    auth = json.parse(cache.auth.value);
+                }
+                catch (e) {
+                    console.warn("invalid auth JSON [" + cache.auth.value + "]");
+                    auth = [];
+                }
+                editor.setAuth(cache, auth);
+            });
+            events(cache.qp, function () {
+                let qp;
+                try {
+                    qp = json.parse(cache.qp.value);
+                }
+                catch (e) {
+                    console.warn("invalid qp JSON [" + cache.qp.value + "]");
+                    qp = [];
+                }
+                editor.setQueryParams(cache, qp);
+            });
+            events(cache.headers, function () {
+                let h;
+                try {
+                    h = json.parse(cache.headers.value);
+                }
+                catch (e) {
+                    console.warn("invalid headers JSON [" + cache.headers.value + "]");
+                    h = [];
+                }
+                editor.setHeaders(cache, h);
+            });
+            events(cache.body, function () {
+                let b;
+                try {
+                    b = json.parse(cache.body.value);
+                }
+                catch (e) {
+                    console.warn("invalid body JSON [" + cache.body.value + "]");
+                }
+                editor.setBody(cache, b);
+            });
+        }
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function initHeadersEditor(el) {
+            const parent = el.parentElement;
+            parent.appendChild(createHeadersEditor(el));
+        }
+        editor.initHeadersEditor = initHeadersEditor;
+        function setHeaders(cache, headers) {
+        }
+        editor.setHeaders = setHeaders;
+        function createHeadersEditor(el) {
+            const container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
+            const header = JSX("li", null,
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "Name"),
+                    JSX("div", { class: "uk-width-1-4" }, "Value"),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "request.editor.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
+                                JSX("span", { "data-uk-icon": "icon: plus" }))),
+                        "Description")));
+            const updateFn = () => {
+                const curr = json.parse(el.value);
+                container.innerText = "";
+                container.appendChild(header);
+                if (curr) {
+                    for (let h of curr) {
+                        addChild(container, h);
+                    }
+                }
+            };
+            updateFn();
+            return container;
+        }
+        function addChild(container, h) {
+            container.appendChild(JSX("li", null,
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, h.k),
+                    JSX("div", { class: "uk-width-1-4" }, h.v),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return false;", title: "new header" },
+                                JSX("span", { "data-uk-icon": "icon: close" }))),
+                        h.desc ? h.desc : ""))));
+        }
+        editor.addChild = addChild;
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function initOptionsEditor(el) {
+            const parent = el.parentElement;
+            parent.appendChild(createOptionsEditor(el));
+        }
+        editor.initOptionsEditor = initOptionsEditor;
+        function createOptionsEditor(el) {
+            let opts = json.parse(el.value);
+            if (!opts) {
+                opts = {};
+            }
+            return JSX("div", null,
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-timeout" }, "Timeout"),
+                    JSX("input", { class: "uk-input", id: el.id + "-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label" }, "Ignore"),
+                    JSX("div", null,
+                        inputCheckbox(el.id, "ignoreRedirects", "Redirects", opts.ignoreRedirects || false),
+                        inputCheckbox(el.id, "ignoreReferrer", "Referrer", opts.ignoreReferrer || false),
+                        inputCheckbox(el.id, "ignoreCerts", "Certs", opts.ignoreCerts || false),
+                        inputCheckbox(el.id, "ignoreCookies", "Cookies", opts.ignoreCookies || false))),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-excludeDefaultHeaders" }, "Exclude Default Headers"),
+                    JSX("input", { class: "uk-input", id: el.id + "-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-readCookieJars" }, "Read Cookie Jars"),
+                    JSX("input", { class: "uk-input", id: el.id + "-readCookieJars", name: "opt-readCookieJars", type: "text", value: opts.readCookieJars })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "writeCookieJar" }, "Write Cookie Jar"),
+                    JSX("input", { class: "uk-input", id: el.id + "-writeCookieJar", name: "opt-writeCookieJar", type: "text", value: opts.writeCookieJar })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-sslCert" }, "SSL Cert"),
+                    JSX("input", { class: "uk-input", id: el.id + "-sslCert", name: "opt-sslCert", type: "text", value: opts.sslCert })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: el.id + "-userAgentOverride" }, "User Agent Override"),
+                    JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
+        }
+        function inputCheckbox(key, prop, title, v) {
+            const n = "opt-" + prop;
+            const id = key + "-" + prop;
+            if (v) {
+                return JSX("label", { class: "uk-margin-right" },
+                    JSX("input", { type: "checkbox", name: n, value: "true", checked: true }),
+                    " ",
+                    title);
+            }
+            else {
+                return JSX("label", { class: "uk-margin-right" },
+                    JSX("input", { type: "checkbox", name: n, value: "true" }),
+                    " ",
+                    title);
+            }
+        }
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function initQueryParamsEditor(el) {
+        }
+        editor.initQueryParamsEditor = initQueryParamsEditor;
+        function setQueryParams(cache, qp) {
+            let ret = [];
+            if (qp) {
+                for (let p of qp) {
+                    ret.push(encodeURIComponent(p.k) + '=' + encodeURIComponent(p.v));
+                }
+            }
+            const url = new URL(cache.url.value);
+            url.search = ret.join("&");
+            cache.url.value = url.toString();
+        }
+        editor.setQueryParams = setQueryParams;
+        function updateQueryParams(cache, qp) {
+            cache.qp.value = json.str(qp);
+        }
+        editor.updateQueryParams = updateQueryParams;
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function initURLEditor(el) {
+        }
+        editor.initURLEditor = initURLEditor;
+        function setURL(cache, u) {
+            if (!u) {
+                cache.qp.value = "[]";
+                return;
+            }
+            editor.updateQueryParams(cache, u.query);
+            editor.updateBasicAuth(cache, u.auth);
+        }
+        editor.setURL = setURL;
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function extractRequest() {
+            const key = gv("key");
+            const title = gv("title");
+            const desc = gv("description");
+            const url = gv("url");
+            let proto = request.urlToPrototype(url);
+            proto.method = gv("method");
+            proto.query = json.parse(gv("queryparams"));
+            proto.headers = json.parse(gv("headers"));
+            proto.auth = json.parse(gv("auth"));
+            proto.body = json.parse(gv("body"));
+            proto.options = json.parse(gv("options"));
+            return { key: key, title: title, description: desc, prototype: proto };
+        }
+        form.extractRequest = extractRequest;
+        function gv(k) {
+            return dom.req(`#${request.cache.active}-${k}`).value;
+        }
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function renderFormPanel(coll, r) {
+            return JSX("div", null,
+                JSX("div", { class: "uk-card uk-card-body uk-card-default" },
+                    JSX("div", { class: "right" },
+                        JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
+                    JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
+                    form.renderURL(r),
+                    renderSavePanel(r),
+                    renderActions(coll, r)),
+                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" }, form.renderSwitcher(r)),
+                JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }));
+        }
+        form.renderFormPanel = renderFormPanel;
+        function renderDetails(r) {
+            return JSX("li", { class: "request-details-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: r.key + "-key" }, "Key"),
+                    JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "", "data-lpignore": "true" })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: r.key + "-title" }, "Title"),
+                    JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "", "data-lpignore": "true" })),
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
+                    JSX("textarea", { class: "uk-textarea", id: r.key + "-description", name: "description", "data-lpignore": "true" }, r.description || "")));
+        }
+        form.renderDetails = renderDetails;
+        const transforms = {
+            "http": "HTTP",
+            "json": "JSON",
+            "curl": "curl"
+        };
+        function renderSavePanel(r) {
+            return JSX("div", { id: "save-panel", class: "right hiddenX" },
+                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "console.warn('TODO!');" }, "Reset"),
+                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "request.form.extractRequest();" }, "Save Changes"));
+        }
+        function renderActions(coll, r) {
+            const path = "/c/" + coll + "/" + r.key;
+            const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
+            const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }";
+            return JSX("div", null,
+                nav.link({ path: path + "/call", title: "Call", cls: btnClass, isButton: true }),
+                JSX("div", { class: "uk-inline" },
+                    JSX("button", { type: "button", class: btnClass }, "Export"),
+                    JSX("div", { id: "export-dropdown", "uk-dropdown": "mode: click" },
+                        JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(k => JSX("li", null, nav.link({ path: path + "/transform/" + k, title: transforms[k], onclk: "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);" })))))),
+                nav.link({ path: path + "/delete", title: "Delete", cls: btnClass, onclk: delWarn, isButton: true }));
+        }
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function renderSwitcher(r) {
+            const key = r.key;
+            const p = r.prototype;
+            return JSX("div", null,
+                JSX("ul", { "data-uk-tab": "" },
+                    JSX("li", null,
+                        JSX("a", { href: "#details" }, "Details")),
+                    JSX("li", null,
+                        JSX("a", { href: "#query" }, "Query")),
+                    JSX("li", null,
+                        JSX("a", { href: "#auth" }, "Auth")),
+                    JSX("li", null,
+                        JSX("a", { href: "#headers" }, "Headers")),
+                    JSX("li", null,
+                        JSX("a", { href: "#body" }, "Body")),
+                    JSX("li", null,
+                        JSX("a", { href: "#options" }, "Options"))),
+                JSX("ul", { class: "uk-switcher uk-margin" },
+                    form.renderDetails(r),
+                    renderQueryParams(key, p.query),
+                    renderAuth(key, p.auth),
+                    renderHeaders(key, p.headers),
+                    renderBody(key, p.body),
+                    renderOptions(key, p.options)));
+        }
+        form.renderSwitcher = renderSwitcher;
+        function renderQueryParams(key, qp) {
+            return JSX("li", { class: "request-queryparams-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, json.str(qp))));
+        }
+        function renderAuth(key, as) {
+            return JSX("li", { class: "request-auth-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-auth", name: "auth" }, json.str(as))));
+        }
+        function renderHeaders(key, hs) {
+            return JSX("li", { class: "request-headers-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, json.str(hs))));
+        }
+        function renderBody(key, b) {
+            return JSX("li", { class: "request-body-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, json.str(b))));
+        }
+        function renderOptions(key, opts) {
+            return JSX("li", { class: "request-options-panel" },
+                JSX("div", { class: "uk-margin-top" },
+                    JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
+                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, json.str(opts))));
+        }
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var form;
+    (function (form) {
+        function renderURL(r) {
+            const call = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
+            return JSX("div", { class: "uk-margin-top uk-panel" },
+                JSX("div", { class: "left", style: "width:120px;" },
+                    JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
+                        if (m.key === r.prototype.method) {
+                            return JSX("option", { selected: "selected" }, m.key);
+                        }
+                        else {
+                            return JSX("option", null, m.key);
+                        }
+                    }))),
+                JSX("div", { class: "uk-inline right", style: "width:calc(100% - 120px);" },
+                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: call, title: "send request", "uk-icon": "icon: play" }),
+                    JSX("form", { onsubmit: call },
+                        JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" }))));
+        }
+        form.renderURL = renderURL;
+    })(form = request.form || (request.form = {}));
+})(request || (request = {}));
 var dom;
 (function (dom) {
     function initDom(t, color) {
@@ -972,1112 +2070,44 @@ var tags;
     }
     tags.renderTagsView = renderTagsView;
 })(tags || (tags = {}));
-var header;
-(function (header) {
-    function nch(key, description, req, rsp, link) {
-        return { "key": key, "description": description, "req": req, "rsp": rsp, "link": link };
-    }
-    function snch(key, description, req, rsp) {
-        return nch(key, description, req, rsp, mdnLink(key));
-    }
-    function mdnLink(s) {
-        return "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/" + s;
-    }
-    header.commonHeaders = [
-        snch("Accept", "Informs the server about the types of data that can be sent back.", true, false),
-        snch("Access-Control-Allow-Headers", "Used in response to a preflight request to indicate which HTTP headers can be used when making the actual request.", false, true),
-        snch("Access-Control-Allow-Methods", "Specifies the methods allowed when accessing the resource in response to a preflight request.", false, true),
-        snch("Access-Control-Allow-Origin", "Indicates whether the response can be shared.", false, true),
-        snch("Authorization", "Contains the credentials to authenticate a user-agent with a server.", true, false),
-        snch("Connection", "Controls whether the network connection stays open after the current transaction finishes.", true, false),
-        snch("Content-Encoding", "Used to specify the compression algorithm.", true, true),
-        snch("Content-Length", "The size of the resource, in decimal number of bytes.", true, true),
-        snch("Content-Type", "Indicates the media type of the resource.", true, true),
-        snch("Cookie", "Contains stored HTTP cookies previously sent by the server with the Set-Cookie header.", true, false),
-        snch("Date", "The Date general HTTP header contains the date and time at which the message was originated.", false, true),
-        snch("ETag", "A unique string identifying the version of the resource.", false, true),
-        snch("Expires", "The date/time after which the response is considered stale.", false, true),
-        snch("Host", "Specifies the domain name of the server (for virtual hosting), and (optionally) the TCP port number on which the server is listening.", true, false),
-        snch("Last-Modified", "The last modification date of the resource, used to compare several versions of the same resource.", false, true),
-        snch("Location", "Indicates the URL to redirect a page to. ", false, true),
-        snch("Origin", "Indicates where a fetch originates from.", true, false),
-        snch("Referer", "The address of the previous web page from which a link to the currently requested page was followed.", true, false),
-        snch("Server", "Contains information about the software used by the origin server to handle the request.", false, true),
-        snch("Set-Cookie", "Send cookies from the server to the user-agent.", false, true),
-        snch("User-Agent", "Contains a characteristic string that allows the network protocol peers to identify the application", true, false)
-    ];
-    header.commonHeadersByName = new Map();
-    for (const ch of header.commonHeaders) {
-        header.commonHeadersByName.set(ch.key, ch);
-    }
-    function dumpCommonHeaders() {
-        const dump = (title, req, rsp) => {
-            let matched = false;
-            console.log("\n::: " + title + " Headers");
-            header.commonHeaders.forEach(ch => {
-                if (ch.req == req && ch.rsp == rsp) {
-                    matched = true;
-                    console.log(`${ch.key}: ${ch.link}`);
-                    console.log(`  - ${ch.description}`);
-                }
-            });
-            if (!matched) {
-                console.log("none");
-            }
-        };
-        dump("Common", true, true);
-        dump("Request", true, false);
-        dump("Response", false, true);
-        dump("Invalid", false, false);
-    }
-    header.dumpCommonHeaders = dumpCommonHeaders;
-})(header || (header = {}));
-var request;
-(function (request) {
-    function renderActionEmpty() {
-        return JSX("div", null);
-    }
-    request.renderActionEmpty = renderActionEmpty;
-    function renderActionUnknown(key, extra) {
-        return JSX("div", null,
-            renderActionClose(),
-            "unknown action: ",
-            key,
-            " (",
-            extra,
-            ")");
-    }
-    request.renderActionUnknown = renderActionUnknown;
-    function renderActionCall(coll, req) {
-        return JSX("div", { id: coll + "--" + req + "-call" },
-            renderActionClose(),
-            JSX("div", { class: "call-title" }, "Loading..."),
-            JSX("div", { class: "call-result" }));
-    }
-    request.renderActionCall = renderActionCall;
-    function renderActionTransform(coll, req, format) {
-        return JSX("div", { id: coll + "--" + req + "-transform" },
-            renderActionClose(),
-            JSX("div", { class: "transform-title" }, format),
-            JSX("div", { class: "transform-result" }));
-    }
-    request.renderActionTransform = renderActionTransform;
-    function renderActionClose() {
-        return JSX("div", { class: "right" },
-            JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate(`/c/${collection.cache.active}/${request.cache.active}`);return false;", title: "close collection" }));
-    }
-})(request || (request = {}));
-var request;
-(function (request) {
-    class Cache {
-        constructor() {
-            this.summaries = new Map();
-            this.requests = new Map();
-            this.extra = [];
-        }
-        setCollectionRequests(coll, summs) {
-            this.summaries.set(coll.key, summs);
-            if (coll.key === collection.cache.active) {
-                dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
-                for (let req of summs) {
-                    if (this.active === req.key) {
-                        request.renderActiveRequest(collection.cache.active);
-                        if (this.action) {
-                            request.renderAction(collection.cache.active, req.key, this.action, this.extra);
-                        }
-                    }
-                }
-            }
-        }
-        setActiveRequest(key) {
-            if (!collection.cache.active) {
-                return;
-            }
-            if (this.active !== key) {
-                this.active = key;
-                if (this.active) {
-                    request.renderActiveRequest(collection.cache.active);
-                }
-                else {
-                }
-            }
-        }
-        setActiveAction(act, extra) {
-            if (!collection.cache.active) {
-                return;
-            }
-            const sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
-            if (this.active && (this.action !== act || !sameExtra)) {
-                this.action = act;
-                this.extra = extra;
-                request.renderAction(collection.cache.active, this.active, this.action, this.extra);
-            }
-        }
-        updateRequest(r) {
-            if (!collection.cache.active) {
-                return;
-            }
-            const curr = this.requests.get(collection.cache.active);
-            const updated = group.update(curr, r, x => x.key);
-            this.requests.set(collection.cache.active, updated);
-        }
-    }
-    request.cache = new Cache();
-})(request || (request = {}));
-var request;
-(function (request) {
-    function diff(l, r) {
-        const ret = [];
-        const p = (k, lv, rv) => ret.push({ k: k, l: lv, r: rv });
-        const comp = (k, lv, rv) => {
-            if (lv !== rv) {
-                p(k, lv, rv);
-            }
-        };
-        const checkNull = (k, lv, rv) => {
-            if (!l) {
-                if (r) {
-                    p(k, null, "(defined)");
-                }
-                return true;
-            }
-            if (!r) {
-                p(k, "(defined)", null);
-                return true;
-            }
-            return false;
-        };
-        if (checkNull("request", l, r)) {
-            return ret;
-        }
-        comp("key", l.key, r.key);
-        comp("title", l.title, r.title);
-        comp("description", l.description, r.description);
-        const lp = l.prototype;
-        const rp = r.prototype;
-        comp("method", lp.method, rp.method);
-        comp("protocol", lp.protocol, rp.protocol);
-        comp("domain", lp.domain, rp.domain);
-        comp("port", lp.port, rp.port);
-        comp("path", lp.path, rp.path);
-        if (!checkNull("query", lp.query, rp.query)) {
-            if ((!lp.query) || (!rp.query)) {
-                return ret;
-            }
-            comp("query.length", lp.query.length, rp.query.length);
-        }
-        comp("fragment", lp.fragment, rp.fragment);
-        if (!checkNull("headers", lp.headers, rp.headers)) {
-            if ((!lp.headers) || (!rp.headers)) {
-                return ret;
-            }
-            comp("headers.length", lp.headers.length, rp.headers.length);
-        }
-        if (!checkNull("auth", lp.auth, rp.auth)) {
-            if ((!lp.auth) || (!rp.auth)) {
-                return ret;
-            }
-            comp("auth.length", lp.auth.length, rp.auth.length);
-        }
-        if (!checkNull("body", lp.body, rp.body)) {
-            if ((!lp.body) || (!rp.body)) {
-                return ret;
-            }
-            comp("body.type", lp.body.type, rp.body.type);
-            comp("body.config", lp.body.config, rp.body.config);
-        }
-        const lpo = lp.options;
-        const rpo = rp.options;
-        if (checkNull("options", lpo, rpo)) {
-            return ret;
-        }
-        if ((!lpo) || (!rpo)) {
-            return ret;
-        }
-        comp("timeout", lpo.timeout, rpo.timeout);
-        comp("ignoreRedirects", lpo.ignoreRedirects, rpo.ignoreRedirects);
-        comp("ignoreReferrer", lpo.ignoreReferrer, rpo.ignoreReferrer);
-        comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts);
-        comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies);
-        comp("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
-        comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars);
-        comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar);
-        comp("sslCert", lpo.sslCert, rpo.sslCert);
-        comp("userAgentOverride", lpo.userAgentOverride, rpo.userAgentOverride);
-        return ret;
-    }
-    request.diff = diff;
-})(request || (request = {}));
-var request;
-(function (request) {
-    function getActiveRequest() {
-        return getRequest(collection.cache.active, request.cache.active);
-    }
-    request.getActiveRequest = getActiveRequest;
-    function getSummary(coll, key) {
-        for (let req of request.cache.summaries.get(coll) || []) {
-            if (req.key === key) {
-                return req;
-            }
-        }
-        return undefined;
-    }
-    request.getSummary = getSummary;
-    function getRequest(coll, key) {
-        for (let req of request.cache.requests.get(coll) || []) {
-            if (req.key === key) {
-                return req;
-            }
-        }
-        return undefined;
-    }
-    request.getRequest = getRequest;
-    function onRequestMessage(cmd, param) {
-        switch (cmd) {
-            case command.server.requestDetail:
-                const req = param;
-                request.cache.updateRequest(req);
-                if (request.cache.active === req.key) {
-                    request.renderActiveRequest(collection.cache.active);
-                    request.renderAction(collection.cache.active, request.cache.active, request.cache.action, request.cache.extra);
-                }
-                break;
-            case command.server.callResult:
-                const result = param;
-                call.setResult(result);
-                const path = `r/` + result.id;
-                history.replaceState(path, "", "/" + path);
-                break;
-            default:
-                console.warn(`unhandled request command [${cmd}]`);
-        }
-    }
-    request.onRequestMessage = onRequestMessage;
-})(request || (request = {}));
-var request;
-(function (request) {
-    request.MethodGet = { "key": "GET", "description": "" };
-    request.MethodHead = { "key": "HEAD", "description": "" };
-    request.MethodPost = { "key": "POST", "description": "" };
-    request.MethodPut = { "key": "PUT", "description": "" };
-    request.MethodPatch = { "key": "PATCH", "description": "" };
-    request.MethodDelete = { "key": "DELETE", "description": "" };
-    request.MethodConnect = { "key": "CONNECT", "description": "" };
-    request.MethodOptions = { "key": "OPTIONS", "description": "" };
-    request.MethodTrace = { "key": "TRACE", "description": "" };
-    request.allMethods = [request.MethodGet, request.MethodHead, request.MethodPost, request.MethodPut, request.MethodPatch, request.MethodDelete, request.MethodConnect, request.MethodOptions, request.MethodTrace];
-})(request || (request = {}));
-var request;
-(function (request) {
-    function newPrototype(protocol, hostname, port, path, qp, fragment, auth) {
-        if (protocol.endsWith(":")) {
-            protocol = protocol.substr(0, protocol.length - 1);
-        }
-        if (fragment.startsWith("#")) {
-            fragment = fragment.substr(1);
-        }
-        return { method: "get", protocol: protocol, domain: hostname, port: port, path: path, query: qp, fragment: fragment, auth: auth };
-    }
-    function prototypeFromURL(u) {
-        const url = new URL(u);
-        const qp = [];
-        for (const [k, v] of url.searchParams) {
-            qp.push({ k: k, v: v });
-        }
-        const auth = [];
-        if (url.username.length > 0) {
-            auth.push({ type: "basic", config: { "username": url.username, "password": url.password, "showPassword": true } });
-        }
-        let port;
-        if (url.port.length > 0) {
-            port = parseInt(url.port);
-        }
-        return newPrototype(url.protocol, url.hostname, port, url.pathname, qp, url.hash, auth);
-    }
-    request.prototypeFromURL = prototypeFromURL;
-})(request || (request = {}));
-var request;
-(function (request) {
-    function renderActiveRequest(coll) {
-        if (request.cache.active) {
-            const req = request.getRequest(coll, request.cache.active);
-            if (req) {
-                dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
-                request.editor.wireForm(req.key);
-            }
-            else {
-                const summ = request.getSummary(coll, request.cache.active);
-                if (summ) {
-                    dom.setContent("#request-panel", request.renderSummaryPanel(coll, summ));
-                    const param = { coll: coll, req: summ.key };
-                    socket.send({ svc: services.request.key, cmd: command.client.getRequest, param: param });
-                }
-            }
-        }
-        else {
-            console.warn("no active request");
-        }
-    }
-    request.renderActiveRequest = renderActiveRequest;
-    function renderAction(coll, reqKey, action, extra) {
-        // TODO const req = request.form.getRequest();
-        const re = dom.opt(".request-editor");
-        const ra = dom.opt(".request-action");
-        if (!re || !ra) {
-            return;
-        }
-        switch (action) {
-            case undefined:
-                dom.setContent(ra, request.renderActionEmpty());
-                break;
-            case "call":
-                const req = request.getRequest(coll, reqKey);
-                if (!req) {
-                    return;
-                }
-                call.prepare(coll, request.form.extractRequest());
-                // call.prepare(coll, req);
-                dom.setContent(ra, request.renderActionCall(coll, reqKey));
-                break;
-            case "transform":
-                dom.setContent(ra, request.renderActionTransform(coll, reqKey, extra[0]));
-                break;
-            default:
-                console.warn("unhandled request action [" + action + "]");
-                dom.setContent(ra, request.renderActionUnknown(action, extra));
-        }
-        dom.setDisplay(re, action === undefined);
-        dom.setDisplay(ra, action !== undefined);
-    }
-    request.renderAction = renderAction;
-})(request || (request = {}));
-var request;
-(function (request) {
-    function renderSummaryPanel(coll, r) {
-        return JSX("div", null,
-            JSX("div", { class: "uk-card uk-card-body uk-card-default" },
-                JSX("div", { class: "right" },
-                    JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
-                JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
-                JSX("p", null, "Loading...")));
-    }
-    request.renderSummaryPanel = renderSummaryPanel;
-})(request || (request = {}));
-var request;
-(function (request) {
-    function urlToPrototype(url) {
-        const u = new URL(url);
-        return {
-            method: request.MethodGet.key,
-            protocol: str.trimSuffix(u.protocol, ":"),
-            domain: u.hostname,
-            port: parseInt(u.port, 10),
-            path: str.trimPrefix(u.pathname, "/"),
-            fragment: str.trimPrefix(u.hash, "#")
-        };
-    }
-    request.urlToPrototype = urlToPrototype;
-    function prototypeToURL(p) {
-        return prototypeToURLParts(p).map(x => x.v).join("");
-    }
-    request.prototypeToURL = prototypeToURL;
-    function prototypeToHTML(p) {
-        return JSX("span", null, prototypeToURLParts(p).map(x => JSX("span", { title: x.t, class: urlColor(x.t) }, x.v)));
-    }
-    request.prototypeToHTML = prototypeToHTML;
-    function baseURL(s) {
-        return prototypeBaseURL(urlToPrototype(s));
-    }
-    request.baseURL = baseURL;
-    function prototypeBaseURL(p) {
-        if (!p) {
-            return "invalid";
-        }
-        let d = p.domain;
-        if (p.port && p.port > 0) {
-            d += `:${p.port}`;
-        }
-        return `${p.protocol}://${d}/`;
-    }
-    request.prototypeBaseURL = prototypeBaseURL;
-    function prototypeToURLParts(p) {
-        const ret = [];
-        let push = (t, v) => {
-            ret.push({ t: t, v: v });
-        };
-        push("protocol", p.protocol);
-        push("", "://");
-        if (p.auth) {
-            for (let a of p.auth) {
-                if (a.type === "basic") {
-                    const cfg = a.config;
-                    push("username", cfg.username);
-                    push("", ":");
-                    if (cfg.showPassword) {
-                        push("password", cfg.password);
-                    }
-                    else {
-                        push("password", "****");
-                    }
-                    push("", "@");
-                    break;
-                }
-            }
-        }
-        push("domain", p.domain);
-        if (p.port) {
-            push("", ":");
-            push("port", p.port.toString());
-        }
-        if (p.path && p.path.length > 0) {
-            push("", "/");
-            push("path", p.path);
-        }
-        if (p.query && p.query.length > 0) {
-            push("", "?");
-            var query = p.query.map(k => encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v)).join('&');
-            push("query", query);
-        }
-        if (p.fragment && p.fragment.length > 0) {
-            push("", "#");
-            push("fragment", encodeURIComponent(p.fragment));
-        }
-        return ret;
-    }
-    function urlColor(key) {
-        switch (key) {
-            case "username":
-            case "password":
-            case "protocol":
-            case "auth":
-                return "green-fg";
-            case "domain":
-            case "port":
-                return "blue-fg";
-            case "path":
-                return "bluegrey-fg";
-            case "query":
-                return "purple-fg";
-            default:
-                return "";
-        }
-    }
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function initAuthEditor(el) {
-        }
-        editor.initAuthEditor = initAuthEditor;
-        function setAuth(cache, auth) {
-            const url = new URL(cache.url.value);
-            let u = "";
-            let p = "";
-            if (auth) {
-                for (let a of auth) {
-                    if (a.type === "basic") {
-                        const basic = a.config;
-                        u = encodeURIComponent(basic.username);
-                        p = encodeURIComponent(basic.password);
-                    }
-                }
-            }
-            url.username = u;
-            url.password = p;
-            cache.url.value = url.toString();
-        }
-        editor.setAuth = setAuth;
-        function updateBasicAuth(cache, auth) {
-            let currentAuth = [];
-            try {
-                currentAuth = json.parse(cache.auth.value);
-            }
-            catch (e) {
-                console.log("invalid auth JSON [" + cache.auth.value + "]");
-            }
-            let matched = -1;
-            if (!currentAuth) {
-                currentAuth = [];
-            }
-            for (let i = 0; i < currentAuth.length; i++) {
-                const x = currentAuth[i];
-                if (x.type === "basic") {
-                    matched = i;
-                }
-            }
-            let basic;
-            if (auth) {
-                for (let i = 0; i < auth.length; i++) {
-                    const x = auth[i];
-                    if (x.type === "basic") {
-                        basic = x.config;
-                    }
-                }
-            }
-            if (matched === -1) {
-                if (basic) {
-                    currentAuth.push({ type: "basic", config: basic });
-                }
-            }
-            else {
-                if (basic) {
-                    let curr = currentAuth[matched].config;
-                    if (curr) {
-                        curr = {
-                            username: basic.username,
-                            password: basic.password,
-                            showPassword: curr.showPassword
-                        };
-                    }
-                    else {
-                        curr = basic;
-                    }
-                    currentAuth[matched] = { type: "basic", config: curr };
-                }
-                else {
-                    currentAuth.splice(matched, 1);
-                }
-            }
-            cache.auth.value = json.str(currentAuth);
-        }
-        editor.updateBasicAuth = updateBasicAuth;
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function initBodyEditor(el) {
-            const parent = el.parentElement;
-            parent.appendChild(createBodyEditor(el));
-        }
-        editor.initBodyEditor = initBodyEditor;
-        function createBodyEditor(el) {
-            const b = json.parse(el.value);
-            return JSX("div", { class: "uk-margin-top" },
-                JSX("select", { class: "uk-select" },
-                    JSX("option", { value: "" }, "No body"),
-                    rbody.AllTypes.filter(t => !t.hidden).map(t => {
-                        if (b && b.type === t.key) {
-                            return JSX("option", { value: t.key, selected: "selected" }, t.title);
-                        }
-                        else {
-                            return JSX("option", { value: t.key }, t.title);
-                        }
-                    }),
-                    "\u02D9"),
-                rbody.AllTypes.filter(t => !t.hidden).map(t => {
-                    let cfg = (b && b.type == t.key) ? b.config : null;
-                    return configEditor(t.key, cfg, t.key === (b ? b.type : ""));
-                }));
-        }
-        function configEditor(key, config, active) {
-            let cls = "uk-margin-top body-editor-" + key;
-            if (!active) {
-                cls += " hidden";
-            }
-            switch (key) {
-                case "json":
-                    const j = config;
-                    return JSX("div", { class: cls },
-                        JSX("textarea", { class: "uk-textarea" }, json.str(j ? j.msg : null)));
-                default:
-                    return JSX("div", { class: cls },
-                        "Unimplemented [",
-                        key,
-                        "] editor");
-            }
-        }
-        function setBody(cache, body) {
-        }
-        editor.setBody = setBody;
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function wireForm(prefix) {
-            const id = (k) => {
-                return "#" + prefix + "-" + k;
-            };
-            const cache = {
-                url: dom.req(id("url")),
-                auth: dom.req(id("auth")),
-                qp: dom.req(id("queryparams")),
-                headers: dom.req(id("headers")),
-                body: dom.req(id("body")),
-                options: dom.req(id("options"))
-            };
-            initEditors(prefix, cache);
-            wireEvents(cache);
-        }
-        editor.wireForm = wireForm;
-        function initEditors(prefix, cache) {
-            editor.initURLEditor(cache.url);
-            editor.initAuthEditor(cache.auth);
-            editor.initQueryParamsEditor(cache.qp);
-            editor.initHeadersEditor(cache.headers);
-            editor.initBodyEditor(cache.body);
-            editor.initOptionsEditor(cache.options);
-        }
-        function events(e, f) {
-            e.onchange = f;
-            e.onkeyup = f;
-            e.onblur = f;
-        }
-        function wireEvents(cache) {
-            events(cache.url, function () {
-                editor.setURL(cache, request.prototypeFromURL(cache.url.value));
-            });
-            events(cache.auth, function () {
-                let auth;
-                try {
-                    auth = json.parse(cache.auth.value);
-                }
-                catch (e) {
-                    console.log("invalid auth JSON [" + cache.auth.value + "]");
-                    auth = [];
-                }
-                editor.setAuth(cache, auth);
-            });
-            events(cache.qp, function () {
-                let qp;
-                try {
-                    qp = json.parse(cache.qp.value);
-                }
-                catch (e) {
-                    console.log("invalid qp JSON [" + cache.qp.value + "]");
-                    qp = [];
-                }
-                editor.setQueryParams(cache, qp);
-            });
-            events(cache.headers, function () {
-                let h;
-                try {
-                    h = json.parse(cache.headers.value);
-                }
-                catch (e) {
-                    console.log("invalid headers JSON [" + cache.headers.value + "]");
-                    h = [];
-                }
-                editor.setHeaders(cache, h);
-            });
-            events(cache.body, function () {
-                let b;
-                try {
-                    b = json.parse(cache.body.value);
-                }
-                catch (e) {
-                    console.log("invalid body JSON [" + cache.body.value + "]");
-                }
-                editor.setBody(cache, b);
-            });
-        }
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function initHeadersEditor(el) {
-            const parent = el.parentElement;
-            parent.appendChild(createHeadersEditor(el));
-        }
-        editor.initHeadersEditor = initHeadersEditor;
-        function setHeaders(cache, headers) {
-        }
-        editor.setHeaders = setHeaders;
-        function createHeadersEditor(el) {
-            const container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
-            const header = JSX("li", null,
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "Name"),
-                    JSX("div", { class: "uk-width-1-4" }, "Value"),
-                    JSX("div", { class: "uk-width-1-2" },
-                        JSX("div", { class: "right" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "request.editor.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
-                                JSX("span", { "data-uk-icon": "icon: plus" }))),
-                        "Description")));
-            const updateFn = () => {
-                const curr = json.parse(el.value);
-                container.innerText = "";
-                container.appendChild(header);
-                if (curr) {
-                    for (let h of curr) {
-                        addChild(container, h);
-                    }
-                }
-            };
-            updateFn();
-            return container;
-        }
-        function addChild(container, h) {
-            container.appendChild(JSX("li", null,
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, h.k),
-                    JSX("div", { class: "uk-width-1-4" }, h.v),
-                    JSX("div", { class: "uk-width-1-2" },
-                        JSX("div", { class: "right" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "return false;", title: "new header" },
-                                JSX("span", { "data-uk-icon": "icon: close" }))),
-                        h.desc ? h.desc : ""))));
-        }
-        editor.addChild = addChild;
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function initOptionsEditor(el) {
-            const parent = el.parentElement;
-            parent.appendChild(createOptionsEditor(el));
-        }
-        editor.initOptionsEditor = initOptionsEditor;
-        function createOptionsEditor(el) {
-            let opts = json.parse(el.value);
-            if (!opts) {
-                opts = {};
-            }
-            return JSX("div", null,
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-timeout" }, "Timeout"),
-                    JSX("input", { class: "uk-input", id: el.id + "-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label" }, "Ignore"),
-                    JSX("div", null,
-                        inputCheckbox(el.id, "ignoreRedirects", "Redirects", opts.ignoreRedirects || false),
-                        inputCheckbox(el.id, "ignoreReferrer", "Referrer", opts.ignoreReferrer || false),
-                        inputCheckbox(el.id, "ignoreCerts", "Certs", opts.ignoreCerts || false),
-                        inputCheckbox(el.id, "ignoreCookies", "Cookies", opts.ignoreCookies || false))),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-excludeDefaultHeaders" }, "Exclude Default Headers"),
-                    JSX("input", { class: "uk-input", id: el.id + "-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-readCookieJars" }, "Read Cookie Jars"),
-                    JSX("input", { class: "uk-input", id: el.id + "-readCookieJars", name: "opt-readCookieJars", type: "text", value: opts.readCookieJars })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "writeCookieJar" }, "Write Cookie Jar"),
-                    JSX("input", { class: "uk-input", id: el.id + "-writeCookieJar", name: "opt-writeCookieJar", type: "text", value: opts.writeCookieJar })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-sslCert" }, "SSL Cert"),
-                    JSX("input", { class: "uk-input", id: el.id + "-sslCert", name: "opt-sslCert", type: "text", value: opts.sslCert })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: el.id + "-userAgentOverride" }, "User Agent Override"),
-                    JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
-        }
-        function inputCheckbox(key, prop, title, v) {
-            const n = "opt-" + prop;
-            const id = key + "-" + prop;
-            if (v) {
-                return JSX("label", { class: "uk-margin-right" },
-                    JSX("input", { type: "checkbox", name: n, value: "true", checked: true }),
-                    " ",
-                    title);
-            }
-            else {
-                return JSX("label", { class: "uk-margin-right" },
-                    JSX("input", { type: "checkbox", name: n, value: "true" }),
-                    " ",
-                    title);
-            }
-        }
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function initQueryParamsEditor(el) {
-        }
-        editor.initQueryParamsEditor = initQueryParamsEditor;
-        function setQueryParams(cache, qp) {
-            let ret = [];
-            if (qp) {
-                for (let p of qp) {
-                    ret.push(encodeURIComponent(p.k) + '=' + encodeURIComponent(p.v));
-                }
-            }
-            const url = new URL(cache.url.value);
-            url.search = ret.join("&");
-            cache.url.value = url.toString();
-        }
-        editor.setQueryParams = setQueryParams;
-        function updateQueryParams(cache, qp) {
-            cache.qp.value = json.str(qp);
-        }
-        editor.updateQueryParams = updateQueryParams;
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var editor;
-    (function (editor) {
-        function initURLEditor(el) {
-        }
-        editor.initURLEditor = initURLEditor;
-        function setURL(cache, u) {
-            if (!u) {
-                cache.qp.value = "[]";
-                return;
-            }
-            editor.updateQueryParams(cache, u.query);
-            editor.updateBasicAuth(cache, u.auth);
-        }
-        editor.setURL = setURL;
-    })(editor = request.editor || (request.editor = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var form;
-    (function (form) {
-        function extractRequest() {
-            const key = gv("key");
-            const title = gv("title");
-            const desc = gv("description");
-            const url = gv("url");
-            let proto = request.urlToPrototype(url);
-            proto.method = gv("method");
-            proto.query = json.parse(gv("queryparams"));
-            proto.headers = json.parse(gv("headers"));
-            proto.auth = json.parse(gv("auth"));
-            proto.body = json.parse(gv("body"));
-            proto.options = json.parse(gv("options"));
-            console.log(url, proto);
-            return { key: key, title: title, description: desc, prototype: proto };
-        }
-        form.extractRequest = extractRequest;
-        function gv(k) {
-            return dom.req(`#${request.cache.active}-${k}`).value;
-        }
-    })(form = request.form || (request.form = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var form;
-    (function (form) {
-        function renderFormPanel(coll, r) {
-            return JSX("div", null,
-                JSX("div", { class: "uk-card uk-card-body uk-card-default" },
-                    JSX("div", { class: "right" },
-                        JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
-                    JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
-                    form.renderURL(r),
-                    renderSavePanel(r),
-                    renderActions(coll, r)),
-                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" }, form.renderSwitcher(r)),
-                JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }));
-        }
-        form.renderFormPanel = renderFormPanel;
-        function renderDetails(r) {
-            return JSX("li", { class: "request-details-panel" },
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: r.key + "-key" }, "Key"),
-                    JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "", "data-lpignore": "true" })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: r.key + "-title" }, "Title"),
-                    JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "", "data-lpignore": "true" })),
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
-                    JSX("textarea", { class: "uk-textarea", id: r.key + "-description", name: "description", "data-lpignore": "true" }, r.description || "")));
-        }
-        form.renderDetails = renderDetails;
-        const transforms = {
-            "http": "HTTP",
-            "json": "JSON",
-            "curl": "curl"
-        };
-        function renderSavePanel(r) {
-            return JSX("div", { id: "save-panel", class: "right hiddenX" },
-                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "console.log('TODO!');" }, "Reset"),
-                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "console.log(request.form.extractRequest());" }, "Save Changes"));
-        }
-        function renderActions(coll, r) {
-            const path = "/c/" + coll + "/" + r.key;
-            const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
-            const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }";
-            return JSX("div", null,
-                nav.link({ path: path + "/call", title: "Call", cls: btnClass, isButton: true }),
-                JSX("div", { class: "uk-inline" },
-                    JSX("button", { type: "button", class: btnClass }, "Export"),
-                    JSX("div", { id: "export-dropdown", "uk-dropdown": "mode: click" },
-                        JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(k => JSX("li", null, nav.link({ path: path + "/transform/" + k, title: transforms[k], onclk: "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);" })))))),
-                nav.link({ path: path + "/delete", title: "Delete", cls: btnClass, onclk: delWarn, isButton: true }));
-        }
-    })(form = request.form || (request.form = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var form;
-    (function (form) {
-        function renderSwitcher(r) {
-            const key = r.key;
-            const p = r.prototype;
-            return JSX("div", null,
-                JSX("ul", { "data-uk-tab": "" },
-                    JSX("li", null,
-                        JSX("a", { href: "#details" }, "Details")),
-                    JSX("li", null,
-                        JSX("a", { href: "#query" }, "Query")),
-                    JSX("li", null,
-                        JSX("a", { href: "#auth" }, "Auth")),
-                    JSX("li", null,
-                        JSX("a", { href: "#headers" }, "Headers")),
-                    JSX("li", null,
-                        JSX("a", { href: "#body" }, "Body")),
-                    JSX("li", null,
-                        JSX("a", { href: "#options" }, "Options"))),
-                JSX("ul", { class: "uk-switcher uk-margin" },
-                    form.renderDetails(r),
-                    renderQueryParams(key, p.query),
-                    renderAuth(key, p.auth),
-                    renderHeaders(key, p.headers),
-                    renderBody(key, p.body),
-                    renderOptions(key, p.options)));
-        }
-        form.renderSwitcher = renderSwitcher;
-        function renderQueryParams(key, qp) {
-            return JSX("li", { class: "request-queryparams-panel" },
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, json.str(qp))));
-        }
-        function renderAuth(key, as) {
-            return JSX("li", { class: "request-auth-panel" },
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-auth", name: "auth" }, json.str(as))));
-        }
-        function renderHeaders(key, hs) {
-            return JSX("li", { class: "request-headers-panel" },
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, json.str(hs))));
-        }
-        function renderBody(key, b) {
-            return JSX("li", { class: "request-body-panel" },
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, json.str(b))));
-        }
-        function renderOptions(key, opts) {
-            return JSX("li", { class: "request-options-panel" },
-                JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, json.str(opts))));
-        }
-    })(form = request.form || (request.form = {}));
-})(request || (request = {}));
-var request;
-(function (request) {
-    var form;
-    (function (form) {
-        function renderURL(r) {
-            const call = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
-            return JSX("div", { class: "uk-margin-top uk-panel" },
-                JSX("div", { class: "left", style: "width:120px;" },
-                    JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
-                        if (m.key === r.prototype.method) {
-                            return JSX("option", { selected: "selected" }, m.key);
-                        }
-                        else {
-                            return JSX("option", null, m.key);
-                        }
-                    }))),
-                JSX("div", { class: "uk-inline right", style: "width:calc(100% - 120px);" },
-                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: call, title: "send request", "uk-icon": "icon: play" }),
-                    JSX("form", { onsubmit: call },
-                        JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" }))));
-        }
-        form.renderURL = renderURL;
-    })(form = request.form || (request.form = {}));
-})(request || (request = {}));
 var socket;
 (function (socket) {
-    function route(p) {
-        let parts = p.split("/");
-        parts = parts.filter(x => x.length > 0);
-        console.info("nav: " + parts.join(" -> "));
-        const svc = (parts.length > 0) ? parts[0] : "c";
-        switch (svc) {
-            case "c":
-                const coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
-                const req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
-                const act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
-                const extra = (parts.length > 4) ? parts.slice(4) : [];
-                const currColl = collection.cache.active;
-                collection.cache.setActiveCollection(coll);
-                if (coll !== currColl && coll) {
-                    socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
-                }
-                request.cache.setActiveRequest(req);
-                request.cache.setActiveAction(act, extra);
-                ui.setPanels(coll, req, act, extra);
-                break;
-            default:
-                console.info("unhandled svc [" + svc + "]");
-        }
+    function initBypass() {
+        socket.bypass = true;
+        socket.connected = true;
+        nav.enabled = false;
     }
-    socket.route = route;
+    socket.initBypass = initBypass;
+    function bypassSend(msg) {
+        if (socket.debug) {
+            console.debug("out", msg);
+        }
+        npn_handler(JSON.stringify(msg, null, 2));
+    }
+    socket.bypassSend = bypassSend;
 })(socket || (socket = {}));
 var socket;
 (function (socket) {
-    const debug = true;
-    let sock;
-    let connected = false;
-    let pauseSeconds = 0;
-    let appUnloading = false;
-    let pendingMessages = [];
-    let currentService = "";
-    let currentID = "";
-    let connectTime;
-    function socketUrl() {
-        const l = document.location;
-        let protocol = "ws";
-        if (l.protocol === "https:") {
-            protocol = "wss";
-        }
-        return protocol + `://${l.host}/s`;
-    }
+    socket.debug = true;
+    socket.appUnloading = false;
+    socket.currentService = "";
+    socket.currentID = "";
+    socket.bypass = false;
     function setAppUnloading() {
-        appUnloading = true;
+        socket.appUnloading = true;
     }
     socket.setAppUnloading = setAppUnloading;
-    function socketConnect(svc, id) {
-        currentService = svc;
-        currentID = id;
-        connectTime = Date.now();
-        sock = new WebSocket(socketUrl());
-        sock.onopen = onSocketOpen;
-        sock.onmessage = (event) => onSocketMessage(json.parse(event.data));
-        sock.onerror = (event) => npn.onError("socket", event.type);
-        sock.onclose = onSocketClose;
-    }
-    socket.socketConnect = socketConnect;
     function send(msg) {
-        if (connected) {
-            if (debug) {
-                console.debug("out", msg);
-            }
-            const m = json.str(msg);
-            sock.send(m);
+        if (socket.bypass) {
+            socket.bypassSend(msg);
         }
         else {
-            pendingMessages.push(msg);
+            socket.socketSend(msg);
         }
     }
     socket.send = send;
-    function onSocketOpen() {
-        log.info("socket connected");
-        connected = true;
-        pauseSeconds = 1;
-        pendingMessages.forEach(send);
-        pendingMessages = [];
-    }
-    function onSocketMessage(msg) {
-        if (debug) {
+    function recv(msg) {
+        if (socket.debug) {
             console.debug("in", msg);
         }
         switch (msg.svc) {
@@ -2094,140 +2124,85 @@ var socket;
                 console.warn(`unhandled message for service [${msg.svc}]`);
         }
     }
-    socket.onSocketMessage = onSocketMessage;
+    socket.recv = recv;
+})(socket || (socket = {}));
+var socket;
+(function (socket) {
+    let sock;
+    socket.connected = false;
+    let pauseSeconds = 0;
+    let pendingMessages = [];
+    function socketUrl() {
+        const l = document.location;
+        let protocol = "ws";
+        if (l.protocol === "https:") {
+            protocol = "wss";
+        }
+        return protocol + `://${l.host}/s`;
+    }
+    function initSocket() {
+        sock = new WebSocket(socketUrl());
+        sock.onopen = onSocketOpen;
+        sock.onmessage = (event) => socket.recv(json.parse(event.data));
+        sock.onerror = (event) => npn.onError("socket", event.type);
+        sock.onclose = onSocketClose;
+    }
+    socket.initSocket = initSocket;
+    function socketConnect(svc, id, useBypass) {
+        socket.currentService = svc;
+        socket.currentID = id;
+        socket.connectTime = Date.now();
+        if (useBypass) {
+            socket.initBypass();
+        }
+        else {
+            initSocket();
+        }
+    }
+    socket.socketConnect = socketConnect;
+    function onSocketOpen() {
+        log.info("socket connected");
+        socket.connected = true;
+        pauseSeconds = 1;
+        pendingMessages.forEach(socket.send);
+        pendingMessages = [];
+    }
     function onSocketClose() {
         function disconnect() {
-            connected = false;
-            const elapsed = Date.now() - connectTime;
+            socket.connected = false;
+            const elapsed = Date.now() - socket.connectTime;
             if (elapsed < 2000) {
                 pauseSeconds = pauseSeconds * 2;
-                if (debug) {
-                    console.info(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
+                if (socket.debug) {
+                    console.debug(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
                 }
                 setTimeout(() => {
-                    socketConnect(currentService, currentID);
+                    socketConnect(socket.currentService, socket.currentID);
                 }, pauseSeconds * 1000);
             }
             else {
                 log.info("socket closed after [" + elapsed + "ms]");
-                socketConnect(currentService, currentID);
+                socketConnect(socket.currentService, socket.currentID);
             }
         }
-        if (!appUnloading) {
+        if (!socket.appUnloading) {
             disconnect();
         }
     }
-})(socket || (socket = {}));
-var system;
-(function (system) {
-    class Cache {
-        getProfile() {
-            if (!this.profile) {
-                throw "no active profile";
-            }
-            return this.profile;
+    function socketSend(msg) {
+        if (socket.debug) {
+            console.debug("out", msg);
         }
-        apply(sj) {
-            system.cache.profile = sj.profile;
-        }
-    }
-    system.cache = new Cache();
-})(system || (system = {}));
-var system;
-(function (system) {
-    function onSystemMessage(cmd, param) {
-        switch (cmd) {
-            case command.server.error:
-                console.warn("error from server: " + param);
-                break;
-            case command.server.connected:
-                system.cache.apply(param);
-                break;
-            default:
-                console.warn(`unhandled system command [${cmd}]`);
-        }
-    }
-    system.onSystemMessage = onSystemMessage;
-})(system || (system = {}));
-var ui;
-(function (ui) {
-    const bcCls = "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic";
-    function setBreadcrumbs(coll, req, act, extra) {
-        const el = dom.req("#breadcrumbs");
-        reset(el);
-        el.appendChild(nav.link({ path: "/", title: "npn", cls: bcCls }));
-        if (coll) {
-            el.appendChild(sep());
-            el.appendChild(bcFor(coll, "c", coll));
-            if (req) {
-                el.appendChild(sep());
-                el.appendChild(bcFor(req, "c", coll, req));
-                if (act) {
-                    el.appendChild(sep());
-                    el.appendChild(bcFor(act, "c", coll, req, act));
-                    if (extra && extra.length > 0) {
-                        for (let i = 0; i < extra.length; i++) {
-                            el.appendChild(sep());
-                            const ret = [coll, req, act];
-                            ret.push(...extra.slice(0, i));
-                            el.appendChild(bcFor(extra[i], ...ret));
-                        }
-                    }
-                }
-            }
-        }
-    }
-    ui.setBreadcrumbs = setBreadcrumbs;
-    function reset(el) {
-        for (let i = el.childElementCount - 1; i >= 0; i--) {
-            const e = el.children[i];
-            if (e.classList.contains("dynamic")) {
-                el.removeChild(e);
-            }
-        }
-    }
-    ui.reset = reset;
-    function sep() {
-        return JSX("span", { class: "uk-navbar-item dynamic", style: "padding: 0 8px;" }, " / ");
-    }
-    function bcForExtra(coll, req, act, extra) {
-        return bcFor(act, "c", coll, req, act);
-    }
-    function bcFor(title, ...parts) {
-        const path = parts.map(s => "/" + s).join("");
-        return nav.link({ path: path, title: title, cls: bcCls });
-    }
-})(ui || (ui = {}));
-var ui;
-(function (ui) {
-    function setPanels(coll, req, act, extra) {
-        dom.setDisplay("#welcome-panel", coll === undefined);
-        dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
-        dom.setDisplay("#request-panel", req !== undefined && req.length > 0);
-        ui.setBreadcrumbs(coll, req, act, extra);
-        setTitle(coll, req, act);
-    }
-    ui.setPanels = setPanels;
-    function setTitle(coll, req, act) {
-        let title = "";
-        if (act) {
-            title += act + " ";
-        }
-        if (coll) {
-            title += coll;
-        }
-        if (req) {
-            title += "/" + req;
-        }
-        if (title.length == 0) {
-            title = "npn";
+        if (socket.connected) {
+            const m = json.str(msg);
+            sock.send(m);
         }
         else {
-            title = "npn: " + title;
+            pendingMessages.push(msg);
         }
-        document.title = title;
     }
-})(ui || (ui = {}));
+    socket.socketSend = socketSend;
+})(socket || (socket = {}));
 var profile;
 (function (profile) {
     // noinspection JSUnusedGlobalSymbols
@@ -2267,28 +2242,6 @@ var profile;
     }
     profile.setPicture = setPicture;
 })(profile || (profile = {}));
-var command;
-(function (command) {
-    command.client = {
-        ping: "ping",
-        connect: "connect",
-        // Collection
-        getCollection: "getCollection",
-        addURL: "addURL",
-        // Request
-        getRequest: "getRequest",
-        call: "call"
-    };
-    command.server = {
-        error: "error",
-        pong: "pong",
-        connected: "connected",
-        collections: "collections",
-        collectionDetail: "collectionDetail",
-        requestDetail: "requestDetail",
-        callResult: "callResult"
-    };
-})(command || (command = {}));
 var date;
 (function (date) {
     function dateToYMD(dt) {
@@ -2474,9 +2427,9 @@ var log;
                 "ms"),
             msg);
         if (!list) {
-            list = dom.req("#log-list");
+            list = dom.opt("#log-list");
             if (!list) {
-                console.log(`${level}: ${msg}`);
+                console.warn(`${level}: ${msg}`);
                 return;
             }
         }
@@ -2521,9 +2474,9 @@ var log;
 })(log || (log = {}));
 var nav;
 (function (nav) {
+    nav.enabled = true;
     let handler = (p) => {
-        let msg = "default nav handler called: " + p;
-        console.info(msg);
+        console.warn("default nav handler called: " + p);
     };
     function init(f) {
         handler = f;
@@ -2549,6 +2502,10 @@ var nav;
     }
     nav.pop = pop;
     function navigate(path) {
+        if (!nav.enabled) {
+            handler(path);
+            return "";
+        }
         if (path.startsWith("text/html;")) {
             return "";
         }
@@ -2621,21 +2578,6 @@ var notify;
     }
     notify_1.modal = modal;
 })(notify || (notify = {}));
-var services;
-(function (services) {
-    services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
-    services.collection = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
-    services.request = { key: "request", title: "Request", plural: "Requests", icon: "file-text" };
-    const allServices = [services.system, services.collection];
-    function fromKey(key) {
-        const ret = allServices.find(s => s.key === key);
-        if (!ret) {
-            throw `invalid service [${key}]`;
-        }
-        return ret;
-    }
-    services.fromKey = fromKey;
-})(services || (services = {}));
 var str;
 (function (str) {
     function trimPrefix(s, prefix) {
@@ -2657,4 +2599,114 @@ var str;
     }
     str.trimSuffix = trimSuffix;
 })(str || (str = {}));
+var system;
+(function (system) {
+    class Cache {
+        getProfile() {
+            if (!this.profile) {
+                throw "no active profile";
+            }
+            return this.profile;
+        }
+        apply(sj) {
+            system.cache.profile = sj.profile;
+        }
+    }
+    system.cache = new Cache();
+})(system || (system = {}));
+var system;
+(function (system) {
+    function onSystemMessage(cmd, param) {
+        switch (cmd) {
+            case command.server.error:
+                console.warn("error from server: " + param);
+                break;
+            case command.server.connected:
+                system.cache.apply(param);
+                break;
+            default:
+                console.warn(`unhandled system command [${cmd}]`);
+        }
+    }
+    system.onSystemMessage = onSystemMessage;
+})(system || (system = {}));
+var ui;
+(function (ui) {
+    const bcCls = "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic";
+    function setBreadcrumbs(coll, req, act, extra) {
+        const el = dom.req("#breadcrumbs");
+        reset(el);
+        el.appendChild(nav.link({ path: "/", title: "npn", cls: bcCls }));
+        if (coll) {
+            el.appendChild(sep());
+            el.appendChild(bcFor(coll, "c", coll));
+            if (req) {
+                el.appendChild(sep());
+                el.appendChild(bcFor(req, "c", coll, req));
+                if (act) {
+                    el.appendChild(sep());
+                    el.appendChild(bcFor(act, "c", coll, req, act));
+                    if (extra && extra.length > 0) {
+                        for (let i = 0; i < extra.length; i++) {
+                            el.appendChild(sep());
+                            const ret = [coll, req, act];
+                            ret.push(...extra.slice(0, i));
+                            el.appendChild(bcFor(extra[i], ...ret));
+                        }
+                    }
+                }
+            }
+        }
+    }
+    ui.setBreadcrumbs = setBreadcrumbs;
+    function reset(el) {
+        for (let i = el.childElementCount - 1; i >= 0; i--) {
+            const e = el.children[i];
+            if (e.classList.contains("dynamic")) {
+                el.removeChild(e);
+            }
+        }
+    }
+    ui.reset = reset;
+    function sep() {
+        return JSX("span", { class: "uk-navbar-item dynamic", style: "padding: 0 8px;" }, " / ");
+    }
+    function bcForExtra(coll, req, act, extra) {
+        return bcFor(act, "c", coll, req, act);
+    }
+    function bcFor(title, ...parts) {
+        const path = parts.map(s => "/" + s).join("");
+        return nav.link({ path: path, title: title, cls: bcCls });
+    }
+})(ui || (ui = {}));
+var ui;
+(function (ui) {
+    function setPanels(coll, req, act, extra) {
+        dom.setDisplay("#welcome-panel", coll === undefined);
+        dom.setDisplay("#collection-panel", coll !== undefined && coll.length > 0 && req === undefined);
+        dom.setDisplay("#request-panel", req !== undefined && req.length > 0);
+        ui.setBreadcrumbs(coll, req, act, extra);
+        setTitle(coll, req, act);
+    }
+    ui.setPanels = setPanels;
+    function setTitle(coll, req, act) {
+        let title = "";
+        if (act) {
+            title += act + " ";
+        }
+        if (coll) {
+            title += coll;
+        }
+        if (req) {
+            title += "/" + req;
+        }
+        if (title.length == 0) {
+            title = "npn";
+        }
+        else {
+            title = "npn: " + title;
+        }
+        document.title = title;
+    }
+})(ui || (ui = {}));
 //# sourceMappingURL=npn.js.map

@@ -32,7 +32,7 @@ type Form struct {
 }
 
 func NewForm(data ...*FormEntry) *Body {
-	return &Body{Type: KeyForm, Config: &Form{Data: data}}
+	return NewBody(KeyForm, &Form{Data: data})
 }
 
 func (f *Form) ContentLength() int64 {

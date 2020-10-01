@@ -10,7 +10,7 @@ type JSON struct {
 }
 
 func NewJSON(msg interface{}) *Body {
-	return &Body{Type: KeyJSON, Config: &JSON{Msg: msg}}
+	return NewBody(KeyJSON, &JSON{Msg: msg})
 }
 
 func (j *JSON) ContentLength() int64 {
@@ -42,5 +42,5 @@ func parseJSON(ct string, charset string, b []byte) *Body {
 		return detect("", charset, b)
 	}
 
-	return &Body{Type: KeyJSON, Config: &JSON{Msg: x}}
+	return NewJSON(x)
 }

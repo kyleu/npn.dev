@@ -1,6 +1,7 @@
 package call
 
 import (
+	"golang.org/x/text/language"
 	"net/http"
 	"net/http/httptrace"
 	"time"
@@ -40,13 +41,14 @@ func getClient(p *request.Prototype) *http.Client {
 	}
 }
 
-func call(coll string, req string, client *http.Client, p *request.Prototype, prior *Result, logger logur.Logger) *Result {
+func call(coll string, req string, client *http.Client, p *request.Prototype, prior *Response, logger logur.Logger) *Result {
 	httpReq := p.ToHTTP()
 	timing := &Timing{}
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
 	url := httpReq.URL.String()
-	logger.Debug("making call to [" + url + "]")
+	logger.Info("making call to [" + url + "]")
 	timing.Begin()
+
 	hr, err := client.Do(httpReq)
 
 	status := "ok"
@@ -61,16 +63,21 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 	var rsp *Response
 	if hr != nil {
 		rsp = ResponseFromHTTP(hr)
+		rsp.Prior = prior
+	}
+	if rsp == nil {
+		rsp = prior
 	}
 
 	timing.Complete()
 
 	ret := NewResult(url, coll, req, status)
-	ret.RedirectedFrom = prior
 	ret.RequestHeaders = p.FinalHeaders()
 	ret.Response = rsp
 	ret.Timing = timing
 	ret.Error = errStr
+
+	logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
 
 	// TODO handle redirects, recurse with prior
 	return ret

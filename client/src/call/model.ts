@@ -13,6 +13,7 @@ namespace call {
     readonly close?: boolean;
     readonly uncompressed?: boolean;
     readonly body?: rbody.Body;
+    readonly prior?: Response;
     readonly error?: string;
   }
 
@@ -23,7 +24,6 @@ namespace call {
     readonly request: string;
     readonly requestHeaders?: header.Header[];
     readonly status: string;
-    readonly redirectedFrom?: Result;
     readonly response?: Response;
     readonly timing?: Timing;
     readonly error?: string;

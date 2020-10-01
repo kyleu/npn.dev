@@ -2,10 +2,11 @@ namespace call {
   export function renderResult(r: Result) {
     let rspDetail = <div>no result</div>
 
-    if (r.response) {
-      const ct = r.response.contentType || "";
-      const cl = (r.response.contentLength && r.response.contentLength > -1) ? `(${r.response.contentLength} bytes)` : "";
-      rspDetail = <div>{r.response.proto} <em>{r.response.status}</em><div>{ct} {cl}</div></div>;
+    const rsp = r.response;
+    if (rsp) {
+      const ct = rsp.contentType || "";
+      const cl = (rsp.contentLength && rsp.contentLength > -1) ? `(${rsp.contentLength} bytes)` : ((rsp.body && rsp.body.length > -1) ? `(${rsp.body.length} bytes)` : "");
+      rspDetail = <div>{rsp.proto} <em>{rsp.status}</em><div>{ct} {cl}</div></div>;
     }
 
     return [

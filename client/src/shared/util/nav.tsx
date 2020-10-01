@@ -1,7 +1,8 @@
 namespace nav {
+  export let enabled = true;
+
   let handler = (p: string) => {
-    let msg = "default nav handler called: " + p;
-    console.info(msg);
+    console.warn("default nav handler called: " + p);
   }
 
   export function init(f: (p: string) => void) {
@@ -27,6 +28,10 @@ namespace nav {
   }
 
   export function navigate(path: string) {
+    if (!enabled) {
+      handler(path);
+      return "";
+    }
     if (path.startsWith("text/html;")) {
       return "";
     }

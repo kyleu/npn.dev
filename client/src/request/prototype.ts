@@ -24,8 +24,8 @@ namespace request {
     }
 
     let port: number | undefined;
-    if (url.port.length > 0) {
-      port = parseInt(url.port);
+    if (url.port && url.port.length > 0) {
+      port = parseInt(url.port, 10);
     }
 
     return newPrototype(url.protocol, url.hostname, port, url.pathname, qp, url.hash, auth);

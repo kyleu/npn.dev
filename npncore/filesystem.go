@@ -12,24 +12,16 @@ import (
 	"logur.dev/logur"
 )
 
-type FileLoader struct {
+type FileSystem struct {
 	root   string
 	logger logur.Logger
 }
 
-func FilenameOf(fn string) string {
-	idx := strings.LastIndex(fn, "/")
-	if idx > -1 {
-		fn = fn[idx+1:]
-	}
-	return fn
+func NewFileSystem(root string, logger logur.Logger) *FileSystem {
+	return &FileSystem{root: root, logger: logger}
 }
 
-func NewFileLoader(root string, logger logur.Logger) *FileLoader {
-	return &FileLoader{root: root, logger: logger}
-}
-
-func (f *FileLoader) getPath(ss ...string) string {
+func (f *FileSystem) getPath(ss ...string) string {
 	s := path.Join(ss...)
 	if strings.HasPrefix(s, f.root) {
 		return s
@@ -37,11 +29,11 @@ func (f *FileLoader) getPath(ss ...string) string {
 	return path.Join(f.root, s)
 }
 
-func (f *FileLoader) Root() string {
+func (f *FileSystem) Root() string {
 	return f.root
 }
 
-func (f *FileLoader) ReadFile(path string) ([]byte, error) {
+func (f *FileSystem) ReadFile(path string) ([]byte, error) {
 	b, err := ioutil.ReadFile(f.getPath(path))
 	if err != nil {
 		return nil, err
@@ -49,7 +41,7 @@ func (f *FileLoader) ReadFile(path string) ([]byte, error) {
 	return b, nil
 }
 
-func (f *FileLoader) CreateDirectory(path string) error {
+func (f *FileSystem) CreateDirectory(path string) error {
 	p := f.getPath(path)
 	err := os.MkdirAll(p, 0755)
 	if err != nil {
@@ -58,7 +50,7 @@ func (f *FileLoader) CreateDirectory(path string) error {
 	return nil
 }
 
-func (f *FileLoader) WriteFile(path string, content []byte, overwrite bool) error {
+func (f *FileSystem) WriteFile(path string, content []byte, overwrite bool) error {
 	p := f.getPath(path)
 	_, err := os.Stat(p)
 	if os.IsExist(err) && !overwrite {
@@ -81,28 +73,29 @@ func (f *FileLoader) WriteFile(path string, content []byte, overwrite bool) erro
 	return nil
 }
 
-func (f *FileLoader) CopyFile(src string, tgt string) error {
+func (f *FileSystem) CopyFile(src string, tgt string) error {
 	sp := f.getPath(src)
 	tp := f.getPath(tgt)
-	_, err := os.Stat(tgt)
-	if os.IsExist(err) {
-		return errors.New("file [" + tgt + "] exists, will not overwrite")
+
+	targetExists, _ := f.Exists(tp)
+	if targetExists {
+		return errors.New("file [" + tp + "] exists, will not overwrite")
 	}
 
-	input, err := ioutil.ReadFile(sp)
+	input, err := f.ReadFile(sp)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(tp, input, 0644)
+	err = f.WriteFile(tp, input, false)
 	return err
 }
 
-func (f *FileLoader) ListJSON(path string) []string {
+func (f *FileSystem) ListJSON(path string) []string {
 	return f.ListExtension(path, "json")
 }
 
-func (f *FileLoader) ListExtension(path string, ext string) []string {
+func (f *FileSystem) ListExtension(path string, ext string) []string {
 	glob := "*." + ext
 	matches, err := filepath.Glob(f.getPath(path, glob))
 	if err != nil {
@@ -119,7 +112,7 @@ func (f *FileLoader) ListExtension(path string, ext string) []string {
 	return ret
 }
 
-func (f *FileLoader) ListDirectories(path string) []string {
+func (f *FileSystem) ListDirectories(path string) []string {
 	p := f.getPath(path)
 	files, err := ioutil.ReadDir(p)
 	if err != nil {
@@ -134,7 +127,7 @@ func (f *FileLoader) ListDirectories(path string) []string {
 	return ret
 }
 
-func (f *FileLoader) Exists(path string) (bool, bool) {
+func (f *FileSystem) Exists(path string) (bool, bool) {
 	p := f.getPath(path)
 	s, err := os.Stat(p)
 	if err == nil {
@@ -143,13 +136,13 @@ func (f *FileLoader) Exists(path string) (bool, bool) {
 	return false, false
 }
 
-func (f *FileLoader) Remove(path string) error {
+func (f *FileSystem) Remove(path string) error {
 	p := f.getPath(path)
 	f.logger.Warn("removing file at path [" + p + "]")
 	return os.Remove(p)
 }
 
-func (f *FileLoader) RemoveRecursive(pt string) error {
+func (f *FileSystem) RemoveRecursive(pt string) error {
 	p := f.getPath(pt)
 	s, err := os.Stat(p)
 	if err != nil {

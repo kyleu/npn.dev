@@ -32,10 +32,11 @@ namespace request {
         }
         break;
       case command.server.callResult:
+        debugger
         const result = param as call.Result;
         call.setResult(result);
         const path = `r/` + result.id
-        history.replaceState(path, "", "/" + path);
+        // TODO history.replaceState(path, "", "/" + path);
         break;
       default:
         console.warn(`unhandled request command [${cmd}]`);

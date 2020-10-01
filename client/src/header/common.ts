@@ -51,16 +51,16 @@ namespace header {
   export function dumpCommonHeaders() {
     const dump = (title: string, req: boolean, rsp: boolean) => {
       let matched = false;
-      console.log("\n::: " + title + " Headers");
+      console.debug("\n::: " + title + " Headers");
       commonHeaders.forEach(ch => {
         if (ch.req == req && ch.rsp == rsp) {
           matched = true;
-          console.log(`${ch.key}: ${ch.link}`);
-          console.log(`  - ${ch.description}`);
+          console.debug(`${ch.key}: ${ch.link}`);
+          console.debug(`  - ${ch.description}`);
         }
       })
       if (!matched) {
-        console.log("none");
+        console.debug("none");
       }
     }
     dump("Common", true, true);

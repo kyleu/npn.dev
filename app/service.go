@@ -17,7 +17,7 @@ import (
 
 type Service struct {
 	debug      bool
-	files      *npncore.FileLoader
+	files      npncore.FileLoader
 	user       user.Service
 	auth       auth.Service
 	logger     logur.Logger
@@ -27,8 +27,7 @@ type Service struct {
 	Socket     *npnconnection.Service
 }
 
-func NewService(debug bool, dataDir string, logger logur.Logger) *Service {
-	files := npncore.NewFileLoader(dataDir, logger)
+func NewService(debug bool, files npncore.FileLoader, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(false, files, logger)
 	collSvc := collection.NewService(files, logger)
 	callSvc := call.NewService(logger)
@@ -50,7 +49,7 @@ func (c *Service) Debug() bool {
 	return c.debug
 }
 
-func (c *Service) Files() *npncore.FileLoader {
+func (c *Service) Files() npncore.FileLoader {
 	return c.files
 }
 

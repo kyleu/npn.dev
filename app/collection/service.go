@@ -12,11 +12,11 @@ import (
 const rootDir = "collections"
 
 type Service struct {
-	files  *npncore.FileLoader
+	files  npncore.FileLoader
 	logger logur.Logger
 }
 
-func NewService(f *npncore.FileLoader, logger logur.Logger) *Service {
+func NewService(f npncore.FileLoader, logger logur.Logger) *Service {
 	return &Service{files: f, logger: logger}
 }
 
@@ -61,17 +61,21 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 	originalKey = npncore.Slugify(originalKey)
 	newKey = npncore.Slugify(newKey)
 
-	orig, err := s.Load(originalKey)
-	if err != nil {
-		return errors.Wrap(err, "unable to load original collection ["+originalKey+"]")
-	}
+	var orig *Collection
+	var err error
 
-	if orig != nil && originalKey != newKey {
-		o := path.Join(s.files.Root(), rootDir, originalKey)
-		n := path.Join(s.files.Root(), rootDir, newKey)
-		err := os.Rename(o, n)
+	if len(originalKey) > 0 {
+		orig, err = s.Load(originalKey)
 		if err != nil {
-			return errors.Wrap(err, "unable to rename original collection ["+originalKey+"] in path ["+o+"]")
+			return errors.Wrap(err, "unable to load original collection ["+originalKey+"]")
+		}
+		if orig != nil && originalKey != newKey {
+			o := path.Join(s.files.Root(), rootDir, originalKey)
+			n := path.Join(s.files.Root(), rootDir, newKey)
+			err := os.Rename(o, n)
+			if err != nil {
+				return errors.Wrap(err, "unable to rename original collection ["+originalKey+"] in path ["+o+"]")
+			}
 		}
 	}
 
