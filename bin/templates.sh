@@ -17,10 +17,14 @@ function tmpl {
     cd npntemplate
     rm -rf gen
     hero -extensions .html,.sql -source "html" -pkgname $1 -dest "gen/npntemplate"
+    echo "cleaning [$2] templates"
+    find "gen/$1" -type f -name "*.go" -print0 | xargs -0 sed -i "" "/\/\/ source:/d"
     cd ..
   else
     rm -rf $3
     hero -extensions .html,.sql -source "$2" -pkgname $1 -dest $3
+    echo "cleaning [$2] templates"
+    find "$3" -type f -name "*.go" -print0 | xargs -0 sed -i "" "/\/\/ source:/d"
   fi
 }
 
