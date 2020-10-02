@@ -3,6 +3,7 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/kyleu/npn/app/request"
 
 	"emperror.dev/errors"
@@ -46,7 +47,7 @@ func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connecti
 	}
 }
 
-func addURL(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
+func addURL(s *npnconnection.Service, _ *npnconnection.Connection, param json.RawMessage) error {
 	p := &addURLInput{}
 	err := npncore.FromJSONStrict(param, p)
 	if err != nil {
@@ -54,14 +55,14 @@ func addURL(s *npnconnection.Service, c *npnconnection.Connection, param json.Ra
 	}
 	req, err := request.FromString("new", p.URL)
 	if err != nil {
-		return errors.Wrap(err, "unable to parse request from URL [" + p.URL + "]")
+		return errors.Wrap(err, "unable to parse request from URL ["+p.URL+"]")
 	}
 	req.Key = req.Prototype.Domain
 
 	svcs := ctx(s)
 	err = svcs.Collection.SaveRequest(p.Coll, "", req)
 	if err != nil {
-		return errors.Wrap(err, "unable to save request from URL [" + p.URL + "]")
+		return errors.Wrap(err, "unable to save request from URL ["+p.URL+"]")
 	}
 
 	return nil

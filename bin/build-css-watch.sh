@@ -5,9 +5,8 @@
 
 set -e
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-project_dir=${dir}/..
-cd $project_dir
+cd $dir/..
 
 bin/build-css.sh
 echo "Watching sass compilation for [web/stylesheets/style.scss]..."
-sass --watch --no-source-map web/stylesheets/style.scss web/assets/vendor/npn.css
+sass --load-path=npnasset/stylesheets --watch --no-source-map web/stylesheets/style.scss web/assets/vendor/npn.css

@@ -19,7 +19,6 @@ namespace request {
   }
 
   export function renderAction(coll: string, reqKey: string, action: string | undefined, extra: string[]) {
-    // TODO const req = request.form.getRequest();
     const re = dom.opt(".request-editor");
     const ra = dom.opt(".request-action");
     if(!re || !ra) {
@@ -30,12 +29,8 @@ namespace request {
         dom.setContent(ra, renderActionEmpty());
         break;
       case "call":
-        const req = getRequest(coll, reqKey);
-        if (!req) {
-          return;
-        }
-        // call.prepare(coll, request.form.extractRequest());
-        call.prepare(coll, req);
+        // call.prepare(coll, getRequest(coll, reqKey));
+        call.prepare(coll, request.form.extractRequest());
         dom.setContent(ra, renderActionCall(coll, reqKey));
         break;
       case "transform":

@@ -1,4 +1,4 @@
-declare const npn_handler: any;
+declare const npn_handler: any | undefined;
 
 namespace socket {
   export function initBypass() {
@@ -11,6 +11,10 @@ namespace socket {
     if (debug) {
       console.debug("out", msg);
     }
-    npn_handler(JSON.stringify(msg, null, 2));
+    if (npn_handler) {
+      npn_handler(JSON.stringify(msg, null, 2));
+    } else {
+      console.warn("no bypass handler configured");
+    }
   }
 }

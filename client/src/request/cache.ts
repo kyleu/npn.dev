@@ -1,7 +1,7 @@
 namespace request {
   class Cache {
-    summaries: Map<string, Summary[]> = new Map();
-    requests: Map<string, Request[]> = new Map();
+    summaries: map.Map<string, Summary[]> = new map.Map();
+    requests: map.Map<string, Request[]> = new map.Map();
     active?: string;
     action?: string;
     extra: string[] = [];

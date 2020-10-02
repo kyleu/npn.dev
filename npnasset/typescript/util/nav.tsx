@@ -32,14 +32,14 @@ namespace nav {
       handler(path);
       return "";
     }
-    if (path.startsWith("text/html;")) {
+    if (str.startsWith(path, "text/html;")) {
       return "";
     }
-    if (path.startsWith("/")) {
+    if (str.startsWith(path, "/")) {
       path = path.substr(1);
     }
     let locPath = location.pathname;
-    if (locPath.startsWith("/")) {
+    if (str.startsWith(locPath, "/")) {
       locPath = locPath.substr(1);
     }
     if (locPath !== path) {
@@ -64,7 +64,7 @@ namespace nav {
 
   export function link(o: LinkOpts) {
     let href = o.path;
-    if (!href.startsWith("/")) {
+    if (!str.startsWith(href, "/")) {
       href = "/" + href;
     }
     if (o.cls) {
@@ -77,7 +77,7 @@ namespace nav {
       i = <span class="nav-icon" data-uk-icon={`icon: ${o.icon}`} />;
     }
     if (o.onclk) {
-      if (!o.onclk.endsWith(";")) {
+      if (!str.endsWith(o.onclk, ";")) {
         o.onclk += ";"
       }
     } else {

@@ -10,13 +10,15 @@ const KeyRaw = "raw"
 type Raw struct {
 	Type    string `json:"type"`
 	Content string `json:"content"`
-	Length  int64 `json:"length,omitempty"`
-	Binary  bool `json:"binary,omitempty"`
+	Length  int64  `json:"length,omitempty"`
+	Binary  bool   `json:"binary,omitempty"`
 }
+
+var _ Config = (*Raw)(nil)
 
 func NewRaw(bytes []byte) *Body {
 	cfg := &Raw{Length: int64(len(bytes)), Binary: true}
-	if(utf8.Valid(bytes)) {
+	if utf8.Valid(bytes) {
 		cfg.Content = string(bytes)
 	} else {
 		cfg.Content = base64.StdEncoding.EncodeToString(bytes)

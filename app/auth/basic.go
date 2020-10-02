@@ -1,6 +1,8 @@
 package auth
 
-import "fmt"
+import (
+	"fmt"
+)
 
 const KeyBasic = "basic"
 
@@ -9,6 +11,8 @@ type Basic struct {
 	Password     string `json:"password,omitempty"`
 	ShowPassword bool   `json:"showPassword,omitempty"`
 }
+
+var _ Config = (*Basic)(nil)
 
 func NewBasic(user string, pass string, showPass bool) *Auth {
 	b := &Basic{Username: user, Password: pass, ShowPassword: showPass}

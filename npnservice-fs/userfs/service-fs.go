@@ -33,6 +33,8 @@ type ServiceFilesystem struct {
 	logger    logur.Logger
 }
 
+var _ user.Service = (*ServiceFilesystem)(nil)
+
 func NewServiceFilesystem(multiuser bool, files npncore.FileLoader, logger logur.Logger) *ServiceFilesystem {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyUser})
 	return &ServiceFilesystem{Multiuser: multiuser, files: files, logger: logger}

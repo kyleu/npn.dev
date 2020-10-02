@@ -1,9 +1,10 @@
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
-DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
-cd "$DIR"
+#!/bin/bash
+
+## Packages the build output for Github Releases
 
 set -e
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $dir/..
 
 # ./bin/build-all.sh
 
@@ -30,7 +31,7 @@ pkg () {
 }
 
 # macOS
-pkg darwin amd64 npn macos.server
+pkg darwin amd64 npn macos
 
 echo "macOS app..."
 cd ../darwin
@@ -48,8 +49,9 @@ pkg linux riscv64 npn linux
 
 # FreeBSD
 pkg freebsd amd64 npn freebsd
-pkg freebsd arm64 npn freebsd
 pkg freebsd 386 npn freebsd
+pkg freebsd arm64 npn freebsd
+pkg freebsd arm npn freebsd
 
 # Windows
 pkg windows amd64 npn.exe windows
@@ -58,7 +60,7 @@ pkg windows arm npn.exe windows
 
 # Docker
 echo "docker..."
-cp "$DIR/build/docker/npn.docker.tar.gz" "$DIR/build/package/npn.server.docker.tar.gz"
+# cp "$DIR/build/docker/npn.docker.tar.gz" "$DIR/build/package/npn.server.docker.tar.gz"
 
 # WASM
 echo "wasm..."
@@ -76,7 +78,7 @@ cd "$DIR/build/stage"
 # Android
 echo "android library..."
 cp "$DIR/build/android/npn.aar" ./npn.aar
-zip -r "$DIR/build/package/npn.server.android.zip" npn.aar
+zip -r "$DIR/build/package/npn.library.android.zip" npn.aar
 rm ./npn.aar
 
 echo "android app..."
@@ -97,7 +99,7 @@ cp -R Versions/A/* .
 rm -rf Versions
 cd ..
 
-zip -r "$DIR/build/package/npn.server.ios.zip" *
+zip -r "$DIR/build/package/npn.library.ios.zip" *
 rm  -rf ./NpnServer.framework
 
 echo "ios app..."

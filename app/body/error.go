@@ -6,6 +6,8 @@ type Error struct {
 	Message string `json:"message"`
 }
 
+var _ Config = (*Error)(nil)
+
 func NewError(message string) *Body {
 	return NewBody(KeyError, &Error{Message: message})
 }

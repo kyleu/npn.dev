@@ -8,6 +8,8 @@ type Large struct {
 	Length      int64  `json:"length"`
 }
 
+var _ Config = (*Large)(nil)
+
 func NewLarge(filename string, contentType string, length int64) *Body {
 	return NewBody(KeyLarge, &Large{Filename: filename, ContentType: contentType, Length: length})
 }

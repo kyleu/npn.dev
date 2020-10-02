@@ -31,11 +31,11 @@ func (p *Params) ToQueryString(u *url.URL) string {
 	}
 
 	if p.Limit > 0 {
-		ret.Add(p.Key+".l", fmt.Sprintf("%v", p.Limit))
+		ret.Add(p.Key+".l", fmt.Sprint(p.Limit))
 	}
 
 	if p.Offset > 0 {
-		ret.Add(p.Key+".x", fmt.Sprintf("%v", p.Offset))
+		ret.Add(p.Key+".x", fmt.Sprint(p.Offset))
 	}
 
 	return ret.Encode()

@@ -65,7 +65,7 @@ func getCurr(q npncore.ParamSet, key string) *npncore.Params {
 func IDFromParams(key string, m map[string]string) (*uuid.UUID, error) {
 	retOut, ok := m[npncore.KeyID]
 	if !ok {
-		return nil, errors.New("params do not contain \"id\"")
+		return nil, errors.New(`params do not contain "id"`)
 	}
 
 	ret, err := uuid.FromString(retOut)

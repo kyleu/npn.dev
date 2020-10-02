@@ -1,7 +1,10 @@
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
-DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
-cd "$DIR"
+#!/bin/bash
+
+## Builds the project as an iOS framework and builds the native app in `projects/ios`
+
+set -e
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $dir/..
 
 echo "Building [ios]..."
 

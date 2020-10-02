@@ -1,12 +1,13 @@
 package main
 
 import (
-	"emperror.dev/errors"
 	"fmt"
-	"github.com/kyleu/npn/npncore"
 	"path"
 	"strings"
 	"syscall/js"
+
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npncore"
 )
 
 type LocalStorageLoader struct {
@@ -71,7 +72,7 @@ func (l *LocalStorageLoader) ListExtension(path string, ext string) []string {
 	path = l.getPath(path)
 	ret := make([]string, 0)
 	for _, key := range l.Keys() {
-		if(strings.HasPrefix(key, path)) {
+		if strings.HasPrefix(key, path) {
 			tgt := strings.TrimPrefix(key, path)
 			tgt = strings.TrimPrefix(tgt, "/")
 			if !strings.Contains(tgt, "/") {
@@ -96,7 +97,7 @@ func (l *LocalStorageLoader) ListDirectories(path string) []string {
 	path = l.getPath(path)
 	ret := make([]string, 0)
 	for _, key := range l.Keys() {
-		if(strings.HasPrefix(key, path)) {
+		if strings.HasPrefix(key, path) {
 			tgt := strings.TrimPrefix(key, path)
 			tgt = strings.TrimPrefix(tgt, "/")
 			tgt, _ = npncore.SplitString(tgt, '/', true)
@@ -119,7 +120,7 @@ func (l *LocalStorageLoader) Exists(path string) (bool, bool) {
 	matched := false
 	exact := false
 	for _, key := range l.Keys() {
-		if(strings.HasPrefix(key, path)) {
+		if strings.HasPrefix(key, path) {
 			matched = true
 			if key == path {
 				exact = true

@@ -38,7 +38,7 @@ func (a *appFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 				idx++
 			} else {
 				file, line = f, l
-				file = strings.TrimPrefix(file, root + "/")
+				file = strings.TrimPrefix(file, root+"/")
 				break
 			}
 		}

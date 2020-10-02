@@ -6,6 +6,8 @@ type HTML struct {
 	Content string `json:"content"`
 }
 
+var _ Config = (*HTML)(nil)
+
 func NewHTML(content string) *Body {
 	return NewBody(KeyHTML, &HTML{Content: content})
 }

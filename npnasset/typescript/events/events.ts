@@ -1,8 +1,15 @@
 namespace events {
-  let openEvents: Map<string, Function> = new Map<string, Function>();
-  let closeEvents: Map<string, Function> = new Map<string, Function>();
+  let openEvents: map.Map<string, Function>;
+  let closeEvents: map.Map<string, Function>;
 
   export function register(key: string, o?: (param?: string) => void, c?: (param?: string) => void) {
+    if (!openEvents) {
+      openEvents = new map.Map();
+    }
+    if (!closeEvents) {
+      closeEvents = new map.Map();
+    }
+
     if (!o) {
       o = () => {};
     }

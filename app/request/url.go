@@ -70,7 +70,7 @@ func (p *Prototype) URLParts() []*URLPart {
 	add("domain", p.Domain)
 	if p.Port > 0 {
 		add("", ":")
-		add("port", fmt.Sprintf("%v", p.Port))
+		add("port", fmt.Sprint(p.Port))
 	}
 	if len(p.Path) > 0 {
 		add("", "/")

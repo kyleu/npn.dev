@@ -16,11 +16,6 @@ var Testbed = Sandbox{
 	Resolve:     req,
 }
 
-func noop(ctx *npnweb.RequestContext) (string, interface{}, error) {
-	ret := "Testbed!"
-	return "Testbed", ret, nil
-}
-
 // Req
 type reqrsp struct {
 	Req   *request.Request

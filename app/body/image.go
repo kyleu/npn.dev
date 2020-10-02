@@ -9,6 +9,8 @@ type Image struct {
 	Content string `json:"content"`
 }
 
+var _ Config = (*Image)(nil)
+
 func NewImage(t string, bytes []byte) *Body {
 	content := base64.StdEncoding.EncodeToString(bytes)
 	return NewBody(KeyImage, &Image{Type: t, Content: content})

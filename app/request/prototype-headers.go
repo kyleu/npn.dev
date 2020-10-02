@@ -30,7 +30,7 @@ func (p *Prototype) FinalHeaders() header.Headers {
 	check("Content-Length", func() string {
 		cl := p.Body.ContentLength()
 		if cl > 0 {
-			return fmt.Sprintf("%v", cl)
+			return fmt.Sprint(cl)
 		}
 		return ""
 	})

@@ -31,6 +31,8 @@ type Form struct {
 	str  string
 }
 
+var _ Config = (*Form)(nil)
+
 func NewForm(data ...*FormEntry) *Body {
 	return NewBody(KeyForm, &Form{Data: data})
 }

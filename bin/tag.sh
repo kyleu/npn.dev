@@ -4,16 +4,16 @@
 
 set -e
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-project_dir=${dir}/..
-cd $project_dir
+cd $dir/..
 
 TGT=$1
 
-[ "$TGT" ] || (echo "must provide one argument, like \"0.0.1\"" && exit)
+[ "$TGT" ] || (echo `must provide one argument, like "0.0.1"` && exit)
 
 rplc () {
   rm -f go.sum
   find . -type f -name "go.mod" -print0 | xargs -0 sed -i '' -e "s/v[01]\.[0-9]*[0-9]\.[0-9]*[0-9] \/\/ npn/v${TGT} \/\/ npn/g"
+  sed -i '' -e "s/v[01]\.[0-9]*[0-9]\.[0-9]*[0-9]/v${TGT}/g" doc/downloads.md
 }
 
 bld () {

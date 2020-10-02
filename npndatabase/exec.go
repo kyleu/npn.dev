@@ -81,7 +81,7 @@ func (s *Service) process(key string, past string, q string, tx *sqlx.Tx, expect
 		return 0, errors.Wrap(err, errMessage(past, q, values))
 	}
 	if expected > -1 && aff != expected {
-		msg := "expected [%v] %v row(s), but [%v] records affected from sql [%v] with values [%s]"
+		const msg = "expected [%v] %v row(s), but [%v] records affected from sql [%v] with values [%s]"
 		return aff, errors.New(fmt.Sprintf(msg, expected, past, aff, q, npncore.ValueStrings(values)))
 	}
 	return aff, nil

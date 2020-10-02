@@ -20,6 +20,8 @@ type ServiceDatabase struct {
 	logger logur.Logger
 }
 
+var _ user.Service = (*ServiceDatabase)(nil)
+
 func NewServiceDatabase(db *npndatabase.Service, logger logur.Logger) user.Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyUser})
 	return &ServiceDatabase{db: db, logger: logger}

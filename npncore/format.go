@@ -44,7 +44,7 @@ func OxfordComma(names []string, clause string) string {
 func ValueStrings(values []interface{}) string {
 	ret := make([]string, 0, len(values))
 	for _, v := range values {
-		ret = append(ret, fmt.Sprintf("\"%v\"", v))
+		ret = append(ret, fmt.Sprintf(`"%v"`, v))
 	}
 	return strings.Join(ret, ", ")
 }
@@ -67,7 +67,7 @@ func PathParams(s string) []string {
 }
 
 func TruncateString(x interface{}, max int) string {
-	s := fmt.Sprintf("%v", x)
+	s := fmt.Sprint(x)
 	if len(s) > max {
 		return s[0:max] + "..."
 	}

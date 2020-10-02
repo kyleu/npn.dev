@@ -3,18 +3,19 @@ package body
 import (
 	"compress/flate"
 	"compress/gzip"
-	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
 	"io"
 	"io/ioutil"
 	"strings"
+
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npncore"
 )
 
 func Parse(contentEncoding string, contentType string, charset string, contentLength int64, rd io.ReadCloser) (*Body, error) {
 	defer func() { _ = rd.Close() }()
 
 	if contentLength > 1024*1024 {
-		return NewLarge("TODO", contentType, contentLength), nil
+		return NewLarge("LARGE_FILENAME", contentType, contentLength), nil
 	}
 
 	var b []byte

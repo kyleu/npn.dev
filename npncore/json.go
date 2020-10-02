@@ -1,4 +1,3 @@
-
 package npncore
 
 import (
@@ -26,10 +25,12 @@ func ToJSONBytes(x interface{}, logger logur.Logger, indent bool) []byte {
 		b, err = json.Marshal(x)
 	}
 	if err != nil {
+		msg := fmt.Sprintf("unable to serialize json from type [%T]: %+v", x, err)
 		if logger == nil {
-			panic(err)
+			println(msg)
+		} else {
+			logger.Warn(msg)
 		}
-		logger.Warn(fmt.Sprintf("unable to serialize json from type [%T]: %+v", x, err))
 	}
 	return b
 }

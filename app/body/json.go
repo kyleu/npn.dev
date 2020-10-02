@@ -9,6 +9,8 @@ type JSON struct {
 	str string
 }
 
+var _ Config = (*JSON)(nil)
+
 func NewJSON(msg interface{}) *Body {
 	return NewBody(KeyJSON, &JSON{Msg: msg})
 }

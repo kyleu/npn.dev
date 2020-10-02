@@ -1,0 +1,148 @@
+// Common
+.right {
+  float: right;
+}
+
+.left {
+  float: left;
+}
+
+.clear {
+  clear: both;
+}
+
+.small-margin-top {
+  margin-top: 3px;
+}
+
+.hidden {
+  display: none;
+}
+
+.width-icon {
+  width: 32px;
+}
+
+.modal-title {
+  cursor: pointer;
+}
+
+.modal-body-height {
+  min-height: 256px !important;
+}
+
+// Document
+html {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Helvetica Neue", Arial, sans-serif;
+}
+
+html.uk-light, body.uk-light {
+  background-color: $dark_bg_color;
+}
+
+html.uk-dark, body.uk-dark {
+  background-color: $light_bg_color;
+}
+
+h3 {
+  margin: 0;
+}
+
+p {
+  margin-bottom: 0;
+}
+
+a:hover, .uk-link:hover, .uk-link-toggle:hover .uk-link, .uk-link-toggle:focus .uk-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+em, .uk-light em {
+  color: #999;
+}
+
+// Alerts
+.alert-top {
+  margin: 12px;
+}
+
+// Errors
+.error-owned {
+  color: green;
+}
+.error-location {
+  margin-left: 16px;
+  margin-bottom: 16px;
+}
+
+// Content
+#content {
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.h3-icon {
+  float: left;
+  margin: 7px 12px 0 0;
+}
+
+// Backtrace
+.frame {
+  border-top: 1px solid #666;
+  padding: 12px;
+
+  &.owned {
+    .message {
+      color: green;
+    }
+  }
+
+  .loc, .additional {
+    margin-left: 32px;
+    color: #999;
+  }
+}
+
+.uk-dark .frame {
+  border-top: 1px solid #ddd;
+}
+
+// Navbar
+#navbar {
+  max-height: 54px;
+  overflow: hidden;
+
+  svg {
+    max-width: none;
+  }
+
+  img {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.drop {
+  font-size: 16px;
+  text-align: left;
+  .uk-card-body {
+    padding-bottom: 0;
+    p {
+      margin: 0;
+    }
+  }
+}
+
+.uk-light {
+  .drop {
+    border: 1px solid #444;
+  }
+}
+
+.uk-dark  {
+  .drop {
+    border: 1px solid #e5e5e5;
+  }
+}

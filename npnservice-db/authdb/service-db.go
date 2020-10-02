@@ -22,6 +22,8 @@ type ServiceDatabase struct {
 	users            user.Service
 }
 
+var _ auth.Service = (*ServiceDatabase)(nil)
+
 func NewServiceDatabase(enabled bool, redir string /* actions *action.Service, */, db *npndatabase.Service, logger logur.Logger, users user.Service) auth.Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyAuth})
 

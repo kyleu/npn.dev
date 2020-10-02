@@ -10,7 +10,7 @@ var (
 type key int
 
 const (
-	ContextKey key = iota
-	RoutesKey  key = iota
-	InfoKey    key = iota
+	RoutesKey key = iota + 1
+	InfoKey
+	ContextKey
 )

@@ -14,14 +14,14 @@ const (
 )
 
 const (
-	ServerMessagePong = "pong"
+	ServerMessagePong      = "pong"
 	ServerMessageConnected = "connected"
 
 	// Collection
-	ServerMessageCollections = "collections"
+	ServerMessageCollections      = "collections"
 	ServerMessageCollectionDetail = "collectionDetail"
 
 	// Request
 	ServerMessageRequestDetail = "requestDetail"
-	ServerMessageCallResult = "callResult"
+	ServerMessageCallResult    = "callResult"
 )

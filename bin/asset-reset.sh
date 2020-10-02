@@ -1,9 +1,10 @@
 #!/bin/bash
 
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
-DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
-cd "$DIR"
+## Resets the assets to load from local filesystem in development
+
+set -e
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $dir/..
 
 echo "Resetting assets..."
 git checkout npnasset/assets/assets.go

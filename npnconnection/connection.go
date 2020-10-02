@@ -1,8 +1,6 @@
 package npnconnection
 
 import (
-	"sync"
-
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
 
@@ -19,7 +17,6 @@ func (s *Service) Register(profile *npnuser.Profile, c *websocket.Conn) (uuid.UU
 		ModelID: nil,
 		Channel: nil,
 		socket:  c,
-		mu:      sync.Mutex{},
 	}
 
 	s.connectionsMu.Lock()

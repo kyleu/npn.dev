@@ -1,9 +1,10 @@
 #!/bin/bash
 
-SOURCE="${BASH_SOURCE[0]}"
-while [ -h "$SOURCE" ] ; do SOURCE="$(readlink "$SOURCE")"; done
-DIR="$( cd -P "$( dirname "$SOURCE" )/.." && pwd )"
-cd "$DIR"
+## XXX
+
+set -e
+dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+cd $dir/..
 
 bin/build.sh linux amd64
 ../kyleu.dev/deploy/npn.sh

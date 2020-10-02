@@ -43,9 +43,16 @@ namespace header {
     snch("User-Agent", "Contains a characteristic string that allows the network protocol peers to identify the application", true, false)
   ];
 
-  export const commonHeadersByName: Map<string, CommonHeader> = new Map();
-  for (const ch of commonHeaders) {
-    commonHeadersByName.set(ch.key, ch);
+  let commonHeadersByName: map.Map<string, CommonHeader>
+
+  export function getCommonHeaderByName(key: string) {
+    if(!commonHeadersByName) {
+      commonHeadersByName = new map.Map<string, CommonHeader>();
+      for (const ch of commonHeaders) {
+        commonHeadersByName.set(ch.key, ch);
+      }
+    }
+    return commonHeadersByName.get(key);
   }
 
   export function dumpCommonHeaders() {

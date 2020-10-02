@@ -11,6 +11,8 @@ import (
 
 type ServiceNoop struct{}
 
+var _ auth.Service = (*ServiceNoop)(nil)
+
 func (s *ServiceNoop) FullURL(path string) string {
 	return path
 }

@@ -1,10 +1,11 @@
 package call
 
 import (
-	"golang.org/x/text/language"
 	"net/http"
 	"net/http/httptrace"
 	"time"
+
+	"golang.org/x/text/language"
 
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"

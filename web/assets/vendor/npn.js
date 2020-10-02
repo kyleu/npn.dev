@@ -1,4 +1,1142 @@
 "use strict";
+var dom;
+(function (dom) {
+    function initDom(t, color) {
+        try {
+            style.themeLinks(color);
+            style.setTheme(t);
+        }
+        catch (e) {
+            console.warn("error setting style", e);
+        }
+        try {
+            modal.wire();
+        }
+        catch (e) {
+            console.warn("error wiring modals", e);
+        }
+        try {
+            drop.wire();
+        }
+        catch (e) {
+            console.warn("error wiring drops", e);
+        }
+        try {
+            tags.wire();
+        }
+        catch (e) {
+            console.warn("error wiring tag editors", e);
+        }
+        try {
+            flash.wire();
+        }
+        catch (e) {
+            console.warn("error wiring tag editors", e);
+        }
+    }
+    dom.initDom = initDom;
+    function els(selector, context) {
+        var result;
+        if (context) {
+            result = context.querySelectorAll(selector);
+        }
+        else {
+            result = document.querySelectorAll(selector);
+        }
+        var ret = [];
+        result.forEach(function (v) {
+            ret.push(v);
+        });
+        return ret;
+    }
+    dom.els = els;
+    function opt(selector, context) {
+        var e = els(selector, context);
+        switch (e.length) {
+            case 0:
+                return undefined;
+            case 1:
+                return e[0];
+            default:
+                console.warn("found [" + e.length + "] elements with selector [" + selector + "], wanted zero or one");
+        }
+    }
+    dom.opt = opt;
+    function req(selector, context) {
+        var res = opt(selector, context);
+        if (!res) {
+            console.warn("no element found for selector [" + selector + "]");
+        }
+        return res;
+    }
+    dom.req = req;
+    function setHTML(el, html) {
+        if (typeof el === "string") {
+            el = req(el);
+        }
+        el.innerHTML = html;
+        return el;
+    }
+    dom.setHTML = setHTML;
+    function setDisplay(el, condition, v) {
+        if (v === void 0) { v = "block"; }
+        if (typeof el === "string") {
+            el = req(el);
+        }
+        el.style.display = condition ? v : "none";
+        return el;
+    }
+    dom.setDisplay = setDisplay;
+    function setContent(el, e) {
+        if (typeof el === "string") {
+            el = req(el);
+        }
+        dom.clear(el);
+        if (Array.isArray(e)) {
+            e.forEach(function (x) { return el.appendChild(x); });
+        }
+        else {
+            el.appendChild(e);
+        }
+        return el;
+    }
+    dom.setContent = setContent;
+    function setText(el, text) {
+        if (typeof el === "string") {
+            el = req(el);
+        }
+        el.innerText = text;
+        return el;
+    }
+    dom.setText = setText;
+    function switchElements(el, tgt) {
+        setDisplay(el, false);
+        setDisplay(tgt, true);
+        return false;
+    }
+    dom.switchElements = switchElements;
+    function clear(el) {
+        return setHTML(el, "");
+    }
+    dom.clear = clear;
+})(dom || (dom = {}));
+var dom;
+(function (dom) {
+    function setValue(el, text) {
+        if (typeof el === "string") {
+            el = dom.req(el);
+        }
+        el.value = text;
+        return el;
+    }
+    dom.setValue = setValue;
+    function wireTextarea(text) {
+        function resize() {
+            text.style.height = "auto";
+            text.style.height = (text.scrollHeight < 64 ? 64 : text.scrollHeight + 6) + "px";
+        }
+        function delayedResize() {
+            window.setTimeout(resize, 0);
+        }
+        var x = text.dataset["autoresize"];
+        if (!x) {
+            text.dataset["autoresize"] = "true";
+            text.addEventListener("change", resize, false);
+            text.addEventListener("cut", delayedResize, false);
+            text.addEventListener("paste", delayedResize, false);
+            text.addEventListener("drop", delayedResize, false);
+            text.addEventListener("keydown", delayedResize, false);
+            text.focus();
+            text.select();
+        }
+        resize();
+    }
+    dom.wireTextarea = wireTextarea;
+    function setOptions(el, categories) {
+        if (typeof el === "string") {
+            el = dom.req(el);
+        }
+        dom.clear(el);
+        categories.forEach(function (c) {
+            var opt = document.createElement("option");
+            opt.value = c;
+            dom.setText(opt, c);
+            el.appendChild(opt);
+        });
+    }
+    dom.setOptions = setOptions;
+    function setSelectOption(el, o) {
+        if (typeof el === "string") {
+            el = dom.req(el);
+        }
+        for (var i = 0; i < el.children.length; i++) {
+            var e = el.children.item(i);
+            e.selected = e.value === o;
+        }
+    }
+    dom.setSelectOption = setSelectOption;
+    function insertAtCaret(e, text) {
+        if (e.selectionStart || e.selectionStart === 0) {
+            var startPos = e.selectionStart;
+            var endPos = e.selectionEnd;
+            e.value = e.value.substring(0, startPos) + text + e.value.substring(endPos, e.value.length);
+            e.selectionStart = startPos + text.length;
+            e.selectionEnd = startPos + text.length;
+        }
+        else {
+            e.value += text;
+        }
+    }
+    dom.insertAtCaret = insertAtCaret;
+})(dom || (dom = {}));
+// noinspection JSUnusedGlobalSymbols
+function JSX(tag, attrs) {
+    var e = document.createElement(tag);
+    for (var name_1 in attrs) {
+        if (name_1 && attrs.hasOwnProperty(name_1)) {
+            var v = attrs[name_1];
+            if (name_1 === "dangerouslySetInnerHTML") {
+                dom.setHTML(e, v["__html"]);
+            }
+            else if (v === true) {
+                e.setAttribute(name_1, name_1);
+            }
+            else if (v !== false && v !== null && v !== undefined) {
+                e.setAttribute(name_1, v.toString());
+            }
+        }
+    }
+    var _loop_1 = function (i) {
+        var child = arguments_1[i];
+        if (Array.isArray(child)) {
+            child.forEach(function (c) {
+                if (child === undefined || child === null) {
+                    throw "child array for tag [" + tag + "] is " + child + "\n" + e.outerHTML;
+                }
+                if (c === undefined || c === null) {
+                    throw "child for tag [" + tag + "] is " + c + "\n" + e.outerHTML;
+                }
+                if (typeof c === "string") {
+                    c = document.createTextNode(c);
+                }
+                e.appendChild(c);
+            });
+        }
+        else if (child === undefined || child === null) {
+            throw "child for tag [" + tag + "] is " + child + "\n" + e.outerHTML;
+            // debugger;
+            // child = document.createTextNode("NULL!");
+        }
+        else {
+            if (!child.nodeType) {
+                child = document.createTextNode(child.toString());
+            }
+            e.appendChild(child);
+        }
+    };
+    var arguments_1 = arguments;
+    for (var i = 2; i < arguments.length; i++) {
+        _loop_1(i);
+    }
+    return e;
+}
+var style;
+(function (style) {
+    function setTheme(theme) {
+        wireEmoji(theme);
+        switch (theme) {
+            case "auto":
+                var t = "light";
+                if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
+                    t = "dark";
+                }
+                setTheme(t);
+                fetch("/profile/theme/" + t).then(function (r) { return r.text(); }).then(function () {
+                    // console.log(`Set theme to [${t}]`);
+                });
+                break;
+            case "light":
+                document.documentElement.classList.remove("uk-light");
+                document.body.classList.remove("uk-light");
+                document.documentElement.classList.add("uk-dark");
+                document.body.classList.add("uk-dark");
+                break;
+            case "dark":
+                document.documentElement.classList.add("uk-light");
+                document.body.classList.add("uk-light");
+                document.documentElement.classList.remove("uk-dark");
+                document.body.classList.remove("uk-dark");
+                break;
+            default:
+                console.warn("invalid theme");
+                break;
+        }
+    }
+    style.setTheme = setTheme;
+    style.linkColor = "";
+    function themeLinks(color) {
+        style.linkColor = color + "-fg";
+        dom.els(".theme").forEach(function (el) {
+            el.classList.add(style.linkColor);
+        });
+    }
+    style.themeLinks = themeLinks;
+    function wireEmoji(t) {
+        if (typeof EmojiButton === "undefined") {
+            dom.els(".picker-toggle").forEach(function (el) { return dom.setDisplay(el, false); });
+            return;
+        }
+        var opts = { position: "bottom-end", theme: t, zIndex: 1021 };
+        dom.els(".textarea-emoji").forEach(function (el) {
+            var toggle = dom.req(".picker-toggle", el);
+            toggle.addEventListener("click", function () {
+                var textarea = dom.req(".uk-textarea", el);
+                var picker = new EmojiButton(opts);
+                picker.on("emoji", function (emoji) {
+                    drop.onEmojiPicked();
+                    dom.insertAtCaret(textarea, emoji);
+                });
+                picker.togglePicker(toggle);
+            }, false);
+        });
+    }
+})(style || (style = {}));
+var drop;
+(function (drop) {
+    function wire() {
+        dom.els(".drop").forEach(function (el) {
+            el.addEventListener("show", onDropOpen);
+            el.addEventListener("beforehide", onDropBeforeHide);
+            el.addEventListener("hide", onDropHide);
+        });
+    }
+    drop.wire = wire;
+    function onDropOpen(e) {
+        if (!e.target) {
+            return;
+        }
+        var el = e.target;
+        var key = el.dataset["key"] || "";
+        var t = el.dataset["t"] || "";
+        var f = events.getOpenEvent(key);
+        if (f) {
+            f(t);
+        }
+        else {
+            console.warn("no drop open handler registered for [" + key + "]");
+        }
+    }
+    function onDropHide(e) {
+        if (!e.target) {
+            return;
+        }
+        var el = e.target;
+        if (el.classList.contains("uk-open")) {
+            var key = el.dataset["key"] || "";
+            var t = el.dataset["t"] || "";
+            var f = events.getCloseEvent(key);
+            if (f) {
+                f(t);
+            }
+        }
+    }
+    var emojiPicked = false;
+    function onEmojiPicked() {
+        emojiPicked = true;
+        setTimeout(function () { return (emojiPicked = false); }, 200);
+    }
+    drop.onEmojiPicked = onEmojiPicked;
+    function onDropBeforeHide(e) {
+        if (emojiPicked) {
+            e.preventDefault();
+        }
+    }
+})(drop || (drop = {}));
+var events;
+(function (events) {
+    var openEvents;
+    var closeEvents;
+    function register(key, o, c) {
+        if (!openEvents) {
+            openEvents = new map.Map();
+        }
+        if (!closeEvents) {
+            closeEvents = new map.Map();
+        }
+        if (!o) {
+            o = function () { };
+        }
+        openEvents.set(key, o);
+        if (c) {
+            closeEvents.set(key, c);
+        }
+    }
+    events.register = register;
+    function getOpenEvent(key) {
+        return openEvents.get(key);
+    }
+    events.getOpenEvent = getOpenEvent;
+    function getCloseEvent(key) {
+        return closeEvents.get(key);
+    }
+    events.getCloseEvent = getCloseEvent;
+})(events || (events = {}));
+var flash;
+(function (flash) {
+    function wire() {
+        setTimeout(fadeOut, 4000);
+    }
+    flash.wire = wire;
+    function fadeOut() {
+        var matched = false;
+        dom.els(".alert-top").forEach(function (el) {
+            matched = true;
+            el.classList.add("uk-animation-fade", "uk-animation-reverse");
+        });
+        if (matched) {
+            setTimeout(remove, 1000);
+        }
+    }
+    function remove() {
+        dom.els(".alert-top").forEach(function (el) {
+            el.remove();
+        });
+    }
+})(flash || (flash = {}));
+var modal;
+(function (modal) {
+    var activeParam;
+    function wire() {
+        dom.els(".modal").forEach(function (el) {
+            el.addEventListener("show", onModalOpen);
+            el.addEventListener("hide", onModalHide);
+        });
+    }
+    modal.wire = wire;
+    function open(key, param) {
+        activeParam = param;
+        var m = notify.modal("#modal-" + key);
+        m.show();
+        return false;
+    }
+    modal.open = open;
+    function openSoon(key) {
+        setTimeout(function () { return open(key); }, 0);
+    }
+    modal.openSoon = openSoon;
+    function hide(key) {
+        var m = notify.modal("#modal-" + key);
+        var el = m.$el;
+        if (el.classList.contains("uk-open")) {
+            m.hide();
+        }
+    }
+    modal.hide = hide;
+    function onModalOpen(e) {
+        if (!e.target) {
+            return;
+        }
+        var el = e.target;
+        if (el.id.indexOf("modal") !== 0) {
+            return;
+        }
+        var key = el.id.substr("modal-".length);
+        var f = events.getOpenEvent(key);
+        if (f) {
+            f(activeParam);
+        }
+        else {
+            console.warn("no modal open handler registered for [" + key + "]");
+        }
+        activeParam = undefined;
+    }
+    function onModalHide(e) {
+        if (!e.target) {
+            return;
+        }
+        var el = e.target;
+        if (el.classList.contains("uk-open")) {
+            var key = el.id.substr("modal-".length);
+            var f = events.getCloseEvent(key);
+            if (f) {
+                f(activeParam);
+            }
+            activeParam = undefined;
+        }
+    }
+})(modal || (modal = {}));
+var tags;
+(function (tags) {
+    function wire() {
+        dom.els(".tag-editor").forEach(function (el) {
+            el.addEventListener("moved", onTagEditorUpdate);
+            el.addEventListener("added", onTagEditorUpdate);
+            el.addEventListener("removed", onTagEditorUpdate);
+        });
+    }
+    tags.wire = wire;
+    function removeTag(el) {
+        var itemEl = el.parentElement;
+        var editorEl = itemEl.parentElement;
+        itemEl.remove();
+        updateEditor(editorEl);
+    }
+    tags.removeTag = removeTag;
+    function addTag(el) {
+        var editorEl = el.parentElement;
+        if (!editorEl) {
+            return;
+        }
+        var itemEl = tags.renderItem();
+        editorEl.insertBefore(itemEl, dom.req(".add-item", editorEl));
+        editTag(itemEl);
+    }
+    tags.addTag = addTag;
+    function editTag(el) {
+        var valueEl = dom.req(".value", el);
+        var editorEl = dom.req(".editor", el);
+        dom.setDisplay(valueEl, false);
+        dom.setDisplay(editorEl, true);
+        var input = tags.renderInput(valueEl.innerText);
+        input.onblur = function () {
+            valueEl.innerText = input.value;
+            dom.setDisplay(valueEl, true);
+            dom.setDisplay(editorEl, false);
+            updateEditor(el.parentElement);
+        };
+        input.onkeypress = function (e) {
+            if (e.key === "Enter") {
+                input.blur();
+                return false;
+            }
+            return true;
+        };
+        dom.setContent(editorEl, input);
+        input.focus();
+    }
+    tags.editTag = editTag;
+    function onTagEditorUpdate(e) {
+        if (!e.target) {
+            console.warn("no event target");
+            return;
+        }
+        var el = e.target;
+        updateEditor(el);
+    }
+    function updateEditor(el) {
+        var key = el.dataset["key"] || "";
+        var f = events.getOpenEvent(key);
+        if (f) {
+            f();
+        }
+        else {
+            console.warn("no tag open handler registered for [" + key + "]");
+        }
+        var ret = dom.els(".item", el).map(function (e) { return e.innerText; });
+        dom.setValue("#model-" + key + "-input", ret.join(","));
+    }
+})(tags || (tags = {}));
+var tags;
+(function (tags) {
+    function renderInput(v) {
+        return JSX("input", { type: "text", class: "uk-input", value: v });
+    }
+    tags.renderInput = renderInput;
+    function renderItem() {
+        return JSX("span", { class: "item" },
+            JSX("span", { class: "value", onclick: "tags.editTag(this.parentElement);" }),
+            JSX("span", { class: "editor" }),
+            JSX("span", { class: "close", "data-uk-icon": "icon: close; ratio: 0.6;", onclick: "tags.removeTag(this);" }));
+    }
+    tags.renderItem = renderItem;
+    function renderTagsView(a) {
+        return JSX("div", { class: "tag-view" },
+            a.map(function (s) { return JSX("span", { class: "item" }, s); }),
+            JSX("div", { class: "clear" }));
+    }
+    tags.renderTagsView = renderTagsView;
+})(tags || (tags = {}));
+var socket;
+(function (socket) {
+    function initBypass() {
+        socket.bypass = true;
+        socket.connected = true;
+        nav.enabled = false;
+    }
+    socket.initBypass = initBypass;
+    function bypassSend(msg) {
+        if (socket.debug) {
+            console.debug("out", msg);
+        }
+        if (npn_handler) {
+            npn_handler(JSON.stringify(msg, null, 2));
+        }
+        else {
+            console.warn("no bypass handler configured");
+        }
+    }
+    socket.bypassSend = bypassSend;
+})(socket || (socket = {}));
+var socket;
+(function (socket) {
+    socket.debug = true;
+    socket.appUnloading = false;
+    socket.currentService = "";
+    socket.currentID = "";
+    socket.bypass = false;
+    function setAppUnloading() {
+        socket.appUnloading = true;
+    }
+    socket.setAppUnloading = setAppUnloading;
+    function send(msg) {
+        if (socket.bypass) {
+            socket.bypassSend(msg);
+        }
+        else {
+            socket.socketSend(msg);
+        }
+    }
+    socket.send = send;
+    function recv(msg) {
+        if (socket.debug) {
+            console.debug("in", msg);
+        }
+        switch (msg.svc) {
+            case services.system.key:
+                system.onSystemMessage(msg.cmd, msg.param);
+                break;
+            case services.collection.key:
+                collection.onCollectionMessage(msg.cmd, msg.param);
+                break;
+            case services.request.key:
+                request.onRequestMessage(msg.cmd, msg.param);
+                break;
+            default:
+                console.warn("unhandled message for service [" + msg.svc + "]");
+        }
+    }
+    socket.recv = recv;
+})(socket || (socket = {}));
+var socket;
+(function (socket) {
+    var sock;
+    socket.connected = false;
+    var pauseSeconds = 0;
+    var pendingMessages = [];
+    function socketUrl() {
+        var l = document.location;
+        var protocol = "ws";
+        if (l.protocol === "https:") {
+            protocol = "wss";
+        }
+        return protocol + ("://" + l.host + "/s");
+    }
+    function initSocket() {
+        sock = new WebSocket(socketUrl());
+        sock.onopen = onSocketOpen;
+        sock.onmessage = function (event) { return socket.recv(json.parse(event.data)); };
+        sock.onerror = function (event) { return npn.onError("socket", event.type); };
+        sock.onclose = onSocketClose;
+    }
+    socket.initSocket = initSocket;
+    function socketConnect(svc, id, useBypass) {
+        socket.currentService = svc;
+        socket.currentID = id;
+        socket.connectTime = Date.now();
+        if (useBypass) {
+            socket.initBypass();
+        }
+        else {
+            initSocket();
+        }
+    }
+    socket.socketConnect = socketConnect;
+    function onSocketOpen() {
+        log.info("socket connected");
+        socket.connected = true;
+        pauseSeconds = 1;
+        pendingMessages.forEach(socket.send);
+        pendingMessages = [];
+    }
+    function onSocketClose() {
+        function disconnect() {
+            socket.connected = false;
+            var elapsed = Date.now() - socket.connectTime;
+            if (elapsed < 2000) {
+                pauseSeconds = pauseSeconds * 2;
+                if (socket.debug) {
+                    console.debug("socket closed immediately, reconnecting in " + pauseSeconds + " seconds");
+                }
+                setTimeout(function () {
+                    socketConnect(socket.currentService, socket.currentID);
+                }, pauseSeconds * 1000);
+            }
+            else {
+                log.info("socket closed after [" + elapsed + "ms]");
+                socketConnect(socket.currentService, socket.currentID);
+            }
+        }
+        if (!socket.appUnloading) {
+            disconnect();
+        }
+    }
+    function socketSend(msg) {
+        if (socket.debug) {
+            console.debug("out", msg);
+        }
+        if (socket.connected) {
+            var m = json.str(msg);
+            sock.send(m);
+        }
+        else {
+            pendingMessages.push(msg);
+        }
+    }
+    socket.socketSend = socketSend;
+})(socket || (socket = {}));
+var profile;
+(function (profile) {
+    // noinspection JSUnusedGlobalSymbols
+    function setNavColor(el, c) {
+        dom.setValue("#nav-color", c);
+        var nb = dom.req("#navbar");
+        nb.className = c + "-bg uk-navbar-container uk-navbar";
+        var colors = document.querySelectorAll(".nav_swatch");
+        colors.forEach(function (i) {
+            i.classList.remove("active");
+        });
+        el.classList.add("active");
+    }
+    profile.setNavColor = setNavColor;
+    // noinspection JSUnusedGlobalSymbols
+    function setLinkColor(el, c) {
+        dom.setValue("#link-color", c);
+        var links = dom.els(".profile-link");
+        links.forEach(function (l) {
+            l.classList.forEach(function (x) {
+                if (x.indexOf("-fg") > -1) {
+                    l.classList.remove(x);
+                }
+                l.classList.add(c + "-fg");
+            });
+        });
+        var colors = document.querySelectorAll(".link_swatch");
+        colors.forEach(function (i) {
+            i.classList.remove("active");
+        });
+        el.classList.add("active");
+    }
+    profile.setLinkColor = setLinkColor;
+    function setPicture(p) {
+        dom.setValue("#self-picture-input", p);
+        return false;
+    }
+    profile.setPicture = setPicture;
+})(profile || (profile = {}));
+var arr;
+(function (arr) {
+    function find(a, predicate) {
+        var len = a.length >>> 0;
+        var k = 0;
+        while (k < len) {
+            var kValue = a[k];
+            if (predicate(k, kValue)) {
+                return kValue;
+            }
+            k++;
+        }
+        return undefined;
+    }
+    arr.find = find;
+})(arr || (arr = {}));
+var date;
+(function (date) {
+    function dateToYMD(dt) {
+        var d = dt.getDate();
+        var m = dt.getMonth() + 1;
+        var y = dt.getFullYear();
+        return y + "-" + (m <= 9 ? "0" + m : m) + "-" + (d <= 9 ? "0" + d : d);
+    }
+    date.dateToYMD = dateToYMD;
+    function dateFromYMD(s) {
+        var d = new Date(s);
+        return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
+    }
+    date.dateFromYMD = dateFromYMD;
+    function dow(i) {
+        switch (i) {
+            case 0:
+                return "Sun";
+            case 1:
+                return "Mon";
+            case 2:
+                return "Tue";
+            case 3:
+                return "Wed";
+            case 4:
+                return "Thu";
+            case 5:
+                return "Fri";
+            case 6:
+                return "Sat";
+            default:
+                return "???";
+        }
+    }
+    date.dow = dow;
+    function toDateString(d) {
+        return d.toLocaleDateString();
+    }
+    date.toDateString = toDateString;
+    function toTimeString(d) {
+        return d.toLocaleTimeString().slice(0, 8);
+    }
+    date.toTimeString = toTimeString;
+    function toDateTimeString(d) {
+        return toDateString(d) + " " + toTimeString(d);
+    }
+    date.toDateTimeString = toDateTimeString;
+    var tzOffset = new Date().getTimezoneOffset() * 60000;
+    function utcDate(s) {
+        return new Date(Date.parse(s) + tzOffset);
+    }
+    date.utcDate = utcDate;
+})(date || (date = {}));
+var group;
+(function (group_1) {
+    var Group = /** @class */ (function () {
+        function Group(key) {
+            this.members = [];
+            this.key = key;
+        }
+        return Group;
+    }());
+    group_1.Group = Group;
+    var GroupSet = /** @class */ (function () {
+        function GroupSet() {
+            this.groups = [];
+        }
+        GroupSet.prototype.findOrInsert = function (key) {
+            var ret = arr.find(this.groups, function (_, x) { return x.key === key; });
+            if (ret) {
+                return ret;
+            }
+            var n = new Group(key);
+            this.groups.push(n);
+            return n;
+        };
+        return GroupSet;
+    }());
+    group_1.GroupSet = GroupSet;
+    function groupBy(list, func) {
+        var res = new GroupSet();
+        if (list) {
+            list.forEach(function (o) {
+                var group = res.findOrInsert(func(o));
+                group.members.push(o);
+            });
+        }
+        return res;
+    }
+    group_1.groupBy = groupBy;
+    function findGroup(groups, key) {
+        for (var _i = 0, groups_1 = groups; _i < groups_1.length; _i++) {
+            var g = groups_1[_i];
+            if (g.key === key) {
+                return g.members;
+            }
+        }
+        return [];
+    }
+    group_1.findGroup = findGroup;
+    function flatten(a) {
+        var ret = [];
+        a.forEach(function (v) { return ret.push.apply(ret, v); });
+        return ret;
+    }
+    group_1.flatten = flatten;
+    function sort(a, matchFn) {
+        if (!a) {
+            return [];
+        }
+        a.sort(function (l, r) {
+            var lv = matchFn(l);
+            var rv = matchFn(r);
+            if (lv > rv) {
+                return 1;
+            }
+            if (lv < rv) {
+                return -1;
+            }
+            return 0;
+        });
+        return a;
+    }
+    group_1.sort = sort;
+    function update(a, v, matchFn) {
+        if (!a) {
+            return [v];
+        }
+        var matched = false;
+        var key = matchFn(v);
+        for (var idx in a) {
+            var c = a[idx];
+            if (matchFn(c) == key) {
+                matched = true;
+                a[idx] = v;
+            }
+        }
+        if (!matched) {
+            a.push(v);
+        }
+        return a;
+    }
+    group_1.update = update;
+    function updateAndSort(a, v, matchFn) {
+        return sort(update(a, v, matchFn), matchFn);
+    }
+    group_1.updateAndSort = updateAndSort;
+})(group || (group = {}));
+var json;
+(function (json) {
+    function str(x) {
+        if (x === undefined) {
+            return "null";
+        }
+        return JSON.stringify(x, null, 2);
+    }
+    json.str = str;
+    function parse(s) {
+        return JSON.parse(s);
+    }
+    json.parse = parse;
+})(json || (json = {}));
+var log;
+(function (log) {
+    var started = 0;
+    var content;
+    var list;
+    function init() {
+        started = Date.now();
+        l("debug", "npn started");
+    }
+    log.init = init;
+    function info(msg) {
+        l("info", msg);
+    }
+    log.info = info;
+    function l(level, msg) {
+        if (started === 0) {
+            console.warn("call `log.init()` before attempting to log");
+            return;
+        }
+        var n = Date.now() - started;
+        var el = JSX("li", { class: color(level) },
+            JSX("div", { class: "right" },
+                n,
+                "ms"),
+            msg);
+        if (!list) {
+            list = dom.opt("#log-list");
+            if (!list) {
+                console.warn(level + ": " + msg);
+                return;
+            }
+        }
+        list.appendChild(el);
+        if (!content) {
+            content = dom.req("#log-content");
+        }
+        content.scrollTo(0, content.scrollHeight);
+    }
+    log.l = l;
+    function toggle() {
+        var wsc = dom.req("#workspace-content");
+        var lp = dom.req("#log-container");
+        var curr = (lp.style.display !== "") && (lp.style.display !== "none");
+        if (curr) {
+            wsc.classList.remove("log-visible");
+        }
+        else {
+            wsc.classList.add("log-visible");
+        }
+        dom.setDisplay(lp, !curr);
+        if (!content) {
+            content = dom.req("#log-content");
+        }
+        content.scrollTo(0, content.scrollHeight);
+    }
+    log.toggle = toggle;
+    function color(level) {
+        switch (level) {
+            case "debug":
+                return "grey-fg";
+            case "info":
+                return "";
+            case "warn":
+                return "yellow-fg";
+            case "error":
+                return "red-fg";
+            default:
+                return "";
+        }
+    }
+})(log || (log = {}));
+var map;
+(function (map) {
+    var Map = /** @class */ (function () {
+        function Map() {
+            this.storage = Object.create(null);
+        }
+        Map.prototype.get = function (key) {
+            return this.storage[key];
+        };
+        ;
+        Map.prototype.set = function (key, v) {
+            return this.storage[key] = v;
+        };
+        ;
+        return Map;
+    }());
+    map.Map = Map;
+})(map || (map = {}));
+var nav;
+(function (nav) {
+    nav.enabled = true;
+    var handler = function (p) {
+        console.warn("default nav handler called: " + p);
+    };
+    function init(f) {
+        handler = f;
+        window.onpopstate = function (event) {
+            if (event.state) {
+                var s = event.state;
+                handler(s);
+            }
+            else {
+                handler("");
+            }
+        };
+        var path = location.pathname;
+        navigate(path);
+    }
+    nav.init = init;
+    function pop() {
+        var p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
+        if (p === '/c') {
+            p = "";
+        }
+        navigate(p);
+    }
+    nav.pop = pop;
+    function navigate(path) {
+        if (!nav.enabled) {
+            handler(path);
+            return "";
+        }
+        if (str.startsWith(path, "text/html;")) {
+            return "";
+        }
+        if (str.startsWith(path, "/")) {
+            path = path.substr(1);
+        }
+        var locPath = location.pathname;
+        if (str.startsWith(locPath, "/")) {
+            locPath = locPath.substr(1);
+        }
+        if (locPath !== path) {
+            var final = path;
+            history.pushState(final, "", "/" + final);
+        }
+        handler(path);
+    }
+    nav.navigate = navigate;
+    function navActiveRequest() {
+        navigate("/c/" + collection.cache.active + "/" + request.cache.active);
+    }
+    nav.navActiveRequest = navActiveRequest;
+    function link(o) {
+        var href = o.path;
+        if (!str.startsWith(href, "/")) {
+            href = "/" + href;
+        }
+        if (o.cls) {
+            o.cls = " " + o.cls.trim();
+        }
+        else {
+            o.cls = "";
+        }
+        var i = JSX("span", null);
+        if (o.icon) {
+            i = JSX("span", { class: "nav-icon", "data-uk-icon": "icon: " + o.icon });
+        }
+        if (o.onclk) {
+            if (!str.endsWith(o.onclk, ";")) {
+                o.onclk += ";";
+            }
+        }
+        else {
+            o.onclk = "";
+        }
+        if (!o.isButton) {
+            o.cls = style.linkColor + o.cls;
+        }
+        return JSX("a", { class: o.cls, href: href, onclick: o.onclk + "nav.navigate('" + o.path + "', '" + o.title + "');return false;" },
+            i,
+            o.title);
+    }
+    nav.link = link;
+})(nav || (nav = {}));
+var notify;
+(function (notify_1) {
+    function notify(msg, status) {
+        UIkit.notification(msg, { status: status ? "success" : "danger", pos: "top-right" });
+    }
+    notify_1.notify = notify;
+    function confirm(msg, f) {
+        UIkit.modal.confirm(msg).then(f);
+    }
+    notify_1.confirm = confirm;
+    function modal(key) {
+        var m = UIkit.modal(key);
+        if (!m) {
+            console.warn("no modal available with key [" + key + "]");
+        }
+        return m;
+    }
+    notify_1.modal = modal;
+})(notify || (notify = {}));
+var str;
+(function (str_1) {
+    function startsWith(str, search, pos) {
+        pos = (pos && pos > 0) ? pos | 0 : 0;
+        return str.substring(pos, pos + search.length) === search;
+    }
+    str_1.startsWith = startsWith;
+    function endsWith(str, search, pos) {
+        pos = (pos && pos < str.length) ? pos : str.length;
+        return str.substring(pos - search.length, pos) === search;
+    }
+    str_1.endsWith = endsWith;
+    function trimPrefix(s, prefix) {
+        if (startsWith(s, prefix)) {
+            return s.slice(prefix.length);
+        }
+        else {
+            return s;
+        }
+    }
+    str_1.trimPrefix = trimPrefix;
+    function trimSuffix(s, suffix) {
+        if (endsWith(s, suffix)) {
+            return s.substring(0, s.lastIndexOf(suffix));
+        }
+        else {
+            return s;
+        }
+    }
+    str_1.trimSuffix = trimSuffix;
+})(str || (str = {}));
 var command;
 (function (command) {
     command.client = {
@@ -24,12 +1162,12 @@ var command;
 var npn;
 (function (npn) {
     function onError(svc, err) {
-        console.error(`${svc}: ${err}`);
-        const idx = err.lastIndexOf(":");
+        console.error(svc + ": " + err);
+        var idx = err.lastIndexOf(":");
         if (idx > -1) {
             err = err.substr(idx + 1);
         }
-        notify.notify(`${svc} error: ${err}`, false);
+        notify.notify(svc + " error: " + err, false);
     }
     npn.onError = onError;
     function init(svc, id) {
@@ -39,7 +1177,7 @@ var npn;
             return;
         }
         log.init();
-        window.onbeforeunload = () => {
+        window.onbeforeunload = function () {
             socket.setAppUnloading();
         };
         nav.init(routing.route);
@@ -47,12 +1185,13 @@ var npn;
     }
     npn.init = init;
     function debug() {
-        const dump = (k, v = "") => {
-            console.warn(`${k}: ${v}`);
+        var dump = function (k, v) {
+            if (v === void 0) { v = ""; }
+            console.warn(k + ": " + v);
         };
         dump("Active Collection", collection.cache.active);
         dump("Active Request", request.cache.active);
-        dump("Active Action", `${request.cache.action} [${request.cache.extra}]`);
+        dump("Active Action", request.cache.action + " [" + request.cache.extra + "]");
     }
     npn.debug = debug;
     function testbed() {
@@ -71,17 +1210,17 @@ var npn;
 var routing;
 (function (routing) {
     function route(p) {
-        let parts = p.split("/");
-        parts = parts.filter(x => x.length > 0);
+        var parts = p.split("/");
+        parts = parts.filter(function (x) { return x.length > 0; });
         console.debug("nav: " + parts.join(" -> "));
-        const svc = (parts.length > 0) ? parts[0] : "c";
+        var svc = (parts.length > 0) ? parts[0] : "c";
         switch (svc) {
             case "c":
-                const coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
-                const req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
-                const act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
-                const extra = (parts.length > 4) ? parts.slice(4) : [];
-                const currColl = collection.cache.active;
+                var coll = (parts.length > 1 && parts[1].length > 0) ? parts[1] : undefined;
+                var req = (parts.length > 2 && parts[2].length > 0) ? parts[2] : undefined;
+                var act = (parts.length > 3 && parts[3].length > 0) ? parts[3] : undefined;
+                var extra = (parts.length > 4) ? parts.slice(4) : [];
+                var currColl = collection.cache.active;
                 collection.cache.setActiveCollection(coll);
                 if (coll !== currColl && coll) {
                     socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
@@ -101,11 +1240,11 @@ var services;
     services.system = { key: "system", title: "System", plural: "systems", icon: "close" };
     services.collection = { key: "collection", title: "Collection", plural: "Collections", icon: "folder" };
     services.request = { key: "request", title: "Request", plural: "Requests", icon: "file-text" };
-    const allServices = [services.system, services.collection];
+    var allServices = [services.system, services.collection];
     function fromKey(key) {
-        const ret = allServices.find(s => s.key === key);
+        var ret = arr.find(allServices, function (_, s) { return s.key === key; });
         if (!ret) {
-            throw `invalid service [${key}]`;
+            throw "invalid service [" + key + "]";
         }
         return ret;
     }
@@ -121,7 +1260,7 @@ var rbody;
             case "json":
                 return renderJSON(b.config);
             case "html":
-                const baseURL = request.baseURL(url);
+                var baseURL = request.baseURL(url);
                 return renderHTML(b.config, baseURL);
             case "image":
                 return renderImage(b.config);
@@ -158,7 +1297,7 @@ var rbody;
             JSX("pre", null, json.str(j.msg)));
     }
     function renderImage(i) {
-        const dataURL = `data:${i.type};base64,${i.content}`;
+        var dataURL = "data:" + i.type + ";base64," + i.content;
         return JSX("img", { alt: "response image", src: dataURL });
     }
     function renderRaw(r) {
@@ -175,15 +1314,15 @@ var rbody;
 var rbody;
 (function (rbody) {
     function renderHTMLPreview(el) {
-        const container = editorContent(el, true);
-        const iframe = document.createElement("iframe");
+        var container = editorContent(el, true);
+        var iframe = document.createElement("iframe");
         iframe.style.width = "100%";
         iframe.style.minHeight = "720px";
-        const html = previewHTMLFor(container[1], container[0]);
+        var html = previewHTMLFor(container[1], container[0]);
         // iframe.src = "data:text/html;charset=utf-8," + encodeURI(html);
         container[2].innerHTML = "";
         container[2].appendChild(iframe);
-        const idoc = iframe.contentDocument || iframe.contentWindow.document;
+        var idoc = iframe.contentDocument || iframe.contentWindow.document;
         idoc.open();
         idoc.write(html);
         idoc.close();
@@ -194,15 +1333,15 @@ var rbody;
     }
     rbody.renderHTMLText = renderHTMLText;
     function editorContent(el, preview) {
-        const container = el.parentElement.parentElement;
+        var container = el.parentElement.parentElement;
         if (!container.classList.contains("html-body")) {
             throw "container is not class [html-body]";
         }
-        const baseURLEl = dom.req(".base-url", container);
-        const tLink = dom.req(".text-link", container);
-        const tContent = dom.req(".text-content", container);
-        const pLink = dom.req(".preview-link", container);
-        const pContent = dom.req(".preview-content", container);
+        var baseURLEl = dom.req(".base-url", container);
+        var tLink = dom.req(".text-link", container);
+        var tContent = dom.req(".text-content", container);
+        var pLink = dom.req(".preview-link", container);
+        var pContent = dom.req(".preview-content", container);
         dom.setDisplay(tLink, preview);
         dom.setDisplay(tContent, !preview);
         dom.setDisplay(pLink, !preview);
@@ -210,12 +1349,12 @@ var rbody;
         return [baseURLEl.innerText, tContent, pContent];
     }
     function previewHTMLFor(e, baseURL) {
-        let ret = e.innerText;
-        const headIdx = ret.indexOf("<head");
+        var ret = e.innerText;
+        var headIdx = ret.indexOf("<head");
         if (headIdx > -1) {
-            const headEnd = ret.indexOf(">", headIdx);
+            var headEnd = ret.indexOf(">", headIdx);
             if (headEnd > -1) {
-                const base = `<base href="${baseURL}" target="_blank">`;
+                var base = "<base href=\"" + baseURL + "\" target=\"_blank\">";
                 ret = ret.substr(0, headEnd + 1) + base + ret.substr(headEnd + 1);
             }
         }
@@ -243,12 +1382,12 @@ var rbody;
 var call;
 (function (call) {
     function prepare(coll, r) {
-        const param = { coll: coll, req: r.key, proto: r.prototype };
+        var param = { coll: coll, req: r.key, proto: r.prototype };
         socket.send({ svc: services.request.key, cmd: command.client.call, param: param });
     }
     call.prepare = prepare;
     function setResult(result) {
-        const container = dom.req(`#${result.collection}--${result.request}-call`);
+        var container = dom.req("#" + result.collection + "--" + result.request + "-call");
         dom.setContent(container, call.renderResult(result));
     }
     call.setResult = setResult;
@@ -257,11 +1396,11 @@ var call;
 (function (call) {
     function renderResult(r) {
         var _a, _b, _c;
-        let rspDetail = JSX("div", null, "no result");
-        const rsp = r.response;
+        var rspDetail = JSX("div", null, "no result");
+        var rsp = r.response;
         if (rsp) {
-            const ct = rsp.contentType || "";
-            const cl = (rsp.contentLength && rsp.contentLength > -1) ? `(${rsp.contentLength} bytes)` : ((rsp.body && rsp.body.length > -1) ? `(${rsp.body.length} bytes)` : "");
+            var ct = rsp.contentType || "";
+            var cl = (rsp.contentLength && rsp.contentLength > -1) ? "(" + rsp.contentLength + " bytes)" : ((rsp.body && rsp.body.length > -1) ? "(" + rsp.body.length + " bytes)" : "");
             rspDetail = JSX("div", null,
                 rsp.proto,
                 " ",
@@ -304,32 +1443,33 @@ var call;
         ];
     }
     call.renderResult = renderResult;
-    function renderHeaders(title, headers = []) {
+    function renderHeaders(title, headers) {
+        if (headers === void 0) { headers = []; }
         if (headers.length === 0) {
             return section(title, "No headers");
         }
         return JSX("div", { class: "uk-overflow-auto" },
             JSX("h4", null, title),
             JSX("table", { class: "uk-table uk-table-divider uk-text-left uk-table-small uk-table-justify" },
-                JSX("tbody", null, headers.map(h => JSX("tr", { title: h.desc },
+                JSX("tbody", null, headers.map(function (h) { return JSX("tr", { title: h.desc },
                     JSX("td", { class: "uk-text-nowrap" }, h.k),
-                    JSX("td", { class: "uk-text-nowrap" }, h.v))))));
+                    JSX("td", { class: "uk-text-nowrap" }, h.v)); }))));
     }
     function renderTiming(t) {
         if (!t) {
             return JSX("div", null, "No timing");
         }
-        const sections = call.timingSections(t);
+        var sections = call.timingSections(t);
         return JSX("div", { class: "timing-panel" },
             JSX("div", { class: "result-timing-graph" },
                 JSX("object", { type: "image/svg+xml", style: "width: 100%; height: " + (sections.length * 24) + "px", data: call.timingGraph(sections) }, "SVG not supported")),
             JSX("hr", null),
-            sections.map(sc => JSX("div", null,
+            sections.map(function (sc) { return JSX("div", null,
                 sc.key,
                 ": ",
                 sc.start,
                 " - ",
-                sc.end)));
+                sc.end); }));
     }
     function section(k, v) {
         if (!v) {
@@ -344,15 +1484,15 @@ var call;
 var call;
 (function (call) {
     function timingSections(t) {
-        const ret = [];
-        const add = (k, g, s, e) => {
+        var ret = [];
+        var add = function (k, g, s, e) {
             if (s && e) {
                 ret.push({ key: k, group: g, start: s, end: e });
             }
         };
         add("dns", "connect", t.dnsStart, t.dnsEnd);
         add("connect", "connect", t.connectStart, t.connectEnd);
-        let cc = t.connectEnd;
+        var cc = t.connectEnd;
         if ((t.tlsEnd || 0) > 0) {
             cc = t.tlsEnd || 0;
             add("tls", "connect", t.tlsStart || 0, cc);
@@ -369,8 +1509,9 @@ var call;
     call.timingSections = timingSections;
     function timingGraph(ts) {
         var _a;
-        const ret = [];
-        for (const t of ts) {
+        var ret = [];
+        for (var _i = 0, ts_1 = ts; _i < ts_1.length; _i++) {
+            var t = ts_1[_i];
             if (t.group.length > 0) {
                 ret.push(encodeURIComponent(t.key + ".g") + '=' + encodeURIComponent(t.group));
             }
@@ -384,42 +1525,43 @@ var call;
 })(call || (call = {}));
 var collection;
 (function (collection_1) {
-    class Cache {
-        constructor() {
+    var Cache = /** @class */ (function () {
+        function Cache() {
             this.collections = [];
         }
-        updateCollection(collection) {
-            this.collections = group.updateAndSort(this.collections, collection, t => t.key);
+        Cache.prototype.updateCollection = function (collection) {
+            this.collections = group.updateAndSort(this.collections, collection, function (t) { return t.key; });
             collection_1.renderCollections(this.collections);
-        }
-        setActiveCollection(key) {
+        };
+        Cache.prototype.setActiveCollection = function (key) {
             if (this.active !== key) {
                 this.active = key;
                 collection_1.renderCollections(this.collections);
             }
-        }
-    }
+        };
+        return Cache;
+    }());
     collection_1.cache = new Cache();
 })(collection || (collection = {}));
 var collection;
 (function (collection) {
     function renderCollections(cs) {
-        return dom.els(".collection-list").forEach(el => {
-            dom.setContent(el, cs.map(c => renderCollectionLink(c)));
+        return dom.els(".collection-list").forEach(function (el) {
+            dom.setContent(el, cs.map(function (c) { return renderCollectionLink(c); }));
         });
     }
     collection.renderCollections = renderCollections;
     function renderCollectionLink(c) {
-        let title = c.title;
+        var title = c.title;
         if (!title || title.length === 0) {
             title = c.key;
         }
-        let link = nav.link({ path: "/c/" + c.key, title: title, icon: "folder" });
+        var link = nav.link({ path: "/c/" + c.key, title: title, icon: "folder" });
         if (collection.cache.active === c.key) {
-            const activeReq = request.cache.active;
-            const summs = request.cache.summaries.get(c.key);
+            var activeReq = request.cache.active;
+            var summs = request.cache.summaries.get(c.key);
             if (summs) {
-                let collLink;
+                var collLink = void 0;
                 if (activeReq) {
                     collLink = nav.link({ path: "/c/" + c.key, title: title, icon: "album" });
                 }
@@ -428,8 +1570,8 @@ var collection;
                 }
                 link = JSX("div", null,
                     collLink,
-                    summs.map(s => {
-                        const l = nav.link({ path: "/c/" + c.key + "/" + s.key, title: (s.title && s.title.length > 0) ? s.title : s.key, icon: "link" });
+                    summs.map(function (s) {
+                        var l = nav.link({ path: "/c/" + c.key + "/" + s.key, title: (s.title && s.title.length > 0) ? s.title : s.key, icon: "link" });
                         return JSX("div", { class: "uk-margin-small-left" }, request.cache.active === s.key ? JSX("strong", null, l) : l);
                     }));
             }
@@ -437,7 +1579,7 @@ var collection;
         return JSX("div", { class: "nav-item collection-link collection-link-" + c.key }, link);
     }
     function renderCollection(coll, requests) {
-        const cn = coll.title ? coll.title : coll.key;
+        var cn = coll.title ? coll.title : coll.key;
         return JSX("div", null,
             JSX("div", { class: "uk-card uk-card-body uk-card-default" },
                 JSX("div", { class: "right" },
@@ -456,22 +1598,22 @@ var collection;
     }
     collection.renderCollection = renderCollection;
     function addRequestURL() {
-        const input = dom.req("#coll-request-add-url");
-        const url = input.value.trim();
+        var input = dom.req("#coll-request-add-url");
+        var url = input.value.trim();
         if (url && url.length > 0) {
             input.value = "";
-            const param = { "coll": collection.cache.active, "url": url };
+            var param = { "coll": collection.cache.active, "url": url };
             socket.send({ svc: services.collection.key, cmd: command.client.addURL, param: param });
             log.info("adding request [" + url + "]");
         }
     }
     collection.addRequestURL = addRequestURL;
     function renderRequests(coll, rs) {
-        rs = group.sort(rs, x => x.order);
-        return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(r => renderRequestLink(coll, r)));
+        rs = group.sort(rs, function (x) { return x.order; });
+        return JSX("ul", { class: "uk-list uk-list-divider" }, rs.map(function (r) { return renderRequestLink(coll, r); }));
     }
     function renderRequestLink(coll, r) {
-        let title = r.title;
+        var title = r.title;
         if (!title || r.title.length === 0) {
             title = r.key;
         }
@@ -486,19 +1628,19 @@ var collection;
     function onCollectionMessage(cmd, param) {
         switch (cmd) {
             case command.server.collections:
-                collection.cache.collections = group.sort(param, c => c.key);
-                log.info(`processing [${collection.cache.collections.length}] collections`);
+                collection.cache.collections = group.sort(param, function (c) { return c.key; });
+                log.info("processing [" + collection.cache.collections.length + "] collections");
                 collection.renderCollections(collection.cache.collections);
                 break;
             case command.server.collectionDetail:
-                const d = param;
-                log.info(`processing [${d.requests.length}] requests for collection [${d.collection.key}]`);
+                var d = param;
+                log.info("processing [" + d.requests.length + "] requests for collection [" + d.collection.key + "]");
                 collection.cache.updateCollection(d.collection);
                 request.cache.setCollectionRequests(d.collection, d.requests);
                 collection.renderCollections(collection.cache.collections);
                 break;
             default:
-                console.warn(`unhandled collection command [${cmd}]`);
+                console.warn("unhandled collection command [" + cmd + "]");
         }
     }
     collection.onCollectionMessage = onCollectionMessage;
@@ -537,19 +1679,27 @@ var header;
         snch("Set-Cookie", "Send cookies from the server to the user-agent.", false, true),
         snch("User-Agent", "Contains a characteristic string that allows the network protocol peers to identify the application", true, false)
     ];
-    header.commonHeadersByName = new Map();
-    for (const ch of header.commonHeaders) {
-        header.commonHeadersByName.set(ch.key, ch);
+    var commonHeadersByName;
+    function getCommonHeaderByName(key) {
+        if (!commonHeadersByName) {
+            commonHeadersByName = new map.Map();
+            for (var _i = 0, commonHeaders_1 = header.commonHeaders; _i < commonHeaders_1.length; _i++) {
+                var ch = commonHeaders_1[_i];
+                commonHeadersByName.set(ch.key, ch);
+            }
+        }
+        return commonHeadersByName.get(key);
     }
+    header.getCommonHeaderByName = getCommonHeaderByName;
     function dumpCommonHeaders() {
-        const dump = (title, req, rsp) => {
-            let matched = false;
+        var dump = function (title, req, rsp) {
+            var matched = false;
             console.debug("\n::: " + title + " Headers");
-            header.commonHeaders.forEach(ch => {
+            header.commonHeaders.forEach(function (ch) {
                 if (ch.req == req && ch.rsp == rsp) {
                     matched = true;
-                    console.debug(`${ch.key}: ${ch.link}`);
-                    console.debug(`  - ${ch.description}`);
+                    console.debug(ch.key + ": " + ch.link);
+                    console.debug("  - " + ch.description);
                 }
             });
             if (!matched) {
@@ -600,17 +1750,18 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
-    class Cache {
-        constructor() {
-            this.summaries = new Map();
-            this.requests = new Map();
+    var Cache = /** @class */ (function () {
+        function Cache() {
+            this.summaries = new map.Map();
+            this.requests = new map.Map();
             this.extra = [];
         }
-        setCollectionRequests(coll, summs) {
+        Cache.prototype.setCollectionRequests = function (coll, summs) {
             this.summaries.set(coll.key, summs);
             if (coll.key === collection.cache.active) {
                 dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
-                for (let req of summs) {
+                for (var _i = 0, summs_1 = summs; _i < summs_1.length; _i++) {
+                    var req = summs_1[_i];
                     if (this.active === req.key) {
                         request.renderActiveRequest(collection.cache.active);
                         if (this.action) {
@@ -619,8 +1770,8 @@ var request;
                     }
                 }
             }
-        }
-        setActiveRequest(key) {
+        };
+        Cache.prototype.setActiveRequest = function (key) {
             if (!collection.cache.active) {
                 return;
             }
@@ -631,40 +1782,41 @@ var request;
                 }
                 collection.renderCollections(collection.cache.collections);
             }
-        }
-        setActiveAction(act, extra) {
+        };
+        Cache.prototype.setActiveAction = function (act, extra) {
             if (!collection.cache.active) {
                 return;
             }
-            const sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
+            var sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
             if (this.active && (this.action !== act || !sameExtra)) {
                 this.action = act;
                 this.extra = extra;
                 request.renderAction(collection.cache.active, this.active, this.action, this.extra);
             }
-        }
-        updateRequest(r) {
+        };
+        Cache.prototype.updateRequest = function (r) {
             if (!collection.cache.active) {
                 return;
             }
-            const curr = this.requests.get(collection.cache.active);
-            const updated = group.update(curr, r, x => x.key);
+            var curr = this.requests.get(collection.cache.active);
+            var updated = group.update(curr, r, function (x) { return x.key; });
             this.requests.set(collection.cache.active, updated);
-        }
-    }
+        };
+        return Cache;
+    }());
     request.cache = new Cache();
 })(request || (request = {}));
 var request;
 (function (request) {
     function diff(l, r) {
-        const ret = [];
-        const p = (k, lv, rv) => ret.push({ k: k, l: lv, r: rv });
-        const comp = (k, lv, rv) => {
+        var ret = [];
+        var p = function (k, lv, rv) { return ret.push({ k: k, l: lv, r: rv }); };
+        var comp = function (k, lv, rv) {
             if (lv !== rv) {
                 p(k, lv, rv);
             }
         };
-        const checkNull = (k, lv, rv) => {
+        var checkNull = function (k, lv, rv) {
             if (!l) {
                 if (r) {
                     p(k, null, "(defined)");
@@ -683,8 +1835,8 @@ var request;
         comp("key", l.key, r.key);
         comp("title", l.title, r.title);
         comp("description", l.description, r.description);
-        const lp = l.prototype;
-        const rp = r.prototype;
+        var lp = l.prototype;
+        var rp = r.prototype;
         comp("method", lp.method, rp.method);
         comp("protocol", lp.protocol, rp.protocol);
         comp("domain", lp.domain, rp.domain);
@@ -716,8 +1868,8 @@ var request;
             comp("body.type", lp.body.type, rp.body.type);
             comp("body.config", lp.body.config, rp.body.config);
         }
-        const lpo = lp.options;
-        const rpo = rp.options;
+        var lpo = lp.options;
+        var rpo = rp.options;
         if (checkNull("options", lpo, rpo)) {
             return ret;
         }
@@ -745,7 +1897,8 @@ var request;
     }
     request.getActiveRequest = getActiveRequest;
     function getSummary(coll, key) {
-        for (let req of request.cache.summaries.get(coll) || []) {
+        for (var _i = 0, _a = request.cache.summaries.get(coll) || []; _i < _a.length; _i++) {
+            var req = _a[_i];
             if (req.key === key) {
                 return req;
             }
@@ -754,7 +1907,8 @@ var request;
     }
     request.getSummary = getSummary;
     function getRequest(coll, key) {
-        for (let req of request.cache.requests.get(coll) || []) {
+        for (var _i = 0, _a = request.cache.requests.get(coll) || []; _i < _a.length; _i++) {
+            var req = _a[_i];
             if (req.key === key) {
                 return req;
             }
@@ -765,7 +1919,7 @@ var request;
     function onRequestMessage(cmd, param) {
         switch (cmd) {
             case command.server.requestDetail:
-                const req = param;
+                var req = param;
                 request.cache.updateRequest(req);
                 if (request.cache.active === req.key) {
                     request.renderActiveRequest(collection.cache.active);
@@ -774,13 +1928,13 @@ var request;
                 break;
             case command.server.callResult:
                 debugger;
-                const result = param;
+                var result = param;
                 call.setResult(result);
-                const path = `r/` + result.id;
+                var path = "r/" + result.id;
                 // TODO history.replaceState(path, "", "/" + path);
                 break;
             default:
-                console.warn(`unhandled request command [${cmd}]`);
+                console.warn("unhandled request command [" + cmd + "]");
         }
     }
     request.onRequestMessage = onRequestMessage;
@@ -801,25 +1955,23 @@ var request;
 var request;
 (function (request) {
     function newPrototype(protocol, hostname, port, path, qp, fragment, auth) {
-        if (protocol.endsWith(":")) {
+        if (str.endsWith(protocol, ":")) {
             protocol = protocol.substr(0, protocol.length - 1);
         }
-        if (fragment.startsWith("#")) {
+        if (str.startsWith(fragment, "#")) {
             fragment = fragment.substr(1);
         }
         return { method: "get", protocol: protocol, domain: hostname, port: port, path: path, query: qp, fragment: fragment, auth: auth };
     }
     function prototypeFromURL(u) {
-        const url = new URL(u);
-        const qp = [];
-        for (const [k, v] of url.searchParams) {
-            qp.push({ k: k, v: v });
-        }
-        const auth = [];
+        var url = new URL(u);
+        var qp = [];
+        url.searchParams.forEach(function (k, v) { return qp.push({ k: k, v: v }); });
+        var auth = [];
         if (url.username.length > 0) {
             auth.push({ type: "basic", config: { "username": url.username, "password": url.password, "showPassword": true } });
         }
-        let port;
+        var port;
         if (url.port && url.port.length > 0) {
             port = parseInt(url.port, 10);
         }
@@ -831,16 +1983,16 @@ var request;
 (function (request) {
     function renderActiveRequest(coll) {
         if (request.cache.active) {
-            const req = request.getRequest(coll, request.cache.active);
+            var req = request.getRequest(coll, request.cache.active);
             if (req) {
                 dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
                 request.editor.wireForm(req.key);
             }
             else {
-                const summ = request.getSummary(coll, request.cache.active);
+                var summ = request.getSummary(coll, request.cache.active);
                 if (summ) {
                     dom.setContent("#request-panel", request.renderSummaryPanel(coll, summ));
-                    const param = { coll: coll, req: summ.key };
+                    var param = { coll: coll, req: summ.key };
                     socket.send({ svc: services.request.key, cmd: command.client.getRequest, param: param });
                 }
             }
@@ -851,9 +2003,8 @@ var request;
     }
     request.renderActiveRequest = renderActiveRequest;
     function renderAction(coll, reqKey, action, extra) {
-        // TODO const req = request.form.getRequest();
-        const re = dom.opt(".request-editor");
-        const ra = dom.opt(".request-action");
+        var re = dom.opt(".request-editor");
+        var ra = dom.opt(".request-action");
         if (!re || !ra) {
             return;
         }
@@ -862,12 +2013,8 @@ var request;
                 dom.setContent(ra, request.renderActionEmpty());
                 break;
             case "call":
-                const req = request.getRequest(coll, reqKey);
-                if (!req) {
-                    return;
-                }
-                // call.prepare(coll, request.form.extractRequest());
-                call.prepare(coll, req);
+                // call.prepare(coll, getRequest(coll, reqKey));
+                call.prepare(coll, request.form.extractRequest());
                 dom.setContent(ra, request.renderActionCall(coll, reqKey));
                 break;
             case "transform":
@@ -897,7 +2044,7 @@ var request;
 var request;
 (function (request) {
     function urlToPrototype(url) {
-        const u = new URL(url);
+        var u = new URL(url);
         return {
             method: request.MethodGet.key,
             protocol: str.trimSuffix(u.protocol, ":"),
@@ -909,11 +2056,11 @@ var request;
     }
     request.urlToPrototype = urlToPrototype;
     function prototypeToURL(p) {
-        return prototypeToURLParts(p).map(x => x.v).join("");
+        return prototypeToURLParts(p).map(function (x) { return x.v; }).join("");
     }
     request.prototypeToURL = prototypeToURL;
     function prototypeToHTML(p) {
-        return JSX("span", null, prototypeToURLParts(p).map(x => JSX("span", { title: x.t, class: urlColor(x.t) }, x.v)));
+        return JSX("span", null, prototypeToURLParts(p).map(function (x) { return JSX("span", { title: x.t, class: urlColor(x.t) }, x.v); }));
     }
     request.prototypeToHTML = prototypeToHTML;
     function baseURL(s) {
@@ -924,24 +2071,25 @@ var request;
         if (!p) {
             return "invalid";
         }
-        let d = p.domain;
+        var d = p.domain;
         if (p.port && p.port > 0) {
-            d += `:${p.port}`;
+            d += ":" + p.port;
         }
-        return `${p.protocol}://${d}/`;
+        return p.protocol + "://" + d + "/";
     }
     request.prototypeBaseURL = prototypeBaseURL;
     function prototypeToURLParts(p) {
-        const ret = [];
-        let push = (t, v) => {
+        var ret = [];
+        var push = function (t, v) {
             ret.push({ t: t, v: v });
         };
         push("protocol", p.protocol);
         push("", "://");
         if (p.auth) {
-            for (let a of p.auth) {
+            for (var _i = 0, _a = p.auth; _i < _a.length; _i++) {
+                var a = _a[_i];
                 if (a.type === "basic") {
-                    const cfg = a.config;
+                    var cfg = a.config;
                     push("username", cfg.username);
                     push("", ":");
                     if (cfg.showPassword) {
@@ -966,7 +2114,7 @@ var request;
         }
         if (p.query && p.query.length > 0) {
             push("", "?");
-            var query = p.query.map(k => encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v)).join('&');
+            var query = p.query.map(function (k) { return encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v); }).join('&');
             push("query", query);
         }
         if (p.fragment && p.fragment.length > 0) {
@@ -1002,13 +2150,14 @@ var request;
         }
         editor.initAuthEditor = initAuthEditor;
         function setAuth(cache, auth) {
-            const url = new URL(cache.url.value);
-            let u = "";
-            let p = "";
+            var url = new URL(cache.url.value);
+            var u = "";
+            var p = "";
             if (auth) {
-                for (let a of auth) {
+                for (var _i = 0, auth_1 = auth; _i < auth_1.length; _i++) {
+                    var a = auth_1[_i];
                     if (a.type === "basic") {
-                        const basic = a.config;
+                        var basic = a.config;
                         u = encodeURIComponent(basic.username);
                         p = encodeURIComponent(basic.password);
                     }
@@ -1020,27 +2169,27 @@ var request;
         }
         editor.setAuth = setAuth;
         function updateBasicAuth(cache, auth) {
-            let currentAuth = [];
+            var currentAuth = [];
             try {
                 currentAuth = json.parse(cache.auth.value);
             }
             catch (e) {
                 console.warn("invalid auth JSON [" + cache.auth.value + "]");
             }
-            let matched = -1;
+            var matched = -1;
             if (!currentAuth) {
                 currentAuth = [];
             }
-            for (let i = 0; i < currentAuth.length; i++) {
-                const x = currentAuth[i];
+            for (var i = 0; i < currentAuth.length; i++) {
+                var x = currentAuth[i];
                 if (x.type === "basic") {
                     matched = i;
                 }
             }
-            let basic;
+            var basic;
             if (auth) {
-                for (let i = 0; i < auth.length; i++) {
-                    const x = auth[i];
+                for (var i = 0; i < auth.length; i++) {
+                    var x = auth[i];
                     if (x.type === "basic") {
                         basic = x.config;
                     }
@@ -1053,7 +2202,7 @@ var request;
             }
             else {
                 if (basic) {
-                    let curr = currentAuth[matched].config;
+                    var curr = currentAuth[matched].config;
                     if (curr) {
                         curr = {
                             username: basic.username,
@@ -1080,16 +2229,16 @@ var request;
     var editor;
     (function (editor) {
         function initBodyEditor(el) {
-            const parent = el.parentElement;
+            var parent = el.parentElement;
             parent.appendChild(createBodyEditor(el));
         }
         editor.initBodyEditor = initBodyEditor;
         function createBodyEditor(el) {
-            const b = json.parse(el.value);
+            var b = json.parse(el.value);
             return JSX("div", { class: "uk-margin-top" },
                 JSX("select", { class: "uk-select" },
                     JSX("option", { value: "" }, "No body"),
-                    rbody.AllTypes.filter(t => !t.hidden).map(t => {
+                    rbody.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
                         if (b && b.type === t.key) {
                             return JSX("option", { value: t.key, selected: "selected" }, t.title);
                         }
@@ -1098,19 +2247,19 @@ var request;
                         }
                     }),
                     "\u02D9"),
-                rbody.AllTypes.filter(t => !t.hidden).map(t => {
-                    let cfg = (b && b.type == t.key) ? b.config : null;
+                rbody.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
+                    var cfg = (b && b.type == t.key) ? b.config : null;
                     return configEditor(t.key, cfg, t.key === (b ? b.type : ""));
                 }));
         }
         function configEditor(key, config, active) {
-            let cls = "uk-margin-top body-editor-" + key;
+            var cls = "uk-margin-top body-editor-" + key;
             if (!active) {
                 cls += " hidden";
             }
             switch (key) {
                 case "json":
-                    const j = config;
+                    var j = config;
                     return JSX("div", { class: cls },
                         JSX("textarea", { class: "uk-textarea" }, json.str(j ? j.msg : null)));
                 default:
@@ -1130,10 +2279,10 @@ var request;
     var editor;
     (function (editor) {
         function wireForm(prefix) {
-            const id = (k) => {
+            var id = function (k) {
                 return "#" + prefix + "-" + k;
             };
-            const cache = {
+            var cache = {
                 url: dom.req(id("url")),
                 auth: dom.req(id("auth")),
                 qp: dom.req(id("queryparams")),
@@ -1163,7 +2312,7 @@ var request;
                 editor.setURL(cache, request.prototypeFromURL(cache.url.value));
             });
             events(cache.auth, function () {
-                let auth;
+                var auth;
                 try {
                     auth = json.parse(cache.auth.value);
                 }
@@ -1174,7 +2323,7 @@ var request;
                 editor.setAuth(cache, auth);
             });
             events(cache.qp, function () {
-                let qp;
+                var qp;
                 try {
                     qp = json.parse(cache.qp.value);
                 }
@@ -1185,7 +2334,7 @@ var request;
                 editor.setQueryParams(cache, qp);
             });
             events(cache.headers, function () {
-                let h;
+                var h;
                 try {
                     h = json.parse(cache.headers.value);
                 }
@@ -1196,7 +2345,7 @@ var request;
                 editor.setHeaders(cache, h);
             });
             events(cache.body, function () {
-                let b;
+                var b;
                 try {
                     b = json.parse(cache.body.value);
                 }
@@ -1213,7 +2362,7 @@ var request;
     var editor;
     (function (editor) {
         function initHeadersEditor(el) {
-            const parent = el.parentElement;
+            var parent = el.parentElement;
             parent.appendChild(createHeadersEditor(el));
         }
         editor.initHeadersEditor = initHeadersEditor;
@@ -1221,8 +2370,8 @@ var request;
         }
         editor.setHeaders = setHeaders;
         function createHeadersEditor(el) {
-            const container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
-            const header = JSX("li", null,
+            var container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
+            var header = JSX("li", null,
                 JSX("div", { "data-uk-grid": "" },
                     JSX("div", { class: "uk-width-1-4" }, "Name"),
                     JSX("div", { class: "uk-width-1-4" }, "Value"),
@@ -1231,12 +2380,13 @@ var request;
                             JSX("a", { class: style.linkColor, href: "", onclick: "request.editor.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
                                 JSX("span", { "data-uk-icon": "icon: plus" }))),
                         "Description")));
-            const updateFn = () => {
-                const curr = json.parse(el.value);
+            var updateFn = function () {
+                var curr = json.parse(el.value);
                 container.innerText = "";
                 container.appendChild(header);
                 if (curr) {
-                    for (let h of curr) {
+                    for (var _i = 0, curr_1 = curr; _i < curr_1.length; _i++) {
+                        var h = curr_1[_i];
                         addChild(container, h);
                     }
                 }
@@ -1263,12 +2413,12 @@ var request;
     var editor;
     (function (editor) {
         function initOptionsEditor(el) {
-            const parent = el.parentElement;
+            var parent = el.parentElement;
             parent.appendChild(createOptionsEditor(el));
         }
         editor.initOptionsEditor = initOptionsEditor;
         function createOptionsEditor(el) {
-            let opts = json.parse(el.value);
+            var opts = json.parse(el.value);
             if (!opts) {
                 opts = {};
             }
@@ -1300,8 +2450,8 @@ var request;
                     JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
         }
         function inputCheckbox(key, prop, title, v) {
-            const n = "opt-" + prop;
-            const id = key + "-" + prop;
+            var n = "opt-" + prop;
+            var id = key + "-" + prop;
             if (v) {
                 return JSX("label", { class: "uk-margin-right" },
                     JSX("input", { type: "checkbox", name: n, value: "true", checked: true }),
@@ -1325,13 +2475,14 @@ var request;
         }
         editor.initQueryParamsEditor = initQueryParamsEditor;
         function setQueryParams(cache, qp) {
-            let ret = [];
+            var ret = [];
             if (qp) {
-                for (let p of qp) {
+                for (var _i = 0, qp_1 = qp; _i < qp_1.length; _i++) {
+                    var p = qp_1[_i];
                     ret.push(encodeURIComponent(p.k) + '=' + encodeURIComponent(p.v));
                 }
             }
-            const url = new URL(cache.url.value);
+            var url = new URL(cache.url.value);
             url.search = ret.join("&");
             cache.url.value = url.toString();
         }
@@ -1365,11 +2516,11 @@ var request;
     var form;
     (function (form) {
         function extractRequest() {
-            const key = gv("key");
-            const title = gv("title");
-            const desc = gv("description");
-            const url = gv("url");
-            let proto = request.urlToPrototype(url);
+            var key = gv("key");
+            var title = gv("title");
+            var desc = gv("description");
+            var url = gv("url");
+            var proto = request.urlToPrototype(url);
             proto.method = gv("method");
             proto.query = json.parse(gv("queryparams"));
             proto.headers = json.parse(gv("headers"));
@@ -1380,7 +2531,7 @@ var request;
         }
         form.extractRequest = extractRequest;
         function gv(k) {
-            return dom.req(`#${request.cache.active}-${k}`).value;
+            return dom.req("#" + request.cache.active + "-" + k).value;
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
@@ -1414,7 +2565,7 @@ var request;
                     JSX("textarea", { class: "uk-textarea", id: r.key + "-description", name: "description", "data-lpignore": "true" }, r.description || "")));
         }
         form.renderDetails = renderDetails;
-        const transforms = {
+        var transforms = {
             "http": "HTTP",
             "json": "JSON",
             "curl": "curl"
@@ -1425,15 +2576,15 @@ var request;
                 JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "request.form.extractRequest();" }, "Save Changes"));
         }
         function renderActions(coll, r) {
-            const path = "/c/" + coll + "/" + r.key;
-            const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
-            const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }";
+            var path = "/c/" + coll + "/" + r.key;
+            var btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
+            var delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }";
             return JSX("div", null,
                 nav.link({ path: path + "/call", title: "Call", cls: btnClass, isButton: true }),
                 JSX("div", { class: "uk-inline" },
                     JSX("button", { type: "button", class: btnClass }, "Export"),
                     JSX("div", { id: "export-dropdown", "uk-dropdown": "mode: click" },
-                        JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(k => JSX("li", null, nav.link({ path: path + "/transform/" + k, title: transforms[k], onclk: "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);" })))))),
+                        JSX("ul", { class: "uk-list uk-list-divider", style: "margin-bottom: 0;" }, Object.keys(transforms).map(function (k) { return JSX("li", null, nav.link({ path: path + "/transform/" + k, title: transforms[k], onclk: "UIkit.dropdown(dom.req('#export-dropdown')).hide(false);" })); })))),
                 nav.link({ path: path + "/delete", title: "Delete", cls: btnClass, onclk: delWarn, isButton: true }));
         }
     })(form = request.form || (request.form = {}));
@@ -1443,8 +2594,8 @@ var request;
     var form;
     (function (form) {
         function renderSwitcher(r) {
-            const key = r.key;
-            const p = r.prototype;
+            var key = r.key;
+            var p = r.prototype;
             return JSX("div", null,
                 JSX("ul", { "data-uk-tab": "" },
                     JSX("li", null,
@@ -1505,10 +2656,10 @@ var request;
     var form;
     (function (form) {
         function renderURL(r) {
-            const call = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
+            var call = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
             return JSX("div", { class: "uk-margin-top uk-panel" },
                 JSX("div", { class: "left", style: "width:120px;" },
-                    JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(m => {
+                    JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(function (m) {
                         if (m.key === r.prototype.method) {
                             return JSX("option", { selected: "selected" }, m.key);
                         }
@@ -1524,1094 +2675,22 @@ var request;
         form.renderURL = renderURL;
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
-var dom;
-(function (dom) {
-    function initDom(t, color) {
-        try {
-            style.themeLinks(color);
-            style.setTheme(t);
-        }
-        catch (e) {
-            console.warn("error setting style", e);
-        }
-        try {
-            modal.wire();
-        }
-        catch (e) {
-            console.warn("error wiring modals", e);
-        }
-        try {
-            drop.wire();
-        }
-        catch (e) {
-            console.warn("error wiring drops", e);
-        }
-        try {
-            tags.wire();
-        }
-        catch (e) {
-            console.warn("error wiring tag editors", e);
-        }
-        try {
-            flash.wire();
-        }
-        catch (e) {
-            console.warn("error wiring tag editors", e);
-        }
-    }
-    dom.initDom = initDom;
-    function els(selector, context) {
-        let result;
-        if (context) {
-            result = context.querySelectorAll(selector);
-        }
-        else {
-            result = document.querySelectorAll(selector);
-        }
-        const ret = [];
-        result.forEach(v => {
-            ret.push(v);
-        });
-        return ret;
-    }
-    dom.els = els;
-    function opt(selector, context) {
-        const e = els(selector, context);
-        switch (e.length) {
-            case 0:
-                return undefined;
-            case 1:
-                return e[0];
-            default:
-                console.warn(`found [${e.length}] elements with selector [${selector}], wanted zero or one`);
-        }
-    }
-    dom.opt = opt;
-    function req(selector, context) {
-        const res = opt(selector, context);
-        if (!res) {
-            console.warn(`no element found for selector [${selector}]`);
-        }
-        return res;
-    }
-    dom.req = req;
-    function setHTML(el, html) {
-        if (typeof el === "string") {
-            el = req(el);
-        }
-        el.innerHTML = html;
-        return el;
-    }
-    dom.setHTML = setHTML;
-    function setDisplay(el, condition, v = "block") {
-        if (typeof el === "string") {
-            el = req(el);
-        }
-        el.style.display = condition ? v : "none";
-        return el;
-    }
-    dom.setDisplay = setDisplay;
-    function setContent(el, e) {
-        if (typeof el === "string") {
-            el = req(el);
-        }
-        dom.clear(el);
-        if (Array.isArray(e)) {
-            e.forEach(x => el.appendChild(x));
-        }
-        else {
-            el.appendChild(e);
-        }
-        return el;
-    }
-    dom.setContent = setContent;
-    function setText(el, text) {
-        if (typeof el === "string") {
-            el = req(el);
-        }
-        el.innerText = text;
-        return el;
-    }
-    dom.setText = setText;
-    function switchElements(el, tgt) {
-        setDisplay(el, false);
-        setDisplay(tgt, true);
-        return false;
-    }
-    dom.switchElements = switchElements;
-    function clear(el) {
-        return setHTML(el, "");
-    }
-    dom.clear = clear;
-})(dom || (dom = {}));
-var dom;
-(function (dom) {
-    function setValue(el, text) {
-        if (typeof el === "string") {
-            el = dom.req(el);
-        }
-        el.value = text;
-        return el;
-    }
-    dom.setValue = setValue;
-    function wireTextarea(text) {
-        function resize() {
-            text.style.height = "auto";
-            text.style.height = `${text.scrollHeight < 64 ? 64 : text.scrollHeight + 6}px`;
-        }
-        function delayedResize() {
-            window.setTimeout(resize, 0);
-        }
-        const x = text.dataset["autoresize"];
-        if (!x) {
-            text.dataset["autoresize"] = "true";
-            text.addEventListener("change", resize, false);
-            text.addEventListener("cut", delayedResize, false);
-            text.addEventListener("paste", delayedResize, false);
-            text.addEventListener("drop", delayedResize, false);
-            text.addEventListener("keydown", delayedResize, false);
-            text.focus();
-            text.select();
-        }
-        resize();
-    }
-    dom.wireTextarea = wireTextarea;
-    function setOptions(el, categories) {
-        if (typeof el === "string") {
-            el = dom.req(el);
-        }
-        dom.clear(el);
-        categories.forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = c;
-            dom.setText(opt, c);
-            el.appendChild(opt);
-        });
-    }
-    dom.setOptions = setOptions;
-    function setSelectOption(el, o) {
-        if (typeof el === "string") {
-            el = dom.req(el);
-        }
-        for (let i = 0; i < el.children.length; i++) {
-            const e = el.children.item(i);
-            e.selected = e.value === o;
-        }
-    }
-    dom.setSelectOption = setSelectOption;
-    function insertAtCaret(e, text) {
-        if (e.selectionStart || e.selectionStart === 0) {
-            let startPos = e.selectionStart;
-            let endPos = e.selectionEnd;
-            e.value = e.value.substring(0, startPos) + text + e.value.substring(endPos, e.value.length);
-            e.selectionStart = startPos + text.length;
-            e.selectionEnd = startPos + text.length;
-        }
-        else {
-            e.value += text;
-        }
-    }
-    dom.insertAtCaret = insertAtCaret;
-})(dom || (dom = {}));
-// noinspection JSUnusedGlobalSymbols
-function JSX(tag, attrs) {
-    const e = document.createElement(tag);
-    for (const name in attrs) {
-        if (name && attrs.hasOwnProperty(name)) {
-            const v = attrs[name];
-            if (name === "dangerouslySetInnerHTML") {
-                dom.setHTML(e, v["__html"]);
-            }
-            else if (v === true) {
-                e.setAttribute(name, name);
-            }
-            else if (v !== false && v !== null && v !== undefined) {
-                e.setAttribute(name, v.toString());
-            }
-        }
-    }
-    for (let i = 2; i < arguments.length; i++) {
-        let child = arguments[i];
-        if (Array.isArray(child)) {
-            child.forEach(c => {
-                if (child === undefined || child === null) {
-                    throw `child array for tag [${tag}] is ${child}\n${e.outerHTML}`;
-                }
-                if (c === undefined || c === null) {
-                    throw `child for tag [${tag}] is ${c}\n${e.outerHTML}`;
-                }
-                if (typeof c === "string") {
-                    c = document.createTextNode(c);
-                }
-                e.appendChild(c);
-            });
-        }
-        else if (child === undefined || child === null) {
-            throw `child for tag [${tag}] is ${child}\n${e.outerHTML}`;
-            // debugger;
-            // child = document.createTextNode("NULL!");
-        }
-        else {
-            if (!child.nodeType) {
-                child = document.createTextNode(child.toString());
-            }
-            e.appendChild(child);
-        }
-    }
-    return e;
-}
-var style;
-(function (style) {
-    function setTheme(theme) {
-        wireEmoji(theme);
-        switch (theme) {
-            case "auto":
-                let t = "light";
-                if (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) {
-                    t = "dark";
-                }
-                setTheme(t);
-                fetch("/profile/theme/" + t).then(r => r.text()).then(() => {
-                    // console.log(`Set theme to [${t}]`);
-                });
-                break;
-            case "light":
-                document.documentElement.classList.remove("uk-light");
-                document.body.classList.remove("uk-light");
-                document.documentElement.classList.add("uk-dark");
-                document.body.classList.add("uk-dark");
-                break;
-            case "dark":
-                document.documentElement.classList.add("uk-light");
-                document.body.classList.add("uk-light");
-                document.documentElement.classList.remove("uk-dark");
-                document.body.classList.remove("uk-dark");
-                break;
-            default:
-                console.warn("invalid theme");
-                break;
-        }
-    }
-    style.setTheme = setTheme;
-    style.linkColor = "";
-    function themeLinks(color) {
-        style.linkColor = `${color}-fg`;
-        dom.els(".theme").forEach(el => {
-            el.classList.add(style.linkColor);
-        });
-    }
-    style.themeLinks = themeLinks;
-    function wireEmoji(t) {
-        if (typeof EmojiButton === "undefined") {
-            dom.els(".picker-toggle").forEach(el => dom.setDisplay(el, false));
-            return;
-        }
-        const opts = { position: "bottom-end", theme: t, zIndex: 1021 };
-        dom.els(".textarea-emoji").forEach(el => {
-            const toggle = dom.req(".picker-toggle", el);
-            toggle.addEventListener("click", () => {
-                const textarea = dom.req(".uk-textarea", el);
-                const picker = new EmojiButton(opts);
-                picker.on("emoji", (emoji) => {
-                    drop.onEmojiPicked();
-                    dom.insertAtCaret(textarea, emoji);
-                });
-                picker.togglePicker(toggle);
-            }, false);
-        });
-    }
-})(style || (style = {}));
-var drop;
-(function (drop) {
-    function wire() {
-        dom.els(".drop").forEach(el => {
-            el.addEventListener("show", onDropOpen);
-            el.addEventListener("beforehide", onDropBeforeHide);
-            el.addEventListener("hide", onDropHide);
-        });
-    }
-    drop.wire = wire;
-    function onDropOpen(e) {
-        if (!e.target) {
-            return;
-        }
-        const el = e.target;
-        const key = el.dataset["key"] || "";
-        let t = el.dataset["t"] || "";
-        const f = events.getOpenEvent(key);
-        if (f) {
-            f(t);
-        }
-        else {
-            console.warn(`no drop open handler registered for [${key}]`);
-        }
-    }
-    function onDropHide(e) {
-        if (!e.target) {
-            return;
-        }
-        const el = e.target;
-        if (el.classList.contains("uk-open")) {
-            const key = el.dataset["key"] || "";
-            const t = el.dataset["t"] || "";
-            const f = events.getCloseEvent(key);
-            if (f) {
-                f(t);
-            }
-        }
-    }
-    let emojiPicked = false;
-    function onEmojiPicked() {
-        emojiPicked = true;
-        setTimeout(() => (emojiPicked = false), 200);
-    }
-    drop.onEmojiPicked = onEmojiPicked;
-    function onDropBeforeHide(e) {
-        if (emojiPicked) {
-            e.preventDefault();
-        }
-    }
-})(drop || (drop = {}));
-var events;
-(function (events) {
-    let openEvents = new Map();
-    let closeEvents = new Map();
-    function register(key, o, c) {
-        if (!o) {
-            o = () => { };
-        }
-        openEvents.set(key, o);
-        if (c) {
-            closeEvents.set(key, c);
-        }
-    }
-    events.register = register;
-    function getOpenEvent(key) {
-        return openEvents.get(key);
-    }
-    events.getOpenEvent = getOpenEvent;
-    function getCloseEvent(key) {
-        return closeEvents.get(key);
-    }
-    events.getCloseEvent = getCloseEvent;
-})(events || (events = {}));
-var flash;
-(function (flash) {
-    function wire() {
-        setTimeout(fadeOut, 4000);
-    }
-    flash.wire = wire;
-    function fadeOut() {
-        let matched = false;
-        dom.els(".alert-top").forEach(el => {
-            matched = true;
-            el.classList.add("uk-animation-fade", "uk-animation-reverse");
-        });
-        if (matched) {
-            setTimeout(remove, 1000);
-        }
-    }
-    function remove() {
-        dom.els(".alert-top").forEach(el => {
-            el.remove();
-        });
-    }
-})(flash || (flash = {}));
-var modal;
-(function (modal) {
-    let activeParam;
-    function wire() {
-        dom.els(".modal").forEach(el => {
-            el.addEventListener("show", onModalOpen);
-            el.addEventListener("hide", onModalHide);
-        });
-    }
-    modal.wire = wire;
-    function open(key, param) {
-        activeParam = param;
-        const m = notify.modal(`#modal-${key}`);
-        m.show();
-        return false;
-    }
-    modal.open = open;
-    function openSoon(key) {
-        setTimeout(() => open(key), 0);
-    }
-    modal.openSoon = openSoon;
-    function hide(key) {
-        const m = notify.modal(`#modal-${key}`);
-        const el = m.$el;
-        if (el.classList.contains("uk-open")) {
-            m.hide();
-        }
-    }
-    modal.hide = hide;
-    function onModalOpen(e) {
-        if (!e.target) {
-            return;
-        }
-        const el = e.target;
-        if (el.id.indexOf("modal") !== 0) {
-            return;
-        }
-        const key = el.id.substr("modal-".length);
-        const f = events.getOpenEvent(key);
-        if (f) {
-            f(activeParam);
-        }
-        else {
-            console.warn(`no modal open handler registered for [${key}]`);
-        }
-        activeParam = undefined;
-    }
-    function onModalHide(e) {
-        if (!e.target) {
-            return;
-        }
-        const el = e.target;
-        if (el.classList.contains("uk-open")) {
-            const key = el.id.substr("modal-".length);
-            const f = events.getCloseEvent(key);
-            if (f) {
-                f(activeParam);
-            }
-            activeParam = undefined;
-        }
-    }
-})(modal || (modal = {}));
-var tags;
-(function (tags) {
-    function wire() {
-        dom.els(".tag-editor").forEach(el => {
-            el.addEventListener("moved", onTagEditorUpdate);
-            el.addEventListener("added", onTagEditorUpdate);
-            el.addEventListener("removed", onTagEditorUpdate);
-        });
-    }
-    tags.wire = wire;
-    function removeTag(el) {
-        const itemEl = el.parentElement;
-        const editorEl = itemEl.parentElement;
-        itemEl.remove();
-        updateEditor(editorEl);
-    }
-    tags.removeTag = removeTag;
-    function addTag(el) {
-        const editorEl = el.parentElement;
-        if (!editorEl) {
-            return;
-        }
-        const itemEl = tags.renderItem();
-        editorEl.insertBefore(itemEl, dom.req(".add-item", editorEl));
-        editTag(itemEl);
-    }
-    tags.addTag = addTag;
-    function editTag(el) {
-        const valueEl = dom.req(".value", el);
-        const editorEl = dom.req(".editor", el);
-        dom.setDisplay(valueEl, false);
-        dom.setDisplay(editorEl, true);
-        const input = tags.renderInput(valueEl.innerText);
-        input.onblur = () => {
-            valueEl.innerText = input.value;
-            dom.setDisplay(valueEl, true);
-            dom.setDisplay(editorEl, false);
-            updateEditor(el.parentElement);
-        };
-        input.onkeypress = (e) => {
-            if (e.key === "Enter") {
-                input.blur();
-                return false;
-            }
-            return true;
-        };
-        dom.setContent(editorEl, input);
-        input.focus();
-    }
-    tags.editTag = editTag;
-    function onTagEditorUpdate(e) {
-        if (!e.target) {
-            console.warn("no event target");
-            return;
-        }
-        const el = e.target;
-        updateEditor(el);
-    }
-    function updateEditor(el) {
-        const key = el.dataset["key"] || "";
-        const f = events.getOpenEvent(key);
-        if (f) {
-            f();
-        }
-        else {
-            console.warn(`no tag open handler registered for [${key}]`);
-        }
-        const ret = dom.els(".item", el).map(e => e.innerText);
-        dom.setValue(`#model-${key}-input`, ret.join(","));
-    }
-})(tags || (tags = {}));
-var tags;
-(function (tags) {
-    function renderInput(v) {
-        return JSX("input", { type: "text", class: "uk-input", value: v });
-    }
-    tags.renderInput = renderInput;
-    function renderItem() {
-        return JSX("span", { class: "item" },
-            JSX("span", { class: "value", onclick: "tags.editTag(this.parentElement);" }),
-            JSX("span", { class: "editor" }),
-            JSX("span", { class: "close", "data-uk-icon": "icon: close; ratio: 0.6;", onclick: "tags.removeTag(this);" }));
-    }
-    tags.renderItem = renderItem;
-    function renderTagsView(a) {
-        return JSX("div", { class: "tag-view" },
-            a.map(s => JSX("span", { class: "item" }, s)),
-            JSX("div", { class: "clear" }));
-    }
-    tags.renderTagsView = renderTagsView;
-})(tags || (tags = {}));
-var socket;
-(function (socket) {
-    function initBypass() {
-        socket.bypass = true;
-        socket.connected = true;
-        nav.enabled = false;
-    }
-    socket.initBypass = initBypass;
-    function bypassSend(msg) {
-        if (socket.debug) {
-            console.debug("out", msg);
-        }
-        npn_handler(JSON.stringify(msg, null, 2));
-    }
-    socket.bypassSend = bypassSend;
-})(socket || (socket = {}));
-var socket;
-(function (socket) {
-    socket.debug = true;
-    socket.appUnloading = false;
-    socket.currentService = "";
-    socket.currentID = "";
-    socket.bypass = false;
-    function setAppUnloading() {
-        socket.appUnloading = true;
-    }
-    socket.setAppUnloading = setAppUnloading;
-    function send(msg) {
-        if (socket.bypass) {
-            socket.bypassSend(msg);
-        }
-        else {
-            socket.socketSend(msg);
-        }
-    }
-    socket.send = send;
-    function recv(msg) {
-        if (socket.debug) {
-            console.debug("in", msg);
-        }
-        switch (msg.svc) {
-            case services.system.key:
-                system.onSystemMessage(msg.cmd, msg.param);
-                break;
-            case services.collection.key:
-                collection.onCollectionMessage(msg.cmd, msg.param);
-                break;
-            case services.request.key:
-                request.onRequestMessage(msg.cmd, msg.param);
-                break;
-            default:
-                console.warn(`unhandled message for service [${msg.svc}]`);
-        }
-    }
-    socket.recv = recv;
-})(socket || (socket = {}));
-var socket;
-(function (socket) {
-    let sock;
-    socket.connected = false;
-    let pauseSeconds = 0;
-    let pendingMessages = [];
-    function socketUrl() {
-        const l = document.location;
-        let protocol = "ws";
-        if (l.protocol === "https:") {
-            protocol = "wss";
-        }
-        return protocol + `://${l.host}/s`;
-    }
-    function initSocket() {
-        sock = new WebSocket(socketUrl());
-        sock.onopen = onSocketOpen;
-        sock.onmessage = (event) => socket.recv(json.parse(event.data));
-        sock.onerror = (event) => npn.onError("socket", event.type);
-        sock.onclose = onSocketClose;
-    }
-    socket.initSocket = initSocket;
-    function socketConnect(svc, id, useBypass) {
-        socket.currentService = svc;
-        socket.currentID = id;
-        socket.connectTime = Date.now();
-        if (useBypass) {
-            socket.initBypass();
-        }
-        else {
-            initSocket();
-        }
-    }
-    socket.socketConnect = socketConnect;
-    function onSocketOpen() {
-        log.info("socket connected");
-        socket.connected = true;
-        pauseSeconds = 1;
-        pendingMessages.forEach(socket.send);
-        pendingMessages = [];
-    }
-    function onSocketClose() {
-        function disconnect() {
-            socket.connected = false;
-            const elapsed = Date.now() - socket.connectTime;
-            if (elapsed < 2000) {
-                pauseSeconds = pauseSeconds * 2;
-                if (socket.debug) {
-                    console.debug(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
-                }
-                setTimeout(() => {
-                    socketConnect(socket.currentService, socket.currentID);
-                }, pauseSeconds * 1000);
-            }
-            else {
-                log.info("socket closed after [" + elapsed + "ms]");
-                socketConnect(socket.currentService, socket.currentID);
-            }
-        }
-        if (!socket.appUnloading) {
-            disconnect();
-        }
-    }
-    function socketSend(msg) {
-        if (socket.debug) {
-            console.debug("out", msg);
-        }
-        if (socket.connected) {
-            const m = json.str(msg);
-            sock.send(m);
-        }
-        else {
-            pendingMessages.push(msg);
-        }
-    }
-    socket.socketSend = socketSend;
-})(socket || (socket = {}));
-var profile;
-(function (profile) {
-    // noinspection JSUnusedGlobalSymbols
-    function setNavColor(el, c) {
-        dom.setValue("#nav-color", c);
-        const nb = dom.req("#navbar");
-        nb.className = `${c}-bg uk-navbar-container uk-navbar`;
-        const colors = document.querySelectorAll(".nav_swatch");
-        colors.forEach(function (i) {
-            i.classList.remove("active");
-        });
-        el.classList.add("active");
-    }
-    profile.setNavColor = setNavColor;
-    // noinspection JSUnusedGlobalSymbols
-    function setLinkColor(el, c) {
-        dom.setValue("#link-color", c);
-        const links = dom.els(".profile-link");
-        links.forEach(l => {
-            l.classList.forEach(x => {
-                if (x.indexOf("-fg") > -1) {
-                    l.classList.remove(x);
-                }
-                l.classList.add(`${c}-fg`);
-            });
-        });
-        const colors = document.querySelectorAll(".link_swatch");
-        colors.forEach(function (i) {
-            i.classList.remove("active");
-        });
-        el.classList.add("active");
-    }
-    profile.setLinkColor = setLinkColor;
-    function setPicture(p) {
-        dom.setValue("#self-picture-input", p);
-        return false;
-    }
-    profile.setPicture = setPicture;
-})(profile || (profile = {}));
-var date;
-(function (date) {
-    function dateToYMD(dt) {
-        const d = dt.getDate();
-        const m = dt.getMonth() + 1;
-        const y = dt.getFullYear();
-        return `${y}-${m <= 9 ? `0${m}` : m}-${d <= 9 ? `0${d}` : d}`;
-    }
-    date.dateToYMD = dateToYMD;
-    function dateFromYMD(s) {
-        const d = new Date(s);
-        return new Date(d.getTime() + d.getTimezoneOffset() * 60000);
-    }
-    date.dateFromYMD = dateFromYMD;
-    function dow(i) {
-        switch (i) {
-            case 0:
-                return "Sun";
-            case 1:
-                return "Mon";
-            case 2:
-                return "Tue";
-            case 3:
-                return "Wed";
-            case 4:
-                return "Thu";
-            case 5:
-                return "Fri";
-            case 6:
-                return "Sat";
-            default:
-                return "???";
-        }
-    }
-    date.dow = dow;
-    function toDateString(d) {
-        return d.toLocaleDateString();
-    }
-    date.toDateString = toDateString;
-    function toTimeString(d) {
-        return d.toLocaleTimeString().slice(0, 8);
-    }
-    date.toTimeString = toTimeString;
-    function toDateTimeString(d) {
-        return `${toDateString(d)} ${toTimeString(d)}`;
-    }
-    date.toDateTimeString = toDateTimeString;
-    const tzOffset = new Date().getTimezoneOffset() * 60000;
-    function utcDate(s) {
-        return new Date(Date.parse(s) + tzOffset);
-    }
-    date.utcDate = utcDate;
-})(date || (date = {}));
-var group;
-(function (group_1) {
-    class Group {
-        constructor(key) {
-            this.members = [];
-            this.key = key;
-        }
-    }
-    group_1.Group = Group;
-    class GroupSet {
-        constructor() {
-            this.groups = [];
-        }
-        findOrInsert(key) {
-            const ret = this.groups.find(x => x.key === key);
-            if (ret) {
-                return ret;
-            }
-            const n = new Group(key);
-            this.groups.push(n);
-            return n;
-        }
-    }
-    group_1.GroupSet = GroupSet;
-    function groupBy(list, func) {
-        const res = new GroupSet();
-        if (list) {
-            list.forEach(o => {
-                const group = res.findOrInsert(func(o));
-                group.members.push(o);
-            });
-        }
-        return res;
-    }
-    group_1.groupBy = groupBy;
-    function findGroup(groups, key) {
-        for (const g of groups) {
-            if (g.key === key) {
-                return g.members;
-            }
-        }
-        return [];
-    }
-    group_1.findGroup = findGroup;
-    function flatten(a) {
-        const ret = [];
-        a.forEach(v => ret.push(...v));
-        return ret;
-    }
-    group_1.flatten = flatten;
-    function sort(a, matchFn) {
-        if (!a) {
-            return [];
-        }
-        a.sort((l, r) => {
-            const lv = matchFn(l);
-            const rv = matchFn(r);
-            if (lv > rv) {
-                return 1;
-            }
-            if (lv < rv) {
-                return -1;
-            }
-            return 0;
-        });
-        return a;
-    }
-    group_1.sort = sort;
-    function update(a, v, matchFn) {
-        if (!a) {
-            return [v];
-        }
-        let matched = false;
-        const key = matchFn(v);
-        for (const idx in a) {
-            const c = a[idx];
-            if (matchFn(c) == key) {
-                matched = true;
-                a[idx] = v;
-            }
-        }
-        if (!matched) {
-            a.push(v);
-        }
-        return a;
-    }
-    group_1.update = update;
-    function updateAndSort(a, v, matchFn) {
-        return sort(update(a, v, matchFn), matchFn);
-    }
-    group_1.updateAndSort = updateAndSort;
-})(group || (group = {}));
-var json;
-(function (json) {
-    function str(x) {
-        if (x === undefined) {
-            return "null";
-        }
-        return JSON.stringify(x, null, 2);
-    }
-    json.str = str;
-    function parse(s) {
-        return JSON.parse(s);
-    }
-    json.parse = parse;
-})(json || (json = {}));
-var log;
-(function (log) {
-    let started = 0;
-    let content;
-    let list;
-    function init() {
-        started = Date.now();
-        l("debug", "npn started");
-    }
-    log.init = init;
-    function info(msg) {
-        l("info", msg);
-    }
-    log.info = info;
-    function l(level, msg) {
-        if (started === 0) {
-            console.warn("call `log.init()` before attempting to log");
-            return;
-        }
-        const n = Date.now() - started;
-        const el = JSX("li", { class: color(level) },
-            JSX("div", { class: "right" },
-                n,
-                "ms"),
-            msg);
-        if (!list) {
-            list = dom.opt("#log-list");
-            if (!list) {
-                console.warn(`${level}: ${msg}`);
-                return;
-            }
-        }
-        list.appendChild(el);
-        if (!content) {
-            content = dom.req("#log-content");
-        }
-        content.scrollTo(0, content.scrollHeight);
-    }
-    log.l = l;
-    function toggle() {
-        const wsc = dom.req("#workspace-content");
-        const lp = dom.req("#log-container");
-        const curr = (lp.style.display !== "") && (lp.style.display !== "none");
-        if (curr) {
-            wsc.classList.remove("log-visible");
-        }
-        else {
-            wsc.classList.add("log-visible");
-        }
-        dom.setDisplay(lp, !curr);
-        if (!content) {
-            content = dom.req("#log-content");
-        }
-        content.scrollTo(0, content.scrollHeight);
-    }
-    log.toggle = toggle;
-    function color(level) {
-        switch (level) {
-            case "debug":
-                return "grey-fg";
-            case "info":
-                return "";
-            case "warn":
-                return "yellow-fg";
-            case "error":
-                return "red-fg";
-            default:
-                return "";
-        }
-    }
-})(log || (log = {}));
-var nav;
-(function (nav) {
-    nav.enabled = true;
-    let handler = (p) => {
-        console.warn("default nav handler called: " + p);
-    };
-    function init(f) {
-        handler = f;
-        window.onpopstate = (event) => {
-            if (event.state) {
-                let s = event.state;
-                handler(s);
-            }
-            else {
-                handler("");
-            }
-        };
-        let path = location.pathname;
-        navigate(path);
-    }
-    nav.init = init;
-    function pop() {
-        let p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
-        if (p === '/c') {
-            p = "";
-        }
-        navigate(p);
-    }
-    nav.pop = pop;
-    function navigate(path) {
-        if (!nav.enabled) {
-            handler(path);
-            return "";
-        }
-        if (path.startsWith("text/html;")) {
-            return "";
-        }
-        if (path.startsWith("/")) {
-            path = path.substr(1);
-        }
-        let locPath = location.pathname;
-        if (locPath.startsWith("/")) {
-            locPath = locPath.substr(1);
-        }
-        if (locPath !== path) {
-            let final = path;
-            history.pushState(final, "", "/" + final);
-        }
-        handler(path);
-    }
-    nav.navigate = navigate;
-    function navActiveRequest() {
-        navigate(`/c/${collection.cache.active}/${request.cache.active}`);
-    }
-    nav.navActiveRequest = navActiveRequest;
-    function link(o) {
-        let href = o.path;
-        if (!href.startsWith("/")) {
-            href = "/" + href;
-        }
-        if (o.cls) {
-            o.cls = " " + o.cls.trim();
-        }
-        else {
-            o.cls = "";
-        }
-        let i = JSX("span", null);
-        if (o.icon) {
-            i = JSX("span", { class: "nav-icon", "data-uk-icon": `icon: ${o.icon}` });
-        }
-        if (o.onclk) {
-            if (!o.onclk.endsWith(";")) {
-                o.onclk += ";";
-            }
-        }
-        else {
-            o.onclk = "";
-        }
-        if (!o.isButton) {
-            o.cls = style.linkColor + o.cls;
-        }
-        return JSX("a", { class: o.cls, href: href, onclick: o.onclk + "nav.navigate('" + o.path + "', '" + o.title + "');return false;" },
-            i,
-            o.title);
-    }
-    nav.link = link;
-})(nav || (nav = {}));
-var notify;
-(function (notify_1) {
-    function notify(msg, status) {
-        UIkit.notification(msg, { status: status ? "success" : "danger", pos: "top-right" });
-    }
-    notify_1.notify = notify;
-    function confirm(msg, f) {
-        UIkit.modal.confirm(msg).then(f);
-    }
-    notify_1.confirm = confirm;
-    function modal(key) {
-        const m = UIkit.modal(key);
-        if (!m) {
-            console.warn(`no modal available with key [${key}]`);
-        }
-        return m;
-    }
-    notify_1.modal = modal;
-})(notify || (notify = {}));
-var str;
-(function (str) {
-    function trimPrefix(s, prefix) {
-        if (s.startsWith(prefix)) {
-            return s.slice(prefix.length);
-        }
-        else {
-            return s;
-        }
-    }
-    str.trimPrefix = trimPrefix;
-    function trimSuffix(s, suffix) {
-        if (s.endsWith(suffix)) {
-            return s.substring(0, s.lastIndexOf(suffix));
-        }
-        else {
-            return s;
-        }
-    }
-    str.trimSuffix = trimSuffix;
-})(str || (str = {}));
 var system;
 (function (system) {
-    class Cache {
-        getProfile() {
+    var Cache = /** @class */ (function () {
+        function Cache() {
+        }
+        Cache.prototype.getProfile = function () {
             if (!this.profile) {
                 throw "no active profile";
             }
             return this.profile;
-        }
-        apply(sj) {
+        };
+        Cache.prototype.apply = function (sj) {
             system.cache.profile = sj.profile;
-        }
-    }
+        };
+        return Cache;
+    }());
     system.cache = new Cache();
 })(system || (system = {}));
 var system;
@@ -2625,16 +2704,23 @@ var system;
                 system.cache.apply(param);
                 break;
             default:
-                console.warn(`unhandled system command [${cmd}]`);
+                console.warn("unhandled system command [" + cmd + "]");
         }
     }
     system.onSystemMessage = onSystemMessage;
 })(system || (system = {}));
+var __spreadArrays = (this && this.__spreadArrays) || function () {
+    for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
+    for (var r = Array(s), k = 0, i = 0; i < il; i++)
+        for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++)
+            r[k] = a[j];
+    return r;
+};
 var ui;
 (function (ui) {
-    const bcCls = "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic";
+    var bcCls = "uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic";
     function setBreadcrumbs(coll, req, act, extra) {
-        const el = dom.req("#breadcrumbs");
+        var el = dom.req("#breadcrumbs");
         reset(el);
         el.appendChild(nav.link({ path: "/", title: "npn", cls: bcCls }));
         if (coll) {
@@ -2647,11 +2733,11 @@ var ui;
                     el.appendChild(sep());
                     el.appendChild(bcFor(act, "c", coll, req, act));
                     if (extra && extra.length > 0) {
-                        for (let i = 0; i < extra.length; i++) {
+                        for (var i = 0; i < extra.length; i++) {
                             el.appendChild(sep());
-                            const ret = [coll, req, act];
-                            ret.push(...extra.slice(0, i));
-                            el.appendChild(bcFor(extra[i], ...ret));
+                            var ret = [coll, req, act];
+                            ret.push.apply(ret, extra.slice(0, i));
+                            el.appendChild(bcFor.apply(void 0, __spreadArrays([extra[i]], ret)));
                         }
                     }
                 }
@@ -2660,8 +2746,8 @@ var ui;
     }
     ui.setBreadcrumbs = setBreadcrumbs;
     function reset(el) {
-        for (let i = el.childElementCount - 1; i >= 0; i--) {
-            const e = el.children[i];
+        for (var i = el.childElementCount - 1; i >= 0; i--) {
+            var e = el.children[i];
             if (e.classList.contains("dynamic")) {
                 el.removeChild(e);
             }
@@ -2674,8 +2760,12 @@ var ui;
     function bcForExtra(coll, req, act, extra) {
         return bcFor(act, "c", coll, req, act);
     }
-    function bcFor(title, ...parts) {
-        const path = parts.map(s => "/" + s).join("");
+    function bcFor(title) {
+        var parts = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            parts[_i - 1] = arguments[_i];
+        }
+        var path = parts.map(function (s) { return "/" + s; }).join("");
         return nav.link({ path: path, title: title, cls: bcCls });
     }
 })(ui || (ui = {}));
@@ -2690,7 +2780,7 @@ var ui;
     }
     ui.setPanels = setPanels;
     function setTitle(coll, req, act) {
-        let title = "";
+        var title = "";
         if (act) {
             title += act + " ";
         }

@@ -12,6 +12,8 @@ type CURL struct {
 	Multiline bool
 }
 
+var _ Transformer = (*CURL)(nil)
+
 func (c *CURL) Key() string {
 	return "curl"
 }

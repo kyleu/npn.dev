@@ -17,6 +17,8 @@ type FileSystem struct {
 	logger logur.Logger
 }
 
+var _ FileLoader = (*FileSystem)(nil)
+
 func NewFileSystem(root string, logger logur.Logger) *FileSystem {
 	return &FileSystem{root: root, logger: logger}
 }

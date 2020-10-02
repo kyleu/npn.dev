@@ -804,14 +804,6 @@ em, .uk-light em {
   color: #999;
 }
 
-.uk-light #logo-symbol {
-  stroke: #ddd !important;
-}
-
-.uk-dark #logo-symbol {
-  stroke: #333 !important;
-}
-
 .alert-top {
   margin: 12px;
 }
@@ -865,32 +857,6 @@ em, .uk-light em {
   height: 32px;
 }
 
-.marketing .uk-align-right {
-  margin: 0;
-}
-.marketing .uk-list-divider {
-  margin: 0;
-}
-
-.uk-comment-header {
-  margin-bottom: 6px;
-}
-
-.uk-comment-body {
-  margin-bottom: 8px;
-}
-
-.comment-drop {
-  width: 482px;
-}
-.comment-drop .uk-comment-list {
-  max-height: 400px;
-  overflow: auto;
-}
-.comment-drop .uk-card {
-  width: 480px;
-}
-
 .drop {
   font-size: 16px;
   text-align: left;
@@ -908,6 +874,19 @@ em, .uk-light em {
 
 .uk-dark .drop {
   border: 1px solid #e5e5e5;
+}
+
+.uk-light #logo-symbol {
+  stroke: #ddd !important;
+}
+
+.uk-dark #logo-symbol {
+  stroke: #333 !important;
+}
+
+.chart-tooltip {
+  position: absolute;
+  display: none;
 }
 
 .emoji-picker, .emoji-picker__search {
@@ -1023,10 +1002,6 @@ input {
     padding-left: 240px;
   }
 }
-.collection-link.active {
-  background-color: #61A151;
-}
-
 #nav-left {
   position: fixed;
   top: 54px;
@@ -1104,9 +1079,4 @@ input {
 #log-list {
   padding: 32px;
   margin-bottom: 0;
-}
-
-.chart-tooltip {
-  position: absolute;
-  display: none;
 }

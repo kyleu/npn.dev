@@ -12,7 +12,7 @@ namespace group {
     readonly groups: Group<K, V>[] = [];
 
     findOrInsert(key: K): Group<K, V> {
-      const ret = this.groups.find(x => x.key === key);
+      const ret = arr.find(this.groups, (_, x) => x.key === key);
       if (ret) {
         return ret;
       }

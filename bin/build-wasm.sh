@@ -1,11 +1,10 @@
 #!/bin/bash
 
-## Builds the desktop apps
+## Builds the app as a WASM server
 
 set -e
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-project_dir=${dir}/..
-cd $project_dir
+cd $dir/..
 
 bin/build.sh js wasm
 mv ./build/js/wasm/npn ./build/js/wasm/npn.wasm

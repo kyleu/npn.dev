@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
+	"syscall/js"
+
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/cli"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
-	"syscall/js"
 )
 
 var exitChannel = make(chan bool)
@@ -31,7 +32,7 @@ func register(_ js.Value, args []js.Value) interface{} {
 	log(fmt.Sprintf("Started [%v] in bypass mode", npncore.AppName))
 
 	svc := app.Svc(ai)
-	svc.Socket.SetWASMCallback(func(s string){callback.Invoke(s)})
+	svc.Socket.SetWASMCallback(func(s string) { callback.Invoke(s) })
 
 	err = seedData(svc)
 	if err != nil {

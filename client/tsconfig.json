@@ -7,16 +7,16 @@
     "module": "none",
     "noImplicitAny": true,
     "removeComments": false,
-    "preserveConstEnums": true,
     "outFile": "../web/assets/vendor/npn.js",
+    "preserveConstEnums": true,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "sourceRoot": "/admin/src/client/src/",
     "strict": true,
-    "target": "ES6"
+    "target": "ES5"
   },
   "include": [
+    "../npnasset/typescript/**/*",
     "src/**/*"
   ],
   "exclude": [

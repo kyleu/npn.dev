@@ -11,11 +11,6 @@
   }
 }
 
-// Nav
-.collection-link.active {
-  background-color: #61A151;
-}
-
 // Left Nav
 #nav-left {
   position: fixed;
@@ -117,13 +112,4 @@
 #log-list {
   padding: 32px;
   margin-bottom: 0;
-}
-
-// Timing
-.result-timing-graph {
-}
-
-.chart-tooltip {
-  position: absolute;
-  display: none;
 }

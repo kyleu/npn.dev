@@ -5,8 +5,7 @@
 
 set -e
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-project_dir=${dir}/..
-cd $project_dir/client
+cd $dir/../client
 
 ../bin/build-client.sh
 echo "Watching TypeScript compilation for [client/src]..."

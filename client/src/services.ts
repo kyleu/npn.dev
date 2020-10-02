@@ -13,7 +13,7 @@ namespace services {
   const allServices = [system, collection];
 
   export function fromKey(key: string) {
-    const ret = allServices.find(s => s.key === key);
+    const ret = arr.find(allServices, (_, s) => s.key === key);
     if (!ret) {
       throw `invalid service [${key}]`;
     }

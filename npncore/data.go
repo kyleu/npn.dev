@@ -27,7 +27,7 @@ func (d Data) String() string {
 func (d Data) ToQueryString() string {
 	params := url.Values{}
 	for k, v := range d {
-		params.Add(k, fmt.Sprintf("%v", v))
+		params.Add(k, fmt.Sprint(v))
 	}
 	return params.Encode()
 }
@@ -111,5 +111,5 @@ func setPath(i interface{}, path []string, val interface{}) error {
 }
 
 func (d Data) GetString(k string) string {
-	return fmt.Sprintf("%v", d.GetPath(k))
+	return fmt.Sprint(d.GetPath(k))
 }

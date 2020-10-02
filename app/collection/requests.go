@@ -16,11 +16,11 @@ import (
 const shouldSaveHistory = true
 
 type RequestSummary struct {
-	Key         string             `json:"key,omitempty"`
-	Title       string             `json:"title,omitempty"`
-	Description string             `json:"description,omitempty"`
-	URL         string             `json:"url,omitempty"`
-	Order       int                `json:"order,omitempty"`
+	Key         string `json:"key,omitempty"`
+	Title       string `json:"title,omitempty"`
+	Description string `json:"description,omitempty"`
+	URL         string `json:"url,omitempty"`
+	Order       int    `json:"order,omitempty"`
 }
 
 func (r *RequestSummary) TitleWithFallback() string {

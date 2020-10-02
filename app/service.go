@@ -27,6 +27,8 @@ type Service struct {
 	Socket     *npnconnection.Service
 }
 
+var _ npnweb.AppInfo = (*Service)(nil)
+
 func NewService(debug bool, files npncore.FileLoader, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(false, files, logger)
 	collSvc := collection.NewService(files, logger)

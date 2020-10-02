@@ -3,8 +3,9 @@ package npnconnection
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kyleu/npn/npnuser"
 	"sync"
+
+	"github.com/kyleu/npn/npnuser"
 
 	"github.com/kyleu/npn/npncore"
 
@@ -31,14 +32,12 @@ type Service struct {
 func NewService(logger logur.Logger, onOpen ConnectEvent, handler Handler, onClose ConnectEvent, ctx interface{}) *Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeySocket})
 	return &Service{
-		connections:   make(map[uuid.UUID]*Connection),
-		connectionsMu: sync.Mutex{},
-		channels:      make(map[Channel][]uuid.UUID),
-		channelsMu:    sync.Mutex{},
-		Logger:        logger,
-		handler:       handler,
-		onOpen:        onOpen,
-		Context:       ctx,
+		connections: make(map[uuid.UUID]*Connection),
+		channels:    make(map[Channel][]uuid.UUID),
+		Logger:      logger,
+		handler:     handler,
+		onOpen:      onOpen,
+		Context:     ctx,
 	}
 }
 

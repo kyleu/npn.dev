@@ -5,11 +5,12 @@
 
 set -e
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-project_dir=${dir}/..
-cd $project_dir/client
+cd $dir/../client
 
+echo "Building TypeScript..."
 tsc --project tsconfig.json
 
 cd $project_dir/web/assets/vendor
 
+echo "Optimizing TypeScript..."
 closure-compiler --create_source_map npn.min.js.map npn.js > npn.min.js

@@ -1,9 +1,9 @@
 namespace request {
   function newPrototype(protocol: string, hostname: string, port: number | undefined, path: string, qp: request.QueryParam[], fragment: string, auth: auth.Auth[]): Prototype {
-    if (protocol.endsWith(":")) {
+    if (str.endsWith(protocol, ":")) {
       protocol = protocol.substr(0, protocol.length - 1);
     }
-    if (fragment.startsWith("#")) {
+    if (str.startsWith(fragment, "#")) {
       fragment = fragment.substr(1);
     }
 
@@ -14,9 +14,7 @@ namespace request {
     const url = new URL(u);
 
     const qp: QueryParam[] = []
-    for (const [k, v] of url.searchParams) {
-      qp.push({k: k, v: v});
-    }
+    url.searchParams.forEach((k, v) => qp.push({k: k, v: v}));
 
     const auth: auth.Auth[] = [];
     if(url.username.length > 0) {

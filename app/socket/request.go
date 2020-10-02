@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+
 	"github.com/kyleu/npn/app/request"
 
 	"emperror.dev/errors"
@@ -32,6 +33,9 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 		}
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, req)
 		err = s.WriteMessage(c.ID, msg)
+		if err != nil {
+			return errors.Wrap(err, "can't write message")
+		}
 	case ClientMessageCall:
 		frm := &requestCallParam{}
 		err := npncore.FromJSONStrict(param, frm)

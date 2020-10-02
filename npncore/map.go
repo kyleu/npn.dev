@@ -130,7 +130,7 @@ func StringToDBMap(s string) (map[string]string, error) {
 	for _, p := range parts {
 		idx := strings.Index(p, "=>")
 		if idx == -1 {
-			return nil, errors.New("no \"=>\" in string [" + p + "]")
+			return nil, errors.New(`no "=>" in string [` + p + "]")
 		}
 		k := strings.TrimSpace(p[0:idx])
 		v := strings.TrimSpace(p[idx+2:])

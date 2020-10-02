@@ -32,7 +32,6 @@ func NewConnection(svc string, profile *npnuser.Profile, socket *websocket.Conn)
 		ModelID: nil,
 		Channel: nil,
 		socket:  socket,
-		mu:      sync.Mutex{},
 	}
 }
 

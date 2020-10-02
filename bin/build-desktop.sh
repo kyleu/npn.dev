@@ -1,11 +1,10 @@
 #!/bin/bash
 
-## Builds the desktop apps
+## Builds all the desktop apps, XCode required
 
 set -e
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-project_dir=${dir}/..
-cd $project_dir
+cd $dir/..
 
 bin/build-macos.sh
 # bin/build-webview.sh darwin amd64
@@ -24,6 +23,7 @@ bin/build.sh linux riscv64
 bin/build.sh freebsd amd64
 bin/build.sh freebsd 386
 bin/build.sh freebsd arm64
+bin/build.sh freebsd arm
 
 bin/build.sh windows amd64 npn.exe
 # bin/build-webview.sh windows amd64

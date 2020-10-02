@@ -21,8 +21,8 @@ func NewRequest() *Request {
 func FromString(key string, content string) (*Request, error) {
 	ret := &Request{}
 	content = strings.TrimSpace(content)
-	if strings.HasPrefix(content, "\"") || strings.HasPrefix(content, "http") {
-		u := strings.TrimPrefix(strings.TrimSuffix(content, "\""), "\"")
+	if strings.HasPrefix(content, `"`) || strings.HasPrefix(content, "http") {
+		u := strings.TrimPrefix(strings.TrimSuffix(content, `"`), `"`)
 		proto := PrototypeFromString(u)
 		ret.Prototype = proto
 	} else {

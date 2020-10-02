@@ -5,11 +5,11 @@ go 1.15
 require (
 	emperror.dev/errors v0.7.0
 	github.com/kyleu/npn v1.0.0
-	github.com/kyleu/npn/npnconnection v0.0.4
-	github.com/kyleu/npn/npncontroller v0.0.4
+	github.com/kyleu/npn/npnconnection v0.0.11
+	github.com/kyleu/npn/npncontroller v0.0.11
 	github.com/kyleu/npn/npncore v1.0.0
-	github.com/kyleu/npn/npnuser v0.0.4
-	github.com/kyleu/npn/npnweb v0.0.4
+	github.com/kyleu/npn/npnuser v0.0.11
+	github.com/kyleu/npn/npnweb v0.0.11
 )
 
 replace github.com/kyleu/npn => ../../

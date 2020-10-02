@@ -80,7 +80,7 @@ func RespondMIME(filename string, mime string, ext string, ba []byte, w http.Res
 		if !strings.HasSuffix(filename, "."+ext) {
 			filename = filename + "." + ext
 		}
-		w.Header().Set("Content-Disposition", "attachment; filename=\""+filename+"\"")
+		w.Header().Set("Content-Disposition", `attachment; filename="`+filename+`"`)
 	}
 	WriteCORS(w)
 	if len(ba) == 0 {
@@ -111,7 +111,7 @@ func AdminAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestCont
 				ae := JSONResponse{Status: "error", Message: "you are not an administrator", Path: r.URL.Path, Occurred: time.Now()}
 				return RespondJSON(w, "", ae, ctx.Logger)
 			}
-			msg := "you're not an administrator, silly!"
+			const msg = "you're not an administrator, silly!"
 			return FlashAndRedir(false, msg, "home", w, r, ctx)
 		}
 		return f(ctx)

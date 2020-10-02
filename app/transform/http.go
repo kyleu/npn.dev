@@ -10,6 +10,8 @@ import (
 type HTTP struct {
 }
 
+var _ Transformer = (*HTTP)(nil)
+
 func (c *HTTP) Key() string {
 	return "http"
 }
