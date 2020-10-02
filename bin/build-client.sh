@@ -10,7 +10,7 @@ cd $dir/../client
 echo "Building TypeScript..."
 tsc --project tsconfig.json
 
-cd $project_dir/web/assets/vendor
+cd ../web/assets/vendor
 
 echo "Optimizing TypeScript..."
 closure-compiler --create_source_map npn.min.js.map npn.js > npn.min.js
