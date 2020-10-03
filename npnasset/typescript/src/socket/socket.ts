@@ -3,6 +3,15 @@ namespace socket {
   export let connected = false;
   let pauseSeconds = 0;
   let pendingMessages: Message[] = [];
+  let onOpen: (id: string) => void;
+  let onMessage: (m: Message) => void;
+  let onError: (svc: string, err: string) => void;
+
+  export function init(open: (id: string) => void, recv: (m: Message) => void, err: (svc: string, err: string) => void) {
+    onOpen = open;
+    onMessage = recv;
+    onError = err;
+  }
 
   function socketUrl() {
     const l = document.location;
@@ -16,8 +25,8 @@ namespace socket {
   export function initSocket() {
     sock = new WebSocket(socketUrl());
     sock.onopen = onSocketOpen;
-    sock.onmessage = (event) => recv(json.parse(event.data));
-    sock.onerror = (event) => npn.onError("socket", event.type);
+    sock.onmessage = (event) => onMessage(json.parse(event.data));
+    sock.onerror = (event) => onError("socket", event.type);
     sock.onclose = onSocketClose;
   }
 
@@ -25,6 +34,11 @@ namespace socket {
     currentService = svc;
     currentID = id;
     connectTime = Date.now();
+
+    if (!onMessage) {
+      throw "onMessage not initialized";
+    }
+
     if(useBypass) {
       initBypass();
     } else {
@@ -38,6 +52,7 @@ namespace socket {
     pauseSeconds = 1;
     pendingMessages.forEach(send);
     pendingMessages = [];
+    onOpen(currentID);
   }
 
   function onSocketClose() {

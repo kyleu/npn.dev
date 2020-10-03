@@ -7,7 +7,7 @@
     "module": "none",
     "noImplicitAny": true,
     "removeComments": false,
-    "outFile": "../web/assets/vendor/npn.js",
+    "outFile": "./build/npnasset.js",
     "preserveConstEnums": true,
     "preserveWatchOutput": true,
     "skipLibCheck": true,
@@ -16,7 +16,6 @@
     "target": "ES5"
   },
   "include": [
-    "../npnasset/typescript/src/**/*",
     "src/**/*"
   ],
   "exclude": [

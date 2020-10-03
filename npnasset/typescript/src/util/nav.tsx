@@ -49,10 +49,6 @@ namespace nav {
     handler(path);
   }
 
-  export function navActiveRequest() {
-    navigate(`/c/${collection.cache.active}/${request.cache.active}`);
-  }
-
   export interface LinkOpts {
     path: string;
     title: string;

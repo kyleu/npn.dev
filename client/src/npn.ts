@@ -22,6 +22,7 @@ namespace npn {
     };
 
     nav.init(routing.route);
+    socket.init((id: string) => {}, routing.recv, onError);
     socket.socketConnect(svc, id, svc === "wasm");
   }
 

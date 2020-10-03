@@ -597,25 +597,6 @@ var socket;
         }
     }
     socket.send = send;
-    function recv(msg) {
-        if (socket.debug) {
-            console.debug("in", msg);
-        }
-        switch (msg.svc) {
-            case services.system.key:
-                system.onSystemMessage(msg.cmd, msg.param);
-                break;
-            case services.collection.key:
-                collection.onCollectionMessage(msg.cmd, msg.param);
-                break;
-            case services.request.key:
-                request.onRequestMessage(msg.cmd, msg.param);
-                break;
-            default:
-                console.warn("unhandled message for service [" + msg.svc + "]");
-        }
-    }
-    socket.recv = recv;
 })(socket || (socket = {}));
 var socket;
 (function (socket) {
@@ -623,6 +604,15 @@ var socket;
     socket.connected = false;
     var pauseSeconds = 0;
     var pendingMessages = [];
+    var onOpen;
+    var onMessage;
+    var onError;
+    function init(open, recv, err) {
+        onOpen = open;
+        onMessage = recv;
+        onError = err;
+    }
+    socket.init = init;
     function socketUrl() {
         var l = document.location;
         var protocol = "ws";
@@ -634,8 +624,8 @@ var socket;
     function initSocket() {
         sock = new WebSocket(socketUrl());
         sock.onopen = onSocketOpen;
-        sock.onmessage = function (event) { return socket.recv(json.parse(event.data)); };
-        sock.onerror = function (event) { return npn.onError("socket", event.type); };
+        sock.onmessage = function (event) { return onMessage(json.parse(event.data)); };
+        sock.onerror = function (event) { return onError("socket", event.type); };
         sock.onclose = onSocketClose;
     }
     socket.initSocket = initSocket;
@@ -643,6 +633,9 @@ var socket;
         socket.currentService = svc;
         socket.currentID = id;
         socket.connectTime = Date.now();
+        if (!onMessage) {
+            throw "onMessage not initialized";
+        }
         if (useBypass) {
             socket.initBypass();
         }
@@ -657,6 +650,7 @@ var socket;
         pauseSeconds = 1;
         pendingMessages.forEach(socket.send);
         pendingMessages = [];
+        onOpen(socket.currentID);
     }
     function onSocketClose() {
         function disconnect() {
@@ -1051,10 +1045,6 @@ var nav;
         handler(path);
     }
     nav.navigate = navigate;
-    function navActiveRequest() {
-        navigate("/c/" + collection.cache.active + "/" + request.cache.active);
-    }
-    nav.navActiveRequest = navActiveRequest;
     function link(o) {
         var href = o.path;
         if (!str.startsWith(href, "/")) {
@@ -1183,6 +1173,7 @@ var npn;
             socket.setAppUnloading();
         };
         nav.init(routing.route);
+        socket.init(function (id) { }, routing.recv, onError);
         socket.socketConnect(svc, id, svc === "wasm");
     }
     npn.init = init;
@@ -1211,6 +1202,25 @@ var npn;
 })(npn || (npn = {}));
 var routing;
 (function (routing) {
+    function recv(msg) {
+        if (socket.debug) {
+            console.debug("in", msg);
+        }
+        switch (msg.svc) {
+            case services.system.key:
+                system.onSystemMessage(msg.cmd, msg.param);
+                break;
+            case services.collection.key:
+                collection.onCollectionMessage(msg.cmd, msg.param);
+                break;
+            case services.request.key:
+                request.onRequestMessage(msg.cmd, msg.param);
+                break;
+            default:
+                console.warn("unhandled message for service [" + msg.svc + "]");
+        }
+    }
+    routing.recv = recv;
     function route(p) {
         var parts = p.split("/");
         parts = parts.filter(function (x) { return x.length > 0; });

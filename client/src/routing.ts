@@ -1,4 +1,23 @@
 namespace routing {
+  export function recv(msg: socket.Message) {
+    if (socket.debug) {
+      console.debug("in", msg);
+    }
+    switch (msg.svc) {
+      case services.system.key:
+        system.onSystemMessage(msg.cmd, msg.param);
+        break;
+      case services.collection.key:
+        collection.onCollectionMessage(msg.cmd, msg.param);
+        break;
+      case services.request.key:
+        request.onRequestMessage(msg.cmd, msg.param);
+        break;
+      default:
+        console.warn(`unhandled message for service [${msg.svc}]`);
+    }
+  }
+
   export function route(p: string) {
     let parts = p.split("/");
     parts = parts.filter(x => x.length > 0);
