@@ -39,14 +39,14 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
 	github.com/kyleu/npn/npnasset v0.0.0-00010101000000-000000000000
-	github.com/kyleu/npn/npnconnection v0.0.11
+	github.com/kyleu/npn/npnconnection v0.0.12
 	github.com/kyleu/npn/npncontroller v0.0.0-00010101000000-000000000000
-	github.com/kyleu/npn/npncore v0.0.11
-	github.com/kyleu/npn/npnservice v0.0.11
+	github.com/kyleu/npn/npncore v0.0.12
+	github.com/kyleu/npn/npnservice v0.0.12
 	github.com/kyleu/npn/npnservice-fs v0.0.0-00010101000000-000000000000
-	github.com/kyleu/npn/npntemplate v0.0.11
-	github.com/kyleu/npn/npnuser v0.0.11
-	github.com/kyleu/npn/npnweb v0.0.11
+	github.com/kyleu/npn/npntemplate v0.0.12
+	github.com/kyleu/npn/npnuser v0.0.12
+	github.com/kyleu/npn/npnweb v0.0.12
 	github.com/mccutchen/go-httpbin v1.1.1
 	github.com/sagikazarmark/ocmux v0.2.0
 	github.com/shiyanhui/hero v0.0.2
