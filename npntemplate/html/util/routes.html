@@ -18,7 +18,7 @@
           <% for _, r := range npnweb.ExtractRoutes(ctx.Routes) { %>
             <% if len(r.Methods) == 0 { %>
             <tr>
-              <th scope="row" colspan="3"><div class="uk-margin-top"><%= strings.TrimPrefix(r.Path, "/") %></div></th>
+              <th scope="row" colspan="3"><div class="mt"><%= strings.TrimPrefix(r.Path, "/") %></div></th>
             </tr>
             <% } else { %>
             <tr>

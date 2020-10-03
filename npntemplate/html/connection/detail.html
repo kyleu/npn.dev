@@ -20,7 +20,7 @@
         </tbody>
       </table>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+    <div class="uk-card uk-card-body uk-card-default mt">
       <form class="uk-form-stacked" action="<%= ctx.Route(npnweb.AdminLink(npncore.KeyConnection, `post`)) %>" method="post">
         <input name="<%= npncore.KeyID %>" type="hidden" value="<%=v model.ID %>" />
         <fieldset class="uk-fieldset">
@@ -40,7 +40,7 @@
             <% Textarea(npnweb.InputParams{Name: "param", Value: npncore.ToJSON(msg.Param, ctx.Logger)}, _buffer) %>
           </div>
 
-          <div class="uk-margin-top">
+          <div class="mt">
             <button class="uk-button uk-button-default" type="submit">Send</button>
           </div>
         </fieldset>

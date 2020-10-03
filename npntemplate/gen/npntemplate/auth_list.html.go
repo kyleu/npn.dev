@@ -18,7 +18,7 @@ func AuthSigninList(auths auth.Records, ctx *npnweb.RequestContext, buffer *byte
     <a class="right theme uk-icon-button" data-uk-icon="question" href="" onclick="return modal.open('auth');" title="sign in information"></a>
     Sign In
   </h3>
-  <ul class="uk-list uk-list-divider uk-margin-top">
+  <ul class="uk-list uk-list-divider mt">
     `)
 	for _, p := range ctx.App.Auth().EnabledProviders() {
 

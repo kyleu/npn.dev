@@ -9,7 +9,8 @@ namespace command {
 
     // Request
     getRequest: "getRequest",
-    call: "call"
+    call: "call",
+    transform: "transform"
   };
 
   export const server = {
@@ -22,6 +23,7 @@ namespace command {
     collectionDetail: "collectionDetail",
 
     requestDetail: "requestDetail",
-    callResult: "callResult"
+    callResult: "callResult",
+    transformResult: "transformResult"
   };
 }

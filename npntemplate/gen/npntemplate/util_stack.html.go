@@ -14,7 +14,7 @@ import (
 func errorStack(ed *npncore.ErrorDetail, ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 	if ed.StackTrace != nil {
 		buffer.WriteString(`
-  <div class="uk-margin-top">
+  <div class="mt">
     <div class="uk-card uk-card-body uk-card-default">
       <table class="uk-table uk-table-divider">
         <caption class="hidden">error detail</caption>

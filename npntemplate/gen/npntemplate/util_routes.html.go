@@ -50,7 +50,7 @@ func RoutesList(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
 		if len(r.Methods) == 0 {
 			_buffer.WriteString(`
             <tr>
-              <th scope="row" colspan="3"><div class="uk-margin-top">`)
+              <th scope="row" colspan="3"><div class="mt">`)
 			hero.EscapeHTML(strings.TrimPrefix(r.Path, "/"), _buffer)
 			_buffer.WriteString(`</div></th>
             </tr>

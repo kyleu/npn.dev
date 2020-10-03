@@ -32,10 +32,12 @@ namespace call {
   export function prepare(coll: string, r: request.Request) {
     const param = {coll: coll, req: r.key, proto: r.prototype};
     socket.send({svc: services.request.key, cmd: command.client.call, param: param});
+    log.info("calling [" + request.prototypeToURL(r.prototype) + "]");
   }
 
   export function setResult(result: Result) {
     const container = dom.req(`#${result.collection}--${result.request}-call`);
     dom.setContent(container, renderResult(result));
+    log.info("call result [" + result.id + "] received");
   }
 }

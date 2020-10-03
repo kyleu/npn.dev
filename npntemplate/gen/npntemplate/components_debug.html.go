@@ -12,7 +12,7 @@ import (
 
 func DebugPanel(t interface{}, logger logur.Logger, buffer *bytes.Buffer) {
 	buffer.WriteString(`
-<div class="uk-margin-top">
+<div class="mt">
   <a class="theme" href="" onclick="this.nextElementSibling.style.display = 'block';return false;">JSON</a>
   <pre class="hidden">`)
 	hero.EscapeHTML(npncore.ToJSON(t, logger), buffer)

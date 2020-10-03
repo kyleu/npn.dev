@@ -1,8 +1,8 @@
 <%: func RequestActions(collection string, req *request.Request, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<div class="uk-card uk-card-body uk-card-default uk-margin-top">
+<div class="uk-card uk-card-body uk-card-default mt">
   <h3 class="uk-card-title">Actions</h3>
-  <a class="uk-button uk-button-default uk-margin-top" href="<%= ctx.Route(`request.call`, `c`, collection, npncore.KeyKey, req.Key) %>">Call</a>
-  <a class="uk-button uk-button-default uk-margin-top" href="<%= ctx.Route(`request.transform`, `c`, collection, npncore.KeyKey, req.Key) %>">Export</a>
-  <a class="uk-button uk-button-default uk-margin-top" href="<%= ctx.Route(`request.edit`, `c`, collection, npncore.KeyKey, req.Key) %>">Edit</a>
-  <a class="uk-button uk-button-default uk-margin-top" href="<%= ctx.Route(`request.delete`, `c`, collection, npncore.KeyKey, req.Key) %>" onclick="return confirm('Are you sure you want to delete request [<%= req.Key %>]?')">Delete</a>
+  <a class="uk-button uk-button-default mt" href="<%= ctx.Route(`request.call`, `c`, collection, npncore.KeyKey, req.Key) %>">Call</a>
+  <a class="uk-button uk-button-default mt" href="<%= ctx.Route(`request.transform`, `c`, collection, npncore.KeyKey, req.Key) %>">Export</a>
+  <a class="uk-button uk-button-default mt" href="<%= ctx.Route(`request.edit`, `c`, collection, npncore.KeyKey, req.Key) %>">Edit</a>
+  <a class="uk-button uk-button-default mt" href="<%= ctx.Route(`request.delete`, `c`, collection, npncore.KeyKey, req.Key) %>" onclick="return confirm('Are you sure you want to delete request [<%= req.Key %>]?')">Delete</a>
 </div>

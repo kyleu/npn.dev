@@ -9,7 +9,7 @@
       <p>TODO...</p>
     </div>
     <% for _, f := range cfg.Files { %>
-      <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+      <div class="uk-card uk-card-body uk-card-default mt">
         <h3 class="uk-card-title"><%= f.Filename %></h3>
         <% matched := false %>
         <% for _, o := range os { %>

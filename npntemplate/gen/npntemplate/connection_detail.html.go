@@ -57,7 +57,7 @@ func ConnectionDetail(model *npnconnection.Status, msg *npnconnection.Message, c
         </tbody>
       </table>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+    <div class="uk-card uk-card-body uk-card-default mt">
       <form class="uk-form-stacked" action="`)
 	hero.EscapeHTML(ctx.Route(npnweb.AdminLink(npncore.KeyConnection, `post`)), _buffer)
 	_buffer.WriteString(`" method="post">
@@ -93,7 +93,7 @@ func ConnectionDetail(model *npnconnection.Status, msg *npnconnection.Message, c
 	_buffer.WriteString(`
           </div>
 
-          <div class="uk-margin-top">
+          <div class="mt">
             <button class="uk-button uk-button-default" type="submit">Send</button>
           </div>
         </fieldset>

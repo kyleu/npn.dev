@@ -18,15 +18,7 @@ namespace request {
     </div>;
   }
 
-  export function renderActionTransform(coll: string, req: string, format: string) {
-    return <div id={coll + "--" + req + "-transform"}>
-      {renderActionClose()}
-      <div class="transform-title">{format}</div>
-      <div class="transform-result" />
-    </div>;
-  }
-
-  function renderActionClose() {
+  export function renderActionClose() {
     return <div class="right">
       <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.navigate(`/c/${collection.cache.active}/${request.cache.active}`);return false;" title="close collection" />
     </div>;

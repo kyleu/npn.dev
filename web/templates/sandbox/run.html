@@ -6,7 +6,7 @@
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-card-default">
       <h3 class="uk-card-title"><%= sb.Title %></h3>
-      <div class="uk-margin-top">
+      <div class="mt">
         <% if sb.Key == "testbed" { %>
           <% SandboxTestbed(ctx, _buffer) %>
         <% } else { %>
@@ -14,9 +14,9 @@
         <% } %>
       </div>
     </div>
-    <div class="uk-card uk-card-body uk-card-default uk-margin-top">
+    <div class="uk-card uk-card-body uk-card-default mt">
       <h3 class="uk-card-title">Response (<%= t %>)</h3>
-      <div class="uk-margin-top">
+      <div class="mt">
         <pre><code><%= json %></code></pre>
       </div>
     </div>

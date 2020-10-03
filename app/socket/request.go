@@ -2,58 +2,86 @@ package socket
 
 import (
 	"encoding/json"
-
-	"github.com/kyleu/npn/app/request"
+	"github.com/gofrs/uuid"
+	"github.com/kyleu/npn/app/transform"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
 )
 
-type requestCallParam struct {
-	Coll  string             `json:"coll"`
-	Req   string             `json:"req"`
-	Proto *request.Prototype `json:"proto"`
-}
-
 func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {
-	svc := s.Context.(*services)
 	var err error
 
 	switch cmd {
 	case ClientMessageGetRequest:
-		frm := &requestCallParam{}
-		err := npncore.FromJSONStrict(param, frm)
-		if err != nil {
-			return errors.Wrap(err, "can't load request param")
-		}
-		req, err := svc.Collection.LoadRequest(frm.Coll, frm.Req)
-		if err != nil {
-			return errors.Wrap(err, "can't load request")
-		}
-		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, req)
-		err = s.WriteMessage(c.ID, msg)
-		if err != nil {
-			return errors.Wrap(err, "can't write message")
-		}
+		err = onGetRequest(c.ID, param, s)
 	case ClientMessageCall:
-		frm := &requestCallParam{}
-		err := npncore.FromJSONStrict(param, frm)
-		if err != nil {
-			return errors.Wrap(err, "can't load request param")
-		}
-
-		go func() {
-			rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto)
-			println(rsp.Status)
-			msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
-			println(msg.Cmd)
-			_ = s.WriteMessage(c.ID, msg)
-		}()
-
+		err = onCall(c.ID, param, s)
+	case ClientMessageTransform:
+		err = onTransform(c.ID, param, s)
 	default:
 		err = errors.New("invalid request command [" + cmd + "]")
 	}
 
 	return err
+}
+
+func onGetRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+	svc := s.Context.(*services)
+	frm := &paramGetRequest{}
+	err := npncore.FromJSONStrict(param, frm)
+	if err != nil {
+		return errors.Wrap(err, "can't load getRequest param")
+	}
+	req, err := svc.Collection.LoadRequest(frm.Coll, frm.Req)
+	if err != nil {
+		return errors.Wrap(err, "can't load request")
+	}
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, req)
+	err = s.WriteMessage(connID, msg)
+	if err != nil {
+		return errors.Wrap(err, "can't write message")
+	}
+	return nil
+}
+
+func onCall(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+	svc := s.Context.(*services)
+	frm := &paramCall{}
+	err := npncore.FromJSONStrict(param, frm)
+	if err != nil {
+		return errors.Wrap(err, "can't load request call param")
+	}
+
+	go func() {
+		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto)
+		println(rsp.Status)
+		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
+		_ = s.WriteMessage(connID, msg)
+	}()
+
+	return nil
+}
+
+func onTransform(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+	frm := &paramTransform{}
+	err := npncore.FromJSONStrict(param, frm)
+	if err != nil {
+		return errors.Wrap(err, "can't load request transform param")
+	}
+
+	tx := transform.AllTransformers.Get(frm.Fmt)
+	if tx == nil {
+		return errors.New("can't load transformer [" + frm.Fmt + "]")
+	}
+
+	rsp, err := tx.Transform(frm.Proto)
+	if err != nil {
+		return errors.Wrap(err, "can't load transform request")
+	}
+
+	txr := transformResponse{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageTransformResult, txr)
+	return s.WriteMessage(connID, msg)
 }

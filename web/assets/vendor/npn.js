@@ -1147,7 +1147,8 @@ var command;
         addURL: "addURL",
         // Request
         getRequest: "getRequest",
-        call: "call"
+        call: "call",
+        transform: "transform"
     };
     command.server = {
         error: "error",
@@ -1156,7 +1157,8 @@ var command;
         collections: "collections",
         collectionDetail: "collectionDetail",
         requestDetail: "requestDetail",
-        callResult: "callResult"
+        callResult: "callResult",
+        transformResult: "transformResult"
     };
 })(command || (command = {}));
 var npn;
@@ -1384,11 +1386,13 @@ var call;
     function prepare(coll, r) {
         var param = { coll: coll, req: r.key, proto: r.prototype };
         socket.send({ svc: services.request.key, cmd: command.client.call, param: param });
+        log.info("calling [" + request.prototypeToURL(r.prototype) + "]");
     }
     call.prepare = prepare;
     function setResult(result) {
         var container = dom.req("#" + result.collection + "--" + result.request + "-call");
         dom.setContent(container, call.renderResult(result));
+        log.info("call result [" + result.id + "] received");
     }
     call.setResult = setResult;
 })(call || (call = {}));
@@ -1736,17 +1740,11 @@ var request;
             JSX("div", { class: "call-result" }));
     }
     request.renderActionCall = renderActionCall;
-    function renderActionTransform(coll, req, format) {
-        return JSX("div", { id: coll + "--" + req + "-transform" },
-            renderActionClose(),
-            JSX("div", { class: "transform-title" }, format),
-            JSX("div", { class: "transform-result" }));
-    }
-    request.renderActionTransform = renderActionTransform;
     function renderActionClose() {
         return JSX("div", { class: "right" },
             JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate(`/c/${collection.cache.active}/${request.cache.active}`);return false;", title: "close collection" }));
     }
+    request.renderActionClose = renderActionClose;
 })(request || (request = {}));
 var request;
 (function (request) {
@@ -1920,6 +1918,7 @@ var request;
         switch (cmd) {
             case command.server.requestDetail:
                 var req = param;
+                log.info("received details for request [" + req.key + "]");
                 request.cache.updateRequest(req);
                 if (request.cache.active === req.key) {
                     request.renderActiveRequest(collection.cache.active);
@@ -1927,11 +1926,13 @@ var request;
                 }
                 break;
             case command.server.callResult:
-                debugger;
                 var result = param;
                 call.setResult(result);
                 var path = "r/" + result.id;
                 // TODO history.replaceState(path, "", "/" + path);
+                break;
+            case command.server.transformResult:
+                transform.setResult(param);
                 break;
             default:
                 console.warn("unhandled request command [" + cmd + "]");
@@ -2018,7 +2019,10 @@ var request;
                 dom.setContent(ra, request.renderActionCall(coll, reqKey));
                 break;
             case "transform":
-                dom.setContent(ra, request.renderActionTransform(coll, reqKey, extra[0]));
+                var req = request.form.extractRequest();
+                dom.setContent(ra, transform.renderRequest(coll, reqKey, extra[0]));
+                var param = { coll: coll, req: reqKey, fmt: extra[0], proto: req.prototype };
+                socket.send({ svc: services.request.key, cmd: command.client.transform, param: param });
                 break;
             default:
                 console.warn("unhandled request action [" + action + "]");
@@ -2675,6 +2679,26 @@ var request;
         form.renderURL = renderURL;
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
+var transform;
+(function (transform) {
+    function renderRequest(coll, req, format) {
+        return JSX("div", { id: coll + "--" + req + "-transform" },
+            request.renderActionClose(),
+            JSX("div", { class: "transform-title" }, format),
+            JSX("div", { class: "transform-result" }));
+    }
+    transform.renderRequest = renderRequest;
+    function setResult(result) {
+        var container = dom.req("#" + result.coll + "--" + result.req + "-transform .transform-result");
+        dom.setContent(container, render(result));
+        log.info("call result [" + result.coll + "/" + result.req + ": " + result.fmt + "] received");
+    }
+    transform.setResult = setResult;
+    function render(r) {
+        return JSX("div", { class: "uk-margin-top" },
+            JSX("pre", null, r.out));
+    }
+})(transform || (transform = {}));
 var system;
 (function (system) {
     var Cache = /** @class */ (function () {

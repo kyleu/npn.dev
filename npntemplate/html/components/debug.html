@@ -1,5 +1,5 @@
 <%: func DebugPanel(t interface{}, logger logur.Logger, buffer *bytes.Buffer) %>
-<div class="uk-margin-top">
+<div class="mt">
   <a class="theme" href="" onclick="this.nextElementSibling.style.display = 'block';return false;">JSON</a>
   <pre class="hidden"><%= npncore.ToJSON(t, logger) %></pre>
 </div>

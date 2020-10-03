@@ -107,8 +107,8 @@ func Profile(auths auth.Records, ref string, ctx *npnweb.RequestContext, w io.Wr
 	ProfileColors("link", "Link", ctx.Profile.LinkColor, _buffer)
 	_buffer.WriteString(`
 
-            <div class="uk-margin-top">
-              <button class="right uk-button uk-button-default uk-margin-top" type="submit">Save Changes</button>
+            <div class="mt">
+              <button class="right uk-button uk-button-default mt" type="submit">Save Changes</button>
             </div>
           </form>
         </div>

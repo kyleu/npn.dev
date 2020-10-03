@@ -1,5 +1,5 @@
 <%: func PrototypeFields(key string, proto *request.Prototype, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<div class="uk-margin-top">
+<div class="mt">
   <label class="uk-form-label" for="method">Method</label>
   <select class="uk-select" id="method" name="method">
   <% for _, m := range request.AllMethods { %>
@@ -12,7 +12,7 @@
   </select>
 </div>
 
-<div class="uk-margin-top">
+<div class="mt">
   <label class="uk-form-label" for="<%= key %>-url">URL</label>
   <input class="uk-input" id="<%= key %>-url" name="url" type="text" value="<%= proto.URLString() %>" />
 </div>

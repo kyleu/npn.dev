@@ -34,7 +34,10 @@ namespace request {
         dom.setContent(ra, renderActionCall(coll, reqKey));
         break;
       case "transform":
-        dom.setContent(ra, renderActionTransform(coll, reqKey, extra[0]));
+        const req = request.form.extractRequest()
+        dom.setContent(ra, transform.renderRequest(coll, reqKey, extra[0]));
+        const param = {coll: coll, req: reqKey, fmt: extra[0], proto: req.prototype};
+        socket.send({svc: services.request.key, cmd: command.client.transform, param: param});
         break;
       default:
         console.warn("unhandled request action [" + action + "]");

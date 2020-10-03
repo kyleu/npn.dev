@@ -25,6 +25,7 @@ namespace request {
     switch (cmd) {
       case command.server.requestDetail:
         const req = param as Request
+        log.info("received details for request [" + req.key + "]");
         cache.updateRequest(req)
         if (cache.active === req.key) {
           renderActiveRequest(collection.cache.active!);
@@ -32,11 +33,13 @@ namespace request {
         }
         break;
       case command.server.callResult:
-        debugger
         const result = param as call.Result;
         call.setResult(result);
         const path = `r/` + result.id
         // TODO history.replaceState(path, "", "/" + path);
+        break;
+      case command.server.transformResult:
+        transform.setResult(param as transform.Result);
         break;
       default:
         console.warn(`unhandled request command [${cmd}]`);
