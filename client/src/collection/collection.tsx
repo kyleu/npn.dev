@@ -60,13 +60,23 @@ namespace collection {
     </div>
   }
 
+  export function addFromInput() {
+    const input = dom.req<HTMLInputElement>("#coll-add-input");
+    const name = input.value.trim();
+    if (name && name.length > 0) {
+      input.value = "";
+      socket.send({svc: services.collection.key, cmd: command.client.addCollection, param: name});
+      log.info("adding request [" + name + "]");
+    }
+  }
+
   export function addRequestURL() {
     const input = dom.req<HTMLInputElement>("#coll-request-add-url");
     const url = input.value.trim();
     if (url && url.length > 0) {
       input.value = "";
       const param = {"coll": collection.cache.active, "url": url};
-      socket.send({svc: services.collection.key, cmd: command.client.addURL, param: param});
+      socket.send({svc: services.collection.key, cmd: command.client.addRequestURL, param: param});
       log.info("adding request [" + url + "]");
     }
   }

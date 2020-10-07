@@ -1134,7 +1134,8 @@ var command;
         connect: "connect",
         // Collection
         getCollection: "getCollection",
-        addURL: "addURL",
+        addCollection: "addCollection",
+        addRequestURL: "addRequestURL",
         // Request
         getRequest: "getRequest",
         call: "call",
@@ -1146,7 +1147,9 @@ var command;
         connected: "connected",
         collections: "collections",
         collectionDetail: "collectionDetail",
+        collectionAdded: "collectionAdded",
         requestDetail: "requestDetail",
+        requestAdded: "requestAdded",
         callResult: "callResult",
         transformResult: "transformResult"
     };
@@ -1553,6 +1556,15 @@ var collection;
                 collection_1.renderCollections(this.collections);
             }
         };
+        Cache.prototype.getActiveCollection = function () {
+            for (var _i = 0, _a = this.collections; _i < _a.length; _i++) {
+                var x = _a[_i];
+                if (x.key == this.active) {
+                    return x;
+                }
+            }
+            return undefined;
+        };
         return Cache;
     }());
     collection_1.cache = new Cache();
@@ -1611,13 +1623,23 @@ var collection;
                 JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests))));
     }
     collection.renderCollection = renderCollection;
+    function addFromInput() {
+        var input = dom.req("#coll-add-input");
+        var name = input.value.trim();
+        if (name && name.length > 0) {
+            input.value = "";
+            socket.send({ svc: services.collection.key, cmd: command.client.addCollection, param: name });
+            log.info("adding request [" + name + "]");
+        }
+    }
+    collection.addFromInput = addFromInput;
     function addRequestURL() {
         var input = dom.req("#coll-request-add-url");
         var url = input.value.trim();
         if (url && url.length > 0) {
             input.value = "";
             var param = { "coll": collection.cache.active, "url": url };
-            socket.send({ svc: services.collection.key, cmd: command.client.addURL, param: param });
+            socket.send({ svc: services.collection.key, cmd: command.client.addRequestURL, param: param });
             log.info("adding request [" + url + "]");
         }
     }
@@ -1652,6 +1674,12 @@ var collection;
                 collection.cache.updateCollection(d.collection);
                 request.cache.setCollectionRequests(d.collection, d.requests);
                 collection.renderCollections(collection.cache.collections);
+                break;
+            case command.server.collectionAdded:
+                var a = param;
+                log.info("processing new collection [" + a.active + "]");
+                collection.cache.collections = a.collections;
+                nav.navigate("/c/" + a.active);
                 break;
             default:
                 console.warn("unhandled collection command [" + cmd + "]");
@@ -1934,6 +1962,13 @@ var request;
                     request.renderActiveRequest(collection.cache.active);
                     request.renderAction(collection.cache.active, request.cache.active, request.cache.action, request.cache.extra);
                 }
+                break;
+            case command.server.requestAdded:
+                var ra = param;
+                log.info("received details for new request [" + ra.key + "]");
+                request.cache.updateRequest(ra);
+                request.cache.setActiveRequest(ra.key);
+                nav.navigate("/c/" + collection.cache.active + "/" + ra.key);
                 break;
             case command.server.callResult:
                 var result = param;

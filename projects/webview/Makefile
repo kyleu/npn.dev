@@ -9,7 +9,6 @@ ifdef SOURCE_DATE_EPOCH
 else
     BUILD_DATE ?= $(shell date "$(DATE_FMT)")
 endif
-LDFLAGS += -X main.version=${VERSION} -X main.commitHash=${COMMIT_HASH} -X main.buildDate=${BUILD_DATE}
 export CGO_ENABLED ?= 1
 ifeq (${VERBOSE}, 1)
 ifeq ($(filter -v,${GOARGS}),)

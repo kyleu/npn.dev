@@ -46,6 +46,10 @@ func PrototypeFromString(u string) *Prototype {
 	}
 	rest, query := npncore.SplitString(rest, '?', true)
 	proto, rest := npncore.SplitString(rest, ':', true)
+	if len(rest) == 0 {
+		rest = proto
+		proto = "http"
+	}
 	rest = strings.TrimPrefix(strings.TrimPrefix(rest, "/"), "/")
 	rest, path := npncore.SplitString(rest, '/', true)
 	if len(path) > 0 {

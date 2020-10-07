@@ -2,8 +2,15 @@
         <div id="welcome-panel" class="panel">
           <h3>Welcome to <%= npncore.AppName %>!</h3>
           <ul class="uk-list uk-list-divider">
-            <li>Add a collection</li>
-            <li>Collection list</li>
+            <li>
+              <form onsubmit="collection.addFromInput();return false;">
+                <div class="uk-margin-top uk-inline uk-width-expand">
+                  <button class="uk-form-icon uk-form-icon-flip" type="submit" title="add collection" uk-icon="icon: plus"></button>
+                  <input id="coll-add-input" class="uk-input" placeholder="new collection name" data-lpignore="true" />
+                </div>
+              </form>
+            </li>
+            <li><div class="collection-list">Collection list</div></li>
             <li>Recent requests</li>
             <li>What's new</li>
           </ul>

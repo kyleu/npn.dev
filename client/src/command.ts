@@ -5,7 +5,8 @@ namespace command {
 
     // Collection
     getCollection: "getCollection",
-    addURL: "addURL",
+    addCollection: "addCollection",
+    addRequestURL: "addRequestURL",
 
     // Request
     getRequest: "getRequest",
@@ -21,8 +22,10 @@ namespace command {
 
     collections: "collections",
     collectionDetail: "collectionDetail",
+    collectionAdded: "collectionAdded",
 
     requestDetail: "requestDetail",
+    requestAdded: "requestAdded",
     callResult: "callResult",
     transformResult: "transformResult"
   };

@@ -30,7 +30,10 @@ func Run(a string, p uint16, platform string, dir string) (uint16, error) {
 }
 
 func Start(platform string, dir string) (npnweb.AppInfo, *mux.Router, error) {
-	info := InitApp(platform, dir)
+	info, err := InitApp(platform, dir)
+	if err != nil {
+		return info, nil, errors.WithMessage(err, "unable to initialize app")
+	}
 
 	r, err := controllers.BuildRouter(info)
 	if err != nil {
@@ -42,7 +45,7 @@ func Start(platform string, dir string) (npnweb.AppInfo, *mux.Router, error) {
 	return info, r, nil
 }
 
-func InitApp(platform string, dir string) npnweb.AppInfo {
+func InitApp(platform string, dir string) (npnweb.AppInfo, error) {
 	_ = os.Setenv("TZ", "UTC")
 
 	npncore.AppKey = "npn"
@@ -64,16 +67,16 @@ func InitApp(platform string, dir string) npnweb.AppInfo {
 	}
 
 	var files npncore.FileLoader
-	if platform == "wasm" {
-		if FileLoaderOverride == nil {
+	if FileLoaderOverride != nil {
+		files = FileLoaderOverride
+	} else {
+		if platform == "wasm" {
 			logger.Warn("can't load FileLoaderOverride for WASM")
 			files = npncore.NewFileSystem(dir, logger)
 		} else {
-			files = FileLoaderOverride
+			files = npncore.NewFileSystem(dir, logger)
 		}
-	} else {
-		files = npncore.NewFileSystem(dir, logger)
 	}
 
-	return app.NewService(verbose, files, logger)
+	return app.NewService(verbose, files, logger), nil
 }

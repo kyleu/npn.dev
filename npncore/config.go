@@ -3,8 +3,8 @@ package npncore
 var (
 	AppKey      = "SetAppKey"
 	AppName     = "SetAppName"
-	AppPlatform = "SetAppName"
-	AppVersion  = "0"
+	AppPlatform = "SetAppPlatform"
+	AppVersion  = "0.0.0"
 )
 
 type key int

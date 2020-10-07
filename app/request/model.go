@@ -21,11 +21,7 @@ func NewRequest() *Request {
 func FromString(key string, content string) (*Request, error) {
 	ret := &Request{}
 	content = strings.TrimSpace(content)
-	if strings.HasPrefix(content, `"`) || strings.HasPrefix(content, "http") {
-		u := strings.TrimPrefix(strings.TrimSuffix(content, `"`), `"`)
-		proto := PrototypeFromString(u)
-		ret.Prototype = proto
-	} else {
+	if strings.HasPrefix(content, "{") {
 		errRequest := npncore.FromJSONStrict([]byte(content), ret)
 		if errRequest != nil {
 			proto := &Prototype{}
@@ -35,6 +31,10 @@ func FromString(key string, content string) (*Request, error) {
 			}
 			ret.Prototype = proto
 		}
+	} else {
+		u := strings.TrimPrefix(strings.TrimSuffix(content, `"`), `"`)
+		proto := PrototypeFromString(u)
+		ret.Prototype = proto
 	}
 	return ret.Normalize(key), nil
 }

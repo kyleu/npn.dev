@@ -3,6 +3,7 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	"github.com/kyleu/npn/app/request"
 
@@ -31,6 +32,12 @@ type collDetails struct {
 	Requests   collection.RequestSummaries `json:"requests"`
 }
 
+type addCollResult struct {
+	Collections collection.Collections      `json:"collections"`
+	Active      string                      `json:"active"`
+	Requests    collection.RequestSummaries `json:"requests"`
+}
+
 type addURLInput struct {
 	Coll string `json:"coll"`
 	URL  string `json:"url"`
@@ -40,14 +47,46 @@ func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connecti
 	switch cmd {
 	case ClientMessageGetCollection:
 		return getCollDetails(s, c, param)
-	case ClientMessageAddURL:
-		return addURL(s, c, param)
+	case ClientMessageAddCollection:
+		return addCollection(s, c, param)
+	case ClientMessageAddRequestURL:
+		return addRequestURL(s, c, param)
 	default:
 		return errors.New("unhandled collection command [" + cmd + "]")
 	}
 }
 
-func addURL(s *npnconnection.Service, _ *npnconnection.Connection, param json.RawMessage) error {
+func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
+	name := ""
+	err := npncore.FromJSONStrict(param, &name)
+	if err != nil {
+		return errors.Wrap(err, "unable to parse input from URL")
+	}
+	key := npncore.Slugify(name)
+	svcs := ctx(s)
+	curr, err := svcs.Collection.Load(key)
+	if curr != nil {
+		key = key + strings.ToLower("-"+npncore.RandomString(4))
+	}
+
+	err = svcs.Collection.Save("", key, name, "")
+	if err != nil {
+		return errors.Wrap(err, "unable to save new collection with key ["+key+"]")
+	}
+
+	newColls, _ := svcs.Collection.List()
+
+	ret := &addCollResult{Collections: newColls, Active: key}
+	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionAdded, ret)
+	err = s.WriteMessage(c.ID, msg)
+	if err != nil {
+		s.Logger.Warn(fmt.Sprintf("error writing to socket: %+v", err))
+	}
+	// TODO Send message
+	return nil
+}
+
+func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
 	p := &addURLInput{}
 	err := npncore.FromJSONStrict(param, p)
 	if err != nil {
@@ -57,15 +96,33 @@ func addURL(s *npnconnection.Service, _ *npnconnection.Connection, param json.Ra
 	if err != nil {
 		return errors.Wrap(err, "unable to parse request from URL ["+p.URL+"]")
 	}
-	req.Key = req.Prototype.Domain
+	req.Key = npncore.Slugify(req.Prototype.Domain)
 
 	svcs := ctx(s)
+	println(req.Key)
+	curr, err := svcs.Collection.LoadRequest(p.Coll, req.Key)
+	if curr != nil {
+		println("!!!!!")
+		if req.Prototype != nil && len(req.Prototype.Path) > 0 {
+			add := req.Prototype.Path
+			if len(add) > 8 {
+				add = add[0:8]
+			}
+			req.Key = req.Key + "-" + npncore.Slugify(add)
+		}
+		curr, err = svcs.Collection.LoadRequest(p.Coll, req.Key)
+		if curr != nil {
+			req.Key = req.Key + strings.ToLower("-"+npncore.RandomString(4))
+		}
+	}
+
 	err = svcs.Collection.SaveRequest(p.Coll, "", req)
 	if err != nil {
 		return errors.Wrap(err, "unable to save request from URL ["+p.URL+"]")
 	}
 
-	return nil
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestAdded, &req)
+	return s.WriteMessage(c.ID, msg)
 }
 
 func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {

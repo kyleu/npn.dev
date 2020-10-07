@@ -32,6 +32,13 @@ namespace request {
           renderAction(collection.cache.active!, cache.active, cache.action, cache.extra);
         }
         break;
+      case command.server.requestAdded:
+        const ra = param as Request
+        log.info("received details for new request [" + ra.key + "]");
+        cache.updateRequest(ra)
+        cache.setActiveRequest(ra.key);
+        nav.navigate(`/c/${collection.cache.active}/${ra.key}`);
+        break;
       case command.server.callResult:
         const result = param as call.Result;
         call.setResult(result);

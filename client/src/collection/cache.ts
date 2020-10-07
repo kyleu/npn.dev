@@ -20,6 +20,15 @@ namespace collection {
         renderCollections(this.collections);
       }
     }
+
+    getActiveCollection() {
+      for (const x of this.collections) {
+        if (x.key == this.active) {
+          return x;
+        }
+      }
+      return undefined;
+    }
   }
 
   export const cache = new Cache();

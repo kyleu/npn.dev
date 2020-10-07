@@ -5,6 +5,11 @@ namespace collection {
     readonly description: string;
   }
 
+  interface CollectionAdded {
+    readonly collections: Collection[];
+    readonly active: string;
+  }
+
   export function onCollectionMessage(cmd: string, param: any) {
     switch (cmd) {
       case command.server.collections:
@@ -18,6 +23,12 @@ namespace collection {
         cache.updateCollection(d.collection);
         request.cache.setCollectionRequests(d.collection, d.requests);
         renderCollections(cache.collections!);
+        break;
+      case command.server.collectionAdded:
+        const a = param as CollectionAdded;
+        log.info(`processing new collection [${a.active}]`);
+        cache.collections = a.collections;
+        nav.navigate("/c/" + a.active);
         break;
       default:
         console.warn(`unhandled collection command [${cmd}]`);

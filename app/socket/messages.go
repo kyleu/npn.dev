@@ -8,7 +8,8 @@ const (
 
 	// Collection
 	ClientMessageGetCollection = "getCollection"
-	ClientMessageAddURL        = "addURL"
+	ClientMessageAddCollection = "addCollection"
+	ClientMessageAddRequestURL = "addRequestURL"
 
 	// Request
 	ClientMessageGetRequest = "getRequest"
@@ -23,9 +24,11 @@ const (
 	// Collection
 	ServerMessageCollections      = "collections"
 	ServerMessageCollectionDetail = "collectionDetail"
+	ServerMessageCollectionAdded  = "collectionAdded"
 
 	// Request
 	ServerMessageRequestDetail   = "requestDetail"
+	ServerMessageRequestAdded    = "requestAdded"
 	ServerMessageCallResult      = "callResult"
 	ServerMessageTransformResult = "transformResult"
 )

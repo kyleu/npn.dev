@@ -10,14 +10,13 @@ var redir string
 var addr string
 var port uint16
 var dataDir string
-var platform string
 
 func Configure() cobra.Command {
 	rootCmd := cobra.Command{
 		Use:   npncore.AppKey,
 		Short: "Command line interface for " + npncore.AppName,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			actualPort, err := Run(addr, port, platform, dataDir)
+			actualPort, err := Run(addr, port, "", dataDir)
 			if actualPort > 0 {
 				port = actualPort
 			}
@@ -31,7 +30,6 @@ func Configure() cobra.Command {
 	flags.StringVarP(&addr, "address", "a", "127.0.0.1", "interface address to listen on")
 	flags.Uint16VarP(&port, "port", "p", 10101, "port for http server to listen on")
 	flags.BoolVarP(&verbose, "verbose", "v", false, "verbose output")
-	flags.StringVar(&platform, "test-platform", "", "TEMP: test platform styling")
 
 	return rootCmd
 }
