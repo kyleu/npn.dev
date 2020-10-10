@@ -3,13 +3,13 @@ module github.com/kyleu/npn/projects/wasm
 go 1.15
 
 require (
-	emperror.dev/errors v0.7.0
-	github.com/kyleu/npn v1.0.0
-	github.com/kyleu/npn/npnconnection v0.0.11
-	github.com/kyleu/npn/npncontroller v0.0.11
-	github.com/kyleu/npn/npncore v1.0.0
-	github.com/kyleu/npn/npnuser v0.0.11
-	github.com/kyleu/npn/npnweb v0.0.11
+	emperror.dev/errors v0.8.0
+	github.com/kyleu/npn v0.0.12 // npn
+	github.com/kyleu/npn/npnconnection v0.0.12 // npn
+	github.com/kyleu/npn/npncontroller v0.0.12 // npn
+	github.com/kyleu/npn/npncore v0.0.12 // npn
+	github.com/kyleu/npn/npnuser v0.0.12 // npn
+	github.com/kyleu/npn/npnweb v0.0.12 // npn
 )
 
 replace github.com/kyleu/npn => ../../

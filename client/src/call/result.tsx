@@ -1,20 +1,14 @@
 namespace call {
-  export function renderResult(r: Result) {
-    let rspDetail = <div>no result</div>
-
-    const rsp = r.response;
-    if (rsp) {
-      const ct = rsp.contentType || "";
-      const cl = (rsp.contentLength && rsp.contentLength > -1) ? `(${rsp.contentLength} bytes)` : ((rsp.body && rsp.body.length > -1) ? `(${rsp.body.length} bytes)` : "");
-      rspDetail = <div>{rsp.proto} <em>{rsp.status}</em><div>{ct} {cl}</div></div>;
+  function renderResponse(rsp: undefined | call.Response) {
+    if (!rsp) {
+      return <div>no response</div>;
     }
-
-    return [
-      <div class="right">
-        <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close result" />
-      </div>,
-      <div class="clear" />,
-      <div>
+    const ct = rsp.contentType || "";
+    const cl = (rsp.contentLength && rsp.contentLength > -1) ? `(${rsp.contentLength} bytes)` : ((rsp.body && rsp.body.length > -1) ? `(${rsp.body.length} bytes)` : "");
+    const ret = <div>
+      <h3>{rsp ? rsp.status : "Unknown"}</h3>
+      <em>{rsp.method} {rsp.url}</em>
+      <div class="mt">
         <ul data-uk-tab="">
           <li><a href="#result">Result</a></li>
           <li><a href="#request">Request</a></li>
@@ -24,19 +18,39 @@ namespace call {
         </ul>
         <ul class="uk-switcher uk-margin">
           <li>
-            <div>{r.status}: {(r.timing?.completed || 0) / 1000}ms</div>
-            {rspDetail}
+            <div>{(rsp.timing?.completed || 0) / 1000}ms</div>
+            <div>{rsp.proto} <em>{rsp.status}</em><div>{ct} {cl}</div></div>
           </li>
           <li>
-            <h3 class="uk-margin-small-bottom">{r.url}</h3>
-            {renderHeaders("Final Request Headers", r.requestHeaders)}
+            {renderHeaders("Final Request Headers", rsp.requestHeaders)}
           </li>
-          <li>{renderHeaders("Response Headers", r.response?.headers)}</li>
-          <li>{rbody.renderBody(r.url, r.response?.body)}</li>
-          <li>{renderTiming(r.timing)}</li>
+          <li>{renderHeaders("Response Headers", rsp.headers)}</li>
+          <li>{rbody.renderBody(rsp.url, rsp.body)}</li>
+          <li>{renderTiming(rsp.timing)}</li>
         </ul>
       </div>
+    </div>;
+    if (rsp.prior) {
+      return <div>
+        {renderResponse(rsp.prior)}
+        <hr />
+        {ret}
+      </div>
+    }
+    return ret;
+  }
+
+  export function renderResult(r: Result) {
+    const ret = [
+      <div class="right">
+        <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close result" />
+      </div>,
+      r.error ? <div>
+        <div class="red-fg">error: {r.error}</div>
+      </div> : <div />,
+      renderResponse(r.response)
     ];
+    return ret;
   }
 
   function renderHeaders(title: string, headers: header.Header[] = []) {
@@ -61,6 +75,10 @@ namespace call {
     const sections = timingSections(t);
     return <div class="timing-panel">
       <div class="result-timing-graph">
+        <div>
+          <div class="timing-start">0ms</div>
+          <div class="timing-end">{t.completed / 1000}ms</div>
+        </div>
         <object type="image/svg+xml" style={"width: 100%; height: " + (sections.length * 24) + "px"} data={timingGraph(sections)}>SVG not supported</object>
       </div>
       <hr />

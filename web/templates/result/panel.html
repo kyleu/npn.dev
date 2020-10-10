@@ -1,7 +1,7 @@
 <%: func ResultPanel(result *call.Result, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
 <div class="uk-card uk-card-body uk-card-default mt">
-  <% if result.Timing != nil { %>
-    <div class="right"><%= npncore.MicrosToMillis(ctx.Profile.Locale, result.Timing.Duration()) %></div>
+  <% if result.Response != nil && result.Response.Timing != nil { %>
+    <div class="right"><%= npncore.MicrosToMillis(ctx.Profile.Locale, result.Response.Timing.Duration()) %></div>
   <% } %>
   <h3 class="uk-card-title">Result: <%= result.Status %></h3>
   <% if len(result.Error) > 0 { %>

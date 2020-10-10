@@ -5,11 +5,11 @@ import (
 
 	"emperror.dev/errors"
 	"github.com/johnfercher/maroto/pkg/consts"
-	pdfgen "github.com/johnfercher/maroto/pkg/pdf"
+	"github.com/johnfercher/maroto/pkg/pdf"
 	"github.com/johnfercher/maroto/pkg/props"
 )
 
-func Render(rsp interface{}, url string, callback func(rsp interface{}, m pdfgen.Maroto) (string, error)) (string, []byte, error) {
+func Render(rsp interface{}, url string, callback func(rsp interface{}, m pdf.Maroto) (string, error)) (string, []byte, error) {
 	m := newDoc()
 	writeDocHeader(url, m)
 	filename, err := callback(rsp, m)
@@ -19,13 +19,13 @@ func Render(rsp interface{}, url string, callback func(rsp interface{}, m pdfgen
 	return response(filename, m)
 }
 
-func newDoc() pdfgen.Maroto {
-	m := pdfgen.NewMaroto(consts.Portrait, consts.A4)
+func newDoc() pdf.Maroto {
+	m := pdf.NewMaroto(consts.Portrait, consts.A4)
 	m.SetPageMargins(10, 10, 10)
 	return m
 }
 
-func writeDocHeader(url string, m pdfgen.Maroto) {
+func writeDocHeader(url string, m pdf.Maroto) {
 	m.RegisterHeader(func() {
 		TR(func() {
 			Col(func() {
@@ -36,7 +36,7 @@ func writeDocHeader(url string, m pdfgen.Maroto) {
 	})
 }
 
-func response(fn string, m pdfgen.Maroto) (string, []byte, error) {
+func response(fn string, m pdf.Maroto) (string, []byte, error) {
 	buff, err := m.Output()
 	if err != nil {
 		return fn, nil, errors.Wrap(err, "error writing PDF output")

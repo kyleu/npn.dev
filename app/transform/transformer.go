@@ -24,4 +24,3 @@ func (t Transformers) Get(s string) Transformer {
 }
 
 var AllTransformers = Transformers{&CURL{}, &HTTP{}}
-

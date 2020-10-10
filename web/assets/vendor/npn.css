@@ -647,7 +647,7 @@ h4 {
 }
 
 .uk-dark .uk-navbar-nav > li > a, .uk-dark .uk-logo {
-  color: #666;
+  color: #333;
 }
 .uk-dark .uk-navbar-nav > li > a:hover, .uk-dark .uk-logo:hover {
   color: #000;
@@ -891,6 +891,20 @@ em, .uk-light em {
 .chart-tooltip {
   position: absolute;
   display: none;
+}
+
+.timing-start {
+  float: left;
+  border-left: 1px solid #666;
+  padding-left: 4px;
+  padding-bottom: 4px;
+}
+
+.timing-end {
+  float: right;
+  border-right: 1px solid #666;
+  padding-right: 4px;
+  padding-bottom: 4px;
 }
 
 .emoji-picker, .emoji-picker__search {

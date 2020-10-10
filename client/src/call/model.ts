@@ -1,5 +1,8 @@
 namespace call {
   export interface Response {
+    readonly method: string;
+    readonly url: string;
+    readonly requestHeaders: header.Header[];
     readonly status: string;
     readonly statusCode?: number;
     readonly proto?: string;
@@ -14,18 +17,16 @@ namespace call {
     readonly uncompressed?: boolean;
     readonly body?: rbody.Body;
     readonly prior?: Response;
+    readonly timing?: Timing;
     readonly error?: string;
   }
 
   export interface Result {
     readonly id: string;
-    readonly url: string;
     readonly collection: string;
     readonly request: string;
-    readonly requestHeaders?: header.Header[];
     readonly status: string;
     readonly response?: Response;
-    readonly timing?: Timing;
     readonly error?: string;
   }
 

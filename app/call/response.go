@@ -4,12 +4,17 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/kyleu/npn/app/request"
+
 	"github.com/kyleu/npn/app/body"
 	"github.com/kyleu/npn/app/header"
 	"github.com/kyleu/npn/npncore"
 )
 
 type Response struct {
+	Method           string         `json:"method,omitempty"`
+	URL              string         `json:"url,omitempty"`
+	RequestHeaders   header.Headers `json:"requestHeaders,omitempty"`
 	Status           string         `json:"status"`
 	StatusCode       int            `json:"statusCode,omitempty"`
 	Proto            string         `json:"proto,omitempty"`
@@ -24,10 +29,11 @@ type Response struct {
 	Uncompressed     bool           `json:"uncompressed,omitempty"`
 	Body             *body.Body     `json:"body,omitempty"`
 	Prior            *Response      `json:"prior,omitempty"`
+	Timing           *Timing        `json:"timing,omitempty"`
 	Error            *string        `json:"error,omitempty"`
 }
 
-func ResponseFromHTTP(r *http.Response) *Response {
+func ResponseFromHTTP(p *request.Prototype, r *http.Response, timing *Timing) *Response {
 	headers := make(header.Headers, 0, len(r.Header))
 	for k, vs := range r.Header {
 		for _, v := range vs {
@@ -46,6 +52,9 @@ func ResponseFromHTTP(r *http.Response) *Response {
 		ct = bod.Config.MimeType()
 	}
 	return &Response{
+		Method:           r.Request.Method,
+		URL:              r.Request.URL.String(),
+		RequestHeaders:   p.FinalHeaders(),
 		Status:           r.Status,
 		StatusCode:       r.StatusCode,
 		Proto:            r.Proto,
@@ -59,6 +68,7 @@ func ResponseFromHTTP(r *http.Response) *Response {
 		Close:            r.Close,
 		Uncompressed:     r.Uncompressed,
 		Body:             bod,
+		Timing:           timing,
 		Error:            es,
 	}
 }

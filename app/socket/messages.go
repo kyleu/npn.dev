@@ -12,9 +12,10 @@ const (
 	ClientMessageAddRequestURL = "addRequestURL"
 
 	// Request
-	ClientMessageGetRequest = "getRequest"
-	ClientMessageCall       = "call"
-	ClientMessageTransform  = "transform"
+	ClientMessageGetRequest  = "getRequest"
+	ClientMessageSaveRequest = "saveRequest"
+	ClientMessageCall        = "call"
+	ClientMessageTransform   = "transform"
 )
 
 const (
@@ -36,6 +37,12 @@ const (
 type paramGetRequest struct {
 	Coll string `json:"coll"`
 	Req  string `json:"req"`
+}
+
+type paramSaveRequest struct {
+	Coll string           `json:"coll"`
+	Orig string           `json:"orig"`
+	Req  *request.Request `json:"req"`
 }
 
 type paramCall struct {

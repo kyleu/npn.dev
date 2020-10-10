@@ -23,6 +23,20 @@
   display: none;
 }
 
+.timing-start {
+  float: left;
+  border-left: 1px solid #666;
+  padding-left: 4px;
+  padding-bottom: 4px;
+}
+
+.timing-end {
+  float: right;
+  border-right: 1px solid #666;
+  padding-right: 4px;
+  padding-bottom: 4px;
+}
+
 @import "form.scss";
 @import "tags.scss";
 @import "profile.scss";

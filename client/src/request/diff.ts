@@ -9,8 +9,41 @@ namespace request {
     const ret: Diff[] = [];
     const p = (k: string, lv: any, rv: any) => ret.push({k: k, l: lv, r: rv});
     const comp = (k: string, lv: any, rv: any) => {
-      if (lv !== rv) {
-        p(k, lv, rv);
+      if (lv === undefined || lv === null) {
+        lv = "";
+      }
+      if (rv === undefined || rv === null) {
+        rv = "";
+      }
+      if (typeof lv === "object" && typeof rv === "object") {
+        for (const f in lv) {
+          if (lv.hasOwnProperty(f)) {
+            comp(k + "." + f, lv[f], rv[f])
+          }
+        }
+        for (const f in rv) {
+          if (rv.hasOwnProperty(f) && !lv.hasOwnProperty(f)) {
+            comp(k + "." + f, lv[f], rv[f])
+          }
+        }
+      } else {
+        if (lv !== rv) {
+          p(k, lv, rv);
+        }
+      }
+    }
+    const compArray = (k: string, lv: any[] | undefined, rv: any[] | undefined) => {
+      if (lv === undefined || lv === null) {
+        lv = [];
+      }
+      if (rv === undefined || rv === null) {
+        rv = [];
+      }
+      if (lv.length !== rv.length) {
+        p(k + ".length", lv.length, rv.length);
+      }
+      for (let i = 0; i < lv.length; i++) {
+        comp(k + "[" + i + "]", lv[i], rv[i]);
       }
     }
     const checkNull = (k: string, lv: any, rv: any) => {
@@ -37,41 +70,22 @@ namespace request {
 
     const lp = l.prototype;
     const rp = r.prototype;
+
     comp("method", lp.method, rp.method);
     comp("protocol", lp.protocol, rp.protocol);
     comp("domain", lp.domain, rp.domain);
     comp("port", lp.port, rp.port);
     comp("path", lp.path, rp.path);
-
-    if(!checkNull("query", lp.query, rp.query)) {
-      if ((!lp.query) || (!rp.query)) {
-        return ret;
-      }
-      comp("query.length", lp.query.length, rp.query.length);
-    }
-
+    compArray("query", lp.query, rp.query);
     comp("fragment", lp.fragment, rp.fragment);
-
-    if(!checkNull("headers", lp.headers, rp.headers)) {
-      if ((!lp.headers) || (!rp.headers)) {
-        return ret;
-      }
-      comp("headers.length", lp.headers.length, rp.headers.length);
-    }
-
-    if(!checkNull("auth", lp.auth, rp.auth)) {
-      if ((!lp.auth) || (!rp.auth)) {
-        return ret;
-      }
-      comp("auth.length", lp.auth.length, rp.auth.length);
-    }
+    compArray("headers", lp.headers, rp.headers);
+    compArray("auth", lp.auth, rp.auth);
 
     if(!checkNull("body", lp.body, rp.body)) {
-      if ((!lp.body) || (!rp.body)) {
-        return ret;
+      if (lp.body && rp.body) {
+        comp("body.type", lp.body.type, rp.body.type);
+        comp("body.config", lp.body.config, rp.body.config);
       }
-      comp("body.type", lp.body.type, rp.body.type);
-      comp("body.config", lp.body.config, rp.body.config);
     }
 
     const lpo = lp.options;
@@ -89,7 +103,7 @@ namespace request {
     comp("ignoreReferrer", lpo.ignoreReferrer, rpo.ignoreReferrer);
     comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts);
     comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies);
-    comp("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
+    compArray("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
     comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars);
     comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar);
     comp("sslCert", lpo.sslCert, rpo.sslCert);

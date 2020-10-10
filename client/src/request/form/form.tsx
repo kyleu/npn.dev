@@ -11,7 +11,9 @@ namespace request.form {
         {renderActions(coll, r)}
       </div>
       <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
-        {renderSwitcher(r)}
+        <form action="" method="post" onsubmit="console.log('XXXXXXX');return false;">
+          {renderSwitcher(r)}
+        </form>
       </div>
       <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden"/>
     </div>
@@ -36,6 +38,10 @@ namespace request.form {
     </li>;
   }
 
+  export function reset(r: string) {
+    render(collection.cache.active!, r);
+  }
+
   const transforms: any = {
     "http": "HTTP",
     "json": "JSON",
@@ -43,9 +49,9 @@ namespace request.form {
   };
 
   function renderSavePanel(r: request.Request) {
-    return <div id="save-panel" class="right hiddenX">
-      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick="console.warn('TODO!');">Reset</button>
-      <button class="uk-button uk-button-default uk-margin-top" onclick="request.form.extractRequest();">Save Changes</button>
+    return <div id="save-panel" class="right hidden">
+      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick={"request.form.reset('" + r.key + "');"}>Reset</button>
+      <button class="uk-button uk-button-default uk-margin-top" onclick={"request.form.saveCurrentRequest('" + r.key + "');"}>Save Changes</button>
     </div>;
   }
 

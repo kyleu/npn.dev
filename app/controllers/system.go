@@ -10,13 +10,6 @@ import (
 	"github.com/kyleu/npn/gen/templates"
 )
 
-func TEMPHome(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		ctx.Title = npncore.AppName
-		return npncontroller.T(templates.SystemIndex(ctx, w))
-	})
-}
-
 func System(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Title = npncore.AppName
@@ -34,7 +27,7 @@ func About(w http.ResponseWriter, r *http.Request) {
 
 func Source(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		http.ServeFile(w, r, "./"+r.URL.Path)
+		http.ServeFile(w, r, "./client/src/"+r.URL.Path)
 		return "", nil
 	})
 }

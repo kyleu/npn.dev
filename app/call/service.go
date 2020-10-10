@@ -3,6 +3,8 @@ package call
 import (
 	"net/http"
 	"net/http/httptrace"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"golang.org/x/text/language"
@@ -23,7 +25,7 @@ func NewService(logger logur.Logger) *Service {
 
 func (s *Service) Call(coll string, req string, p *request.Prototype) *Result {
 	if p == nil {
-		return NewErrorResult(p.URLString(), coll, req, "no request")
+		return NewErrorResult(coll, req, "no request")
 	}
 	return call(coll, req, getClient(p), p, nil, s.logger)
 }
@@ -63,7 +65,7 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 
 	var rsp *Response
 	if hr != nil {
-		rsp = ResponseFromHTTP(hr)
+		rsp = ResponseFromHTTP(p, hr, timing)
 		rsp.Prior = prior
 	}
 	if rsp == nil {
@@ -72,14 +74,35 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 
 	timing.Complete()
 
-	ret := NewResult(url, coll, req, status)
-	ret.RequestHeaders = p.FinalHeaders()
+	ret := NewResult(coll, req, status)
 	ret.Response = rsp
-	ret.Timing = timing
 	ret.Error = errStr
 
 	logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
 
-	// TODO handle redirects, recurse with prior
+	if p.Options == nil || (!p.Options.IgnoreRedirects) {
+		if rsp != nil && rsp.StatusCode >= 300 && rsp.StatusCode < 400 && rsp.Headers.Contains("location") {
+			loc := rsp.Headers.GetValue("location")
+			if len(loc) == 0 {
+
+			}
+			if strings.HasPrefix(loc, "//") {
+				loc = p.Protocol.Key + ":" + loc
+			}
+			if !strings.Contains(loc, "://") {
+				if !strings.HasPrefix(loc, "/") {
+					loc = filepath.Dir(p.Path) + "/" + loc
+				}
+				loc = p.Protocol.Key + "://" + p.Host() + loc
+			}
+			redirP := request.PrototypeFromString(loc)
+			redirP.Auth = p.Auth
+			redirP.Headers = p.Headers
+			redirP.Options = p.Options
+			logger.Debug("redirecting to [" + redirP.URLString() + "]")
+			return call(coll, req, client, redirP, ret.Response, logger)
+		}
+	}
+
 	return ret
 }

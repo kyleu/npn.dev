@@ -1138,6 +1138,7 @@ var command;
         addRequestURL: "addRequestURL",
         // Request
         getRequest: "getRequest",
+        saveRequest: "saveRequest",
         call: "call",
         transform: "transform"
     };
@@ -1411,27 +1412,20 @@ var call;
 })(call || (call = {}));
 var call;
 (function (call) {
-    function renderResult(r) {
-        var _a, _b, _c;
-        var rspDetail = JSX("div", null, "no result");
-        var rsp = r.response;
-        if (rsp) {
-            var ct = rsp.contentType || "";
-            var cl = (rsp.contentLength && rsp.contentLength > -1) ? "(" + rsp.contentLength + " bytes)" : ((rsp.body && rsp.body.length > -1) ? "(" + rsp.body.length + " bytes)" : "");
-            rspDetail = JSX("div", null,
-                rsp.proto,
-                " ",
-                JSX("em", null, rsp.status),
-                JSX("div", null,
-                    ct,
-                    " ",
-                    cl));
+    function renderResponse(rsp) {
+        var _a;
+        if (!rsp) {
+            return JSX("div", null, "no response");
         }
-        return [
-            JSX("div", { class: "right" },
-                JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
-            JSX("div", { class: "clear" }),
-            JSX("div", null,
+        var ct = rsp.contentType || "";
+        var cl = (rsp.contentLength && rsp.contentLength > -1) ? "(" + rsp.contentLength + " bytes)" : ((rsp.body && rsp.body.length > -1) ? "(" + rsp.body.length + " bytes)" : "");
+        var ret = JSX("div", null,
+            JSX("h3", null, rsp ? rsp.status : "Unknown"),
+            JSX("em", null,
+                rsp.method,
+                " ",
+                rsp.url),
+            JSX("div", { class: "mt" },
                 JSX("ul", { "data-uk-tab": "" },
                     JSX("li", null,
                         JSX("a", { href: "#result" }, "Result")),
@@ -1446,18 +1440,39 @@ var call;
                 JSX("ul", { class: "uk-switcher uk-margin" },
                     JSX("li", null,
                         JSX("div", null,
-                            r.status,
-                            ": ",
-                            (((_a = r.timing) === null || _a === void 0 ? void 0 : _a.completed) || 0) / 1000,
+                            (((_a = rsp.timing) === null || _a === void 0 ? void 0 : _a.completed) || 0) / 1000,
                             "ms"),
-                        rspDetail),
-                    JSX("li", null,
-                        JSX("h3", { class: "uk-margin-small-bottom" }, r.url),
-                        renderHeaders("Final Request Headers", r.requestHeaders)),
-                    JSX("li", null, renderHeaders("Response Headers", (_b = r.response) === null || _b === void 0 ? void 0 : _b.headers)),
-                    JSX("li", null, rbody.renderBody(r.url, (_c = r.response) === null || _c === void 0 ? void 0 : _c.body)),
-                    JSX("li", null, renderTiming(r.timing))))
+                        JSX("div", null,
+                            rsp.proto,
+                            " ",
+                            JSX("em", null, rsp.status),
+                            JSX("div", null,
+                                ct,
+                                " ",
+                                cl))),
+                    JSX("li", null, renderHeaders("Final Request Headers", rsp.requestHeaders)),
+                    JSX("li", null, renderHeaders("Response Headers", rsp.headers)),
+                    JSX("li", null, rbody.renderBody(rsp.url, rsp.body)),
+                    JSX("li", null, renderTiming(rsp.timing)))));
+        if (rsp.prior) {
+            return JSX("div", null,
+                renderResponse(rsp.prior),
+                JSX("hr", null),
+                ret);
+        }
+        return ret;
+    }
+    function renderResult(r) {
+        var ret = [
+            JSX("div", { class: "right" },
+                JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
+            r.error ? JSX("div", null,
+                JSX("div", { class: "red-fg" },
+                    "error: ",
+                    r.error)) : JSX("div", null),
+            renderResponse(r.response)
         ];
+        return ret;
     }
     call.renderResult = renderResult;
     function renderHeaders(title, headers) {
@@ -1479,6 +1494,11 @@ var call;
         var sections = call.timingSections(t);
         return JSX("div", { class: "timing-panel" },
             JSX("div", { class: "result-timing-graph" },
+                JSX("div", null,
+                    JSX("div", { class: "timing-start" }, "0ms"),
+                    JSX("div", { class: "timing-end" },
+                        t.completed / 1000,
+                        "ms")),
                 JSX("object", { type: "image/svg+xml", style: "width: 100%; height: " + (sections.length * 24) + "px", data: call.timingGraph(sections) }, "SVG not supported")),
             JSX("hr", null),
             sections.map(function (sc) { return JSX("div", null,
@@ -1824,7 +1844,7 @@ var request;
                 return;
             }
             var sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
-            if (this.active && (this.action !== act || !sameExtra)) {
+            if (this.active /* && (this.action !== act || !sameExtra) */) {
                 this.action = act;
                 this.extra = extra;
                 request.renderAction(collection.cache.active, this.active, this.action, this.extra);
@@ -1848,8 +1868,42 @@ var request;
         var ret = [];
         var p = function (k, lv, rv) { return ret.push({ k: k, l: lv, r: rv }); };
         var comp = function (k, lv, rv) {
-            if (lv !== rv) {
-                p(k, lv, rv);
+            if (lv === undefined || lv === null) {
+                lv = "";
+            }
+            if (rv === undefined || rv === null) {
+                rv = "";
+            }
+            if (typeof lv === "object" && typeof rv === "object") {
+                for (var f in lv) {
+                    if (lv.hasOwnProperty(f)) {
+                        comp(k + "." + f, lv[f], rv[f]);
+                    }
+                }
+                for (var f in rv) {
+                    if (rv.hasOwnProperty(f) && !lv.hasOwnProperty(f)) {
+                        comp(k + "." + f, lv[f], rv[f]);
+                    }
+                }
+            }
+            else {
+                if (lv !== rv) {
+                    p(k, lv, rv);
+                }
+            }
+        };
+        var compArray = function (k, lv, rv) {
+            if (lv === undefined || lv === null) {
+                lv = [];
+            }
+            if (rv === undefined || rv === null) {
+                rv = [];
+            }
+            if (lv.length !== rv.length) {
+                p(k + ".length", lv.length, rv.length);
+            }
+            for (var i = 0; i < lv.length; i++) {
+                comp(k + "[" + i + "]", lv[i], rv[i]);
             }
         };
         var checkNull = function (k, lv, rv) {
@@ -1878,31 +1932,15 @@ var request;
         comp("domain", lp.domain, rp.domain);
         comp("port", lp.port, rp.port);
         comp("path", lp.path, rp.path);
-        if (!checkNull("query", lp.query, rp.query)) {
-            if ((!lp.query) || (!rp.query)) {
-                return ret;
-            }
-            comp("query.length", lp.query.length, rp.query.length);
-        }
+        compArray("query", lp.query, rp.query);
         comp("fragment", lp.fragment, rp.fragment);
-        if (!checkNull("headers", lp.headers, rp.headers)) {
-            if ((!lp.headers) || (!rp.headers)) {
-                return ret;
-            }
-            comp("headers.length", lp.headers.length, rp.headers.length);
-        }
-        if (!checkNull("auth", lp.auth, rp.auth)) {
-            if ((!lp.auth) || (!rp.auth)) {
-                return ret;
-            }
-            comp("auth.length", lp.auth.length, rp.auth.length);
-        }
+        compArray("headers", lp.headers, rp.headers);
+        compArray("auth", lp.auth, rp.auth);
         if (!checkNull("body", lp.body, rp.body)) {
-            if ((!lp.body) || (!rp.body)) {
-                return ret;
+            if (lp.body && rp.body) {
+                comp("body.type", lp.body.type, rp.body.type);
+                comp("body.config", lp.body.config, rp.body.config);
             }
-            comp("body.type", lp.body.type, rp.body.type);
-            comp("body.config", lp.body.config, rp.body.config);
         }
         var lpo = lp.options;
         var rpo = rp.options;
@@ -1917,7 +1955,7 @@ var request;
         comp("ignoreReferrer", lpo.ignoreReferrer, rpo.ignoreReferrer);
         comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts);
         comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies);
-        comp("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
+        compArray("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
         comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars);
         comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar);
         comp("sslCert", lpo.sslCert, rpo.sslCert);
@@ -2012,7 +2050,7 @@ var request;
     function prototypeFromURL(u) {
         var url = new URL(u);
         var qp = [];
-        url.searchParams.forEach(function (k, v) { return qp.push({ k: k, v: v }); });
+        url.searchParams.forEach(function (v, k) { return qp.push({ k: k, v: v }); });
         var auth = [];
         if (url.username.length > 0) {
             auth.push({ type: "basic", config: { "username": url.username, "password": url.password, "showPassword": true } });
@@ -2029,25 +2067,29 @@ var request;
 (function (request) {
     function renderActiveRequest(coll) {
         if (request.cache.active) {
-            var req = request.getRequest(coll, request.cache.active);
-            if (req) {
-                dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
-                request.editor.wireForm(req.key);
-            }
-            else {
-                var summ = request.getSummary(coll, request.cache.active);
-                if (summ) {
-                    dom.setContent("#request-panel", request.renderSummaryPanel(coll, summ));
-                    var param = { coll: coll, req: summ.key };
-                    socket.send({ svc: services.request.key, cmd: command.client.getRequest, param: param });
-                }
-            }
+            render(coll, request.cache.active);
         }
         else {
             console.warn("no active request");
         }
     }
     request.renderActiveRequest = renderActiveRequest;
+    function render(coll, reqKey) {
+        var req = request.getRequest(coll, reqKey);
+        if (req) {
+            dom.setContent("#request-panel", request.form.renderFormPanel(coll, req));
+            request.editor.wireForm(req.key);
+        }
+        else {
+            var summ = request.getSummary(coll, reqKey);
+            if (summ) {
+                dom.setContent("#request-panel", request.renderSummaryPanel(coll, summ));
+                var param = { coll: coll, req: summ.key };
+                socket.send({ svc: services.request.key, cmd: command.client.getRequest, param: param });
+            }
+        }
+    }
+    request.render = render;
     function renderAction(coll, reqKey, action, extra) {
         var re = dom.opt(".request-editor");
         var ra = dom.opt(".request-action");
@@ -2060,11 +2102,11 @@ var request;
                 break;
             case "call":
                 // call.prepare(coll, getRequest(coll, reqKey));
-                call.prepare(coll, request.form.extractRequest());
+                call.prepare(coll, request.form.extractRequest(request.cache.active));
                 dom.setContent(ra, request.renderActionCall(coll, reqKey));
                 break;
             case "transform":
-                var req = request.form.extractRequest();
+                var req = request.form.extractRequest(request.cache.active);
                 dom.setContent(ra, transform.renderRequest(coll, reqKey, extra[0]));
                 var param = { coll: coll, req: reqKey, fmt: extra[0], proto: req.prototype };
                 socket.send({ svc: services.request.key, cmd: command.client.transform, param: param });
@@ -2332,7 +2374,11 @@ var request;
                 return "#" + prefix + "-" + k;
             };
             var cache = {
+                key: dom.req(id("key")),
+                title: dom.req(id("title")),
+                desc: dom.req(id("description")),
                 url: dom.req(id("url")),
+                method: dom.req(id("method")),
                 auth: dom.req(id("auth")),
                 qp: dom.req(id("queryparams")),
                 headers: dom.req(id("headers")),
@@ -2352,13 +2398,32 @@ var request;
             editor.initOptionsEditor(cache.options);
         }
         function events(e, f) {
-            e.onchange = f;
-            e.onkeyup = f;
-            e.onblur = f;
+            var x = function () {
+                f();
+                return true;
+            };
+            e.onchange = x;
+            e.onkeyup = x;
+            e.onblur = x;
         }
+        editor.events = events;
         function wireEvents(cache) {
+            events(cache.key, function () {
+                request.form.checkEditor(request.cache.active);
+            });
+            events(cache.title, function () {
+                request.form.checkEditor(request.cache.active);
+            });
+            events(cache.desc, function () {
+                request.form.checkEditor(request.cache.active);
+            });
+            events(cache.method, function () {
+                request.form.checkEditor(request.cache.active);
+            });
             events(cache.url, function () {
-                editor.setURL(cache, request.prototypeFromURL(cache.url.value));
+                var p = request.prototypeFromURL(cache.url.value);
+                editor.setURL(cache, p);
+                request.form.checkEditor(request.cache.active);
             });
             events(cache.auth, function () {
                 var auth;
@@ -2380,7 +2445,7 @@ var request;
                     console.warn("invalid qp JSON [" + cache.qp.value + "]");
                     qp = [];
                 }
-                editor.setQueryParams(cache, qp);
+                editor.setQueryParams(cache.url, qp);
             });
             events(cache.headers, function () {
                 var h;
@@ -2426,35 +2491,83 @@ var request;
                     JSX("div", { class: "uk-width-1-4" }, "Value"),
                     JSX("div", { class: "uk-width-1-2" },
                         JSX("div", { class: "right" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "request.editor.addChild(dom.req('#" + el.id + "-ul" + "'), {k: '', v: ''});return false;", title: "new header" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.addHeaderRow('" + el.id + "')", title: "new header" },
                                 JSX("span", { "data-uk-icon": "icon: plus" }))),
                         "Description")));
-            var updateFn = function () {
-                var curr = json.parse(el.value);
-                container.innerText = "";
-                container.appendChild(header);
-                if (curr) {
-                    for (var _i = 0, curr_1 = curr; _i < curr_1.length; _i++) {
-                        var h = curr_1[_i];
-                        addChild(container, h);
-                    }
+            var curr = json.parse(el.value);
+            container.innerText = "";
+            container.appendChild(header);
+            if (curr) {
+                for (var idx = 0; idx < curr.length; idx++) {
+                    addChild(el.id, idx, container, curr[idx]);
                 }
-            };
-            updateFn();
+            }
             return container;
         }
-        function addChild(container, h) {
-            container.appendChild(JSX("li", null,
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, h.k),
-                    JSX("div", { class: "uk-width-1-4" }, h.v),
-                    JSX("div", { class: "uk-width-1-2" },
-                        JSX("div", { class: "right" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "return false;", title: "new header" },
-                                JSX("span", { "data-uk-icon": "icon: close" }))),
-                        h.desc ? h.desc : ""))));
+        function addHeaderRow(id) {
+            var ul = dom.req("#" + id + "-ul");
+            var idx = ul.children.length - 1;
+            addChild(id, idx, ul, { k: '', v: '' });
+            return false;
         }
-        editor.addChild = addChild;
+        editor.addHeaderRow = addHeaderRow;
+        function removeHeaderRow(id, el) {
+            el.parentElement.parentElement.parentElement.parentElement.remove();
+            parseHeaders(id);
+            return false;
+        }
+        editor.removeHeaderRow = removeHeaderRow;
+        function addChild(elID, idx, container, h) {
+            var ret = JSX("li", null,
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" },
+                        JSX("input", { class: "uk-input", "data-field": idx + "-key", type: "text", value: h.k })),
+                    JSX("div", { class: "uk-width-1-4" },
+                        JSX("input", { class: "uk-input", "data-field": idx + "-value", type: "text", value: h.v })),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right", style: "margin-top: 6px;" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.removeHeaderRow('" + elID + "', this);", title: "new header" },
+                                JSX("span", { "data-uk-icon": "icon: close" }))),
+                        JSX("input", { style: "width: calc(100% - 48px);", class: "uk-input", "data-field": idx + "-desc", type: "text", value: h.desc }))));
+            editor.events(ret, function () { return parseHeaders(elID); });
+            container.appendChild(ret);
+        }
+        function parseHeaders(elID) {
+            var ta = dom.req("#" + elID);
+            var ul = dom.req("#" + elID + "-ul");
+            var inputs = dom.els("input", ul);
+            var ret = [];
+            for (var _i = 0, inputs_1 = inputs; _i < inputs_1.length; _i++) {
+                var i = inputs_1[_i];
+                var field = i.dataset["field"] || "";
+                var dash = field.lastIndexOf("-");
+                var idx = parseInt(field.substring(0, dash), 10);
+                var key = field.substring(dash + 1);
+                if (!ret[idx]) {
+                    ret[idx] = { k: "", v: "" };
+                }
+                switch (key) {
+                    case "key":
+                        ret[idx].k = i.value.trim();
+                        break;
+                    case "value":
+                        ret[idx].v = i.value.trim();
+                        break;
+                    case "desc":
+                        var desc = i.value.trim();
+                        if (desc.length > 0) {
+                            ret[idx].desc = desc;
+                        }
+                        break;
+                    default:
+                        throw "unknown key [" + key + "]";
+                }
+            }
+            ret = ret.filter(function (x) { return x.k.length > 0; });
+            ta.value = json.str(ret);
+            request.form.checkEditor(elID.substr(0, elID.lastIndexOf("-")));
+            return ret;
+        }
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
@@ -2521,9 +2634,11 @@ var request;
     var editor;
     (function (editor) {
         function initQueryParamsEditor(el) {
+            var parent = el.parentElement;
+            parent.appendChild(createQueryParamsEditor(el));
         }
         editor.initQueryParamsEditor = initQueryParamsEditor;
-        function setQueryParams(cache, qp) {
+        function setQueryParams(el, qp) {
             var ret = [];
             if (qp) {
                 for (var _i = 0, qp_1 = qp; _i < qp_1.length; _i++) {
@@ -2531,15 +2646,107 @@ var request;
                     ret.push(encodeURIComponent(p.k) + '=' + encodeURIComponent(p.v));
                 }
             }
-            var url = new URL(cache.url.value);
+            var url = new URL(el.value);
             url.search = ret.join("&");
-            cache.url.value = url.toString();
+            el.value = url.toString();
         }
         editor.setQueryParams = setQueryParams;
         function updateQueryParams(cache, qp) {
             cache.qp.value = json.str(qp);
+            updateFn(cache.qp, dom.req("#" + cache.qp.id + "-ul"));
         }
         editor.updateQueryParams = updateQueryParams;
+        function header(id) {
+            return JSX("li", null,
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "Name"),
+                    JSX("div", { class: "uk-width-1-4" }, "Value"),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.addHeaderRow('" + id + "')", title: "new header" },
+                                JSX("span", { "data-uk-icon": "icon: plus" }))),
+                        "Description")));
+        }
+        function updateFn(el, container) {
+            var curr = json.parse(el.value);
+            container.innerText = "";
+            container.appendChild(header(el.id));
+            if (curr) {
+                for (var idx = 0; idx < curr.length; idx++) {
+                    addChild(el.id, idx, container, curr[idx]);
+                }
+            }
+        }
+        function createQueryParamsEditor(el) {
+            var container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
+            updateFn(el, container);
+            return container;
+        }
+        function addQueryParamRow(id) {
+            var ul = dom.req("#" + id + "-ul");
+            var idx = ul.children.length - 1;
+            addChild(id, idx, ul, { k: '', v: '' });
+            return false;
+        }
+        editor.addQueryParamRow = addQueryParamRow;
+        function removeQueryParamRow(id, el) {
+            el.parentElement.parentElement.parentElement.parentElement.remove();
+            parseQueryParams(id);
+            return false;
+        }
+        editor.removeQueryParamRow = removeQueryParamRow;
+        function addChild(elID, idx, container, h) {
+            var ret = JSX("li", null,
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" },
+                        JSX("input", { class: "uk-input", "data-field": idx + "-key", type: "text", value: h.k })),
+                    JSX("div", { class: "uk-width-1-4" },
+                        JSX("input", { class: "uk-input", "data-field": idx + "-value", type: "text", value: h.v })),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right", style: "margin-top: 6px;" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.removeHeaderRow('" + elID + "', this);", title: "new header" },
+                                JSX("span", { "data-uk-icon": "icon: close" }))),
+                        JSX("input", { style: "width: calc(100% - 48px);", class: "uk-input", "data-field": idx + "-desc", type: "text", value: h.desc }))));
+            editor.events(ret, function () { return parseQueryParams(elID); });
+            container.appendChild(ret);
+        }
+        function parseQueryParams(elID) {
+            var ta = dom.req("#" + elID);
+            var ul = dom.req("#" + elID + "-ul");
+            var inputs = dom.els("input", ul);
+            var ret = [];
+            for (var _i = 0, inputs_2 = inputs; _i < inputs_2.length; _i++) {
+                var i = inputs_2[_i];
+                var field = i.dataset["field"] || "";
+                var dash = field.lastIndexOf("-");
+                var idx = parseInt(field.substring(0, dash), 10);
+                var key = field.substring(dash + 1);
+                if (!ret[idx]) {
+                    ret[idx] = { k: "", v: "" };
+                }
+                switch (key) {
+                    case "key":
+                        ret[idx].k = i.value.trim();
+                        break;
+                    case "value":
+                        ret[idx].v = i.value.trim();
+                        break;
+                    case "desc":
+                        var desc = i.value.trim();
+                        if (desc.length > 0) {
+                            ret[idx].desc = desc;
+                        }
+                        break;
+                    default:
+                        throw "unknown key [" + key + "]";
+                }
+            }
+            ret = ret.filter(function (x) { return x.k.length > 0; });
+            ta.value = json.str(ret);
+            setQueryParams(dom.req("#" + elID.replace("queryparams", "url")), ret);
+            request.form.checkEditor(elID.substr(0, elID.lastIndexOf("-")));
+            return ret;
+        }
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
@@ -2564,23 +2771,44 @@ var request;
 (function (request) {
     var form;
     (function (form) {
-        function extractRequest() {
-            var key = gv("key");
-            var title = gv("title");
-            var desc = gv("description");
-            var url = gv("url");
+        function extractRequest(reqID) {
+            var key = gv(reqID, "key");
+            var title = gv(reqID, "title");
+            var desc = gv(reqID, "description");
+            var url = gv(reqID, "url");
             var proto = request.urlToPrototype(url);
-            proto.method = gv("method");
-            proto.query = json.parse(gv("queryparams"));
-            proto.headers = json.parse(gv("headers"));
-            proto.auth = json.parse(gv("auth"));
-            proto.body = json.parse(gv("body"));
-            proto.options = json.parse(gv("options"));
+            proto.method = gv(reqID, "method");
+            proto.query = json.parse(gv(reqID, "queryparams"));
+            proto.headers = json.parse(gv(reqID, "headers"));
+            proto.auth = json.parse(gv(reqID, "auth"));
+            proto.body = json.parse(gv(reqID, "body"));
+            proto.options = json.parse(gv(reqID, "options"));
             return { key: key, title: title, description: desc, prototype: proto };
         }
         form.extractRequest = extractRequest;
-        function gv(k) {
-            return dom.req("#" + request.cache.active + "-" + k).value;
+        function checkEditor(reqID) {
+            var o = request.getRequest(collection.cache.active, reqID);
+            var changed = false;
+            if (o) {
+                var n = extractRequest(reqID);
+                var diff_1 = request.diff(o, n);
+                // console.log(o, n, diff);
+                changed = diff_1.length > 0;
+            }
+            else {
+                changed = true;
+            }
+            dom.setDisplay("#save-panel", changed);
+        }
+        form.checkEditor = checkEditor;
+        function saveCurrentRequest(reqID) {
+            var req = extractRequest(reqID);
+            var msg = { "coll": collection.cache.active, "orig": reqID, "req": req };
+            socket.send({ svc: services.request.key, cmd: command.client.saveRequest, param: msg });
+        }
+        form.saveCurrentRequest = saveCurrentRequest;
+        function gv(r, k) {
+            return dom.req("#" + r + "-" + k).value;
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
@@ -2597,7 +2825,8 @@ var request;
                     form.renderURL(r),
                     renderSavePanel(r),
                     renderActions(coll, r)),
-                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" }, form.renderSwitcher(r)),
+                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
+                    JSX("form", { action: "", method: "post", onsubmit: "console.log('XXXXXXX');return false;" }, form.renderSwitcher(r))),
                 JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }));
         }
         form.renderFormPanel = renderFormPanel;
@@ -2614,15 +2843,19 @@ var request;
                     JSX("textarea", { class: "uk-textarea", id: r.key + "-description", name: "description", "data-lpignore": "true" }, r.description || "")));
         }
         form.renderDetails = renderDetails;
+        function reset(r) {
+            request.render(collection.cache.active, r);
+        }
+        form.reset = reset;
         var transforms = {
             "http": "HTTP",
             "json": "JSON",
             "curl": "curl"
         };
         function renderSavePanel(r) {
-            return JSX("div", { id: "save-panel", class: "right hiddenX" },
-                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "console.warn('TODO!');" }, "Reset"),
-                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "request.form.extractRequest();" }, "Save Changes"));
+            return JSX("div", { id: "save-panel", class: "right hidden" },
+                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "request.form.reset('" + r.key + "');" }, "Reset"),
+                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "request.form.saveCurrentRequest('" + r.key + "');" }, "Save Changes"));
         }
         function renderActions(coll, r) {
             var path = "/c/" + coll + "/" + r.key;
@@ -2671,8 +2904,7 @@ var request;
         function renderQueryParams(key, qp) {
             return JSX("li", { class: "request-queryparams-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-queryparams" }, "Query Params"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-queryparams", name: "queryparams" }, json.str(qp))));
+                    JSX("textarea", { class: "uk-textarea hidden", id: key + "-queryparams", name: "queryparams" }, json.str(qp))));
         }
         function renderAuth(key, as) {
             return JSX("li", { class: "request-auth-panel" },
@@ -2683,8 +2915,7 @@ var request;
         function renderHeaders(key, hs) {
             return JSX("li", { class: "request-headers-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-headers" }, "Headers"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-headers", name: "headers" }, json.str(hs))));
+                    JSX("textarea", { class: "uk-textarea hidden", id: key + "-headers", name: "headers" }, json.str(hs))));
         }
         function renderBody(key, b) {
             return JSX("li", { class: "request-body-panel" },
@@ -2695,8 +2926,7 @@ var request;
         function renderOptions(key, opts) {
             return JSX("li", { class: "request-options-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-options" }, "Options"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, json.str(opts))));
+                    JSX("textarea", { class: "uk-textarea hidden", id: key + "-options", name: "options" }, json.str(opts))));
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));

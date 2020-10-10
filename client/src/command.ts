@@ -10,6 +10,7 @@ namespace command {
 
     // Request
     getRequest: "getRequest",
+    saveRequest: "saveRequest",
     call: "call",
     transform: "transform"
   };

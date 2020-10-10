@@ -14,7 +14,7 @@ namespace request {
     const url = new URL(u);
 
     const qp: QueryParam[] = []
-    url.searchParams.forEach((k, v) => qp.push({k: k, v: v}));
+    url.searchParams.forEach((v, k) => qp.push({k: k, v: v}));
 
     const auth: auth.Auth[] = [];
     if(url.username.length > 0) {

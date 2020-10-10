@@ -11,7 +11,7 @@ bin/build-css.sh
 
 bin/build-desktop.sh
 
-# bin/build-docker.sh
+bin/build-docker.sh
 
 bin/build-wasm.sh
 projects/wasm/bin/build.sh

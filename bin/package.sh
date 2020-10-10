@@ -5,6 +5,7 @@
 set -e
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
+pdir="$( pwd )"
 
 # ./bin/build-all.sh
 
@@ -13,18 +14,18 @@ mkdir -p ./build/stage
 rm -rf ./build/package
 mkdir -p ./build/package
 
-cd "$DIR/build/stage"
+cd "$pdir/build/stage"
 
-# cp -R "$DIR/data" ./data
+# cp -R "$pdir/data" ./data
 
 pkg () {
   echo "$4 ($2)..."
-  cp "$DIR/build/$1/$2/$3" "./$3"
+  cp "$pdir/build/$1/$2/$3" "./$3"
 
   if [ $2 = "amd64" ]; then
-    zip -r "$DIR/build/package/npn.server.$4.zip" *
+    zip -r "$pdir/build/package/npn.server.$4.zip" *
   else
-    zip -r "$DIR/build/package/npn.server.$4.$2.zip" *
+    zip -r "$pdir/build/package/npn.server.$4.$2.zip" *
   fi
 
   rm "./$3"
@@ -60,35 +61,35 @@ pkg windows arm npn.exe windows
 
 # Docker
 echo "docker..."
-# cp "$DIR/build/docker/npn.docker.tar.gz" "$DIR/build/package/npn.server.docker.tar.gz"
+cp "$pdir/build/docker/npn.docker.tar.gz" "$pdir/build/package/npn.server.docker.tar.gz"
 
 # WASM
 echo "wasm..."
-cp "$DIR/build/js/wasm/npn.wasm" ./npn.wasm
-zip -r "$DIR/build/package/npn.server.wasm.zip" *
+cp "$pdir/build/js/wasm/npn.wasm" ./npn.wasm
+zip -r "$pdir/build/package/npn.server.wasm.zip" *
 rm ./npn.wasm
 
 # HTML
 echo "html..."
 pwd
-cd "$DIR/projects/wasm/assets"
-zip -r "$DIR/build/package/npn.server.html.zip" *
-cd "$DIR/build/stage"
+cd "$pdir/projects/wasm/assets"
+zip -r "$pdir/build/package/npn.server.html.zip" *
+cd "$pdir/build/stage"
 
 # Android
 echo "android library..."
-cp "$DIR/build/android/npn.aar" ./npn.aar
-zip -r "$DIR/build/package/npn.library.android.zip" npn.aar
+cp "$pdir/build/android/npn.aar" ./npn.aar
+zip -r "$pdir/build/package/npn.library.android.zip" npn.aar
 rm ./npn.aar
 
 echo "android app..."
-cp "$DIR/build/android/npn.apk" ./npn.apk
-zip -r "$DIR/build/package/npn.app.android.zip" npn.apk
+cp "$pdir/build/android/npn.apk" ./npn.apk
+zip -r "$pdir/build/package/npn.app.android.zip" npn.apk
 rm ./npn.apk
 
 # iOS
 echo "ios framework..."
-cp  -r "$DIR/build/ios/NpnServer.framework" ./NpnServer.framework
+cp  -r "$pdir/build/ios/NpnServer.framework" ./NpnServer.framework
 
 cd NpnServer.framework
 rm -rf Headers
@@ -99,7 +100,7 @@ cp -R Versions/A/* .
 rm -rf Versions
 cd ..
 
-zip -r "$DIR/build/package/npn.library.ios.zip" *
+zip -r "$pdir/build/package/npn.library.ios.zip" *
 rm  -rf ./NpnServer.framework
 
 echo "ios app..."
@@ -108,4 +109,4 @@ zip -r "npn.app.ios.zip" npn.app
 mv "npn.app.ios.zip" "../package"
 cd ../stage
 
-rm -rf "$DIR/build/stage"
+rm -rf "$pdir/build/stage"

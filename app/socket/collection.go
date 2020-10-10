@@ -64,9 +64,9 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 	}
 	key := npncore.Slugify(name)
 	svcs := ctx(s)
-	curr, err := svcs.Collection.Load(key)
+	curr, _ := svcs.Collection.Load(key)
 	if curr != nil {
-		key = key + strings.ToLower("-"+npncore.RandomString(4))
+		key += "-" + strings.ToLower(npncore.RandomString(4))
 	}
 
 	err = svcs.Collection.Save("", key, name, "")
@@ -78,12 +78,7 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 
 	ret := &addCollResult{Collections: newColls, Active: key}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionAdded, ret)
-	err = s.WriteMessage(c.ID, msg)
-	if err != nil {
-		s.Logger.Warn(fmt.Sprintf("error writing to socket: %+v", err))
-	}
-	// TODO Send message
-	return nil
+	return s.WriteMessage(c.ID, msg)
 }
 
 func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
@@ -99,20 +94,18 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 	req.Key = npncore.Slugify(req.Prototype.Domain)
 
 	svcs := ctx(s)
-	println(req.Key)
-	curr, err := svcs.Collection.LoadRequest(p.Coll, req.Key)
+	curr, _ := svcs.Collection.LoadRequest(p.Coll, req.Key)
 	if curr != nil {
-		println("!!!!!")
 		if req.Prototype != nil && len(req.Prototype.Path) > 0 {
 			add := req.Prototype.Path
 			if len(add) > 8 {
 				add = add[0:8]
 			}
-			req.Key = req.Key + "-" + npncore.Slugify(add)
+			req.Key += "-" + npncore.Slugify(add)
 		}
-		curr, err = svcs.Collection.LoadRequest(p.Coll, req.Key)
+		curr, _ = svcs.Collection.LoadRequest(p.Coll, req.Key)
 		if curr != nil {
-			req.Key = req.Key + strings.ToLower("-"+npncore.RandomString(4))
+			req.Key += "-" + strings.ToLower(npncore.RandomString(4))
 		}
 	}
 

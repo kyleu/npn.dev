@@ -19,9 +19,6 @@ type appFormatter struct {
 var root, _ = filepath.Abs(".")
 
 func (a *appFormatter) Format(entry *logrus.Entry) ([]byte, error) {
-
-	println(root)
-
 	entry.Message = "\n" + entry.Message + "\n\n"
 	b, err := a.nested.Format(entry)
 	if err != nil {

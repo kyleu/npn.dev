@@ -1,7 +1,7 @@
 namespace header {
   export interface Header {
-    readonly k: string;
-    readonly v: string;
-    readonly desc?: string;
+    k: string;
+    v: string;
+    desc?: string;
   }
 }

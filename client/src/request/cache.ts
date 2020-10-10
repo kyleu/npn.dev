@@ -40,7 +40,7 @@ namespace request {
       }
 
       const sameExtra = this.extra.length === extra.length && this.extra.every(function(value, index) { return value === extra[index]});
-      if (this.active && (this.action !== act || !sameExtra)) {
+      if (this.active /* && (this.action !== act || !sameExtra) */) {
         this.action = act;
         this.extra = extra;
         renderAction(collection.cache.active, this.active, this.action, this.extra);

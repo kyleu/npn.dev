@@ -5,7 +5,7 @@
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <% ResultPanel(result, ctx, _buffer) %>
-    <% DebugResultTiming(result.Timing, ctx, _buffer) %>
+    <% DebugResultTiming(result.Response.Timing, ctx, _buffer) %>
     <% if result.Response != nil { %>
       <% ViewHeaders(result.Response.Headers, ctx, _buffer) %>
       <% ViewBody(result.Response.Body, ctx, _buffer) %>

@@ -83,7 +83,7 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.PathPrefix(routes.Path("vendor")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(npnasset.VendorAsset))).Name(routes.Name("vendor"))
 	r.PathPrefix(routes.Path("assets")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Static))).Name(routes.Name("assets"))
 
-	r.PathPrefix(routes.Adm("src/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Adm("src/"), http.HandlerFunc(Source)))).Name(npnweb.AdminLink("source"))
+	r.PathPrefix(routes.Path("client", "src/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path("client", "src/"), http.HandlerFunc(Source)))).Name(npnweb.AdminLink("source"))
 
 	// Provided
 	npncontroller.RoutesProfile(ai, r)

@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/app/transform"
 
@@ -16,6 +17,8 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 	switch cmd {
 	case ClientMessageGetRequest:
 		err = onGetRequest(c.ID, param, s)
+	case ClientMessageSaveRequest:
+		err = onSaveRequest(c.ID, param, s)
 	case ClientMessageCall:
 		err = onCall(c.ID, param, s)
 	case ClientMessageTransform:
@@ -39,11 +42,22 @@ func onGetRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Serv
 		return errors.Wrap(err, "can't load request")
 	}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, req)
-	err = s.WriteMessage(connID, msg)
+	return s.WriteMessage(connID, msg)
+}
+
+func onSaveRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+	svc := s.Context.(*services)
+	frm := &paramSaveRequest{}
+	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
-		return errors.Wrap(err, "can't write message")
+		return errors.Wrap(err, "can't load saveRequest param")
 	}
-	return nil
+	err = svc.Collection.SaveRequest(frm.Coll, frm.Orig, frm.Req)
+	if err != nil {
+		return errors.Wrap(err, "can't load original request")
+	}
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, frm.Req)
+	return s.WriteMessage(connID, msg)
 }
 
 func onCall(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
@@ -56,7 +70,6 @@ func onCall(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) e
 
 	go func() {
 		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto)
-		println(rsp.Status)
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
 		_ = s.WriteMessage(connID, msg)
 	}()
