@@ -2,7 +2,7 @@
 
 ## Resets the assets to load from local filesystem in development
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

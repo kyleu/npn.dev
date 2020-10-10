@@ -2,7 +2,7 @@
 
 ## Builds the project as a macOS server and builds the native app in `projects/macos`
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

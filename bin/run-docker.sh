@@ -2,7 +2,7 @@
 
 ## Runs the Docker image produced by `build-docker`, exposing an HTTP port; Requires docker
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

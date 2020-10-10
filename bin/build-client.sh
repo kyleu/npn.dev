@@ -3,7 +3,7 @@
 ## Uses `tsc` to compile the scripts in `client`
 ## Requires tsc available on the path
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/../client
 

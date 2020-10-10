@@ -2,7 +2,7 @@
 
 ## Updates the go.mod version, deletes go.sum, tags the git repo
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

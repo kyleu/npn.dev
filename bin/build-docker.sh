@@ -3,7 +3,7 @@
 ## Makes a release build, builds a docker image, then exports and zips the output
 ## Requires docker
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

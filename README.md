@@ -6,9 +6,14 @@ https://github.com/KyleU/npn
 
 ## Documentation
 
+- [downloads.md](doc/downloads.md)
 - [features.md](doc/features.md)
 - [installing.md](doc/installing.md)
 - [scripts.md](doc/scripts.md)
+
+## Installing
+
+- Download from [Github Releases](https://github.com/kyleu/npn/releases/latest), or see the [downloads page](doc/downloads.md) 
 
 ## Building
 

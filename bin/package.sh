@@ -2,7 +2,7 @@
 
 ## Packages the build output for Github Releases
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 pdir="$( pwd )"

@@ -2,7 +2,7 @@
 
 ## Builds the project as an android framework and builds the native app in `projects/android`
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

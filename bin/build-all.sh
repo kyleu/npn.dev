@@ -2,7 +2,7 @@
 
 ## Attempts to build for all available platforms and architectures; Requires docker and a bunch of other stuff
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

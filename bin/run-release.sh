@@ -2,7 +2,7 @@
 
 ## Builds the project in release mode and runs it
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

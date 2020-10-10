@@ -3,7 +3,7 @@
 ## Uses `scss` to compile the stylesheets in `web/stylesheets`
 ## Requires SCSS available on the path
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 

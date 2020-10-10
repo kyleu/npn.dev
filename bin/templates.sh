@@ -2,11 +2,11 @@
 
 ## Builds all the templates using hero, skipping if unchanged
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 
-FORCE="$1"
+FORCE="${1:-}"
 
 function tmpl {
   echo "updating [$2] templates"
@@ -38,12 +38,12 @@ function check {
 
   if cmp -s "$fsrc" "$ftgt"; then
     if [ "$FORCE" = "force" ]; then
-      tmpl $1 $2 $3 $4
+      tmpl $1 $2 $3
     else
       rm "$ftgt"
     fi
   else
-    tmpl $1 $2 $3 $4
+    tmpl $1 $2 $3
   fi
 }
 

@@ -2,7 +2,7 @@
 
 ## Builds the project as an iOS framework and builds the native app in `projects/ios`
 
-set -e
+set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 
