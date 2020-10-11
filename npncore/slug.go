@@ -15,7 +15,7 @@ func Slugify(s string) (slug string) {
 
 	slug = regexpNonAuthorizedChars.ReplaceAllString(slug, "-")
 	slug = regexpMultipleDashes.ReplaceAllString(slug, "-")
-	slug = strings.Trim(slug, "-_")
+	slug = strings.Trim(slug, "-_.")
 
 	slug = smartTruncate(slug)
 

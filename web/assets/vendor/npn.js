@@ -1065,7 +1065,7 @@ var nav;
             active = active.substr(1);
         }
         var cls = "";
-        if (active === k || k === "body") {
+        if (active === k) {
             cls += "uk-active";
         }
         var ret = JSX("li", { class: cls },

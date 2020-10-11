@@ -56,7 +56,7 @@ namespace nav {
       active = active.substr(1);
     }
     let cls = "";
-    if (active === k || k === "body") {
+    if (active === k) {
       cls += "uk-active";
     }
     const ret = <li class={cls}><a href={"#" + k}>{title}</a></li>;
