@@ -47,7 +47,7 @@ namespace request {
         break;
       case command.server.callResult:
         const result = param as call.Result;
-        call.setResult(result);
+        call.setResult(result, location.hash);
         const path = `r/` + result.id
         // TODO history.replaceState(path, "", "/" + path);
         break;

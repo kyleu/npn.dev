@@ -18,10 +18,10 @@ namespace routing {
     }
   }
 
-  export function route(p: string) {
+  export function route(p: string, hash: string) {
     let parts = p.split("/");
     parts = parts.filter(x => x.length > 0);
-    // console.debug("nav: " + parts.join(" -> "));
+    console.debug("nav: " + parts.join(" -> ") + ((hash.length > 0) ? (" #" + hash) : ""));
 
     const svc = (parts.length > 0) ? parts[0] : "c";
     switch (svc) {

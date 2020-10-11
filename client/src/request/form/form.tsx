@@ -12,7 +12,7 @@ namespace request.form {
       </div>
       <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
         <form action="" method="post" onsubmit="console.log('XXXXXXX');return false;">
-          {renderSwitcher(r)}
+          {renderSwitcher(r, location.hash)}
         </form>
       </div>
       <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden"/>

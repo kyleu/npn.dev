@@ -36,9 +36,9 @@ namespace call {
     log.info("calling [" + request.prototypeToURL(r.prototype) + "]");
   }
 
-  export function setResult(result: Result) {
+  export function setResult(result: Result, hash: string) {
     const container = dom.req(`#${result.collection}--${result.request}-call`);
-    dom.setContent(container, renderResult(result));
+    dom.setContent(container, renderResult(result, hash));
     log.info("call result [" + result.id + "] received");
   }
 }

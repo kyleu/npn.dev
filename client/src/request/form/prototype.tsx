@@ -1,15 +1,15 @@
 namespace request.form {
-  export function renderSwitcher(r: request.Request) {
+  export function renderSwitcher(r: request.Request, hash: string) {
     const key = r.key;
     const p = r.prototype;
     return <div>
       <ul data-uk-tab="">
-        <li><a href="#details">Details</a></li>
-        <li><a href="#query">Query</a></li>
-        <li><a href="#auth">Auth</a></li>
-        <li><a href="#headers">Headers</a></li>
-        <li><a href="#body">Body</a></li>
-        <li><a href="#options">Options</a></li>
+        {nav.hashLink("details", "Details", hash)}
+        {nav.hashLink("query", "Query", hash)}
+        {nav.hashLink("auth", "Auth", hash)}
+        {nav.hashLink("headers", "Headers", hash)}
+        {nav.hashLink("body", "Body", hash)}
+        {nav.hashLink("options", "Options", hash)}
       </ul>
       <ul class="uk-switcher uk-margin">
         {renderDetails(r)}

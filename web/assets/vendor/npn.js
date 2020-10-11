@@ -1010,35 +1010,29 @@ var map;
 var nav;
 (function (nav) {
     nav.enabled = true;
-    var handler = function (p) {
-        console.warn("default nav handler called: " + p);
+    var handler = function (p, hash) {
+        console.warn("default nav handler called: " + p + ((hash.length > 0) ? ("#" + hash) : ""));
     };
     function init(f) {
         handler = f;
         window.onpopstate = function (event) {
             if (event.state) {
                 var s = event.state;
-                handler(s);
+                var _a = extractHash(s), path_1 = _a[0], hash = _a[1];
+                handler(path_1, hash);
             }
             else {
-                handler("");
+                handler("", "");
             }
         };
-        var path = location.pathname;
+        var path = location.pathname + ((location.hash.length > 0) ? (location.hash) : "");
         navigate(path);
     }
     nav.init = init;
-    function pop() {
-        var p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
-        if (p === '/c') {
-            p = "";
-        }
-        navigate(p);
-    }
-    nav.pop = pop;
-    function navigate(path) {
+    function navigate(s) {
+        var _a = extractHash(s), path = _a[0], hash = _a[1];
         if (!nav.enabled) {
-            handler(path);
+            handler(path, hash);
             return "";
         }
         if (str.startsWith(path, "text/html;")) {
@@ -1055,9 +1049,33 @@ var nav;
             var final = path;
             history.pushState(final, "", "/" + final);
         }
-        handler(path);
+        handler(path, hash);
     }
     nav.navigate = navigate;
+    function pop() {
+        var p = location.pathname.substr(0, location.pathname.lastIndexOf("/"));
+        if (p === '/c') {
+            p = "";
+        }
+        navigate(p);
+    }
+    nav.pop = pop;
+    function hashLink(k, title, active) {
+        if (active.indexOf("#") === 0) {
+            active = active.substr(1);
+        }
+        var cls = "";
+        if (active === k || k === "body") {
+            cls += "uk-active";
+        }
+        var ret = JSX("li", { class: cls },
+            JSX("a", { href: "#" + k }, title));
+        ret.onclick = function () {
+            history.replaceState(history.state, "", "#" + k);
+        };
+        return ret;
+    }
+    nav.hashLink = hashLink;
     function link(o) {
         var href = o.path;
         if (!str.startsWith(href, "/")) {
@@ -1084,11 +1102,25 @@ var nav;
         if (!o.isButton) {
             o.cls = style.linkColor + o.cls;
         }
-        return JSX("a", { class: o.cls, href: href, onclick: o.onclk + "nav.navigate('" + o.path + "', '" + o.title + "');return false;" },
+        var p = o.path;
+        if (o.hash && o.hash.length > 0) {
+            p += "#" + o.hash;
+        }
+        return JSX("a", { class: o.cls, href: href, onclick: o.onclk + "nav.navigate('" + p + "', '" + o.title + "');return false;" },
             i,
             o.title);
     }
     nav.link = link;
+    function extractHash(s) {
+        var path = s;
+        var hash = "";
+        var hashIdx = path.indexOf("#");
+        if (hashIdx > -1) {
+            hash = path.substr(hashIdx + 1);
+            path = path.substr(0, hashIdx);
+        }
+        return [path, hash];
+    }
 })(nav || (nav = {}));
 var notify;
 (function (notify_1) {
@@ -1242,10 +1274,10 @@ var routing;
         }
     }
     routing.recv = recv;
-    function route(p) {
+    function route(p, hash) {
         var parts = p.split("/");
         parts = parts.filter(function (x) { return x.length > 0; });
-        // console.debug("nav: " + parts.join(" -> "));
+        console.debug("nav: " + parts.join(" -> ") + ((hash.length > 0) ? (" #" + hash) : ""));
         var svc = (parts.length > 0) ? parts[0] : "c";
         switch (svc) {
             case "c":
@@ -1420,16 +1452,16 @@ var call;
         log.info("calling [" + request.prototypeToURL(r.prototype) + "]");
     }
     call.prepare = prepare;
-    function setResult(result) {
+    function setResult(result, hash) {
         var container = dom.req("#" + result.collection + "--" + result.request + "-call");
-        dom.setContent(container, call.renderResult(result));
+        dom.setContent(container, call.renderResult(result, hash));
         log.info("call result [" + result.id + "] received");
     }
     call.setResult = setResult;
 })(call || (call = {}));
 var call;
 (function (call) {
-    function renderResponse(rsp) {
+    function renderResponse(rsp, hash) {
         var _a;
         if (!rsp) {
             return JSX("div", null, "no response");
@@ -1444,16 +1476,11 @@ var call;
                 rsp.url),
             JSX("div", { class: "mt" },
                 JSX("ul", { "data-uk-tab": "" },
-                    JSX("li", null,
-                        JSX("a", { href: "#result" }, "Result")),
-                    JSX("li", null,
-                        JSX("a", { href: "#request" }, "Request")),
-                    JSX("li", null,
-                        JSX("a", { href: "#headers" }, "Response")),
-                    JSX("li", null,
-                        JSX("a", { href: "#body" }, "Body")),
-                    JSX("li", null,
-                        JSX("a", { href: "#timing" }, "Timing"))),
+                    nav.hashLink("result", "Result", hash),
+                    nav.hashLink("request", "Request", hash),
+                    nav.hashLink("headers", "Response", hash),
+                    nav.hashLink("body", "Body", hash),
+                    nav.hashLink("timing", "Timing", hash)),
                 JSX("ul", { class: "uk-switcher uk-margin" },
                     JSX("li", null,
                         JSX("div", null,
@@ -1473,13 +1500,13 @@ var call;
                     JSX("li", null, renderTiming(rsp.timing)))));
         if (rsp.prior) {
             return JSX("div", null,
-                renderResponse(rsp.prior),
+                renderResponse(rsp.prior, hash),
                 JSX("hr", null),
                 ret);
         }
         return ret;
     }
-    function renderResult(r) {
+    function renderResult(r, hash) {
         var ret = [
             JSX("div", { class: "right" },
                 JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
@@ -1487,7 +1514,7 @@ var call;
                 JSX("div", { class: "red-fg" },
                     "error: ",
                     r.error)) : JSX("div", null),
-            renderResponse(r.response)
+            renderResponse(r.response, hash)
         ];
         return ret;
     }
@@ -2072,7 +2099,7 @@ var request;
                 break;
             case command.server.callResult:
                 var result = param;
-                call.setResult(result);
+                call.setResult(result, location.hash);
                 var path = "r/" + result.id;
                 // TODO history.replaceState(path, "", "/" + path);
                 break;
@@ -2989,7 +3016,7 @@ var request;
                     renderSavePanel(coll, r),
                     renderActions(coll, r)),
                 JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
-                    JSX("form", { action: "", method: "post", onsubmit: "console.log('XXXXXXX');return false;" }, form.renderSwitcher(r))),
+                    JSX("form", { action: "", method: "post", onsubmit: "console.log('XXXXXXX');return false;" }, form.renderSwitcher(r, location.hash))),
                 JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }));
         }
         form.renderFormPanel = renderFormPanel;
@@ -3038,23 +3065,17 @@ var request;
 (function (request) {
     var form;
     (function (form) {
-        function renderSwitcher(r) {
+        function renderSwitcher(r, hash) {
             var key = r.key;
             var p = r.prototype;
             return JSX("div", null,
                 JSX("ul", { "data-uk-tab": "" },
-                    JSX("li", null,
-                        JSX("a", { href: "#details" }, "Details")),
-                    JSX("li", null,
-                        JSX("a", { href: "#query" }, "Query")),
-                    JSX("li", null,
-                        JSX("a", { href: "#auth" }, "Auth")),
-                    JSX("li", null,
-                        JSX("a", { href: "#headers" }, "Headers")),
-                    JSX("li", null,
-                        JSX("a", { href: "#body" }, "Body")),
-                    JSX("li", null,
-                        JSX("a", { href: "#options" }, "Options"))),
+                    nav.hashLink("details", "Details", hash),
+                    nav.hashLink("query", "Query", hash),
+                    nav.hashLink("auth", "Auth", hash),
+                    nav.hashLink("headers", "Headers", hash),
+                    nav.hashLink("body", "Body", hash),
+                    nav.hashLink("options", "Options", hash)),
                 JSX("ul", { class: "uk-switcher uk-margin" },
                     form.renderDetails(r),
                     renderQueryParams(key, p.query),

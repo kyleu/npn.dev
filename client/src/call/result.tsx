@@ -1,20 +1,20 @@
 namespace call {
-  function renderResponse(rsp: undefined | call.Response) {
+  function renderResponse(rsp: undefined | call.Response, hash: string) {
     if (!rsp) {
       return <div>no response</div>;
     }
     const ct = rsp.contentType || "";
-    const cl = (rsp.contentLength && rsp.contentLength > -1) ? `(${rsp.contentLength} bytes)` : ((rsp.body && rsp.body.length > -1) ? `(${rsp.body.length} bytes)` : "");
+    const cl = (rsp.contentLength && rsp.contentLength > -1) ? `(${rsp.contentLength} bytes)` : ((rsp.body && rsp.body.length! > -1) ? `(${rsp.body.length} bytes)` : "");
     const ret = <div>
       <h3>{rsp ? rsp.status : "Unknown"}</h3>
       <em>{rsp.method} {rsp.url}</em>
       <div class="mt">
         <ul data-uk-tab="">
-          <li><a href="#result">Result</a></li>
-          <li><a href="#request">Request</a></li>
-          <li><a href="#headers">Response</a></li>
-          <li><a href="#body">Body</a></li>
-          <li><a href="#timing">Timing</a></li>
+          {nav.hashLink("result", "Result", hash)}
+          {nav.hashLink("request", "Request", hash)}
+          {nav.hashLink("headers", "Response", hash)}
+          {nav.hashLink("body", "Body", hash)}
+          {nav.hashLink("timing", "Timing", hash)}
         </ul>
         <ul class="uk-switcher uk-margin">
           <li>
@@ -32,7 +32,7 @@ namespace call {
     </div>;
     if (rsp.prior) {
       return <div>
-        {renderResponse(rsp.prior)}
+        {renderResponse(rsp.prior, hash)}
         <hr />
         {ret}
       </div>
@@ -40,7 +40,7 @@ namespace call {
     return ret;
   }
 
-  export function renderResult(r: Result) {
+  export function renderResult(r: Result, hash: string) {
     const ret = [
       <div class="right">
         <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close result" />
@@ -48,7 +48,7 @@ namespace call {
       r.error ? <div>
         <div class="red-fg">error: {r.error}</div>
       </div> : <div />,
-      renderResponse(r.response)
+      renderResponse(r.response, hash)
     ];
     return ret;
   }
