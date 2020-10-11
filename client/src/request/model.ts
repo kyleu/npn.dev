@@ -1,8 +1,8 @@
 namespace request {
   export interface QueryParam {
-    readonly k: string;
-    readonly v: string;
-    readonly desc?: string;
+    k: string;
+    v: string;
+    desc?: string;
   }
 
   export interface Options {

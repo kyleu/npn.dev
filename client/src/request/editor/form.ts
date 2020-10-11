@@ -52,17 +52,20 @@ namespace request.editor {
     e.onblur = x;
   }
 
+  export function check() {
+    request.form.checkEditor(collection.cache.active!, request.cache.active!);
+  }
+
   function wireEvents(cache: Cache) {
-    const ce = () => request.form.checkEditor(collection.cache.active!, request.cache.active!)
-    events(cache.key, ce);
-    events(cache.title, ce);
-    events(cache.desc, ce);
-    events(cache.method, ce);
+    events(cache.key, check);
+    events(cache.title, check);
+    events(cache.desc, check);
+    events(cache.method, check);
 
     events(cache.url, function () {
       const p = prototypeFromURL(cache.url.value);
       setURL(cache, p);
-      ce();
+      check();
     });
 
     events(cache.auth, function () {
@@ -74,7 +77,7 @@ namespace request.editor {
         auth = [];
       }
       setAuth(cache, auth);
-      ce();
+      check();
     });
 
     events(cache.qp, function () {
@@ -86,7 +89,7 @@ namespace request.editor {
         qp = [];
       }
       setQueryParams(cache.url, qp);
-      ce();
+      check();
     });
 
     events(cache.headers, function () {
@@ -98,7 +101,7 @@ namespace request.editor {
         h = [];
       }
       setHeaders(cache, h);
-      ce();
+      check();
     });
 
     events(cache.body, function () {
@@ -109,7 +112,7 @@ namespace request.editor {
         console.warn("invalid body JSON [" + cache.body.value + "]")
       }
       setBody(cache, b);
-      ce();
+      check();
     });
   }
 }

@@ -22,7 +22,7 @@ namespace request.form {
     if (o) {
       const n = extractRequest(reqID);
       const diff = request.diff(o, n);
-      // console.log(o, n, diff);
+      // console.debug("checking editor state", o, n, diff);
       changed = diff.length > 0;
     } else {
       changed = true;

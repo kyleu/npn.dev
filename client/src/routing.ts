@@ -21,7 +21,7 @@ namespace routing {
   export function route(p: string) {
     let parts = p.split("/");
     parts = parts.filter(x => x.length > 0);
-    console.debug("nav: " + parts.join(" -> "));
+    // console.debug("nav: " + parts.join(" -> "));
 
     const svc = (parts.length > 0) ? parts[0] : "c";
     switch (svc) {
@@ -35,8 +35,8 @@ namespace routing {
         if (coll !== currColl && coll) {
           socket.send({svc: services.collection.key, cmd: command.client.getCollection, param: coll});
         }
-        request.cache.setActiveRequest(currColl, req);
-        request.cache.setActiveAction(currColl, act, extra);
+        request.cache.setActiveRequest(coll, req);
+        request.cache.setActiveAction(coll, act, extra);
         ui.setPanels(coll, req, act, extra);
         break;
       default:

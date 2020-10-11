@@ -6,6 +6,7 @@ namespace request {
       console.warn("no active request")
     }
   }
+
   export function render(coll: string, reqKey: string) {
     const req = getRequest(coll, reqKey);
     if (req) {

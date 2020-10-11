@@ -579,7 +579,7 @@ var socket;
 })(socket || (socket = {}));
 var socket;
 (function (socket) {
-    socket.debug = true;
+    socket.debug = false;
     socket.appUnloading = false;
     socket.currentService = "";
     socket.currentID = "";
@@ -1245,7 +1245,7 @@ var routing;
     function route(p) {
         var parts = p.split("/");
         parts = parts.filter(function (x) { return x.length > 0; });
-        console.debug("nav: " + parts.join(" -> "));
+        // console.debug("nav: " + parts.join(" -> "));
         var svc = (parts.length > 0) ? parts[0] : "c";
         switch (svc) {
             case "c":
@@ -1258,8 +1258,8 @@ var routing;
                 if (coll !== currColl && coll) {
                     socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
                 }
-                request.cache.setActiveRequest(currColl, req);
-                request.cache.setActiveAction(currColl, act, extra);
+                request.cache.setActiveRequest(coll, req);
+                request.cache.setActiveAction(coll, act, extra);
                 ui.setPanels(coll, req, act, extra);
                 break;
             default:
@@ -2473,16 +2473,19 @@ var request;
             e.onblur = x;
         }
         editor.events = events;
+        function check() {
+            request.form.checkEditor(collection.cache.active, request.cache.active);
+        }
+        editor.check = check;
         function wireEvents(cache) {
-            var ce = function () { return request.form.checkEditor(collection.cache.active, request.cache.active); };
-            events(cache.key, ce);
-            events(cache.title, ce);
-            events(cache.desc, ce);
-            events(cache.method, ce);
+            events(cache.key, check);
+            events(cache.title, check);
+            events(cache.desc, check);
+            events(cache.method, check);
             events(cache.url, function () {
                 var p = request.prototypeFromURL(cache.url.value);
                 editor.setURL(cache, p);
-                ce();
+                check();
             });
             events(cache.auth, function () {
                 var auth;
@@ -2494,7 +2497,7 @@ var request;
                     auth = [];
                 }
                 editor.setAuth(cache, auth);
-                ce();
+                check();
             });
             events(cache.qp, function () {
                 var qp;
@@ -2506,7 +2509,7 @@ var request;
                     qp = [];
                 }
                 editor.setQueryParams(cache.url, qp);
-                ce();
+                check();
             });
             events(cache.headers, function () {
                 var h;
@@ -2518,7 +2521,7 @@ var request;
                     h = [];
                 }
                 editor.setHeaders(cache, h);
-                ce();
+                check();
             });
             events(cache.body, function () {
                 var b;
@@ -2529,7 +2532,7 @@ var request;
                     console.warn("invalid body JSON [" + cache.body.value + "]");
                 }
                 editor.setBody(cache, b);
-                ce();
+                check();
             });
         }
     })(editor = request.editor || (request.editor = {}));
@@ -2548,18 +2551,9 @@ var request;
         editor.setHeaders = setHeaders;
         function createHeadersEditor(el) {
             var container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
-            var header = JSX("li", null,
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "Name"),
-                    JSX("div", { class: "uk-width-1-4" }, "Value"),
-                    JSX("div", { class: "uk-width-1-2" },
-                        JSX("div", { class: "right" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.addHeaderRow('" + el.id + "')", title: "new header" },
-                                JSX("span", { "data-uk-icon": "icon: plus" }))),
-                        "Description")));
             var curr = json.parse(el.value);
             container.innerText = "";
-            container.appendChild(header);
+            container.appendChild(editor.mapHeader(el.id, "addHeaderRow"));
             if (curr) {
                 for (var idx = 0; idx < curr.length; idx++) {
                     addChild(el.id, idx, container, curr[idx]);
@@ -2567,6 +2561,12 @@ var request;
             }
             return container;
         }
+        function removeHeaderRow(id, el) {
+            el.parentElement.parentElement.parentElement.parentElement.remove();
+            parseHeaders(id);
+            return false;
+        }
+        editor.removeHeaderRow = removeHeaderRow;
         function addHeaderRow(id) {
             var ul = dom.req("#" + id + "-ul");
             var idx = ul.children.length - 1;
@@ -2574,14 +2574,38 @@ var request;
             return false;
         }
         editor.addHeaderRow = addHeaderRow;
-        function removeHeaderRow(id, el) {
-            el.parentElement.parentElement.parentElement.parentElement.remove();
-            parseHeaders(id);
-            return false;
-        }
-        editor.removeHeaderRow = removeHeaderRow;
         function addChild(elID, idx, container, h) {
-            var ret = JSX("li", null,
+            var ret = editor.newChild(elID, idx, h, "removeHeaderRow");
+            container.appendChild(ret);
+            editor.events(ret, function () { return parseHeaders(elID); });
+        }
+        function parseHeaders(elID) {
+            var ret = editor.parseMapParams(elID);
+            var ta = dom.req("#" + elID);
+            ta.value = json.str(ret);
+            editor.check();
+            return ret;
+        }
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
+        function mapHeader(id, cb) {
+            return JSX("li", null,
+                JSX("div", { "data-uk-grid": "" },
+                    JSX("div", { class: "uk-width-1-4" }, "Name"),
+                    JSX("div", { class: "uk-width-1-4" }, "Value"),
+                    JSX("div", { class: "uk-width-1-2" },
+                        JSX("div", { class: "right" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor." + cb + "('" + id + "')", title: "new row" },
+                                JSX("span", { "data-uk-icon": "icon: plus" }))),
+                        "Description")));
+        }
+        editor.mapHeader = mapHeader;
+        function newChild(elID, idx, h, cb) {
+            return JSX("li", null,
                 JSX("div", { "data-uk-grid": "" },
                     JSX("div", { class: "uk-width-1-4" },
                         JSX("input", { class: "uk-input", "data-field": idx + "-key", type: "text", value: h.k })),
@@ -2589,14 +2613,12 @@ var request;
                         JSX("input", { class: "uk-input", "data-field": idx + "-value", type: "text", value: h.v })),
                     JSX("div", { class: "uk-width-1-2" },
                         JSX("div", { class: "right", style: "margin-top: 6px;" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.removeHeaderRow('" + elID + "', this);", title: "new header" },
+                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor." + cb + "('" + elID + "', this);", title: "remove row" },
                                 JSX("span", { "data-uk-icon": "icon: close" }))),
                         JSX("input", { style: "width: calc(100% - 48px);", class: "uk-input", "data-field": idx + "-desc", type: "text", value: h.desc }))));
-            editor.events(ret, function () { return parseHeaders(elID); });
-            container.appendChild(ret);
         }
-        function parseHeaders(elID) {
-            var ta = dom.req("#" + elID);
+        editor.newChild = newChild;
+        function parseMapParams(elID) {
             var ul = dom.req("#" + elID + "-ul");
             var inputs = dom.els("input", ul);
             var ret = [];
@@ -2627,9 +2649,9 @@ var request;
                 }
             }
             ret = ret.filter(function (x) { return x.k.length > 0; });
-            ta.value = json.str(ret);
             return ret;
         }
+        editor.parseMapParams = parseMapParams;
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
@@ -2705,12 +2727,31 @@ var request;
             if (qp) {
                 for (var _i = 0, qp_1 = qp; _i < qp_1.length; _i++) {
                     var p = qp_1[_i];
-                    ret.push(encodeURIComponent(p.k) + '=' + encodeURIComponent(p.v));
+                    var x = encodeURIComponent(p.k);
+                    if (p.v.length > 0) {
+                        x += '=' + encodeURIComponent(p.v);
+                    }
+                    ret.push(x);
                 }
             }
-            var url = new URL(el.value);
-            url.search = ret.join("&");
-            el.value = url.toString();
+            var orig = el.value;
+            var f = "";
+            var fIdx = orig.indexOf("#");
+            if (fIdx > -1) {
+                f = orig.substr(fIdx + 1);
+            }
+            var qIdx = orig.indexOf("?");
+            var url = "";
+            if (qIdx === -1) {
+                url = orig + "?" + ret.join("&");
+            }
+            else {
+                url = orig.substr(0, qIdx) + "?" + ret.join("&");
+            }
+            if (f.length > 0) {
+                url += "#" + encodeURIComponent(f);
+            }
+            el.value = url;
         }
         editor.setQueryParams = setQueryParams;
         function updateQueryParams(cache, qp) {
@@ -2718,21 +2759,10 @@ var request;
             updateFn(cache.qp, dom.req("#" + cache.qp.id + "-ul"));
         }
         editor.updateQueryParams = updateQueryParams;
-        function header(id) {
-            return JSX("li", null,
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" }, "Name"),
-                    JSX("div", { class: "uk-width-1-4" }, "Value"),
-                    JSX("div", { class: "uk-width-1-2" },
-                        JSX("div", { class: "right" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.addHeaderRow('" + id + "')", title: "new header" },
-                                JSX("span", { "data-uk-icon": "icon: plus" }))),
-                        "Description")));
-        }
         function updateFn(el, container) {
             var curr = json.parse(el.value);
             container.innerText = "";
-            container.appendChild(header(el.id));
+            container.appendChild(editor.mapHeader(el.id, "addQueryParamRow"));
             if (curr) {
                 for (var idx = 0; idx < curr.length; idx++) {
                     addChild(el.id, idx, container, curr[idx]);
@@ -2744,6 +2774,12 @@ var request;
             updateFn(el, container);
             return container;
         }
+        function removeQueryParamRow(id, el) {
+            el.parentElement.parentElement.parentElement.parentElement.remove();
+            parseQueryParams(id);
+            return false;
+        }
+        editor.removeQueryParamRow = removeQueryParamRow;
         function addQueryParamRow(id) {
             var ul = dom.req("#" + id + "-ul");
             var idx = ul.children.length - 1;
@@ -2751,61 +2787,17 @@ var request;
             return false;
         }
         editor.addQueryParamRow = addQueryParamRow;
-        function removeQueryParamRow(id, el) {
-            el.parentElement.parentElement.parentElement.parentElement.remove();
-            parseQueryParams(id);
-            return false;
-        }
-        editor.removeQueryParamRow = removeQueryParamRow;
-        function addChild(elID, idx, container, h) {
-            var ret = JSX("li", null,
-                JSX("div", { "data-uk-grid": "" },
-                    JSX("div", { class: "uk-width-1-4" },
-                        JSX("input", { class: "uk-input", "data-field": idx + "-key", type: "text", value: h.k })),
-                    JSX("div", { class: "uk-width-1-4" },
-                        JSX("input", { class: "uk-input", "data-field": idx + "-value", type: "text", value: h.v })),
-                    JSX("div", { class: "uk-width-1-2" },
-                        JSX("div", { class: "right", style: "margin-top: 6px;" },
-                            JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor.removeHeaderRow('" + elID + "', this);", title: "new header" },
-                                JSX("span", { "data-uk-icon": "icon: close" }))),
-                        JSX("input", { style: "width: calc(100% - 48px);", class: "uk-input", "data-field": idx + "-desc", type: "text", value: h.desc }))));
-            editor.events(ret, function () { return parseQueryParams(elID); });
+        function addChild(elID, idx, container, qp) {
+            var ret = editor.newChild(elID, idx, qp, "removeQueryParamRow");
             container.appendChild(ret);
+            editor.events(ret, function () { return parseQueryParams(elID); });
         }
         function parseQueryParams(elID) {
+            var ret = editor.parseMapParams(elID);
             var ta = dom.req("#" + elID);
-            var ul = dom.req("#" + elID + "-ul");
-            var inputs = dom.els("input", ul);
-            var ret = [];
-            for (var _i = 0, inputs_2 = inputs; _i < inputs_2.length; _i++) {
-                var i = inputs_2[_i];
-                var field = i.dataset["field"] || "";
-                var dash = field.lastIndexOf("-");
-                var idx = parseInt(field.substring(0, dash), 10);
-                var key = field.substring(dash + 1);
-                if (!ret[idx]) {
-                    ret[idx] = { k: "", v: "" };
-                }
-                switch (key) {
-                    case "key":
-                        ret[idx].k = i.value.trim();
-                        break;
-                    case "value":
-                        ret[idx].v = i.value.trim();
-                        break;
-                    case "desc":
-                        var desc = i.value.trim();
-                        if (desc.length > 0) {
-                            ret[idx].desc = desc;
-                        }
-                        break;
-                    default:
-                        throw "unknown key [" + key + "]";
-                }
-            }
-            ret = ret.filter(function (x) { return x.k.length > 0; });
             ta.value = json.str(ret);
             setQueryParams(dom.req("#" + elID.replace("queryparams", "url")), ret);
+            editor.check();
             return ret;
         }
     })(editor = request.editor || (request.editor = {}));
@@ -2853,7 +2845,7 @@ var request;
             if (o) {
                 var n = extractRequest(reqID);
                 var diff_1 = request.diff(o, n);
-                // console.log(o, n, diff);
+                // console.debug("checking editor state", o, n, diff);
                 changed = diff_1.length > 0;
             }
             else {
