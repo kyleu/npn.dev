@@ -5,7 +5,7 @@ namespace socket {
     readonly param: any;
   }
 
-  export const debug = false;
+  export const debug = true;
 
   export let appUnloading = false;
 

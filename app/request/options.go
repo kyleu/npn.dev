@@ -5,6 +5,7 @@ type Options struct {
 	IgnoreRedirects       bool     `json:"ignoreRedirects,omitempty"`
 	IgnoreReferrer        bool     `json:"ignoreReferrer,omitempty"`
 	IgnoreCerts           bool     `json:"ignoreCerts,omitempty"`
+	IgnoreCookies         bool     `json:"ignoreCookies,omitempty"`
 	ExcludeDefaultHeaders []string `json:"excludeDefaultHeaders,omitempty"`
 	ReadCookieJars        []string `json:"readCookieJars,omitempty"`
 	WriteCookieJar        string   `json:"writeCookieJar,omitempty"`

@@ -59,7 +59,7 @@ namespace request.form {
   function renderOptions(key: String, opts: request.Options | undefined) {
     return <li class="request-options-panel">
       <div class="uk-margin-top">
-        <textarea class="uk-textarea hidden" id={key + "-options"} name="options">{json.str(opts)}</textarea>
+        <textarea class="uk-textarea" id={key + "-options"} name="options">{json.str(opts)}</textarea>
       </div>
     </li>;
   }

@@ -6,16 +6,16 @@ namespace request {
   }
 
   export interface Options {
-    readonly timeout?: number;
-    readonly ignoreRedirects?: boolean;
-    readonly ignoreReferrer?: boolean;
-    readonly ignoreCerts?: boolean;
-    readonly ignoreCookies?: boolean;
-    readonly excludeDefaultHeaders?: string[];
-    readonly readCookieJars?: string[];
-    readonly writeCookieJar?: string;
-    readonly sslCert?: string;
-    readonly userAgentOverride?: string;
+    timeout?: number;
+    ignoreRedirects?: boolean;
+    ignoreReferrer?: boolean;
+    ignoreCerts?: boolean;
+    ignoreCookies?: boolean;
+    excludeDefaultHeaders?: string[];
+    readCookieJars?: string[];
+    writeCookieJar?: string;
+    sslCert?: string;
+    userAgentOverride?: string;
   }
 
   export interface Method {

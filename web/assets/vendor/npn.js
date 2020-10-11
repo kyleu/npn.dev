@@ -579,7 +579,7 @@ var socket;
 })(socket || (socket = {}));
 var socket;
 (function (socket) {
-    socket.debug = false;
+    socket.debug = true;
     socket.appUnloading = false;
     socket.currentService = "";
     socket.currentID = "";
@@ -2671,29 +2671,29 @@ var request;
             return JSX("div", null,
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-timeout" }, "Timeout"),
-                    JSX("input", { class: "uk-input", id: el.id + "-timeout", name: "opt-timeout", type: "number", value: opts.timeout })),
+                    timeoutInput(el, opts.timeout)),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label" }, "Ignore"),
                     JSX("div", null,
-                        inputCheckbox(el.id, "ignoreRedirects", "Redirects", opts.ignoreRedirects || false),
-                        inputCheckbox(el.id, "ignoreReferrer", "Referrer", opts.ignoreReferrer || false),
-                        inputCheckbox(el.id, "ignoreCerts", "Certs", opts.ignoreCerts || false),
-                        inputCheckbox(el.id, "ignoreCookies", "Cookies", opts.ignoreCookies || false))),
+                        ignoreRedirectsInput(el, opts.ignoreRedirects),
+                        ignoreReferrerInput(el, opts.ignoreReferrer),
+                        ignoreCertsInput(el, opts.ignoreCerts),
+                        ignoreCookiesInput(el, opts.ignoreCookies))),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-excludeDefaultHeaders" }, "Exclude Default Headers"),
-                    JSX("input", { class: "uk-input", id: el.id + "-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: opts.excludeDefaultHeaders })),
+                    excludeDefaultHeadersInput(el, opts.excludeDefaultHeaders)),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-readCookieJars" }, "Read Cookie Jars"),
-                    JSX("input", { class: "uk-input", id: el.id + "-readCookieJars", name: "opt-readCookieJars", type: "text", value: opts.readCookieJars })),
+                    readCookieJarsInput(el, opts.readCookieJars)),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "writeCookieJar" }, "Write Cookie Jar"),
-                    JSX("input", { class: "uk-input", id: el.id + "-writeCookieJar", name: "opt-writeCookieJar", type: "text", value: opts.writeCookieJar })),
+                    writeCookieJarInput(el, opts.writeCookieJar)),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-sslCert" }, "SSL Cert"),
-                    JSX("input", { class: "uk-input", id: el.id + "-sslCert", name: "opt-sslCert", type: "text", value: opts.sslCert })),
+                    sslCertInput(el, opts.sslCert)),
                 JSX("div", { class: "uk-margin-top" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-userAgentOverride" }, "User Agent Override"),
-                    JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: opts.userAgentOverride })));
+                    userAgentOverrideInput(el, opts.userAgentOverride)));
         }
         function inputCheckbox(key, prop, title, v) {
             var n = "opt-" + prop;
@@ -2710,6 +2710,64 @@ var request;
                     " ",
                     title);
             }
+        }
+        function wire(ret, f, el) {
+            editor.events(ret, function () {
+                var opts = json.parse(el.value);
+                f(opts);
+                el.value = json.str(opts);
+                editor.check();
+            });
+        }
+        function timeoutInput(el, timeout) {
+            var ret = JSX("input", { class: "uk-input", id: el.id + "-timeout", name: "opt-timeout", type: "number", value: timeout || 0 });
+            wire(ret, function (opts) { return opts.timeout = parseInt(ret.value, 10); }, el);
+            return ret;
+        }
+        function ignoreRedirectsInput(el, ignoreRedirects) {
+            var ret = inputCheckbox(el.id, "ignoreRedirects", "Redirects", ignoreRedirects || false);
+            wire(ret, function (opts) { return opts.ignoreRedirects = dom.req("input", ret).checked; }, el);
+            return ret;
+        }
+        function ignoreReferrerInput(el, ignoreReferrer) {
+            var ret = inputCheckbox(el.id, "ignoreReferrer", "Referrer", ignoreReferrer || false);
+            wire(ret, function (opts) { return opts.ignoreReferrer = dom.req("input", ret).checked; }, el);
+            return ret;
+        }
+        function ignoreCertsInput(el, ignoreCerts) {
+            var ret = inputCheckbox(el.id, "ignoreCerts", "Certs", ignoreCerts || false);
+            wire(ret, function (opts) { return opts.ignoreCerts = dom.req("input", ret).checked; }, el);
+            return ret;
+        }
+        function ignoreCookiesInput(el, ignoreCookies) {
+            var ret = inputCheckbox(el.id, "ignoreCookies", "Cookies", ignoreCookies || false);
+            wire(ret, function (opts) { return opts.ignoreCookies = dom.req("input", ret).checked; }, el);
+            return ret;
+        }
+        function excludeDefaultHeadersInput(el, excludeDefaultHeaders) {
+            var ret = JSX("input", { class: "uk-input", id: el.id + "-excludeDefaultHeaders", name: "opt-excludeDefaultHeaders", type: "text", value: excludeDefaultHeaders });
+            wire(ret, function (opts) { return opts.excludeDefaultHeaders = ret.value.split(",").map(function (x) { return x.trim(); }); }, el);
+            return ret;
+        }
+        function readCookieJarsInput(el, readCookieJars) {
+            var ret = JSX("input", { class: "uk-input", id: el.id + "-readCookieJars", name: "opt-readCookieJars", type: "text", value: readCookieJars });
+            wire(ret, function (opts) { return opts.readCookieJars = ret.value.split(",").map(function (x) { return x.trim(); }); }, el);
+            return ret;
+        }
+        function writeCookieJarInput(el, writeCookieJar) {
+            var ret = JSX("input", { class: "uk-input", id: el.id + "-writeCookieJar", name: "opt-writeCookieJar", type: "text", value: writeCookieJar });
+            wire(ret, function (opts) { return opts.writeCookieJar = ret.value; }, el);
+            return ret;
+        }
+        function sslCertInput(el, sslCert) {
+            var ret = JSX("input", { class: "uk-input", id: el.id + "-sslCert", name: "opt-sslCert", type: "text", value: sslCert });
+            wire(ret, function (opts) { return opts.sslCert = ret.value; }, el);
+            return ret;
+        }
+        function userAgentOverrideInput(el, userAgentOverride) {
+            var ret = JSX("input", { class: "uk-input", id: el.id + "-userAgentOverride", name: "opt-userAgentOverride", type: "text", value: userAgentOverride || "" });
+            wire(ret, function (opts) { return opts.userAgentOverride = ret.value; }, el);
+            return ret;
         }
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
@@ -2979,7 +3037,7 @@ var request;
         function renderOptions(key, opts) {
             return JSX("li", { class: "request-options-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("textarea", { class: "uk-textarea hidden", id: key + "-options", name: "options" }, json.str(opts))));
+                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, json.str(opts))));
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));
