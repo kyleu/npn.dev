@@ -40,6 +40,7 @@ func ResponseFromHTTP(p *request.Prototype, r *http.Response, timing *Timing) *R
 			headers = append(headers, &header.Header{Key: k, Value: v})
 		}
 	}
+	headers.Sort()
 	ct, charset := parseCT(headers.GetValue("Content-Type"))
 	ce := headers.GetValue("Content-Encoding")
 	bod, err := body.Parse(ce, ct, charset, r.ContentLength, r.Body)

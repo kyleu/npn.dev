@@ -2,6 +2,7 @@ package header
 
 import (
 	"net/http"
+	"sort"
 	"strings"
 )
 
@@ -51,4 +52,10 @@ func (h Headers) Clone() Headers {
 	ret := make(Headers, len(h))
 	copy(ret, h)
 	return ret
+}
+
+func (h Headers) Sort() {
+	sort.SliceStable(h, func(l, r int) bool {
+		return h[l].Key < h[r].Key
+	})
 }

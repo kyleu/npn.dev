@@ -48,6 +48,7 @@ func (p *Prototype) FinalHeaders() header.Headers {
 	//	check("js.fetch:redirect", func() string { return "manual" })
 	//}
 
+	ret.Sort()
 	return ret
 }
 
