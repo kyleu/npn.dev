@@ -33,7 +33,6 @@ namespace request.form {
   function renderAuth(key: String, as: auth.Auth[] | undefined) {
     return <li class="request-auth-panel">
       <div class="uk-margin-top">
-        <label class="uk-form-label" for={key + "-auth"}>Auth</label>
         <textarea class="uk-textarea" id={key + "-auth"} name="auth">{json.str(as)}</textarea>
       </div>
     </li>;
@@ -50,8 +49,7 @@ namespace request.form {
   function renderBody(key: String, b: rbody.Body | undefined) {
     return <li class="request-body-panel">
       <div class="uk-margin-top">
-        <label class="uk-form-label" for={key + "-body"}>Body</label>
-        <textarea class="uk-textarea" id={key + "-body"} name="body">{json.str(b)}</textarea>
+        <textarea class="uk-textarea hidden" id={key + "-body"} name="body">{json.str(b)}</textarea>
       </div>
     </li>;
   }
@@ -59,7 +57,7 @@ namespace request.form {
   function renderOptions(key: String, opts: request.Options | undefined) {
     return <li class="request-options-panel">
       <div class="uk-margin-top">
-        <textarea class="uk-textarea" id={key + "-options"} name="options">{json.str(opts)}</textarea>
+        <textarea class="uk-textarea hidden" id={key + "-options"} name="options">{json.str(opts)}</textarea>
       </div>
     </li>;
   }

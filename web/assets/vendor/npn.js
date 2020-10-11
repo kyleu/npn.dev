@@ -1963,13 +1963,13 @@ var request;
             }
         };
         var checkNull = function (k, lv, rv) {
-            if (!l) {
-                if (r) {
+            if (!lv) {
+                if (rv) {
                     p(k, null, "(defined)");
                 }
                 return true;
             }
-            if (!r) {
+            if (!rv) {
                 p(k, "(defined)", null);
                 return true;
             }
@@ -2390,45 +2390,97 @@ var request;
             parent.appendChild(createBodyEditor(el));
         }
         editor.initBodyEditor = initBodyEditor;
+        function setBody(cache, body) {
+        }
+        editor.setBody = setBody;
         function createBodyEditor(el) {
             var b = json.parse(el.value);
             return JSX("div", { class: "uk-margin-top" },
-                JSX("select", { class: "uk-select" },
-                    JSX("option", { value: "" }, "No body"),
-                    rbody.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
-                        if (b && b.type === t.key) {
-                            return JSX("option", { value: t.key, selected: "selected" }, t.title);
-                        }
-                        else {
-                            return JSX("option", { value: t.key }, t.title);
-                        }
-                    }),
-                    "\u02D9"),
+                bodySelect(el, b),
+                JSX("div", { class: "body-editor", "data-key": "" }),
                 rbody.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
                     var cfg = (b && b.type == t.key) ? b.config : null;
-                    return configEditor(t.key, cfg, t.key === (b ? b.type : ""));
+                    return configEditor(t.key, cfg, t.key === (b ? b.type : ""), el);
                 }));
         }
-        function configEditor(key, config, active) {
-            var cls = "uk-margin-top body-editor-" + key;
+        function bodySelect(el, b) {
+            var ret = JSX("select", { class: "uk-select" },
+                JSX("option", { value: "" }, "No body"),
+                rbody.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
+                    if (b && b.type === t.key) {
+                        return JSX("option", { value: t.key, selected: "selected" }, t.title);
+                    }
+                    else {
+                        return JSX("option", { value: t.key }, t.title);
+                    }
+                }));
+            editor.events(ret, function () {
+                dom.els(".body-editor", ret.parentElement).forEach(function (e) {
+                    var key = e.dataset["key"];
+                    if (ret.value === key) {
+                        if (key === "") {
+                            el.value = "null";
+                            editor.check();
+                        }
+                        e.classList.remove("hidden");
+                    }
+                    else {
+                        e.classList.add("hidden");
+                    }
+                });
+            });
+            return ret;
+        }
+        function configEditor(key, config, active, el) {
+            var cls = "uk-margin-top body-editor";
             if (!active) {
                 cls += " hidden";
             }
             switch (key) {
                 case "json":
-                    var j = config;
-                    return JSX("div", { class: cls },
-                        JSX("textarea", { class: "uk-textarea" }, json.str(j ? j.msg : null)));
+                    return JSX("div", { class: cls, "data-key": key }, jsonEditor(key, active ? config : undefined, el));
+                case "html":
+                    return JSX("div", { class: cls, "data-key": key }, htmlEditor(key, active ? config : undefined, el));
                 default:
-                    return JSX("div", { class: cls },
+                    return JSX("div", { class: cls, "data-key": key },
                         "Unimplemented [",
                         key,
                         "] editor");
             }
         }
-        function setBody(cache, body) {
+        function htmlEditor(key, h, el) {
+            var ret = JSX("textarea", { class: "uk-textarea" }, h ? h.content : "");
+            var orig = h ? h.content : "";
+            editor.events(ret, function () {
+                var changed = orig !== ret.value;
+                if (changed) {
+                    var msg = ret.value;
+                    updateFn("html", { content: msg }, el);
+                }
+            });
+            return ret;
         }
-        editor.setBody = setBody;
+        function jsonEditor(key, j, el) {
+            var ret = JSX("textarea", { class: "uk-textarea" }, json.str(j ? j.msg : null));
+            var orig = j ? json.str(j.msg) : "null";
+            editor.events(ret, function () {
+                var changed = orig !== ret.value;
+                if (changed) {
+                    var msg = ret.value;
+                    try {
+                        msg = json.parse(msg);
+                    }
+                    catch (e) { }
+                    updateFn("json", { msg: msg }, el);
+                }
+            });
+            return ret;
+        }
+        function updateFn(t, cfg, el) {
+            var nb = { type: t, config: cfg };
+            el.value = json.str(nb);
+            editor.check();
+        }
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
@@ -2903,7 +2955,7 @@ var request;
             if (o) {
                 var n = extractRequest(reqID);
                 var diff_1 = request.diff(o, n);
-                // console.debug("checking editor state", o, n, diff);
+                console.debug("checking editor state", o, n, diff_1);
                 changed = diff_1.length > 0;
             }
             else {
@@ -3020,7 +3072,6 @@ var request;
         function renderAuth(key, as) {
             return JSX("li", { class: "request-auth-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-auth" }, "Auth"),
                     JSX("textarea", { class: "uk-textarea", id: key + "-auth", name: "auth" }, json.str(as))));
         }
         function renderHeaders(key, hs) {
@@ -3031,13 +3082,12 @@ var request;
         function renderBody(key, b) {
             return JSX("li", { class: "request-body-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("label", { class: "uk-form-label", for: key + "-body" }, "Body"),
-                    JSX("textarea", { class: "uk-textarea", id: key + "-body", name: "body" }, json.str(b))));
+                    JSX("textarea", { class: "uk-textarea hidden", id: key + "-body", name: "body" }, json.str(b))));
         }
         function renderOptions(key, opts) {
             return JSX("li", { class: "request-options-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("textarea", { class: "uk-textarea", id: key + "-options", name: "options" }, json.str(opts))));
+                    JSX("textarea", { class: "uk-textarea hidden", id: key + "-options", name: "options" }, json.str(opts))));
         }
     })(form = request.form || (request.form = {}));
 })(request || (request = {}));

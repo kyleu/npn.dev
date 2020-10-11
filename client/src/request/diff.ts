@@ -47,13 +47,13 @@ namespace request {
       }
     }
     const checkNull = (k: string, lv: any, rv: any) => {
-      if (!l) {
-        if (r) {
+      if (!lv) {
+        if (rv) {
           p(k, null, "(defined)")
         }
         return true;
       }
-      if (!r) {
+      if (!rv) {
         p(k, "(defined)", null)
         return true;
       }
