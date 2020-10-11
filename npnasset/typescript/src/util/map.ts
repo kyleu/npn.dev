@@ -10,6 +10,10 @@ namespace map {
       return this.storage[key] = v;
     };
 
+    del(key: K) {
+      delete this.storage[key];
+    };
+
     constructor() {}
   }
 }

@@ -8,28 +8,15 @@ import (
 	"github.com/kyleu/npn/app/request"
 
 	"emperror.dev/errors"
-	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
 )
 
-func sendCollections(s *npnconnection.Service, connID uuid.UUID) {
-	svcs := ctx(s)
-	colls, err := svcs.Collection.List()
-	if err != nil {
-		s.Logger.Warn(fmt.Sprintf("error retrieving collections: %+v", err))
-	}
-	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollections, colls)
-	err = s.WriteMessage(connID, msg)
-	if err != nil {
-		s.Logger.Warn(fmt.Sprintf("error writing to socket: %+v", err))
-	}
-}
-
 type collDetails struct {
-	Collection *collection.Collection      `json:"collection"`
-	Requests   collection.RequestSummaries `json:"requests"`
+	Key        string                      `json:"key"`
+	Collection *collection.Collection      `json:"collection,omitempty"`
+	Requests   collection.RequestSummaries `json:"requests,omitempty"`
 }
 
 type addCollResult struct {
@@ -58,6 +45,19 @@ func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connecti
 	}
 }
 
+func sendCollections(s *npnconnection.Service, c *npnconnection.Connection) {
+	svcs := ctx(s)
+	colls, err := svcs.Collection.List(&c.Profile.UserID)
+	if err != nil {
+		s.Logger.Warn(fmt.Sprintf("error retrieving collections: %+v", err))
+	}
+	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollections, colls)
+	err = s.WriteMessage(c.ID, msg)
+	if err != nil {
+		s.Logger.Warn(fmt.Sprintf("error writing to socket: %+v", err))
+	}
+}
+
 func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
 	name := ""
 	err := npncore.FromJSONStrict(param, &name)
@@ -66,17 +66,17 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 	}
 	key := npncore.Slugify(name)
 	svcs := ctx(s)
-	curr, _ := svcs.Collection.Load(key)
+	curr, _ := svcs.Collection.Load(&c.Profile.UserID, key)
 	if curr != nil {
 		key += "-" + strings.ToLower(npncore.RandomString(4))
 	}
 
-	err = svcs.Collection.Save("", key, name, "")
+	err = svcs.Collection.Save(&c.Profile.UserID, "", key, name, "")
 	if err != nil {
 		return errors.Wrap(err, "unable to save new collection with key ["+key+"]")
 	}
 
-	newColls, _ := svcs.Collection.List()
+	newColls, _ := svcs.Collection.List(&c.Profile.UserID)
 
 	ret := &addCollResult{Collections: newColls, Active: key}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionAdded, ret)
@@ -90,7 +90,7 @@ func deleteCollection(s *npnconnection.Service, c *npnconnection.Connection, par
 		return errors.Wrap(err, "unable to parse input")
 	}
 	svcs := ctx(s)
-	err = svcs.Collection.Delete(key)
+	err = svcs.Collection.Delete(&c.Profile.UserID, key)
 	if err != nil {
 		return errors.Wrap(err, "unable to delete collection with key ["+key+"]")
 	}
@@ -112,7 +112,7 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 	req.Key = npncore.Slugify(req.Prototype.Domain)
 
 	svcs := ctx(s)
-	curr, _ := svcs.Collection.LoadRequest(p.Coll, req.Key)
+	curr, _ := svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
 	if curr != nil {
 		if req.Prototype != nil && len(req.Prototype.Path) > 0 {
 			add := req.Prototype.Path
@@ -121,13 +121,13 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 			}
 			req.Key += "-" + npncore.Slugify(add)
 		}
-		curr, _ = svcs.Collection.LoadRequest(p.Coll, req.Key)
+		curr, _ = svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
 		if curr != nil {
 			req.Key += "-" + strings.ToLower(npncore.RandomString(4))
 		}
 	}
 
-	err = svcs.Collection.SaveRequest(p.Coll, "", req)
+	err = svcs.Collection.SaveRequest(&c.Profile.UserID, p.Coll, "", req)
 	if err != nil {
 		return errors.Wrap(err, "unable to save request from URL ["+p.URL+"]")
 	}
@@ -143,15 +143,15 @@ func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error parsing collection [%v]: %+v", key, err))
 	}
-	coll, err := svcs.Collection.Load(key)
+	coll, err := svcs.Collection.Load(&c.Profile.UserID, key)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error retrieving collection [%v]: %+v", key, err))
 	}
-	reqs, err := svcs.Collection.ListRequests(key)
+	reqs, err := svcs.Collection.ListRequests(&c.Profile.UserID, key)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error retrieving requests for collection [%v]: %+v", key, err))
 	}
-	cd := collDetails{Collection: coll, Requests: reqs}
+	cd := collDetails{Key: key, Collection: coll, Requests: reqs}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionDetail, &cd)
 	return s.WriteMessage(c.ID, msg)
 }

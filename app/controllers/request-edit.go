@@ -25,7 +25,7 @@ func RequestDelete(w http.ResponseWriter, r *http.Request) {
 		coll := mux.Vars(r)["c"]
 		key := mux.Vars(r)[npncore.KeyKey]
 
-		err := app.Svc(ctx.App).Collection.DeleteRequest(coll, key)
+		err := app.Svc(ctx.App).Collection.DeleteRequest(&ctx.Profile.UserID, coll, key)
 		if err != nil {
 			return npncontroller.EResp(err, "unable to delete ["+coll+"/"+key+"]")
 		}
@@ -57,7 +57,7 @@ func RequestSave(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(err, "unable to parse request")
 		}
 
-		err = app.Svc(ctx.App).Collection.SaveRequest(frm.Coll, frm.OriginalKey, req)
+		err = app.Svc(ctx.App).Collection.SaveRequest(&ctx.Profile.UserID, frm.Coll, frm.OriginalKey, req)
 		if err != nil {
 			return npncontroller.EResp(err, "unable to save ["+frm.Coll+"/"+req.Key+"]")
 		}

@@ -93,12 +93,6 @@ namespace group {
     if (!a) {
       return [];
     }
-    for (const idx in a) {
-      const c = a[idx]
-      if (matchFn(c) == key) {
-        delete a[idx];
-      }
-    }
-    return a;
+    return a.filter(x => matchFn(x) != key);
   }
 }

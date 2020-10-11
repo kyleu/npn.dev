@@ -3,7 +3,6 @@ package socket
 import (
 	"encoding/json"
 
-	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/app/transform"
 
 	"emperror.dev/errors"
@@ -16,15 +15,15 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 
 	switch cmd {
 	case ClientMessageGetRequest:
-		err = onGetRequest(c.ID, param, s)
+		err = onGetRequest(c, param, s)
 	case ClientMessageSaveRequest:
-		err = onSaveRequest(c.ID, param, s)
+		err = onSaveRequest(c, param, s)
 	case ClientMessageDeleteRequest:
-		err = onDeleteRequest(c.ID, param, s)
+		err = onDeleteRequest(c, param, s)
 	case ClientMessageCall:
-		err = onCall(c.ID, param, s)
+		err = onCall(c, param, s)
 	case ClientMessageTransform:
-		err = onTransform(c.ID, param, s)
+		err = onTransform(c, param, s)
 	default:
 		err = errors.New("invalid request command [" + cmd + "]")
 	}
@@ -32,52 +31,52 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 	return err
 }
 
-func onGetRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := s.Context.(*services)
 	frm := &paramGetRequest{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load getRequest param")
 	}
-	req, err := svc.Collection.LoadRequest(frm.Coll, frm.Req)
+	req, err := svc.Collection.LoadRequest(&c.Profile.UserID, frm.Coll, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't load request")
 	}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, req)
-	return s.WriteMessage(connID, msg)
+	return s.WriteMessage(c.ID, msg)
 }
 
-func onSaveRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := s.Context.(*services)
 	frm := &paramSaveRequest{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
-	err = svc.Collection.SaveRequest(frm.Coll, frm.Orig, frm.Req)
+	err = svc.Collection.SaveRequest(&c.Profile.UserID, frm.Coll, frm.Orig, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't save request")
 	}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, frm.Req)
-	return s.WriteMessage(connID, msg)
+	return s.WriteMessage(c.ID, msg)
 }
 
-func onDeleteRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := s.Context.(*services)
 	frm := &paramDeleteRequest{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
-	err = svc.Collection.DeleteRequest(frm.Coll, frm.Req)
+	err = svc.Collection.DeleteRequest(&c.Profile.UserID, frm.Coll, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't remove request")
 	}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDeleted, frm.Req)
-	return s.WriteMessage(connID, msg)
+	return s.WriteMessage(c.ID, msg)
 }
 
-func onCall(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := s.Context.(*services)
 	frm := &paramCall{}
 	err := npncore.FromJSONStrict(param, frm)
@@ -88,13 +87,13 @@ func onCall(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) e
 	go func() {
 		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto)
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
-		_ = s.WriteMessage(connID, msg)
+		_ = s.WriteMessage(c.ID, msg)
 	}()
 
 	return nil
 }
 
-func onTransform(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+func onTransform(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	frm := &paramTransform{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
@@ -113,5 +112,5 @@ func onTransform(connID uuid.UUID, param json.RawMessage, s *npnconnection.Servi
 
 	txr := transformResponse{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageTransformResult, txr)
-	return s.WriteMessage(connID, msg)
+	return s.WriteMessage(c.ID, msg)
 }

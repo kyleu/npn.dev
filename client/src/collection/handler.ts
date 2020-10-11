@@ -1,8 +1,8 @@
 namespace collection {
   interface CollectionDetails {
-    readonly collection: Collection;
-    readonly requests: request.Summary[];
-    readonly description: string;
+    readonly key: string;
+    readonly collection?: Collection;
+    readonly requests?: request.Summary[];
   }
 
   interface CollectionAdded {
@@ -19,9 +19,13 @@ namespace collection {
         break;
       case command.server.collectionDetail:
         const d = param as CollectionDetails;
-        log.info(`processing [${d.requests.length}] requests for collection [${d.collection.key}]`);
-        cache.updateCollection(d.collection);
-        request.cache.setCollectionRequests(d.collection, d.requests);
+        log.info(`processing [${d.requests?.length || 0}] requests for collection [${d.key}]`);
+        if (d.collection) {
+          cache.updateCollection(d.collection);
+        } else {
+          cache.collections = cache.collections.filter(x => x.key !== del);
+        }
+        request.cache.setCollectionRequests(d.key, d.collection, d.requests || []);
         renderCollections(cache.collections!);
         break;
       case command.server.collectionAdded:

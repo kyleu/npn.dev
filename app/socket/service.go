@@ -47,7 +47,7 @@ func onOpen(s *npnconnection.Service, c *npnconnection.Connection) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to write to socket")
 	}
-	go sendCollections(s, c.ID)
+	go sendCollections(s, c)
 	return nil
 }
 

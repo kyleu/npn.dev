@@ -50,7 +50,7 @@ func loadRequest(r *http.Request, ctx *npnweb.RequestContext, action string) (st
 	c := mux.Vars(r)["c"]
 	key := mux.Vars(r)[npncore.KeyKey]
 
-	req, err := app.Svc(ctx.App).Collection.LoadRequest(c, key)
+	req, err := app.Svc(ctx.App).Collection.LoadRequest(&ctx.Profile.UserID, c, key)
 	if err != nil {
 		return c, nil, err
 	}

@@ -1,6 +1,7 @@
 package collection
 
 import (
+	"github.com/gofrs/uuid"
 	"os"
 	"path"
 
@@ -8,8 +9,6 @@ import (
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
-
-const rootDir = "collections"
 
 type Service struct {
 	files  npncore.FileLoader
@@ -20,25 +19,28 @@ func NewService(f npncore.FileLoader, logger logur.Logger) *Service {
 	return &Service{files: f, logger: logger}
 }
 
-func (s *Service) List() (Collections, error) {
-	dirs := s.files.ListDirectories(rootDir)
+func (s *Service) List(userID *uuid.UUID) (Collections, error) {
+	dirs := s.files.ListDirectories(dirFor(userID))
 
 	ret := make(Collections, 0, len(dirs))
 	for _, dir := range dirs {
-		c, err := s.Load(dir)
+		c, err := s.Load(userID, dir)
 		if err != nil {
 			return nil, err
+		}
+		if c == nil {
+			c = &Collection{Key: dir}
 		}
 		ret = append(ret, c)
 	}
 	return ret, nil
 }
 
-func (s *Service) Load(key string) (*Collection, error) {
-	p := path.Join(rootDir, key)
+func (s *Service) Load(userID *uuid.UUID, key string) (*Collection, error) {
+	p := path.Join(dirFor(userID), key)
 	_, isDir := s.files.Exists(p)
 	if !isDir {
-		return nil, errors.New("collection [" + key + "] does not exist")
+		return nil, nil
 	}
 	ret := &Collection{}
 	filePath := path.Join(p, "collection.json")
@@ -57,7 +59,7 @@ func (s *Service) Load(key string) (*Collection, error) {
 	return ret.Normalize(key, p), nil
 }
 
-func (s *Service) Save(originalKey string, newKey string, title string, description string) error {
+func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, title string, description string) error {
 	originalKey = npncore.Slugify(originalKey)
 	newKey = npncore.Slugify(newKey)
 
@@ -65,13 +67,13 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 	var err error
 
 	if len(originalKey) > 0 {
-		orig, err = s.Load(originalKey)
+		orig, err = s.Load(userID, originalKey)
 		if err != nil {
 			return errors.Wrap(err, "unable to load original collection ["+originalKey+"]")
 		}
 		if orig != nil && originalKey != newKey {
-			o := path.Join(s.files.Root(), rootDir, originalKey)
-			n := path.Join(s.files.Root(), rootDir, newKey)
+			o := path.Join(s.files.Root(), dirFor(userID), originalKey)
+			n := path.Join(s.files.Root(), dirFor(userID), newKey)
 			err := os.Rename(o, n)
 			if err != nil {
 				return errors.Wrap(err, "unable to rename original collection ["+originalKey+"] in path ["+o+"]")
@@ -93,7 +95,7 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 	}
 	n.Path = newKey
 
-	p := path.Join(rootDir, newKey, "collection.json")
+	p := path.Join(dirFor(userID), newKey, "collection.json")
 	content := npncore.ToJSON(n, s.logger)
 	err = s.files.WriteFile(p, []byte(content), true)
 	if err != nil {
@@ -103,7 +105,16 @@ func (s *Service) Save(originalKey string, newKey string, title string, descript
 	return nil
 }
 
-func (s *Service) Delete(key string) error {
-	p := path.Join(rootDir, key)
+func (s *Service) Delete(userID *uuid.UUID, key string) error {
+	p := path.Join(dirFor(userID), key)
 	return s.files.RemoveRecursive(p)
+}
+
+var systemUserID = uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000")
+
+func dirFor(userID *uuid.UUID) string {
+	if userID == nil || *userID == systemUserID {
+		return "collections"
+	}
+	return path.Join("users", userID.String(), "collections")
 }

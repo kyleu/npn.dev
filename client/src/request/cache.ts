@@ -6,17 +6,24 @@ namespace request {
     action?: string;
     extra: string[] = [];
 
-    setCollectionRequests(coll: collection.Collection, summs: request.Summary[]) {
-      this.summaries.set(coll.key, summs);
-      if (coll.key === collection.cache.active) {
-        dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
-        for (let req of summs) {
-          if (this.active === req.key) {
-            renderActiveRequest(coll.key);
-            if (this.action) {
-              renderAction(coll.key, req.key, this.action, this.extra);
+    setCollectionRequests(key: string, coll: collection.Collection | undefined, summs: request.Summary[]) {
+      if (coll) {
+        this.summaries.set(key, summs);
+        if (key === collection.cache.active) {
+          dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
+          for (let req of summs) {
+            if (this.active === req.key) {
+              renderActiveRequest(key);
+              if (this.action) {
+                renderAction(key, req.key, this.action, this.extra);
+              }
             }
           }
+        }
+      } else {
+        this.summaries.del(key);
+        if (key === collection.cache.active) {
+          dom.setContent("#collection-panel", collection.renderNotFound(key));
         }
       }
     }
@@ -66,11 +73,11 @@ namespace request {
       let summs = this.summaries.get(coll);
       summs = summs.filter(x => x.key !== rd);
       this.summaries.set(coll, summs)
-      if(collection.cache.active === coll) {
-        collection.renderCollection(collection.cache.getActiveCollection()!, summs)
-      }
       if (this.active === rd) {
         cache.setActiveRequest(coll, undefined);
+      }
+      if(collection.cache.active === coll) {
+        collection.renderCollection(collection.cache.getActiveCollection()!, summs)
       }
     }
   }

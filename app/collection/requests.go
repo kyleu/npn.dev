@@ -2,6 +2,7 @@ package collection
 
 import (
 	"fmt"
+	"github.com/gofrs/uuid"
 	"os"
 	"path"
 	"path/filepath"
@@ -32,12 +33,12 @@ func (r *RequestSummary) TitleWithFallback() string {
 
 type RequestSummaries []*RequestSummary
 
-func (s *Service) ListRequests(c string) (RequestSummaries, error) {
-	p := path.Join(rootDir, c, "requests")
+func (s *Service) ListRequests(userID *uuid.UUID, c string) (RequestSummaries, error) {
+	p := path.Join(dirFor(userID), c, "requests")
 	files := s.files.ListJSON(p)
 	ret := make(RequestSummaries, 0, len(files))
 	for idx, rk := range files {
-		r, err := s.LoadRequest(c, rk)
+		r, err := s.LoadRequest(userID, c, rk)
 		if err != nil {
 			return nil, errors.Wrap(err, "error loading request ["+rk+"]")
 		}
@@ -56,9 +57,9 @@ func (s *Service) ListRequests(c string) (RequestSummaries, error) {
 	return ret, nil
 }
 
-func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
+func (s *Service) LoadRequest(userID *uuid.UUID, c string, f string) (*request.Request, error) {
 	f = strings.TrimSuffix(f, ".json")
-	p := path.Join(rootDir, c, "requests", f+".json")
+	p := path.Join(dirFor(userID), c, "requests", f+".json")
 	content, err := s.files.ReadFile(p)
 	if err != nil {
 		return nil, err
@@ -70,7 +71,7 @@ func (s *Service) LoadRequest(c string, f string) (*request.Request, error) {
 	return ret, nil
 }
 
-func (s *Service) SaveRequest(coll string, originalKey string, req *request.Request) error {
+func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string, req *request.Request) error {
 	originalKey = npncore.Slugify(originalKey)
 	slug := npncore.Slugify(req.Key)
 	if slug != req.Key {
@@ -81,16 +82,16 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 	shouldDelete := len(originalKey) > 0 && req.Key != originalKey
 
 	if shouldDelete {
-		orig, err := s.LoadRequest(coll, req.Key)
+		orig, err := s.LoadRequest(userID, coll, req.Key)
 		if err == nil && orig != nil {
 			return errors.New("file already exists in collection [" + coll + "] with key [" + req.Key + "]")
 		}
 	}
 
-	p := requestPath(coll, req.Key)
+	p := requestPath(userID, coll, req.Key)
 
 	if shouldDelete {
-		o := path.Join(s.files.Root(), requestPath(coll, originalKey))
+		o := path.Join(s.files.Root(), requestPath(userID, coll, originalKey))
 		n := path.Join(s.files.Root(), p)
 		err := os.Rename(o, n)
 		if err != nil {
@@ -101,7 +102,9 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 	msg := npncore.ToJSON(req, s.logger)
 
 	if shouldSaveHistory {
-		hp := historyPath(coll, req.Key)
+		hp := historyPath(userID, coll, req.Key)
+		println("##########")
+		println(hp)
 		now := time.Now()
 		hfn := path.Join(hp, npncore.ToDateString(&now)+".json")
 		hd := filepath.Dir(hfn)
@@ -112,7 +115,7 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 
 		x, _ := os.Stat(p)
 		if x == nil {
-			err = s.files.WriteFile(p, []byte(msg), true)
+			err = s.files.WriteFile(hfn, []byte(msg), true)
 		} else {
 			err = s.files.CopyFile(p, hfn)
 		}
@@ -129,15 +132,15 @@ func (s *Service) SaveRequest(coll string, originalKey string, req *request.Requ
 	return nil
 }
 
-func requestPath(coll string, key string) string {
-	return path.Join(rootDir, coll, "requests", key+".json")
+func requestPath(userID *uuid.UUID, coll string, key string) string {
+	return path.Join(dirFor(userID), coll, "requests", key+".json")
 }
 
-func historyPath(coll string, key string) string {
-	return path.Join(rootDir, coll, "history", "requests", key)
+func historyPath(userID *uuid.UUID, coll string, key string) string {
+	return path.Join(dirFor(userID), coll, "history", "requests", key)
 }
 
-func (s *Service) DeleteRequest(coll string, key string) error {
-	p := path.Join(rootDir, coll, "requests", key+".json")
+func (s *Service) DeleteRequest(userID *uuid.UUID, coll string, key string) error {
+	p := path.Join(dirFor(userID), coll, "requests", key+".json")
 	return s.files.RemoveRecursive(p)
 }

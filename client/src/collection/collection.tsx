@@ -61,6 +61,16 @@ namespace collection {
     </div>
   }
 
+  export function renderNotFound(key: string) {
+    return <div class="uk-card uk-card-body uk-card-default">
+      <div class="right">
+        <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close collection"/>
+      </div>
+      <h3 class="uk-card-title"><span class="nav-icon-h3" data-uk-icon="icon: album"/>{key}</h3>
+      <p>Collection [{key}] not found</p>
+    </div>
+  }
+
   export function addFromInput() {
     const input = dom.req<HTMLInputElement>("#coll-add-input");
     const name = input.value.trim();

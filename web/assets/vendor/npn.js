@@ -894,13 +894,7 @@ var group;
         if (!a) {
             return [];
         }
-        for (var idx in a) {
-            var c = a[idx];
-            if (matchFn(c) == key) {
-                delete a[idx];
-            }
-        }
-        return a;
+        return a.filter(function (x) { return matchFn(x) != key; });
     }
     group_1.remove = remove;
 })(group || (group = {}));
@@ -1001,6 +995,10 @@ var map;
         ;
         Map.prototype.set = function (key, v) {
             return this.storage[key] = v;
+        };
+        ;
+        Map.prototype.del = function (key) {
+            delete this.storage[key];
         };
         ;
         return Map;
@@ -1694,6 +1692,19 @@ var collection;
                 JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests))));
     }
     collection.renderCollection = renderCollection;
+    function renderNotFound(key) {
+        return JSX("div", { class: "uk-card uk-card-body uk-card-default" },
+            JSX("div", { class: "right" },
+                JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close collection" })),
+            JSX("h3", { class: "uk-card-title" },
+                JSX("span", { class: "nav-icon-h3", "data-uk-icon": "icon: album" }),
+                key),
+            JSX("p", null,
+                "Collection [",
+                key,
+                "] not found"));
+    }
+    collection.renderNotFound = renderNotFound;
     function addFromInput() {
         var input = dom.req("#coll-add-input");
         var name = input.value.trim();
@@ -1741,6 +1752,7 @@ var collection;
 var collection;
 (function (collection) {
     function onCollectionMessage(cmd, param) {
+        var _a;
         switch (cmd) {
             case command.server.collections:
                 collection.cache.collections = group.sort(param, function (c) { return c.key; });
@@ -1749,9 +1761,14 @@ var collection;
                 break;
             case command.server.collectionDetail:
                 var d = param;
-                log.info("processing [" + d.requests.length + "] requests for collection [" + d.collection.key + "]");
-                collection.cache.updateCollection(d.collection);
-                request.cache.setCollectionRequests(d.collection, d.requests);
+                log.info("processing [" + (((_a = d.requests) === null || _a === void 0 ? void 0 : _a.length) || 0) + "] requests for collection [" + d.key + "]");
+                if (d.collection) {
+                    collection.cache.updateCollection(d.collection);
+                }
+                else {
+                    collection.cache.collections = collection.cache.collections.filter(function (x) { return x.key !== del_1; });
+                }
+                request.cache.setCollectionRequests(d.key, d.collection, d.requests || []);
                 collection.renderCollections(collection.cache.collections);
                 break;
             case command.server.collectionAdded:
@@ -1878,18 +1895,26 @@ var request;
             this.requests = new map.Map();
             this.extra = [];
         }
-        Cache.prototype.setCollectionRequests = function (coll, summs) {
-            this.summaries.set(coll.key, summs);
-            if (coll.key === collection.cache.active) {
-                dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
-                for (var _i = 0, summs_1 = summs; _i < summs_1.length; _i++) {
-                    var req = summs_1[_i];
-                    if (this.active === req.key) {
-                        request.renderActiveRequest(coll.key);
-                        if (this.action) {
-                            request.renderAction(coll.key, req.key, this.action, this.extra);
+        Cache.prototype.setCollectionRequests = function (key, coll, summs) {
+            if (coll) {
+                this.summaries.set(key, summs);
+                if (key === collection.cache.active) {
+                    dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
+                    for (var _i = 0, summs_1 = summs; _i < summs_1.length; _i++) {
+                        var req = summs_1[_i];
+                        if (this.active === req.key) {
+                            request.renderActiveRequest(key);
+                            if (this.action) {
+                                request.renderAction(key, req.key, this.action, this.extra);
+                            }
                         }
                     }
+                }
+            }
+            else {
+                this.summaries.del(key);
+                if (key === collection.cache.active) {
+                    dom.setContent("#collection-panel", collection.renderNotFound(key));
                 }
             }
         };
@@ -1934,11 +1959,11 @@ var request;
             var summs = this.summaries.get(coll);
             summs = summs.filter(function (x) { return x.key !== rd; });
             this.summaries.set(coll, summs);
-            if (collection.cache.active === coll) {
-                collection.renderCollection(collection.cache.getActiveCollection(), summs);
-            }
             if (this.active === rd) {
                 request.cache.setActiveRequest(coll, undefined);
+            }
+            if (collection.cache.active === coll) {
+                collection.renderCollection(collection.cache.getActiveCollection(), summs);
             }
         };
         return Cache;

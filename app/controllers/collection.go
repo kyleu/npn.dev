@@ -15,7 +15,7 @@ import (
 
 func CollectionList(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		colls, err := app.Svc(ctx.App).Collection.List()
+		colls, err := app.Svc(ctx.App).Collection.List(&ctx.Profile.UserID)
 		if err != nil {
 			return npncontroller.EResp(err)
 		}
@@ -38,12 +38,12 @@ func CollectionDetail(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		key := mux.Vars(r)["c"]
 
-		coll, err := app.Svc(ctx.App).Collection.Load(key)
+		coll, err := app.Svc(ctx.App).Collection.Load(&ctx.Profile.UserID, key)
 		if err != nil {
 			return npncontroller.EResp(err)
 		}
 
-		reqs, err := app.Svc(ctx.App).Collection.ListRequests(key)
+		reqs, err := app.Svc(ctx.App).Collection.ListRequests(&ctx.Profile.UserID, key)
 		if err != nil {
 			return npncontroller.EResp(err)
 		}
@@ -58,7 +58,7 @@ func CollectionEdit(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		key := mux.Vars(r)["c"]
 
-		coll, err := app.Svc(ctx.App).Collection.Load(key)
+		coll, err := app.Svc(ctx.App).Collection.Load(&ctx.Profile.UserID, key)
 		if err != nil {
 			return npncontroller.EResp(err)
 		}
@@ -82,7 +82,7 @@ func CollectionSave(w http.ResponseWriter, r *http.Request) {
 		title := r.Form.Get("title")
 		description := r.Form.Get("description")
 
-		err := app.Svc(ctx.App).Collection.Save(originalKey, key, title, description)
+		err := app.Svc(ctx.App).Collection.Save(&ctx.Profile.UserID, originalKey, key, title, description)
 		if err != nil {
 			return npncontroller.EResp(err)
 		}
@@ -95,7 +95,7 @@ func CollectionDelete(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		coll := mux.Vars(r)["c"]
 
-		err := app.Svc(ctx.App).Collection.Delete(coll)
+		err := app.Svc(ctx.App).Collection.Delete(&ctx.Profile.UserID, coll)
 		if err != nil {
 			return npncontroller.EResp(err, "unable to delete collection ["+coll+"]")
 		}
