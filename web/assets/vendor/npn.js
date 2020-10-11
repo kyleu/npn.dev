@@ -890,6 +890,19 @@ var group;
         return sort(update(a, v, matchFn), matchFn);
     }
     group_1.updateAndSort = updateAndSort;
+    function remove(a, key, matchFn) {
+        if (!a) {
+            return [];
+        }
+        for (var idx in a) {
+            var c = a[idx];
+            if (matchFn(c) == key) {
+                delete a[idx];
+            }
+        }
+        return a;
+    }
+    group_1.remove = remove;
 })(group || (group = {}));
 var json;
 (function (json) {
@@ -1135,10 +1148,12 @@ var command;
         // Collection
         getCollection: "getCollection",
         addCollection: "addCollection",
+        deleteCollection: "deleteCollection",
         addRequestURL: "addRequestURL",
         // Request
         getRequest: "getRequest",
         saveRequest: "saveRequest",
+        deleteRequest: "deleteRequest",
         call: "call",
         transform: "transform"
     };
@@ -1149,8 +1164,10 @@ var command;
         collections: "collections",
         collectionDetail: "collectionDetail",
         collectionAdded: "collectionAdded",
+        collectionDeleted: "collectionDeleted",
         requestDetail: "requestDetail",
         requestAdded: "requestAdded",
+        requestDeleted: "requestDeleted",
         callResult: "callResult",
         transformResult: "transformResult"
     };
@@ -1241,8 +1258,8 @@ var routing;
                 if (coll !== currColl && coll) {
                     socket.send({ svc: services.collection.key, cmd: command.client.getCollection, param: coll });
                 }
-                request.cache.setActiveRequest(req);
-                request.cache.setActiveAction(act, extra);
+                request.cache.setActiveRequest(currColl, req);
+                request.cache.setActiveAction(currColl, act, extra);
                 ui.setPanels(coll, req, act, extra);
                 break;
             default:
@@ -1576,10 +1593,16 @@ var collection;
                 collection_1.renderCollections(this.collections);
             }
         };
+        Cache.prototype.deleteCollection = function (key) {
+            socket.send({ svc: services.collection.key, cmd: command.client.deleteCollection, param: key });
+        };
         Cache.prototype.getActiveCollection = function () {
+            return this.active ? this.getCollection(this.active) : undefined;
+        };
+        Cache.prototype.getCollection = function (key) {
             for (var _i = 0, _a = this.collections; _i < _a.length; _i++) {
                 var x = _a[_i];
-                if (x.key == this.active) {
+                if (x.key == key) {
                     return x;
                 }
             }
@@ -1633,10 +1656,11 @@ var collection;
                 JSX("h3", { class: "uk-card-title" },
                     JSX("span", { class: "nav-icon-h3", "data-uk-icon": "icon: album" }),
                     cn),
-                JSX("p", null, coll.description || "")),
+                JSX("p", null, coll.description || ""),
+                renderCollectionActions(coll)),
             JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
                 JSX("h3", { class: "uk-card-title" }, "Requests"),
-                JSX("form", { onsubmit: "collection.addRequestURL();return false;" },
+                JSX("form", { onsubmit: "collection.addRequestURL('" + coll.key + "');return false;" },
                     JSX("div", { class: "uk-margin-top uk-inline uk-width-expand" },
                         JSX("button", { class: "uk-form-icon uk-form-icon-flip", type: "submit", title: "add request", "uk-icon": "icon: plus" }),
                         JSX("input", { id: "coll-request-add-url", class: "uk-input", placeholder: "add a request by url", "data-lpignore": "true" }))),
@@ -1653,12 +1677,12 @@ var collection;
         }
     }
     collection.addFromInput = addFromInput;
-    function addRequestURL() {
+    function addRequestURL(coll) {
         var input = dom.req("#coll-request-add-url");
         var url = input.value.trim();
         if (url && url.length > 0) {
             input.value = "";
-            var param = { "coll": collection.cache.active, "url": url };
+            var param = { "coll": coll, "url": url };
             socket.send({ svc: services.collection.key, cmd: command.client.addRequestURL, param: param });
             log.info("adding request [" + url + "]");
         }
@@ -1677,6 +1701,14 @@ var collection;
             nav.link({ path: "/c/" + coll + "/" + r.key, title: title }),
             r.description && r.description.length ? JSX("div", null,
                 JSX("em", null, r.description)) : JSX("span", null));
+    }
+    function renderCollectionActions(coll) {
+        var path = "/c/" + coll.key;
+        var btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
+        var delWarn = "confirm('Are you sure you want to delete collection [" + coll.key + "]?')";
+        return JSX("div", null,
+            JSX("button", { class: btnClass, onclick: "return false;" }, "Edit"),
+            JSX("button", { class: btnClass, onclick: "if (" + delWarn + ") { collection.cache.deleteCollection('" + coll.key + "') }" }, "Delete"));
     }
 })(collection || (collection = {}));
 var collection;
@@ -1700,6 +1732,13 @@ var collection;
                 log.info("processing new collection [" + a.active + "]");
                 collection.cache.collections = a.collections;
                 nav.navigate("/c/" + a.active);
+                break;
+            case command.server.collectionDeleted:
+                var del_1 = param;
+                log.info("processing deleted collection [" + del_1 + "]");
+                collection.cache.collections = collection.cache.collections.filter(function (x) { return x.key !== del_1; });
+                collection.renderCollections(collection.cache.collections);
+                nav.navigate("/");
                 break;
             default:
                 console.warn("unhandled collection command [" + cmd + "]");
@@ -1819,44 +1858,61 @@ var request;
                 for (var _i = 0, summs_1 = summs; _i < summs_1.length; _i++) {
                     var req = summs_1[_i];
                     if (this.active === req.key) {
-                        request.renderActiveRequest(collection.cache.active);
+                        request.renderActiveRequest(coll.key);
                         if (this.action) {
-                            request.renderAction(collection.cache.active, req.key, this.action, this.extra);
+                            request.renderAction(coll.key, req.key, this.action, this.extra);
                         }
                     }
                 }
             }
         };
-        Cache.prototype.setActiveRequest = function (key) {
-            if (!collection.cache.active) {
+        Cache.prototype.setActiveRequest = function (coll, key) {
+            if (!coll) {
                 return;
             }
             if (this.active !== key) {
                 this.active = key;
                 if (this.active) {
-                    request.renderActiveRequest(collection.cache.active);
+                    request.renderActiveRequest(coll);
                 }
                 collection.renderCollections(collection.cache.collections);
             }
         };
-        Cache.prototype.setActiveAction = function (act, extra) {
-            if (!collection.cache.active) {
+        Cache.prototype.setActiveAction = function (coll, act, extra) {
+            if (!coll) {
                 return;
             }
             var sameExtra = this.extra.length === extra.length && this.extra.every(function (value, index) { return value === extra[index]; });
             if (this.active /* && (this.action !== act || !sameExtra) */) {
                 this.action = act;
                 this.extra = extra;
-                request.renderAction(collection.cache.active, this.active, this.action, this.extra);
+                request.renderAction(coll, this.active, this.action, this.extra);
             }
         };
-        Cache.prototype.updateRequest = function (r) {
-            if (!collection.cache.active) {
-                return;
-            }
-            var curr = this.requests.get(collection.cache.active);
+        Cache.prototype.updateRequest = function (coll, r) {
+            var curr = this.requests.get(coll);
             var updated = group.update(curr, r, function (x) { return x.key; });
-            this.requests.set(collection.cache.active, updated);
+            this.requests.set(coll, updated);
+            var summs = this.summaries.get(coll);
+            summs = summs.map(function (x) { return x.key == r.key ? request.toSummary(r, 0) : x; });
+            this.summaries.set(coll, summs);
+            if (collection.cache.active === coll) {
+                collection.renderCollection(collection.cache.getActiveCollection(), summs);
+            }
+        };
+        Cache.prototype.removeRequest = function (coll, rd) {
+            var curr = this.requests.get(coll);
+            var updated = group.remove(curr, rd, function (x) { return x.key; });
+            this.requests.set(coll, updated);
+            var summs = this.summaries.get(coll);
+            summs = summs.filter(function (x) { return x.key !== rd; });
+            this.summaries.set(coll, summs);
+            if (collection.cache.active === coll) {
+                collection.renderCollection(collection.cache.getActiveCollection(), summs);
+            }
+            if (this.active === rd) {
+                request.cache.setActiveRequest(coll, undefined);
+            }
         };
         return Cache;
     }());
@@ -1966,10 +2022,6 @@ var request;
 })(request || (request = {}));
 var request;
 (function (request) {
-    function getActiveRequest() {
-        return getRequest(collection.cache.active, request.cache.active);
-    }
-    request.getActiveRequest = getActiveRequest;
     function getSummary(coll, key) {
         for (var _i = 0, _a = request.cache.summaries.get(coll) || []; _i < _a.length; _i++) {
             var req = _a[_i];
@@ -1990,23 +2042,33 @@ var request;
         return undefined;
     }
     request.getRequest = getRequest;
+    function toSummary(r, order) {
+        return { key: r.key, title: r.title, description: r.description, url: request.prototypeToURL(r.prototype), order: order };
+    }
+    request.toSummary = toSummary;
     function onRequestMessage(cmd, param) {
+        var coll = collection.cache.active;
         switch (cmd) {
             case command.server.requestDetail:
                 var req = param;
                 log.info("received details for request [" + req.key + "]");
-                request.cache.updateRequest(req);
+                request.cache.updateRequest(coll, req);
                 if (request.cache.active === req.key) {
-                    request.renderActiveRequest(collection.cache.active);
-                    request.renderAction(collection.cache.active, request.cache.active, request.cache.action, request.cache.extra);
+                    request.renderActiveRequest(coll);
+                    request.renderAction(coll, request.cache.active, request.cache.action, request.cache.extra);
                 }
                 break;
             case command.server.requestAdded:
                 var ra = param;
                 log.info("received details for new request [" + ra.key + "]");
-                request.cache.updateRequest(ra);
-                request.cache.setActiveRequest(ra.key);
-                nav.navigate("/c/" + collection.cache.active + "/" + ra.key);
+                request.cache.updateRequest(coll, ra);
+                nav.navigate("/c/" + coll + "/" + ra.key);
+                break;
+            case command.server.requestDeleted:
+                var rd = param;
+                log.info("received details for deleted request [" + rd + "]");
+                request.cache.removeRequest(coll, rd);
+                nav.navigate("/c/" + coll);
                 break;
             case command.server.callResult:
                 var result = param;
@@ -2105,11 +2167,15 @@ var request;
                 call.prepare(coll, request.form.extractRequest(request.cache.active));
                 dom.setContent(ra, request.renderActionCall(coll, reqKey));
                 break;
+            case "delete":
+                var del = { coll: coll, req: reqKey };
+                socket.send({ svc: services.request.key, cmd: command.client.deleteRequest, param: del });
+                break;
             case "transform":
                 var req = request.form.extractRequest(request.cache.active);
                 dom.setContent(ra, transform.renderRequest(coll, reqKey, extra[0]));
-                var param = { coll: coll, req: reqKey, fmt: extra[0], proto: req.prototype };
-                socket.send({ svc: services.request.key, cmd: command.client.transform, param: param });
+                var tx = { coll: coll, req: reqKey, fmt: extra[0], proto: req.prototype };
+                socket.send({ svc: services.request.key, cmd: command.client.transform, param: tx });
                 break;
             default:
                 console.warn("unhandled request action [" + action + "]");
@@ -2408,22 +2474,15 @@ var request;
         }
         editor.events = events;
         function wireEvents(cache) {
-            events(cache.key, function () {
-                request.form.checkEditor(request.cache.active);
-            });
-            events(cache.title, function () {
-                request.form.checkEditor(request.cache.active);
-            });
-            events(cache.desc, function () {
-                request.form.checkEditor(request.cache.active);
-            });
-            events(cache.method, function () {
-                request.form.checkEditor(request.cache.active);
-            });
+            var ce = function () { return request.form.checkEditor(collection.cache.active, request.cache.active); };
+            events(cache.key, ce);
+            events(cache.title, ce);
+            events(cache.desc, ce);
+            events(cache.method, ce);
             events(cache.url, function () {
                 var p = request.prototypeFromURL(cache.url.value);
                 editor.setURL(cache, p);
-                request.form.checkEditor(request.cache.active);
+                ce();
             });
             events(cache.auth, function () {
                 var auth;
@@ -2435,6 +2494,7 @@ var request;
                     auth = [];
                 }
                 editor.setAuth(cache, auth);
+                ce();
             });
             events(cache.qp, function () {
                 var qp;
@@ -2446,6 +2506,7 @@ var request;
                     qp = [];
                 }
                 editor.setQueryParams(cache.url, qp);
+                ce();
             });
             events(cache.headers, function () {
                 var h;
@@ -2457,6 +2518,7 @@ var request;
                     h = [];
                 }
                 editor.setHeaders(cache, h);
+                ce();
             });
             events(cache.body, function () {
                 var b;
@@ -2467,6 +2529,7 @@ var request;
                     console.warn("invalid body JSON [" + cache.body.value + "]");
                 }
                 editor.setBody(cache, b);
+                ce();
             });
         }
     })(editor = request.editor || (request.editor = {}));
@@ -2565,7 +2628,6 @@ var request;
             }
             ret = ret.filter(function (x) { return x.k.length > 0; });
             ta.value = json.str(ret);
-            request.form.checkEditor(elID.substr(0, elID.lastIndexOf("-")));
             return ret;
         }
     })(editor = request.editor || (request.editor = {}));
@@ -2744,7 +2806,6 @@ var request;
             ret = ret.filter(function (x) { return x.k.length > 0; });
             ta.value = json.str(ret);
             setQueryParams(dom.req("#" + elID.replace("queryparams", "url")), ret);
-            request.form.checkEditor(elID.substr(0, elID.lastIndexOf("-")));
             return ret;
         }
     })(editor = request.editor || (request.editor = {}));
@@ -2786,8 +2847,8 @@ var request;
             return { key: key, title: title, description: desc, prototype: proto };
         }
         form.extractRequest = extractRequest;
-        function checkEditor(reqID) {
-            var o = request.getRequest(collection.cache.active, reqID);
+        function checkEditor(collID, reqID) {
+            var o = request.getRequest(collID, reqID);
             var changed = false;
             if (o) {
                 var n = extractRequest(reqID);
@@ -2801,9 +2862,9 @@ var request;
             dom.setDisplay("#save-panel", changed);
         }
         form.checkEditor = checkEditor;
-        function saveCurrentRequest(reqID) {
+        function saveCurrentRequest(collID, reqID) {
             var req = extractRequest(reqID);
-            var msg = { "coll": collection.cache.active, "orig": reqID, "req": req };
+            var msg = { "coll": collID, "orig": reqID, "req": req };
             socket.send({ svc: services.request.key, cmd: command.client.saveRequest, param: msg });
         }
         form.saveCurrentRequest = saveCurrentRequest;
@@ -2822,8 +2883,8 @@ var request;
                     JSX("div", { class: "right" },
                         JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.navigate('/c/" + coll + "');return false;", title: "close request" })),
                     JSX("h3", { class: "uk-card-title" }, r.title ? r.title : r.key),
-                    form.renderURL(r),
-                    renderSavePanel(r),
+                    form.renderURL(coll, r),
+                    renderSavePanel(coll, r),
                     renderActions(coll, r)),
                 JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
                     JSX("form", { action: "", method: "post", onsubmit: "console.log('XXXXXXX');return false;" }, form.renderSwitcher(r))),
@@ -2843,8 +2904,8 @@ var request;
                     JSX("textarea", { class: "uk-textarea", id: r.key + "-description", name: "description", "data-lpignore": "true" }, r.description || "")));
         }
         form.renderDetails = renderDetails;
-        function reset(r) {
-            request.render(collection.cache.active, r);
+        function reset(coll, r) {
+            request.render(coll, r);
         }
         form.reset = reset;
         var transforms = {
@@ -2852,10 +2913,10 @@ var request;
             "json": "JSON",
             "curl": "curl"
         };
-        function renderSavePanel(r) {
+        function renderSavePanel(coll, r) {
             return JSX("div", { id: "save-panel", class: "right hidden" },
-                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "request.form.reset('" + r.key + "');" }, "Reset"),
-                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "request.form.saveCurrentRequest('" + r.key + "');" }, "Save Changes"));
+                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "request.form.reset('" + coll + "', '" + r.key + "');" }, "Reset"),
+                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "request.form.saveCurrentRequest('" + coll + "', '" + r.key + "');" }, "Save Changes"));
         }
         function renderActions(coll, r) {
             var path = "/c/" + coll + "/" + r.key;
@@ -2934,8 +2995,8 @@ var request;
 (function (request) {
     var form;
     (function (form) {
-        function renderURL(r) {
-            var call = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;";
+        function renderURL(coll, r) {
+            var call = "nav.navigate(`/c/" + coll + "/" + r.key + "/call`);return false;";
             return JSX("div", { class: "uk-margin-top uk-panel" },
                 JSX("div", { class: "left", style: "width:120px;" },
                     JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(function (m) {

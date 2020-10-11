@@ -19,6 +19,8 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 		err = onGetRequest(c.ID, param, s)
 	case ClientMessageSaveRequest:
 		err = onSaveRequest(c.ID, param, s)
+	case ClientMessageDeleteRequest:
+		err = onDeleteRequest(c.ID, param, s)
 	case ClientMessageCall:
 		err = onCall(c.ID, param, s)
 	case ClientMessageTransform:
@@ -54,9 +56,24 @@ func onSaveRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Ser
 	}
 	err = svc.Collection.SaveRequest(frm.Coll, frm.Orig, frm.Req)
 	if err != nil {
-		return errors.Wrap(err, "can't load original request")
+		return errors.Wrap(err, "can't save request")
 	}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, frm.Req)
+	return s.WriteMessage(connID, msg)
+}
+
+func onDeleteRequest(connID uuid.UUID, param json.RawMessage, s *npnconnection.Service) error {
+	svc := s.Context.(*services)
+	frm := &paramDeleteRequest{}
+	err := npncore.FromJSONStrict(param, frm)
+	if err != nil {
+		return errors.Wrap(err, "can't load saveRequest param")
+	}
+	err = svc.Collection.DeleteRequest(frm.Coll, frm.Req)
+	if err != nil {
+		return errors.Wrap(err, "can't remove request")
+	}
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDeleted, frm.Req)
 	return s.WriteMessage(connID, msg)
 }
 

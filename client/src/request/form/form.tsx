@@ -6,8 +6,8 @@ namespace request.form {
           <a class="theme uk-icon" data-uk-icon="close" href="" onclick={"nav.navigate('/c/" + coll + "');return false;"} title="close request" />
         </div>
         <h3 class="uk-card-title">{r.title ? r.title : r.key}</h3>
-        {renderURL(r)}
-        {renderSavePanel(r)}
+        {renderURL(coll, r)}
+        {renderSavePanel(coll, r)}
         {renderActions(coll, r)}
       </div>
       <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
@@ -38,8 +38,8 @@ namespace request.form {
     </li>;
   }
 
-  export function reset(r: string) {
-    render(collection.cache.active!, r);
+  export function reset(coll: string, r: string) {
+    render(coll, r);
   }
 
   const transforms: any = {
@@ -48,10 +48,10 @@ namespace request.form {
     "curl": "curl"
   };
 
-  function renderSavePanel(r: request.Request) {
+  function renderSavePanel(coll: string, r: request.Request) {
     return <div id="save-panel" class="right hidden">
-      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick={"request.form.reset('" + r.key + "');"}>Reset</button>
-      <button class="uk-button uk-button-default uk-margin-top" onclick={"request.form.saveCurrentRequest('" + r.key + "');"}>Save Changes</button>
+      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick={"request.form.reset('" + coll + "', '" + r.key + "');"}>Reset</button>
+      <button class="uk-button uk-button-default uk-margin-top" onclick={"request.form.saveCurrentRequest('" + coll + "', '" + r.key + "');"}>Save Changes</button>
     </div>;
   }
 

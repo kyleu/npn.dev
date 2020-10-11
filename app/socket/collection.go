@@ -49,6 +49,8 @@ func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connecti
 		return getCollDetails(s, c, param)
 	case ClientMessageAddCollection:
 		return addCollection(s, c, param)
+	case ClientMessageDeleteCollection:
+		return deleteCollection(s, c, param)
 	case ClientMessageAddRequestURL:
 		return addRequestURL(s, c, param)
 	default:
@@ -78,6 +80,22 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 
 	ret := &addCollResult{Collections: newColls, Active: key}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionAdded, ret)
+	return s.WriteMessage(c.ID, msg)
+}
+
+func deleteCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
+	key := ""
+	err := npncore.FromJSONStrict(param, &key)
+	if err != nil {
+		return errors.Wrap(err, "unable to parse input")
+	}
+	svcs := ctx(s)
+	err = svcs.Collection.Delete(key)
+	if err != nil {
+		return errors.Wrap(err, "unable to delete collection with key ["+key+"]")
+	}
+
+	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionDeleted, key)
 	return s.WriteMessage(c.ID, msg)
 }
 

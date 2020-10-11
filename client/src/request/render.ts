@@ -36,11 +36,15 @@ namespace request {
         call.prepare(coll, request.form.extractRequest(request.cache.active!));
         dom.setContent(ra, renderActionCall(coll, reqKey));
         break;
+      case "delete":
+        const del = {coll: coll, req: reqKey};
+        socket.send({svc: services.request.key, cmd: command.client.deleteRequest, param: del});
+        break;
       case "transform":
         const req = request.form.extractRequest(request.cache.active!)
         dom.setContent(ra, transform.renderRequest(coll, reqKey, extra[0]));
-        const param = {coll: coll, req: reqKey, fmt: extra[0], proto: req.prototype};
-        socket.send({svc: services.request.key, cmd: command.client.transform, param: param});
+        const tx = {coll: coll, req: reqKey, fmt: extra[0], proto: req.prototype};
+        socket.send({svc: services.request.key, cmd: command.client.transform, param: tx});
         break;
       default:
         console.warn("unhandled request action [" + action + "]");

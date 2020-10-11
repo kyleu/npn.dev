@@ -53,23 +53,16 @@ namespace request.editor {
   }
 
   function wireEvents(cache: Cache) {
-    events(cache.key, function () {
-      request.form.checkEditor(request.cache.active!);
-    });
-    events(cache.title, function () {
-      request.form.checkEditor(request.cache.active!);
-    });
-    events(cache.desc, function () {
-      request.form.checkEditor(request.cache.active!);
-    });
+    const ce = () => request.form.checkEditor(collection.cache.active!, request.cache.active!)
+    events(cache.key, ce);
+    events(cache.title, ce);
+    events(cache.desc, ce);
+    events(cache.method, ce);
 
-    events(cache.method, function () {
-      request.form.checkEditor(request.cache.active!);
-    });
     events(cache.url, function () {
       const p = prototypeFromURL(cache.url.value);
       setURL(cache, p);
-      request.form.checkEditor(request.cache.active!);
+      ce();
     });
 
     events(cache.auth, function () {
@@ -81,6 +74,7 @@ namespace request.editor {
         auth = [];
       }
       setAuth(cache, auth);
+      ce();
     });
 
     events(cache.qp, function () {
@@ -92,6 +86,7 @@ namespace request.editor {
         qp = [];
       }
       setQueryParams(cache.url, qp);
+      ce();
     });
 
     events(cache.headers, function () {
@@ -103,6 +98,7 @@ namespace request.editor {
         h = [];
       }
       setHeaders(cache, h);
+      ce();
     });
 
     events(cache.body, function () {
@@ -113,6 +109,7 @@ namespace request.editor {
         console.warn("invalid body JSON [" + cache.body.value + "]")
       }
       setBody(cache, b);
+      ce();
     });
   }
 }

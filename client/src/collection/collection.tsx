@@ -44,10 +44,11 @@ namespace collection {
         </div>
         <h3 class="uk-card-title"><span class="nav-icon-h3" data-uk-icon="icon: album"/>{cn}</h3>
         <p>{coll.description || ""}</p>
+        {renderCollectionActions(coll)}
       </div>
       <div class="uk-card uk-card-body uk-card-default uk-margin-top">
         <h3 class="uk-card-title">Requests</h3>
-        <form onsubmit="collection.addRequestURL();return false;">
+        <form onsubmit={"collection.addRequestURL('" + coll.key + "');return false;"}>
           <div class="uk-margin-top uk-inline uk-width-expand">
             <button class="uk-form-icon uk-form-icon-flip" type="submit" title="add request" uk-icon="icon: plus"/>
             <input id="coll-request-add-url" class="uk-input" placeholder="add a request by url" data-lpignore="true"/>
@@ -70,12 +71,12 @@ namespace collection {
     }
   }
 
-  export function addRequestURL() {
+  export function addRequestURL(coll: string) {
     const input = dom.req<HTMLInputElement>("#coll-request-add-url");
     const url = input.value.trim();
     if (url && url.length > 0) {
       input.value = "";
-      const param = {"coll": collection.cache.active, "url": url};
+      const param = {"coll": coll, "url": url};
       socket.send({svc: services.collection.key, cmd: command.client.addRequestURL, param: param});
       log.info("adding request [" + url + "]");
     }
@@ -97,5 +98,16 @@ namespace collection {
       {nav.link({path: "/c/" + coll + "/" + r.key, title: title})}
       {r.description && r.description.length ? <div><em>{r.description}</em></div> : <span/>}
     </li>;
+  }
+
+  function renderCollectionActions(coll: collection.Collection) {
+    const path = "/c/" + coll.key;
+    const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top"
+    const delWarn = "confirm('Are you sure you want to delete collection [" + coll.key + "]?')"
+
+    return <div>
+      <button class={btnClass} onclick="return false;">Edit</button>
+      <button class={btnClass} onclick={"if (" + delWarn + ") { collection.cache.deleteCollection('" + coll.key + "') }"}>Delete</button>
+    </div>
   }
 }

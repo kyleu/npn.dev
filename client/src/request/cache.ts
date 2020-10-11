@@ -12,30 +12,30 @@ namespace request {
         dom.setContent("#collection-panel", collection.renderCollection(coll, summs));
         for (let req of summs) {
           if (this.active === req.key) {
-            renderActiveRequest(collection.cache.active);
+            renderActiveRequest(coll.key);
             if (this.action) {
-              renderAction(collection.cache.active, req.key, this.action, this.extra);
+              renderAction(coll.key, req.key, this.action, this.extra);
             }
           }
         }
       }
     }
 
-    setActiveRequest(key: string | undefined) {
-      if (!collection.cache.active) {
+    setActiveRequest(coll: string | undefined, key: string | undefined) {
+      if (!coll) {
         return;
       }
       if (this.active !== key) {
         this.active = key;
         if (this.active) {
-          renderActiveRequest(collection.cache.active);
+          renderActiveRequest(coll);
         }
         collection.renderCollections(collection.cache.collections!);
       }
     }
 
-    setActiveAction(act: string | undefined, extra: string[]) {
-      if (!collection.cache.active) {
+    setActiveAction(coll: string | undefined, act: string | undefined, extra: string[]) {
+      if (!coll) {
         return;
       }
 
@@ -43,17 +43,35 @@ namespace request {
       if (this.active /* && (this.action !== act || !sameExtra) */) {
         this.action = act;
         this.extra = extra;
-        renderAction(collection.cache.active, this.active, this.action, this.extra);
+        renderAction(coll, this.active, this.action, this.extra);
       }
     }
 
-    updateRequest(r: request.Request) {
-      if (!collection.cache.active) {
-        return;
-      }
-      const curr = this.requests.get(collection.cache.active);
+    updateRequest(coll: string, r: request.Request) {
+      const curr = this.requests.get(coll);
       const updated = group.update(curr, r, x => x.key);
-      this.requests.set(collection.cache.active, updated);
+      this.requests.set(coll, updated);
+      let summs = this.summaries.get(coll);
+      summs = summs.map(x => x.key == r.key ? toSummary(r, 0) : x);
+      this.summaries.set(coll, summs)
+      if(collection.cache.active === coll) {
+        collection.renderCollection(collection.cache.getActiveCollection()!, summs)
+      }
+    }
+
+    removeRequest(coll: string, rd: string) {
+      const curr = this.requests.get(coll);
+      const updated = group.remove(curr, rd, x => x.key);
+      this.requests.set(coll, updated);
+      let summs = this.summaries.get(coll);
+      summs = summs.filter(x => x.key !== rd);
+      this.summaries.set(coll, summs)
+      if(collection.cache.active === coll) {
+        collection.renderCollection(collection.cache.getActiveCollection()!, summs)
+      }
+      if (this.active === rd) {
+        cache.setActiveRequest(coll, undefined);
+      }
     }
   }
 

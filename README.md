@@ -2,7 +2,7 @@
 
 [npn](https://npn.dev) helps you build stuff
 
-https://github.com/KyleU/npn
+https://github.com/kyleu/npn
 
 ## Documentation
 

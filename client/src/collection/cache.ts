@@ -21,9 +21,17 @@ namespace collection {
       }
     }
 
+    deleteCollection(key: string) {
+      socket.send({svc: services.collection.key, cmd: command.client.deleteCollection, param: key});
+    }
+
     getActiveCollection() {
+      return this.active ? this.getCollection(this.active) : undefined;
+    }
+
+    getCollection(key: string) {
       for (const x of this.collections) {
-        if (x.key == this.active) {
+        if (x.key == key) {
           return x;
         }
       }

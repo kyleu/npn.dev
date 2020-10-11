@@ -16,8 +16,8 @@ namespace request.form {
     return {key: key, title: title, description: desc, prototype: proto};
   }
 
-  export function checkEditor(reqID: string) {
-    const o = request.getRequest(collection.cache.active!, reqID);
+  export function checkEditor(collID: string, reqID: string) {
+    const o = request.getRequest(collID, reqID);
     let changed = false;
     if (o) {
       const n = extractRequest(reqID);
@@ -31,9 +31,9 @@ namespace request.form {
     dom.setDisplay("#save-panel", changed)
   }
 
-  export function saveCurrentRequest(reqID: string) {
+  export function saveCurrentRequest(collID: string, reqID: string) {
     const req = extractRequest(reqID);
-    const msg = {"coll": collection.cache.active, "orig": reqID, "req": req};
+    const msg = {"coll": collID, "orig": reqID, "req": req};
     socket.send({svc: services.request.key, cmd: command.client.saveRequest, param: msg});
   }
 

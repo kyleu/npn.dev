@@ -88,4 +88,17 @@ namespace group {
   export function updateAndSort<T, S>(a: T[] | undefined, v: T, matchFn: (t: T) => S): T[] {
     return sort(update(a, v, matchFn), matchFn);
   }
+
+  export function remove<T, S>(a: T[] | undefined, key: S, matchFn: (t: T) => S): T[] {
+    if (!a) {
+      return [];
+    }
+    for (const idx in a) {
+      const c = a[idx]
+      if (matchFn(c) == key) {
+        delete a[idx];
+      }
+    }
+    return a;
+  }
 }

@@ -108,8 +108,6 @@ namespace request.editor {
     ret = ret.filter(x => x.k.length > 0);
     ta.value = json.str(ret);
 
-    request.form.checkEditor(elID.substr(0, elID.lastIndexOf("-")));
-
     return ret;
   }
 }

@@ -1,6 +1,6 @@
 namespace request.form {
-  export function renderURL(r: request.Request) {
-    const call = "nav.navigate(`/c/" + collection.cache.active + "/" + r.key + "/call`);return false;"
+  export function renderURL(coll: string, r: request.Request) {
+    const call = "nav.navigate(`/c/" + coll + "/" + r.key + "/call`);return false;"
     return <div class="uk-margin-top uk-panel">
       <div class="left" style="width:120px;">
         <select class="uk-select" id={r.key + "-method"} name="method">

@@ -127,8 +127,6 @@ namespace request.editor {
     ta.value = json.str(ret);
     setQueryParams(dom.req("#" + elID.replace("queryparams", "url")), ret);
 
-    request.form.checkEditor(elID.substr(0, elID.lastIndexOf("-")));
-
     return ret;
   }
 }

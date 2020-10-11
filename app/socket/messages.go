@@ -7,15 +7,17 @@ const (
 	ClientMessageConnect = "connect"
 
 	// Collection
-	ClientMessageGetCollection = "getCollection"
-	ClientMessageAddCollection = "addCollection"
-	ClientMessageAddRequestURL = "addRequestURL"
+	ClientMessageGetCollection    = "getCollection"
+	ClientMessageAddCollection    = "addCollection"
+	ClientMessageDeleteCollection = "deleteCollection"
+	ClientMessageAddRequestURL    = "addRequestURL"
 
 	// Request
-	ClientMessageGetRequest  = "getRequest"
-	ClientMessageSaveRequest = "saveRequest"
-	ClientMessageCall        = "call"
-	ClientMessageTransform   = "transform"
+	ClientMessageGetRequest    = "getRequest"
+	ClientMessageSaveRequest   = "saveRequest"
+	ClientMessageDeleteRequest = "deleteRequest"
+	ClientMessageCall          = "call"
+	ClientMessageTransform     = "transform"
 )
 
 const (
@@ -23,13 +25,15 @@ const (
 	ServerMessageConnected = "connected"
 
 	// Collection
-	ServerMessageCollections      = "collections"
-	ServerMessageCollectionDetail = "collectionDetail"
-	ServerMessageCollectionAdded  = "collectionAdded"
+	ServerMessageCollections       = "collections"
+	ServerMessageCollectionDetail  = "collectionDetail"
+	ServerMessageCollectionAdded   = "collectionAdded"
+	ServerMessageCollectionDeleted = "collectionDeleted"
 
 	// Request
 	ServerMessageRequestDetail   = "requestDetail"
 	ServerMessageRequestAdded    = "requestAdded"
+	ServerMessageRequestDeleted  = "requestDeleted"
 	ServerMessageCallResult      = "callResult"
 	ServerMessageTransformResult = "transformResult"
 )
@@ -43,6 +47,11 @@ type paramSaveRequest struct {
 	Coll string           `json:"coll"`
 	Orig string           `json:"orig"`
 	Req  *request.Request `json:"req"`
+}
+
+type paramDeleteRequest struct {
+	Coll string `json:"coll"`
+	Req  string `json:"req"`
 }
 
 type paramCall struct {

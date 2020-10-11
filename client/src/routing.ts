@@ -35,8 +35,8 @@ namespace routing {
         if (coll !== currColl && coll) {
           socket.send({svc: services.collection.key, cmd: command.client.getCollection, param: coll});
         }
-        request.cache.setActiveRequest(req);
-        request.cache.setActiveAction(act, extra);
+        request.cache.setActiveRequest(currColl, req);
+        request.cache.setActiveAction(currColl, act, extra);
         ui.setPanels(coll, req, act, extra);
         break;
       default:

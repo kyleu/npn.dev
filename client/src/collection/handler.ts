@@ -30,6 +30,13 @@ namespace collection {
         cache.collections = a.collections;
         nav.navigate("/c/" + a.active);
         break;
+      case command.server.collectionDeleted:
+        const del = param as string;
+        log.info(`processing deleted collection [${del}]`);
+        cache.collections = cache.collections.filter(x => x.key !== del);
+        renderCollections(cache.collections!);
+        nav.navigate("/");
+        break;
       default:
         console.warn(`unhandled collection command [${cmd}]`);
     }

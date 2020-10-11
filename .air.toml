@@ -5,9 +5,9 @@ tmp_dir = "tmp"
 cmd = "make build"
 bin = "build/npn"
 full_bin = "./build/npn -v"
+include_dir = []
 include_ext = ["go", "html", "sql", "mod"]
 exclude_dir = ["client", "build", "vendor", "gen", "npntemplate/gen", "projects"]
-include_dir = []
 exclude_file = []
 delay = 1000 # ms
 stop_on_error = true
@@ -15,12 +15,3 @@ log = "air_errors.log"
 
 [log]
 time = true
-
-[color]
-main = "magenta"
-watcher = "cyan"
-build = "yellow"
-runner = "green"
-
-[misc]
-clean_on_exit = false
