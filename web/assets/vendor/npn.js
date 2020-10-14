@@ -1340,6 +1340,7 @@ var rbody;
     }
     rbody.renderBody = renderBody;
     function renderHTML(h, baseURL) {
+        var html = Prism.highlight(h.content, Prism.languages.html, 'html');
         return JSX("div", { class: "html-body" },
             JSX("span", { class: "base-url hidden" }, baseURL),
             JSX("span", { class: "preview-link right" },
@@ -1351,13 +1352,18 @@ var rbody;
                 JSX("a", { class: style.linkColor, href: "", onclick: "rbody.renderHTMLText(this);return false" }, "text"),
                 ")"),
             JSX("em", null, "HTML"),
-            JSX("pre", { class: "text-content", style: "overflow: auto; max-height: 720px;" }, h.content),
+            JSX("div", { class: "text-content prism uk-margin-top", style: "overflow: auto; max-height: 720px;" },
+                JSX("pre", { class: "language-html", "data-start": "0", style: "white-space:pre-wrap;" },
+                    JSX("code", { dangerouslySetInnerHTML: { __html: html } }))),
             JSX("div", { class: "preview-content uk-margin-top hidden", style: "overflow: auto; max-height: 720px; border: 1px solid #666;" }));
     }
     function renderJSON(j) {
+        var html = Prism.highlight(JSON.stringify(j.msg, null, 2), Prism.languages.javascript, 'javascript');
         return JSX("div", null,
             JSX("em", null, "JSON"),
-            JSX("pre", null, json.str(j.msg)));
+            JSX("div", { class: "uk-margin-top" },
+                JSX("pre", { class: "language-html", "data-start": "0", style: "white-space:pre-wrap;" },
+                    JSX("code", { dangerouslySetInnerHTML: { __html: html } }))));
     }
     function renderImage(i) {
         var dataURL = "data:" + i.type + ";base64," + i.content;

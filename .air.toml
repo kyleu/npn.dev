@@ -4,7 +4,7 @@ tmp_dir = "tmp"
 [build]
 cmd = "make build"
 bin = "build/npn"
-full_bin = "./build/npn -v"
+full_bin = "./build/npn -v npn"
 include_dir = []
 include_ext = ["go", "html", "sql", "mod"]
 exclude_dir = ["client", "build", "vendor", "gen", "npntemplate/gen", "projects"]

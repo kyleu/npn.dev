@@ -1,5 +1,11 @@
 <%: func InitialNav(ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
       <div class="nav-section">
+        <form class="uk-search uk-search-default" onsubmit="console.log('Search!');return false;">
+          <button class="uk-search-icon-flip" type="submit" data-uk-search-icon></button>
+          <input class="uk-search-input" type="text" name="q" placeholder="Search" />
+        </form>
+      </div>
+      <div class="nav-section mt">
         <div class="nav-header">
           Collections
         </div>

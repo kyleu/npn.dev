@@ -1098,3 +1098,334 @@ input {
   padding: 32px;
   margin-bottom: 0;
 }
+
+pre[class*=language-].line-numbers {
+  position: relative;
+  padding-left: 3.8em;
+  counter-reset: linenumber;
+}
+
+pre[class*=language-].line-numbers > code {
+  position: relative;
+  white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8em;
+  width: 3em;
+  /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #999;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+}
+
+.line-numbers-rows > span:before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}
+
+.uk-light {
+  /* Code blocks */
+  /* Inline code */
+}
+.uk-light code[class*=language-],
+.uk-light pre[class*=language-] {
+  color: #f8f8f2;
+  background: none;
+  text-shadow: 0 1px rgba(0, 0, 0, 0.3);
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 1em;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+.uk-light pre[class*=language-] {
+  padding: 1em;
+  margin: 0;
+  overflow: auto;
+  border-radius: 0.3em;
+}
+.uk-light :not(pre) > code[class*=language-],
+.uk-light pre[class*=language-] {
+  background: #272822;
+}
+.uk-light :not(pre) > code[class*=language-] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+.uk-light .token.comment,
+.uk-light .token.prolog,
+.uk-light .token.doctype,
+.uk-light .token.cdata {
+  color: #8292a2;
+}
+.uk-light .token.punctuation {
+  color: #f8f8f2;
+}
+.uk-light .token.namespace {
+  opacity: 0.7;
+}
+.uk-light .token.property,
+.uk-light .token.tag,
+.uk-light .token.constant,
+.uk-light .token.symbol,
+.uk-light .token.deleted {
+  color: #f92672;
+}
+.uk-light .token.boolean,
+.uk-light .token.number {
+  color: #ae81ff;
+}
+.uk-light .token.selector,
+.uk-light .token.attr-name,
+.uk-light .token.string,
+.uk-light .token.char,
+.uk-light .token.builtin,
+.uk-light .token.inserted {
+  color: #a6e22e;
+}
+.uk-light .token.operator,
+.uk-light .token.entity,
+.uk-light .token.url,
+.uk-light .language-css .token.string,
+.uk-light .style .token.string,
+.uk-light .token.variable {
+  color: #f8f8f2;
+}
+.uk-light .token.atrule,
+.uk-light .token.attr-value,
+.uk-light .token.function,
+.uk-light .token.class-name {
+  color: #e6db74;
+}
+.uk-light .token.keyword {
+  color: #66d9ef;
+}
+.uk-light .token.regex,
+.uk-light .token.important {
+  color: #fd971f;
+}
+.uk-light .token.important,
+.uk-light .token.bold {
+  font-weight: bold;
+}
+.uk-light .token.italic {
+  font-style: italic;
+}
+.uk-light .token.entity {
+  cursor: help;
+}
+.uk-light pre[class*=language-].line-numbers {
+  position: relative;
+  padding-left: 3.8em;
+  counter-reset: linenumber;
+}
+.uk-light pre[class*=language-].line-numbers > code {
+  position: relative;
+  white-space: inherit;
+}
+.uk-light .line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8em;
+  width: 3em;
+  /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #999;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.uk-light .line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+}
+.uk-light .line-numbers-rows > span:before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}
+
+.uk-dark {
+  /* Code blocks */
+  /* Inline code */
+}
+.uk-dark code[class*=language-],
+.uk-dark pre[class*=language-] {
+  color: black;
+  background: none;
+  text-shadow: 0 1px white;
+  font-family: Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace;
+  font-size: 1em;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+  line-height: 1.5;
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+.uk-dark pre[class*=language-]::-moz-selection, .uk-dark pre[class*=language-] ::-moz-selection,
+.uk-dark code[class*=language-]::-moz-selection, .uk-dark code[class*=language-] ::-moz-selection {
+  text-shadow: none;
+  background: #b3d4fc;
+}
+.uk-dark pre[class*=language-]::selection, .uk-dark pre[class*=language-] ::selection,
+.uk-dark code[class*=language-]::selection, .uk-dark code[class*=language-] ::selection {
+  text-shadow: none;
+  background: #b3d4fc;
+}
+@media print {
+  .uk-dark code[class*=language-],
+.uk-dark pre[class*=language-] {
+    text-shadow: none;
+  }
+}
+.uk-dark pre[class*=language-] {
+  padding: 1em;
+  margin: 0;
+  overflow: auto;
+}
+.uk-dark :not(pre) > code[class*=language-],
+.uk-dark pre[class*=language-] {
+  background: #f5f2f0;
+}
+.uk-dark :not(pre) > code[class*=language-] {
+  padding: 0.1em;
+  border-radius: 0.3em;
+  white-space: normal;
+}
+.uk-dark .token.comment,
+.uk-dark .token.prolog,
+.uk-dark .token.doctype,
+.uk-dark .token.cdata {
+  color: slategray;
+}
+.uk-dark .token.punctuation {
+  color: #999;
+}
+.uk-dark .token.namespace {
+  opacity: 0.7;
+}
+.uk-dark .token.property,
+.uk-dark .token.tag,
+.uk-dark .token.boolean,
+.uk-dark .token.number,
+.uk-dark .token.constant,
+.uk-dark .token.symbol,
+.uk-dark .token.deleted {
+  color: #905;
+}
+.uk-dark .token.selector,
+.uk-dark .token.attr-name,
+.uk-dark .token.string,
+.uk-dark .token.char,
+.uk-dark .token.builtin,
+.uk-dark .token.inserted {
+  color: #690;
+}
+.uk-dark .token.operator,
+.uk-dark .token.entity,
+.uk-dark .token.url,
+.uk-dark .language-css .token.string,
+.uk-dark .style .token.string {
+  color: #9a6e3a;
+  /* This background color was intended by the author of this theme. */
+  background: rgba(255, 255, 255, 0.5);
+}
+.uk-dark .token.atrule,
+.uk-dark .token.attr-value,
+.uk-dark .token.keyword {
+  color: #07a;
+}
+.uk-dark .token.function,
+.uk-dark .token.class-name {
+  color: #DD4A68;
+}
+.uk-dark .token.regex,
+.uk-dark .token.important,
+.uk-dark .token.variable {
+  color: #e90;
+}
+.uk-dark .token.important,
+.uk-dark .token.bold {
+  font-weight: bold;
+}
+.uk-dark .token.italic {
+  font-style: italic;
+}
+.uk-dark .token.entity {
+  cursor: help;
+}
+.uk-dark pre[class*=language-].line-numbers {
+  position: relative;
+  padding-left: 3.8em;
+  counter-reset: linenumber;
+}
+.uk-dark pre[class*=language-].line-numbers > code {
+  position: relative;
+  white-space: inherit;
+}
+.uk-dark .line-numbers .line-numbers-rows {
+  position: absolute;
+  pointer-events: none;
+  top: 0;
+  font-size: 100%;
+  left: -3.8em;
+  width: 3em;
+  /* works for line-numbers below 1000 lines */
+  letter-spacing: -1px;
+  border-right: 1px solid #999;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+.uk-dark .line-numbers-rows > span {
+  display: block;
+  counter-increment: linenumber;
+}
+.uk-dark .line-numbers-rows > span:before {
+  content: counter(linenumber);
+  color: #999;
+  display: block;
+  padding-right: 0.8em;
+  text-align: right;
+}

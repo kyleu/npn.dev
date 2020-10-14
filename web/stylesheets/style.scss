@@ -1,6 +1,6 @@
-@import "colors.scss";
-@import "overrides.scss";
-@import "common.scss";
+@import "colors";
+@import "overrides";
+@import "common";
 
 .uk-light {
   #logo-symbol {
@@ -37,7 +37,8 @@
   padding-bottom: 4px;
 }
 
-@import "form.scss";
-@import "tags.scss";
-@import "profile.scss";
-@import "workspace.scss";
+@import "form";
+@import "tags";
+@import "profile";
+@import "workspace";
+@import "prism";
