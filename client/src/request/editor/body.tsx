@@ -10,7 +10,6 @@ namespace request.editor {
 
   function createBodyEditor(el: HTMLTextAreaElement) {
     const b = json.parse(el.value) as rbody.Body;
-
     return <div class="uk-margin-top">
       {bodySelect(el, b)}
       <div class="body-editor" data-key="" />
@@ -54,14 +53,18 @@ namespace request.editor {
     if (!active) {
       cls += " hidden";
     }
+    let e: JSX.Element;
     switch (key) {
       case "json":
-        return <div class={cls} data-key={key}>{jsonEditor(key, active ? config as rbody.JSONConfig : undefined, el)}</div>;
+        e = jsonEditor(key, active ? config as rbody.JSONConfig : undefined, el);
+        break;
       case "html":
-        return <div class={cls} data-key={key}>{htmlEditor(key, active ? config as rbody.HTMLConfig : undefined, el)}</div>;
+        e = htmlEditor(key, active ? config as rbody.HTMLConfig : undefined, el);
+        break;
       default:
-        return <div class={cls} data-key={key}>Unimplemented [{key}] editor</div>;
+        e = <div>Unimplemented [{key}] editor</div>;
     }
+    return <div class={cls} data-key={key}>{e}</div>;
   }
 
   function htmlEditor(key: string, h: rbody.HTMLConfig | undefined, el: HTMLTextAreaElement) {
@@ -71,7 +74,7 @@ namespace request.editor {
       const changed = orig !== ret.value;
       if (changed) {
         let msg = ret.value;
-        updateFn("html", {content: msg}, el);
+        updateFn("html", {content: msg}, msg.length, el);
       }
     });
     return ret;
@@ -79,20 +82,18 @@ namespace request.editor {
 
   function jsonEditor(key: string, j: rbody.JSONConfig | undefined, el: HTMLTextAreaElement) {
     const ret = <textarea class="uk-textarea">{json.str(j ? j.msg : null)}</textarea> as HTMLTextAreaElement;
-    const orig = j ? json.str(j.msg) : "null";
+    const orig = j?.msg;
     events(ret, () => {
-      const changed = orig !== ret.value;
-      if (changed) {
-        let msg = ret.value;
-        try { msg = json.parse(msg) } catch(e) {}
-        updateFn("json", {msg: msg}, el);
-      }
+      let msg = ret.value;
+      try { msg = json.parse(msg) } catch(e) {}
+      const changed = diff.comp("", orig, msg, (k: string, lv: any, rv: any) => {});
+      updateFn("json", {msg: msg}, ret.value.length, el);
     });
     return ret;
   }
 
-  function updateFn(t: string, cfg: any, el: HTMLTextAreaElement) {
-    const nb: rbody.Body = {type: t, config: cfg};
+  function updateFn(t: string, cfg: any, length: number | undefined, el: HTMLTextAreaElement) {
+    const nb: rbody.Body = {type: t, config: cfg, length: length};
     el.value = json.str(nb);
     check();
   }

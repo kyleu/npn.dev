@@ -7,7 +7,7 @@ import (
 	"logur.dev/logur"
 )
 
-var allowedColumns = map[string][]string{}
+var AllowedColumns = map[string][]string{}
 
 type Params struct {
 	Key       string    `json:"key"`
@@ -97,7 +97,7 @@ func (p *Params) Filtered(logger logur.Logger) *Params {
 
 		for _, o := range p.Orderings {
 			containsCol := false
-			available, ok := allowedColumns[p.Key]
+			available, ok := AllowedColumns[p.Key]
 
 			if !ok {
 				logger.Warn("no columns available for [" + p.Key + "]")

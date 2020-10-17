@@ -21,9 +21,9 @@ namespace request.form {
     let changed = false;
     if (o) {
       const n = extractRequest(reqID);
-      const diff = request.diff(o, n);
-      console.debug("checking editor state", o, n, diff);
-      changed = diff.length > 0;
+      const d = diff.diff(o, n);
+      console.debug("checking editor state", o, n, d);
+      changed = d.length > 0;
     } else {
       changed = true;
     }

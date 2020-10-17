@@ -1976,108 +1976,121 @@ var request;
     }());
     request.cache = new Cache();
 })(request || (request = {}));
-var request;
-(function (request) {
+var diff;
+(function (diff_1) {
     function diff(l, r) {
         var ret = [];
         var p = function (k, lv, rv) { return ret.push({ k: k, l: lv, r: rv }); };
-        var comp = function (k, lv, rv) {
-            if (lv === undefined || lv === null) {
-                lv = "";
-            }
-            if (rv === undefined || rv === null) {
-                rv = "";
-            }
-            if (typeof lv === "object" && typeof rv === "object") {
-                for (var f in lv) {
-                    if (lv.hasOwnProperty(f)) {
-                        comp(k + "." + f, lv[f], rv[f]);
-                    }
-                }
-                for (var f in rv) {
-                    if (rv.hasOwnProperty(f) && !lv.hasOwnProperty(f)) {
-                        comp(k + "." + f, lv[f], rv[f]);
-                    }
-                }
-            }
-            else {
-                if (lv !== rv) {
-                    p(k, lv, rv);
-                }
-            }
-        };
-        var compArray = function (k, lv, rv) {
-            if (lv === undefined || lv === null) {
-                lv = [];
-            }
-            if (rv === undefined || rv === null) {
-                rv = [];
-            }
-            if (lv.length !== rv.length) {
-                p(k + ".length", lv.length, rv.length);
-            }
-            for (var i = 0; i < lv.length; i++) {
-                comp(k + "[" + i + "]", lv[i], rv[i]);
-            }
-        };
-        var checkNull = function (k, lv, rv) {
-            if (!lv) {
-                if (rv) {
-                    p(k, null, "(defined)");
-                }
-                return true;
-            }
-            if (!rv) {
-                p(k, "(defined)", null);
-                return true;
-            }
-            return false;
-        };
-        if (checkNull("request", l, r)) {
+        if (checkNull("request", l, r, p)) {
             return ret;
         }
-        comp("key", l.key, r.key);
-        comp("title", l.title, r.title);
-        comp("description", l.description, r.description);
+        comp("key", l.key, r.key, p);
+        comp("title", l.title, r.title, p);
+        comp("description", l.description, r.description, p);
         var lp = l.prototype;
         var rp = r.prototype;
-        comp("method", lp.method, rp.method);
-        comp("protocol", lp.protocol, rp.protocol);
-        comp("domain", lp.domain, rp.domain);
-        comp("port", lp.port, rp.port);
-        comp("path", lp.path, rp.path);
-        compArray("query", lp.query, rp.query);
-        comp("fragment", lp.fragment, rp.fragment);
-        compArray("headers", lp.headers, rp.headers);
-        compArray("auth", lp.auth, rp.auth);
-        if (!checkNull("body", lp.body, rp.body)) {
+        comp("method", lp.method, rp.method, p);
+        comp("protocol", lp.protocol, rp.protocol, p);
+        comp("domain", lp.domain, rp.domain, p);
+        comp("port", lp.port, rp.port, p);
+        comp("path", lp.path, rp.path, p);
+        compArray("query", lp.query, rp.query, p);
+        comp("fragment", lp.fragment, rp.fragment, p);
+        compArray("headers", lp.headers, rp.headers, p);
+        compArray("auth", lp.auth, rp.auth, p);
+        if (!checkNull("body", lp.body, rp.body, p)) {
             if (lp.body && rp.body) {
-                comp("body.type", lp.body.type, rp.body.type);
-                comp("body.config", lp.body.config, rp.body.config);
+                comp("body.type", lp.body.type, rp.body.type, p);
+                comp("body.config", lp.body.config, rp.body.config, p);
             }
         }
         var lpo = lp.options;
         var rpo = rp.options;
-        if (checkNull("options", lpo, rpo)) {
+        if (checkNull("options", lpo, rpo, p)) {
             return ret;
         }
         if ((!lpo) || (!rpo)) {
             return ret;
         }
-        comp("timeout", lpo.timeout, rpo.timeout);
-        comp("ignoreRedirects", lpo.ignoreRedirects, rpo.ignoreRedirects);
-        comp("ignoreReferrer", lpo.ignoreReferrer, rpo.ignoreReferrer);
-        comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts);
-        comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies);
-        compArray("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders);
-        comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars);
-        comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar);
-        comp("sslCert", lpo.sslCert, rpo.sslCert);
-        comp("userAgentOverride", lpo.userAgentOverride, rpo.userAgentOverride);
+        comp("timeout", lpo.timeout, rpo.timeout, p);
+        comp("ignoreRedirects", lpo.ignoreRedirects, rpo.ignoreRedirects, p);
+        comp("ignoreReferrer", lpo.ignoreReferrer, rpo.ignoreReferrer, p);
+        comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts, p);
+        comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies, p);
+        compArray("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders, p);
+        comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars, p);
+        comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar, p);
+        comp("sslCert", lpo.sslCert, rpo.sslCert, p);
+        comp("userAgentOverride", lpo.userAgentOverride, rpo.userAgentOverride, p);
         return ret;
     }
-    request.diff = diff;
-})(request || (request = {}));
+    diff_1.diff = diff;
+    function comp(k, lv, rv, p) {
+        if (lv === undefined || lv === null) {
+            lv = "";
+        }
+        if (rv === undefined || rv === null) {
+            rv = "";
+        }
+        if (typeof lv === "object" && typeof rv === "object") {
+            for (var f in lv) {
+                if (lv.hasOwnProperty(f)) {
+                    if (comp(k + "." + f, lv[f], rv[f], p)) {
+                        return true;
+                    }
+                }
+            }
+            for (var f in rv) {
+                if (rv.hasOwnProperty(f) && !lv.hasOwnProperty(f)) {
+                    if (comp(k + "." + f, lv[f], rv[f], p)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        else {
+            if (lv !== rv) {
+                p(k, lv, rv);
+                return true;
+            }
+        }
+        return false;
+    }
+    diff_1.comp = comp;
+    function compArray(k, lv, rv, p) {
+        if (lv === undefined || lv === null) {
+            lv = [];
+        }
+        if (rv === undefined || rv === null) {
+            rv = [];
+        }
+        if (lv.length !== rv.length) {
+            p(k + ".length", lv.length, rv.length);
+            return true;
+        }
+        for (var i = 0; i < lv.length; i++) {
+            if (comp(k + "[" + i + "]", lv[i], rv[i], p)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    diff_1.compArray = compArray;
+    function checkNull(k, lv, rv, p) {
+        if (!lv) {
+            if (rv) {
+                p(k, null, "(defined)");
+            }
+            return true;
+        }
+        if (!rv) {
+            p(k, "(defined)", null);
+            return true;
+        }
+        return false;
+    }
+    diff_1.checkNull = checkNull;
+})(diff || (diff = {}));
 var request;
 (function (request) {
     function getSummary(coll, key) {
@@ -2361,28 +2374,6 @@ var request;
 (function (request) {
     var editor;
     (function (editor) {
-        function initAuthEditor(el) {
-        }
-        editor.initAuthEditor = initAuthEditor;
-        function setAuth(cache, auth) {
-            var url = new URL(cache.url.value);
-            var u = "";
-            var p = "";
-            if (auth) {
-                for (var _i = 0, auth_1 = auth; _i < auth_1.length; _i++) {
-                    var a = auth_1[_i];
-                    if (a.type === "basic") {
-                        var basic = a.config;
-                        u = encodeURIComponent(basic.username);
-                        p = encodeURIComponent(basic.password);
-                    }
-                }
-            }
-            url.username = u;
-            url.password = p;
-            cache.url.value = url.toString();
-        }
-        editor.setAuth = setAuth;
         function updateBasicAuth(cache, auth) {
             var currentAuth = [];
             try {
@@ -2443,6 +2434,58 @@ var request;
 (function (request) {
     var editor;
     (function (editor) {
+        function initAuthEditor(el) {
+            var parent = el.parentElement;
+            parent.appendChild(createAuthEditor(el));
+        }
+        editor.initAuthEditor = initAuthEditor;
+        function setAuth(cache, auth) {
+            var url = new URL(cache.url.value);
+            var u = "";
+            var p = "";
+            if (auth) {
+                for (var _i = 0, auth_1 = auth; _i < auth_1.length; _i++) {
+                    var a = auth_1[_i];
+                    if (a.type === "basic") {
+                        var basic = a.config;
+                        u = encodeURIComponent(basic.username);
+                        p = encodeURIComponent(basic.password);
+                    }
+                }
+            }
+            url.username = u;
+            url.password = p;
+            cache.url.value = url.toString();
+        }
+        editor.setAuth = setAuth;
+        function createAuthEditor(el) {
+            var authSet = json.parse(el.value) || [];
+            var editors = authSet.map(function (a) {
+                switch (a.type) {
+                    case "basic":
+                        var b = a.config;
+                        return JSX("div", null,
+                            "BASIC: ",
+                            json.str(b));
+                    default:
+                        return JSX("div", null, a.type);
+                }
+            });
+            return JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "current-auth-editors" }, editors),
+                JSX("a", { class: style.linkColor, href: "", onclick: "return false;" }, "Add New Auth"));
+        }
+        function updateFn(t, cfg, el) {
+            var nb = [];
+            el.value = json.str(nb);
+            editor.check();
+        }
+    })(editor = request.editor || (request.editor = {}));
+})(request || (request = {}));
+var request;
+(function (request) {
+    var editor;
+    (function (editor) {
         function initBodyEditor(el) {
             var parent = el.parentElement;
             parent.appendChild(createBodyEditor(el));
@@ -2494,17 +2537,21 @@ var request;
             if (!active) {
                 cls += " hidden";
             }
+            var e;
             switch (key) {
                 case "json":
-                    return JSX("div", { class: cls, "data-key": key }, jsonEditor(key, active ? config : undefined, el));
+                    e = jsonEditor(key, active ? config : undefined, el);
+                    break;
                 case "html":
-                    return JSX("div", { class: cls, "data-key": key }, htmlEditor(key, active ? config : undefined, el));
+                    e = htmlEditor(key, active ? config : undefined, el);
+                    break;
                 default:
-                    return JSX("div", { class: cls, "data-key": key },
+                    e = JSX("div", null,
                         "Unimplemented [",
                         key,
                         "] editor");
             }
+            return JSX("div", { class: cls, "data-key": key }, e);
         }
         function htmlEditor(key, h, el) {
             var ret = JSX("textarea", { class: "uk-textarea" }, h ? h.content : "");
@@ -2513,29 +2560,27 @@ var request;
                 var changed = orig !== ret.value;
                 if (changed) {
                     var msg = ret.value;
-                    updateFn("html", { content: msg }, el);
+                    updateFn("html", { content: msg }, msg.length, el);
                 }
             });
             return ret;
         }
         function jsonEditor(key, j, el) {
             var ret = JSX("textarea", { class: "uk-textarea" }, json.str(j ? j.msg : null));
-            var orig = j ? json.str(j.msg) : "null";
+            var orig = j === null || j === void 0 ? void 0 : j.msg;
             editor.events(ret, function () {
-                var changed = orig !== ret.value;
-                if (changed) {
-                    var msg = ret.value;
-                    try {
-                        msg = json.parse(msg);
-                    }
-                    catch (e) { }
-                    updateFn("json", { msg: msg }, el);
+                var msg = ret.value;
+                try {
+                    msg = json.parse(msg);
                 }
+                catch (e) { }
+                var changed = diff.comp("", orig, msg, function (k, lv, rv) { });
+                updateFn("json", { msg: msg }, ret.value.length, el);
             });
             return ret;
         }
-        function updateFn(t, cfg, el) {
-            var nb = { type: t, config: cfg };
+        function updateFn(t, cfg, length, el) {
+            var nb = { type: t, config: cfg, length: length };
             el.value = json.str(nb);
             editor.check();
         }
@@ -3012,9 +3057,9 @@ var request;
             var changed = false;
             if (o) {
                 var n = extractRequest(reqID);
-                var diff_1 = request.diff(o, n);
-                console.debug("checking editor state", o, n, diff_1);
-                changed = diff_1.length > 0;
+                var d = diff.diff(o, n);
+                console.debug("checking editor state", o, n, d);
+                changed = d.length > 0;
             }
             else {
                 changed = true;
