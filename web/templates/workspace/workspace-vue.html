@@ -1,0 +1,25 @@
+<%: func WorkspaceVue(ctx *npnweb.RequestContext, w io.Writer) (int, error) %><!DOCTYPE html>
+<html lang="en">
+<head>
+  <title><%= ctx.Title %></title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <meta property="og:title" content="<%= ctx.Title %>">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
+
+  <link href="/assets/vendor/ui/<%= npncore.AppKey %>.css" rel="preload" as="style">
+  <link href="/assets/vendor/ui/<%= npncore.AppKey %>.js" rel="preload" as="script">
+  <link href="/assets/vendor/ui/vendor.js" rel="preload" as="script">
+
+  <link href="/assets/vendor/ui/<%= npncore.AppKey %>.css" rel="stylesheet">
+</head>
+<body class="<%= ctx.Profile.Theme.CSS %>">
+  <div id="app">TODO</div>
+  <script src="/assets/vendor/ui/vendor.js"></script>
+  <script src="/assets/vendor/ui/<%= npncore.AppKey %>.js"></script>
+</body>
+</html>
+

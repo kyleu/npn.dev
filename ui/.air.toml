@@ -1,0 +1,17 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "yarn build"
+bin = "bin/copy.sh"
+full_bin = "./bin/copy.sh"
+include_dir = []
+include_ext = ["html", "ts", "vue"]
+exclude_dir = ["dist", "node_modules"]
+exclude_file = []
+delay = 1000 # ms
+stop_on_error = true
+log = "air_errors.log"
+
+[log]
+time = true

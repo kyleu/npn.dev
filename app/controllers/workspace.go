@@ -18,6 +18,12 @@ func Workspace(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func WorkspaceVue(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		return npncontroller.T(templates.WorkspaceVue(ctx, w))
+	})
+}
+
 var upgrader = websocket.Upgrader{}
 
 func Socket(w http.ResponseWriter, r *http.Request) {

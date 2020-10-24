@@ -1,8 +1,12 @@
 <template>
   <div id="app">
-    <NavBar />
-    <LeftNav />
-    <router-view />
+    <div class="uk-dark">
+      <NavBar />
+      <div id="nav-left" class="uk-visible@m"><LeftNav /></div>
+      <div id="workspace-content">
+        <router-view />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -12,10 +16,7 @@ import NavBar from "@/components/NavBar.vue";
 import LeftNav from "@/components/LeftNav.vue";
 
 @Component({
-  components: {
-    LeftNav,
-    NavBar
-  }
+  components: {LeftNav, NavBar}
 })
 export default class Workspace extends Vue {}
 </script>

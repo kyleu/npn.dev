@@ -1,0 +1,354 @@
+$dark-bg-color: #121212;
+$light-bg-color: #fff;
+
+$clear: $light-bg-color;
+$clear-text: #777;
+$clear-dark: $dark-bg-color;
+
+$grey: #bbbbbb;
+$grey-text: #888888;
+$grey-dark: #2c3531;
+
+$bluegrey: #89b6cc;
+$bluegrey-text: #3f7592;
+$bluegrey-dark: #30444e;
+
+$red: #c1301c;
+$red-text: #c1301c;
+$red-dark: #44110a;
+
+$orange: #c96112;
+$orange-text: #c96112;
+$orange-dark: #462206;
+
+$yellow: #c4a705;
+$yellow-text: #c4a705;
+$yellow-dark: #453a02;
+
+$green: #177245;
+$green-text: #177245;
+$green-dark: #072918;
+
+$blue: #397adb;
+$blue-text: #397adb;
+$blue-dark: #101e33;
+
+$purple: #b768a2;
+$purple-text: #b768a2;
+$purple-dark: #1a0e2d;
+
+$x: #000000;
+$x-text: #000000;
+$x-dark: #000000;
+
+.uk-dark {
+  .clear-fg {
+    color: $clear-text;
+    &:hover {
+      color: $clear-text;
+    }
+  }
+  .grey-fg {
+    color: $grey-text;
+    &:hover {
+      color: $grey-text;
+    }
+  }
+  .bluegrey-fg {
+    color: $bluegrey-text;
+    &:hover {
+      color: $bluegrey-text;
+    }
+  }
+  .red-fg {
+    color: $red-text;
+    &:hover {
+      color: $red-text;
+    }
+  }
+  .orange-fg {
+    color: $orange-text;
+    &:hover {
+      color: $orange-text;
+    }
+  }
+  .yellow-fg {
+    color: $yellow-text;
+    &:hover {
+      color: $yellow-text;
+    }
+  }
+  .green-fg {
+    color: $green-text;
+    &:hover {
+      color: $green-text;
+    }
+  }
+  .blue-fg {
+    color: $blue-text;
+    &:hover {
+      color: $blue-text;
+    }
+  }
+  .purple-fg {
+    color: $purple-text;
+    &:hover {
+      color: $purple-text;
+    }
+  }
+  .x-fg {
+    color: $x-text;
+    &:hover {
+      color: $x-text;
+    }
+  }
+
+  .clear-bg {
+    background: $clear !important;
+  }
+  .grey-bg {
+    background: $grey !important;
+  }
+  .bluegrey-bg {
+    background: $bluegrey !important;
+  }
+  .red-bg {
+    background: $red !important;
+  }
+  .orange-bg {
+    background: $orange !important;
+  }
+  .yellow-bg {
+    background: $yellow !important;
+  }
+  .green-bg {
+    background: $green !important;
+  }
+  .blue-bg {
+    background: $blue !important;
+  }
+  .purple-bg {
+    background: $purple !important;
+  }
+  .x-bg {
+    background: $x !important;
+  }
+
+  .clear-fill {
+    fill: $clear !important;
+  }
+  .grey-fill {
+    fill: $grey !important;
+  }
+  .bluegrey-fill {
+    fill: $bluegrey !important;
+  }
+  .red-fill {
+    fill: $red !important;
+  }
+  .orange-fill {
+    fill: $orange !important;
+  }
+  .yellow-fill {
+    fill: $yellow !important;
+  }
+  .green-fill {
+    fill: $green !important;
+  }
+  .blue-fill {
+    fill: $blue !important;
+  }
+  .purple-fill {
+    fill: $purple !important;
+  }
+  .x-fill {
+    fill: $x !important;
+  }
+
+  .clear-border {
+    border-color: $clear-text !important;
+  }
+  .grey-border {
+    border-color: $grey-text !important;
+  }
+  .bluegrey-border {
+    border-color: $bluegrey-text !important;
+  }
+  .red-border {
+    border-color: $red-text !important;
+  }
+  .orange-border {
+    border-color: $orange-text !important;
+  }
+  .yellow-border {
+    border-color: $yellow-text !important;
+  }
+  .green-border {
+    border-color: $green-text !important;
+  }
+  .blue-border {
+    border-color: $blue-text !important;
+  }
+  .purple-border {
+    border-color: $purple-text !important;
+  }
+  .x-border {
+    border-color: $x-text !important;
+  }
+}
+
+.uk-light {
+  .clear-fg {
+    color: $clear;
+    &:hover {
+      color: $clear;
+    }
+  }
+  .grey-fg {
+    color: $grey;
+    &:hover {
+      color: $grey;
+    }
+  }
+  .bluegrey-fg {
+    color: $bluegrey;
+    &:hover {
+      color: $bluegrey;
+    }
+  }
+  .red-fg {
+    color: $red;
+    &:hover {
+      color: $red;
+    }
+  }
+  .orange-fg {
+    color: $orange;
+    &:hover {
+      color: $orange;
+    }
+  }
+  .yellow-fg {
+    color: $yellow;
+    &:hover {
+      color: $yellow;
+    }
+  }
+  .green-fg {
+    color: $green;
+    &:hover {
+      color: $green;
+    }
+  }
+  .blue-fg {
+    color: $blue;
+    &:hover {
+      color: $blue;
+    }
+  }
+  .purple-fg {
+    color: $purple;
+    &:hover {
+      color: $purple;
+    }
+  }
+  .x-fg {
+    color: $x;
+    &:hover {
+      color: $x;
+    }
+  }
+
+  .clear-bg {
+    background: $clear-dark !important;
+  }
+  .grey-bg {
+    background: $grey-dark !important;
+  }
+  .bluegrey-bg {
+    background: $bluegrey-dark !important;
+  }
+  .red-bg {
+    background: $red-dark !important;
+  }
+  .orange-bg {
+    background: $orange-dark !important;
+  }
+  .yellow-bg {
+    background: $yellow-dark !important;
+  }
+  .green-bg {
+    background: $green-dark !important;
+  }
+  .blue-bg {
+    background: $blue-dark !important;
+  }
+  .purple-bg {
+    background: $purple-dark !important;
+  }
+  .x-bg {
+    background: $x-dark !important;
+  }
+
+  .clear-fill {
+    fill: $clear-dark !important;
+  }
+  .grey-fill {
+    fill: $grey-dark !important;
+  }
+  .bluegrey-fill {
+    fill: $bluegrey-dark !important;
+  }
+  .red-fill {
+    fill: $red-dark !important;
+  }
+  .orange-fill {
+    fill: $orange-dark !important;
+  }
+  .yellow-fill {
+    fill: $yellow-dark !important;
+  }
+  .green-fill {
+    fill: $green-dark !important;
+  }
+  .blue-fill {
+    fill: $blue-dark !important;
+  }
+  .purple-fill {
+    fill: $purple-dark !important;
+  }
+  .x-fill {
+    fill: $x-dark !important;
+  }
+
+  .clear-border {
+    border-color: $clear !important;
+  }
+  .grey-border {
+    border-color: $grey !important;
+  }
+  .bluegrey-border {
+    border-color: $bluegrey !important;
+  }
+  .red-border {
+    border-color: $red !important;
+  }
+  .orange-border {
+    border-color: $orange !important;
+  }
+  .yellow-border {
+    border-color: $yellow !important;
+  }
+  .green-border {
+    border-color: $green !important;
+  }
+  .blue-border {
+    border-color: $blue !important;
+  }
+  .purple-border {
+    border-color: $purple !important;
+  }
+  .x-border {
+    border-color: $x !important;
+  }
+}

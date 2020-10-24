@@ -5,8 +5,9 @@
 
 set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $dir/../ui
+cd $dir/..
 
-../bin/build-ui.sh
-echo "Watching TypeScript compilation for [ui]..."
 yarn build
+
+cd dist
+http.py 10102

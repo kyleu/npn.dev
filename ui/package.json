@@ -5,8 +5,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "watch": "webpack --config ./node_modules/@vue/cli-service/webpack.config.js --watch"
+    "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "@types/uikit": "^3.3.1",

@@ -8,11 +8,15 @@ import "@/assets/styles/styles.scss";
 // @ts-ignore
 import Icons from "uikit/dist/js/uikit-icons";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 // @ts-ignore
 (UIkit as any).use(Icons);
 
 // @ts-ignore
 (window as any).UIkit = UIkit;
+
+/* eslint-enable @typescript-eslint/no-explicit-any */
 
 Vue.config.productionTip = false;
 
