@@ -2,62 +2,62 @@
 
 ## macOS
 
-[macOS App](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.app.macos.zip)
+[macOS App](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.app.macos.zip)
 
-[macOS Server](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.macos.zip)
+[macOS Server](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.macos.zip)
 
 
 ## Windows
 
-[Windows Server (64-bit)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.windows.zip)
+[Windows Server (64-bit)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.windows.zip)
 
-[Windows Server (32-bit)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.windows.386.zip)
+[Windows Server (32-bit)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.windows.386.zip)
 
-[Windows Server (arm)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.windows.arm.zip)
+[Windows Server (arm)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.windows.arm.zip)
 
 
 ## Linux
 
-[Linux Server (64-bit)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.linux.zip)
+[Linux Server (64-bit)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.linux.zip)
 
-[Linux Server (32-bit)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.linux.386.zip)
+[Linux Server (32-bit)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.linux.386.zip)
 
-[Linux Server (arm)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.linux.arm.zip)
+[Linux Server (arm)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.linux.arm.zip)
 
-[Linux Server (arm64)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.linux.arm64.zip)
+[Linux Server (arm64)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.linux.arm64.zip)
 
-[Linux Server (mips)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.linux.mips.zip)
+[Linux Server (mips)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.linux.mips.zip)
 
-[Linux Server (riscv64)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.linux.riscv64.zip)
+[Linux Server (riscv64)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.linux.riscv64.zip)
 
 
 ## FreeBSD
 
-[FreeBSD Server (64-bit)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.freebsd.zip)
+[FreeBSD Server (64-bit)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.freebsd.zip)
 
-[FreeBSD Server (32-bit)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.freebsd.386.zip)
+[FreeBSD Server (32-bit)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.freebsd.386.zip)
 
-[FreeBSD Server (arm64)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.freebsd.arm64.zip)
+[FreeBSD Server (arm64)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.freebsd.arm64.zip)
 
-[FreeBSD Server (arm)](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.freebsd.arm.zip)
+[FreeBSD Server (arm)](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.freebsd.arm.zip)
 
 
 ## iOS
 
-[iOS App](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.app.ios.zip)
+[iOS App](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.app.ios.zip)
 
-[iOS Framework](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.library.ios.zip)
+[iOS Framework](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.library.ios.zip)
 
 
 ## Android
 
-[Android App](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.app.android.zip)
+[Android App](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.app.android.zip)
 
-[Android Framework](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.library.android.zip)
+[Android Framework](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.library.android.zip)
 
 
 ## WebAssembly
 
-[HTML App](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.html.zip)
+[HTML App](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.html.zip)
 
-[WASM Server](https://github.com/kyleu/npn/releases/download/v0.0.17/npn.server.wasm.zip)
+[WASM Server](https://github.com/kyleu/npn/releases/download/v0.0.18/npn.server.wasm.zip)

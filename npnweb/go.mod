@@ -4,9 +4,9 @@ go 1.15
 
 require (
 	emperror.dev/errors v0.7.0
-	github.com/kyleu/npn/npncore v0.0.17 // npn
-	github.com/kyleu/npn/npnservice v0.0.17 // npn
-	github.com/kyleu/npn/npnuser v0.0.17 // npn
+	github.com/kyleu/npn/npncore v0.0.18 // npn
+	github.com/kyleu/npn/npnservice v0.0.18 // npn
+	github.com/kyleu/npn/npnuser v0.0.18 // npn
 	github.com/gorilla/mux v1.7.4
 	github.com/mitchellh/mapstructure v1.1.2
 	github.com/gorilla/sessions v1.2.0

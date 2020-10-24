@@ -4,8 +4,8 @@ go 1.15
 require (
 	emperror.dev/errors v0.7.0
 	github.com/graphql-go/graphql v0.7.9
-	github.com/kyleu/npn/npnweb v0.0.17 // npn
-	github.com/kyleu/npn/npncontroller v0.0.17 // npn
+	github.com/kyleu/npn/npnweb v0.0.18 // npn
+	github.com/kyleu/npn/npncontroller v0.0.18 // npn
 	logur.dev/logur v0.16.2
 )
 

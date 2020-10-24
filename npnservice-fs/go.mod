@@ -3,9 +3,9 @@ module github.com/kyleu/npn/npnservice-fs
 go 1.15
 
 require (
-	github.com/kyleu/npn/npncore v0.0.17 // npn
-	github.com/kyleu/npn/npnservice v0.0.17 // npn
-	github.com/kyleu/npn/npnuser v0.0.17 // npn
+	github.com/kyleu/npn/npncore v0.0.18 // npn
+	github.com/kyleu/npn/npnservice v0.0.18 // npn
+	github.com/kyleu/npn/npnuser v0.0.18 // npn
 )
 
 replace github.com/kyleu/npn/npncore => ../npncore
