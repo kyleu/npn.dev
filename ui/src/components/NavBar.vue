@@ -30,7 +30,7 @@ import { Component, Vue } from "vue-property-decorator";
 export default class NavBar extends Vue {}
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 a {
   &.router-link-exact-active {
     font-weight: bold;

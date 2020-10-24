@@ -44,7 +44,6 @@ require (
 	github.com/kyleu/npn/npnconnection v0.0.17 // npn
 	github.com/kyleu/npn/npncontroller v0.0.17 // npn
 	github.com/kyleu/npn/npncore v0.0.17 // npn
-	github.com/kyleu/npn/npndatabase v0.0.0-00010101000000-000000000000 // indirect
 	github.com/kyleu/npn/npnservice v0.0.17 // npn
 	github.com/kyleu/npn/npnservice-fs v0.0.17 // npn
 	github.com/kyleu/npn/npntemplate v0.0.17 // npn

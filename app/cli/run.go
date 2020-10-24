@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npnservice/auth"
 	"os"
@@ -31,6 +32,26 @@ func init() {
 }
 
 func Run(a string, p uint16, platform string, dir string) (uint16, error) {
+	info, r, err := Start(platform, dir)
+	if err != nil {
+		return p, err
+	}
+
+	return npnweb.MakeServer(info, r, a, p)
+}
+
+func Start(platform string, dir string) (npnweb.AppInfo, *mux.Router, error) {
+	info := InitApp(platform, dir)
+
+	r, err := controllers.BuildRouter(info)
+	if err != nil {
+		return info, nil, errors.WithMessage(err, "unable to construct routes")
+	}
+
+	return info, r, nil
+}
+
+func InitApp(platform string, dir string) npnweb.AppInfo {
 	_ = os.Setenv("TZ", "UTC")
 	npncore.AppPlatform = platform
 
@@ -59,16 +80,8 @@ func Run(a string, p uint16, platform string, dir string) (uint16, error) {
 		}
 	}
 
-	info := app.NewService(verbose, files, redir, logger)
-
-	r, err := controllers.BuildRouter(info)
-	if err != nil {
-		return p, errors.WithMessage(err, "unable to construct routes")
-	}
-
-	return npnweb.MakeServer(info, r, a, p)
+	return app.NewService(verbose, files, redir, logger)
 }
-
 
 func setIcon() {
 	npnweb.IconContent = `<svg width="32px" height="32px" viewBox="-0 0 68 68" xmlns="http://www.w3.org/2000/svg">
