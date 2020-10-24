@@ -22,8 +22,4 @@ Vue.config.productionTip = false;
 
 const render = (h: Vue.CreateElement): Vue.VNode => h(Workspace);
 
-new Vue({
-  router: router,
-  store: store,
-  render: render
-}).$mount("#app");
+new Vue({router, store, render}).$mount("#npn");

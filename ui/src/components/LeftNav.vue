@@ -1,6 +1,9 @@
 <template>
   <div>
-    <CollectionList />
+    <div class="nav-section">
+      <div class="nav-header">Collections</div>
+      <CollectionList />
+    </div>
     <div class="nav-section mt">
       <div class="nav-header">System</div>
       <div class="nav-list">
@@ -18,11 +21,10 @@ import { Component, Vue } from "vue-property-decorator";
 import CollectionList from "@/components/CollectionList.vue";
 
 @Component({ components: { CollectionList } })
-export default class LeftNav extends Vue {
-}
+export default class LeftNav extends Vue {}
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
 .left-nav {
   margin-top: 24px;
 }

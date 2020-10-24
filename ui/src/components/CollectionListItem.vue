@@ -1,5 +1,7 @@
 <template>
-  <div><a href="">{{ coll.title.length === 0 ? coll.key : coll.title }}</a></div>
+  <div>
+    <router-link class="theme" :to="'/c/' + coll.key">{{ coll.title.length === 0 ? coll.key : coll.title }}</router-link>
+  </div>
 </template>
 
 <script lang="ts">
@@ -8,6 +10,6 @@ import {Collection} from "@/model/collection";
 
 @Component
 export default class CollectionListItem extends Vue {
-  @Prop(Object) coll: Collection | undefined
+  @Prop() coll!: Collection;
 }
 </script>

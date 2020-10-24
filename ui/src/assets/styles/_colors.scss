@@ -42,6 +42,14 @@ $x-text: #000000;
 $x-dark: #000000;
 
 .uk-dark {
+  // TODO
+  .theme {
+    color: $bluegrey-text;
+    &:hover {
+      color: $bluegrey-text;
+    }
+  }
+
   .clear-fg {
     color: $clear-text;
     &:hover {
@@ -198,6 +206,14 @@ $x-dark: #000000;
 }
 
 .uk-light {
+  // TODO
+  .theme {
+    color: $bluegrey;
+    &:hover {
+      color: $bluegrey;
+    }
+  }
+
   .clear-fg {
     color: $clear;
     &:hover {
