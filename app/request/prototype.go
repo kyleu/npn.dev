@@ -20,7 +20,7 @@ type Prototype struct {
 	Query    npncontroller.QueryParams `json:"query,omitempty"`
 	Fragment string                    `json:"fragment,omitempty"`
 	Headers  header.Headers            `json:"headers,omitempty"`
-	Auth     auth.Auths                `json:"auth,omitempty"`
+	Auth     *auth.Auth                `json:"auth,omitempty"`
 	Body     *body.Body                `json:"body,omitempty"`
 	Options  *Options                  `json:"options,omitempty"`
 }

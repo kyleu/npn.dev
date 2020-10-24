@@ -36,7 +36,7 @@ namespace request.editor {
         const key = e.dataset["key"];
         if (ret.value === key) {
           if (key === "") {
-            el.value = "null";
+            dom.setValue(el, "null");
             check();
           }
           e.classList.remove("hidden");
@@ -62,7 +62,7 @@ namespace request.editor {
         e = htmlEditor(key, active ? config as rbody.HTMLConfig : undefined, el);
         break;
       default:
-        e = <div>Unimplemented [{key}] editor</div>;
+        e = <div>Unimplemented [{key}] body editor</div>;
     }
     return <div class={cls} data-key={key}>{e}</div>;
   }
@@ -94,7 +94,7 @@ namespace request.editor {
 
   function updateFn(t: string, cfg: any, length: number | undefined, el: HTMLTextAreaElement) {
     const nb: rbody.Body = {type: t, config: cfg, length: length};
-    el.value = json.str(nb);
+    dom.setValue(el, json.str(nb));
     check();
   }
 }

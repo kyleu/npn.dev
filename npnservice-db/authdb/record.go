@@ -5,6 +5,9 @@ import (
 	"fmt"
 	"time"
 
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npnuser"
+
 	"github.com/kyleu/npn/npnservice/auth"
 
 	"github.com/kyleu/npn/npncore"
@@ -20,13 +23,28 @@ func (s *ServiceDatabase) NewRecord(r *auth.Record) (*auth.Record, error) {
 		return nil, err
 	}
 
-	return s.GetByID(r.ID), nil
+	return s.GetByID(r.UserID, r.ID), nil
 }
 
 func (s *ServiceDatabase) UpdateRecord(r *auth.Record) error {
 	cols := []string{"user_list_id", "user_list_name", "access_token", "expires", npncore.KeyName, npncore.KeyEmail, "picture"}
 	q := npndatabase.SQLUpdate(npncore.KeyAuth, cols, fmt.Sprintf("%v = $%v", npncore.KeyID, len(cols)+1))
 	return s.db.UpdateOne(q, nil, r.UserListID, r.UserListName, r.AccessToken, r.Expires, r.Name, r.Email, r.Picture, r.ID)
+}
+
+func (s *ServiceDatabase) MergeProfile(p *npnuser.UserProfile, record *auth.Record) (*auth.Record, error) {
+	p.Name = record.Name
+	if len(p.Name) == 0 {
+		p.Name = record.Provider.Title + " User"
+	}
+	p.Picture = record.Picture
+
+	_, err := s.users.SaveProfile(p)
+	if err != nil {
+		return nil, errors.Wrap(err, "error saving user profile")
+	}
+
+	return record, nil
 }
 
 func (s *ServiceDatabase) List(params *npncore.Params) auth.Records {
@@ -53,7 +71,7 @@ func (s *ServiceDatabase) GetByCreated(d *time.Time, params *npncore.Params) aut
 	return toRecords(dtos)
 }
 
-func (s *ServiceDatabase) GetByID(authID uuid.UUID) *auth.Record {
+func (s *ServiceDatabase) GetByID(userID uuid.UUID, authID uuid.UUID) *auth.Record {
 	dto := &recordDTO{}
 	q := npndatabase.SQLSelectSimple("*", npncore.KeyAuth, npncore.KeyID+" = $1")
 	err := s.db.Get(dto, q, nil, authID)
@@ -67,7 +85,7 @@ func (s *ServiceDatabase) GetByID(authID uuid.UUID) *auth.Record {
 	return dto.toRecord()
 }
 
-func (s *ServiceDatabase) GetByProviderID(key string, code string) *auth.Record {
+func (s *ServiceDatabase) GetByProviderID(userID uuid.UUID, key string, code string) *auth.Record {
 	dto := &recordDTO{}
 	q := npndatabase.SQLSelectSimple("*", npncore.KeyAuth, "provider = $1 and provider_id = $2")
 	err := s.db.Get(dto, q, nil, key, code)
@@ -97,7 +115,7 @@ func (s *ServiceDatabase) GetByUserID(userID uuid.UUID, params *npncore.Params) 
 	return toRecords(dtos)
 }
 
-func (s *ServiceDatabase) Delete(authID uuid.UUID) error {
+func (s *ServiceDatabase) Delete(userID uuid.UUID, authID uuid.UUID) error {
 	q := npndatabase.SQLDelete(npncore.KeyAuth, npncore.KeyID+" = $1")
 	return s.db.DeleteOne(q, nil, authID)
 }

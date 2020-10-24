@@ -80,7 +80,7 @@ func ProfilePic(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			return EResp(err, "invalid id")
 		}
-		a := ctx.App.Auth().GetByID(*id)
+		a := ctx.App.Auth().GetByID(ctx.Profile.UserID, *id)
 		ctx.Profile.Picture = a.Picture
 		_, err = ctx.App.User().SaveProfile(ctx.Profile)
 		if err != nil {

@@ -29,7 +29,7 @@ func req(ctx *npnweb.RequestContext) (string, interface{}, error) {
 	// req.Prototype.Body = body.NewJSON(map[string]string{"a": "x", "b": "y", "c": "z"})
 	req.Prototype.Body = body.NewForm(&body.FormEntry{K: "title", V: "DEBUG!"})
 	req.Prototype.Options.ExcludeDefaultHeaders = []string{"user-agent"}
-	// req.Prototype.Auth = auth.Auths{auth.NewBasic("kyle", "kyleu", true)}
+	// req.Prototype.Auth = auth.NewBasic("kyle", "kyleu", true)
 
 	rsp := app.Svc(ctx.App).Caller.Call("adhoc", "adhoc", req.Prototype)
 

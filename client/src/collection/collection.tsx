@@ -75,7 +75,7 @@ namespace collection {
     const input = dom.req<HTMLInputElement>("#coll-add-input");
     const name = input.value.trim();
     if (name && name.length > 0) {
-      input.value = "";
+      dom.setValue(input, "");
       socket.send({svc: services.collection.key, cmd: command.client.addCollection, param: name});
       log.info("adding request [" + name + "]");
     }
@@ -85,7 +85,7 @@ namespace collection {
     const input = dom.req<HTMLInputElement>("#coll-request-add-url");
     const url = input.value.trim();
     if (url && url.length > 0) {
-      input.value = "";
+      dom.setValue(input, "");
       const param = {"coll": coll, "url": url};
       socket.send({svc: services.collection.key, cmd: command.client.addRequestURL, param: param});
       log.info("adding request [" + url + "]");

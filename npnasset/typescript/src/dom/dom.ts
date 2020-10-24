@@ -102,12 +102,6 @@ namespace dom {
     return el;
   }
 
-  export function switchElements(el: HTMLElement, tgt: string) {
-    setDisplay(el, false);
-    setDisplay(tgt, true);
-    return false;
-  }
-
   export function clear(el: string | HTMLElement) {
     return setHTML(el, "");
   }

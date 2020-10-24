@@ -1,26 +1,25 @@
-package authdb
+package auth
 
 import (
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npnservice/auth"
 	"github.com/kyleu/npn/npnuser"
 )
 
-func (s *ServiceDatabase) Handle(profile *npnuser.UserProfile, prv *auth.Provider, code string) (*auth.Record, error) {
+func Handle(s Service, profile *npnuser.UserProfile, prv *Provider, code string) (*Record, error) {
 	if !s.Enabled() {
-		return nil, auth.ErrorAuthDisabled
+		return nil, ErrorAuthDisabled
 	}
 
 	if profile == nil {
 		return nil, errors.New("no user profile for auth")
 	}
 
-	cfg := s.getConfig(prv)
+	cfg := GetConfig(s, prv)
 	if cfg == nil {
 		return nil, errors.New("no auth config for [" + prv.Key + "]")
 	}
 
-	record, err := auth.DecodeRecord(s, prv, code)
+	record, err := DecodeRecord(s, prv, code)
 	if err != nil {
 		return nil, errors.Wrap(err, "error retrieving auth profile")
 	}
@@ -29,14 +28,14 @@ func (s *ServiceDatabase) Handle(profile *npnuser.UserProfile, prv *auth.Provide
 	}
 	record.UserID = profile.UserID
 
-	curr := s.GetByProviderID(record.Provider.Key, record.ProviderID)
+	curr := s.GetByProviderID(record.UserID, record.Provider.Key, record.ProviderID)
 	if curr == nil {
 		record, err = s.NewRecord(record)
 		if err != nil {
 			return nil, errors.Wrap(err, "error saving new auth record")
 		}
 
-		return s.mergeProfile(profile, record)
+		return s.MergeProfile(profile, record)
 	}
 	if curr.UserID == profile.UserID {
 		record.ID = curr.ID
@@ -46,7 +45,7 @@ func (s *ServiceDatabase) Handle(profile *npnuser.UserProfile, prv *auth.Provide
 			return nil, errors.Wrap(err, "error updating auth record")
 		}
 
-		return s.mergeProfile(profile, record)
+		return s.MergeProfile(profile, record)
 	}
 
 	record, err = s.NewRecord(record)
@@ -54,20 +53,5 @@ func (s *ServiceDatabase) Handle(profile *npnuser.UserProfile, prv *auth.Provide
 		return nil, errors.Wrap(err, "error saving new auth record")
 	}
 
-	return s.mergeProfile(profile, record)
-}
-
-func (s *ServiceDatabase) mergeProfile(p *npnuser.UserProfile, record *auth.Record) (*auth.Record, error) {
-	p.Name = record.Name
-	if len(p.Name) == 0 {
-		p.Name = record.Provider.Title + " User"
-	}
-	p.Picture = record.Picture
-
-	_, err := s.users.SaveProfile(p)
-	if err != nil {
-		return nil, errors.Wrap(err, "error saving user profile")
-	}
-
-	return record, nil
+	return s.MergeProfile(profile, record)
 }

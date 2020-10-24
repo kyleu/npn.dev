@@ -62,7 +62,7 @@ namespace request.editor {
     events(ret, () => {
       let opts = json.parse(el.value) as Options;
       f(opts);
-      el.value = json.str(opts);
+      dom.setValue(el, json.str(opts));
       check();
     });
   }

@@ -1,29 +1,26 @@
-package authdb
+package authfs
 
 import (
 	"strings"
 
-	"github.com/kyleu/npn/npnservice/auth"
-
 	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npndatabase"
+	"github.com/kyleu/npn/npnservice/auth"
 	"github.com/kyleu/npn/npnservice/user"
-
 	"logur.dev/logur"
 )
 
-type ServiceDatabase struct {
+type ServiceFS struct {
 	enabled          bool
 	enabledProviders auth.Providers
 	redir            string
-	db               *npndatabase.Service
+	files            npncore.FileLoader
 	logger           logur.Logger
 	users            user.Service
 }
 
-var _ auth.Service = (*ServiceDatabase)(nil)
+var _ auth.Service = (*ServiceFS)(nil)
 
-func NewServiceDatabase(enabled bool, redir string /* actions *action.Service, */, db *npndatabase.Service, logger logur.Logger, users user.Service) auth.Service {
+func NewServiceFS(enabled bool, redir string, files npncore.FileLoader, logger logur.Logger, users user.Service) auth.Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: npncore.KeyAuth})
 
 	if !strings.HasPrefix(redir, "http") {
@@ -33,10 +30,10 @@ func NewServiceDatabase(enabled bool, redir string /* actions *action.Service, *
 		redir += "/"
 	}
 
-	svc := &ServiceDatabase{
+	svc := &ServiceFS{
 		enabled: enabled,
 		redir:   redir,
-		db:      db,
+		files:   files,
 		logger:  logger,
 		users:   users,
 	}
@@ -56,14 +53,14 @@ func NewServiceDatabase(enabled bool, redir string /* actions *action.Service, *
 	return svc
 }
 
-func (s *ServiceDatabase) Enabled() bool {
+func (s *ServiceFS) Enabled() bool {
 	return s.enabled
 }
 
-func (s *ServiceDatabase) EnabledProviders() auth.Providers {
+func (s *ServiceFS) EnabledProviders() auth.Providers {
 	return s.enabledProviders
 }
 
-func (s *ServiceDatabase) FullURL(path string) string {
+func (s *ServiceFS) FullURL(path string) string {
 	return s.redir + strings.TrimPrefix(path, "/")
 }

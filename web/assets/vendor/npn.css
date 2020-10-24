@@ -888,6 +888,17 @@ em, .uk-light em {
   stroke: #333 !important;
 }
 
+.url-view div {
+  padding-top: 8px;
+  padding-left: 11px;
+}
+.url-view a {
+  padding-top: 8px;
+}
+.url-view .url-link {
+  cursor: pointer;
+}
+
 .chart-tooltip {
   position: absolute;
   display: none;
@@ -1009,6 +1020,23 @@ input {
   height: 64px;
   width: 64px;
   margin-right: 16px;
+}
+
+.profile-pic {
+  height: 32px;
+  width: 32px;
+}
+
+.profile-title {
+  padding-top: 6px;
+}
+
+.profile-remove {
+  padding-top: 6px;
+}
+
+.auth-link {
+  margin-top: 8px;
 }
 
 #workspace-content.log-visible {

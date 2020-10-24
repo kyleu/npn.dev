@@ -51,23 +51,14 @@ func (a *Auth) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
-type Auths []*Auth
-
-func (a Auths) HasBasic() bool {
-	for _, x := range a {
-		if x.Type == KeyBasic {
-			return true
-		}
-	}
-	return false
-}
-
-func (a Auths) GetBasic() (string, string) {
-	for _, x := range a {
-		if x.Type == KeyBasic {
-			b := x.Config.(*Basic)
-			return b.Username, b.Password
-		}
+func (a *Auth) GetBasic() (string, string) {
+	if a != nil && a.IsBasic() {
+		b := a.Config.(*Basic)
+		return b.Username, b.Password
 	}
 	return "", ""
+}
+
+func (a *Auth) IsBasic() bool {
+	return a != nil && a.Type == KeyBasic
 }

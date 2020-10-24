@@ -1,5 +1,5 @@
 namespace request {
-  function newPrototype(protocol: string, hostname: string, port: number | undefined, path: string, qp: request.QueryParam[], fragment: string, auth: auth.Auth[]): Prototype {
+  function newPrototype(protocol: string, hostname: string, port: number | undefined, path: string, qp: request.QueryParam[], fragment: string, auth: auth.Auth | undefined): Prototype {
     if (str.endsWith(protocol, ":")) {
       protocol = protocol.substr(0, protocol.length - 1);
     }
@@ -16,9 +16,9 @@ namespace request {
     const qp: QueryParam[] = []
     url.searchParams.forEach((v, k) => qp.push({k: k, v: v}));
 
-    const auth: auth.Auth[] = [];
+    let auth: auth.Auth | undefined;
     if(url.username.length > 0) {
-      auth.push({type: "basic", config: {"username": url.username, "password": url.password, "showPassword": true}})
+      auth = {type: "basic", config: {"username": url.username, "password": url.password, "showPassword": true}};
     }
 
     let port: number | undefined;
@@ -26,6 +26,11 @@ namespace request {
       port = parseInt(url.port, 10);
     }
 
-    return newPrototype(url.protocol, url.hostname, port, url.pathname, qp, url.hash, auth);
+    let path = url.pathname;
+    if (path.indexOf("/") === 0) {
+      path = path.substr(1);
+    }
+
+    return newPrototype(url.protocol, url.hostname, port, path, qp, url.hash, auth);
   }
 }

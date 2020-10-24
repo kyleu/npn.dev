@@ -2,12 +2,13 @@ package collection
 
 import (
 	"fmt"
-	"github.com/gofrs/uuid"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"github.com/gofrs/uuid"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/request"

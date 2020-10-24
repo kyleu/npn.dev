@@ -6,11 +6,15 @@ namespace socket {
   let onOpen: (id: string) => void;
   let onMessage: (m: Message) => void;
   let onError: (svc: string, err: string) => void;
+  let socketPath = "/s";
 
-  export function init(open: (id: string) => void, recv: (m: Message) => void, err: (svc: string, err: string) => void) {
+  export function init(open: (id: string) => void, recv: (m: Message) => void, err: (svc: string, err: string) => void, path?: string) {
     onOpen = open;
     onMessage = recv;
     onError = err;
+    if (path) {
+      socketPath = path;
+    }
   }
 
   function socketUrl() {
@@ -19,7 +23,10 @@ namespace socket {
     if (l.protocol === "https:") {
       protocol = "wss";
     }
-    return protocol + `://${l.host}/s`;
+    if (socketPath.indexOf("/") != 0) {
+      socketPath = "/" + socketPath;
+    }
+    return protocol + `://${l.host}${socketPath}`;
   }
 
   export function initSocket() {

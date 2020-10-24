@@ -80,29 +80,42 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 
 	logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
 
-	if p.Options == nil || (!p.Options.IgnoreRedirects) {
-		if rsp != nil && rsp.StatusCode >= 300 && rsp.StatusCode < 400 && rsp.Headers.Contains("location") {
-			loc := rsp.Headers.GetValue("location")
-			if len(loc) == 0 {
+	ignoreRedir := p.Options == nil || (!p.Options.IgnoreRedirects)
+	redir := rsp != nil && rsp.StatusCode >= 300 && rsp.StatusCode < 400 && rsp.Headers.Contains("location")
 
-			}
-			if strings.HasPrefix(loc, "//") {
-				loc = p.Protocol.Key + ":" + loc
-			}
-			if !strings.Contains(loc, "://") {
-				if !strings.HasPrefix(loc, "/") {
-					loc = filepath.Dir(p.Path) + "/" + loc
-				}
-				loc = p.Protocol.Key + "://" + p.Host() + loc
-			}
-			redirP := request.PrototypeFromString(loc)
-			redirP.Auth = p.Auth
-			redirP.Headers = p.Headers
-			redirP.Options = p.Options
-			logger.Debug("redirecting to [" + redirP.URLString() + "]")
-			return call(coll, req, client, redirP, ret.Response, logger)
+	if ignoreRedir && redir {
+		redirP := getRedir(rsp, p)
+		if redirP == nil {
+			return ret
 		}
+		logger.Debug("redirecting to [" + redirP.URLString() + "]")
+		return call(coll, req, client, redirP, ret.Response, logger)
 	}
 
 	return ret
+}
+
+func getRedir(rsp *Response, p *request.Prototype) *request.Prototype {
+	loc := ""
+	if rsp != nil {
+		loc = rsp.Headers.GetValue("location")
+	}
+	if len(loc) == 0 {
+		return nil
+	}
+	if strings.HasPrefix(loc, "//") {
+		loc = p.Protocol.Key + ":" + loc
+	}
+	if !strings.Contains(loc, "://") {
+		if !strings.HasPrefix(loc, "/") {
+			loc = filepath.Dir(p.Path) + "/" + loc
+		}
+		loc = p.Protocol.Key + "://" + p.Host() + loc
+	}
+	redirP := request.PrototypeFromString(loc)
+	redirP.Auth = p.Auth
+	redirP.Headers = p.Headers
+	redirP.Options = p.Options
+
+	return redirP
 }

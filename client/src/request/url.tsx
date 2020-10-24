@@ -47,22 +47,17 @@ namespace request {
 
     push("protocol", p.protocol);
     push("", "://");
-    if(p.auth) {
-      for (let a of p.auth) {
-        if (a.type === "basic") {
-          const cfg = a.config as auth.Basic
-          push("username", cfg.username);
-          push("", ":");
+    if(p.auth && p.auth.type === "basic") {
+      const cfg = p.auth.config as auth.Basic
+      push("username", cfg.username);
+      push("", ":");
 
-          if (cfg.showPassword) {
-            push("password", cfg.password);
-          } else {
-            push("password", "****");
-          }
-          push("", "@");
-          break;
-        }
+      if (cfg.showPassword) {
+        push("password", cfg.password);
+      } else {
+        push("password", "****");
       }
+      push("", "@");
     }
     push("domain", p.domain);
     if (p.port) {
@@ -92,16 +87,18 @@ namespace request {
       case "password":
       case "protocol":
       case "auth":
-        return "green-fg"
+        return "green-fg";
       case "domain":
       case "port":
-        return "blue-fg"
+        return "blue-fg";
       case "path":
-        return "bluegrey-fg"
+        return "bluegrey-fg";
       case "query":
-        return "purple-fg"
+        return "purple-fg";
+      case "fragment":
+        return "orange-fg";
       default:
-        return ""
+        return "";
     }
   }
 }

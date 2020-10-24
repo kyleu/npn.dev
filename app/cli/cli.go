@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/kirsle/configdir"
 	"github.com/kyleu/npn/npncore"
 	"github.com/spf13/cobra"
 )
@@ -32,4 +33,10 @@ func Configure() cobra.Command {
 	flags.BoolVarP(&verbose, "verbose", "v", false, "verbose output")
 
 	return rootCmd
+}
+
+func defaultDirectory() string {
+	dir := configdir.LocalConfig(npncore.AppName)
+	_ = configdir.MakePath(dir) // Ensure it exists.
+	return dir
 }

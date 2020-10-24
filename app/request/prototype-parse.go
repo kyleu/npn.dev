@@ -12,11 +12,11 @@ import (
 )
 
 func PrototypeFromURL(u *url.URL) *Prototype {
-	var auths auth.Auths
+	var at *auth.Auth
 	if u.User != nil {
 		p, _ := u.User.Password()
 		a := auth.NewBasic(u.User.Username(), p, false)
-		auths = auth.Auths{a}
+		at = a
 	}
 	domain, portString := npncore.SplitString(u.Host, ':', true)
 
@@ -33,12 +33,12 @@ func PrototypeFromURL(u *url.URL) *Prototype {
 		Path:     u.Path,
 		Query:    npncontroller.QueryParamsFromRaw(u.RawQuery),
 		Fragment: u.Fragment,
-		Auth:     auths,
+		Auth:     at,
 	}
 }
 
 func PrototypeFromString(u string) *Prototype {
-	var auths auth.Auths
+	var at *auth.Auth
 
 	rest, frag := npncore.SplitString(u, '#', true)
 	if len(frag) > 0 {
@@ -69,7 +69,7 @@ func PrototypeFromString(u string) *Prototype {
 	if aut != "" {
 		user, pass := npncore.SplitString(aut, ':', true)
 		a := auth.NewBasic(user, pass, false)
-		auths = auth.Auths{a}
+		at = a
 	}
 	return &Prototype{
 		Method:   MethodGet,
@@ -79,6 +79,6 @@ func PrototypeFromString(u string) *Prototype {
 		Path:     path,
 		Query:    npncontroller.QueryParamsFromRaw(query),
 		Fragment: frag,
-		Auth:     auths,
+		Auth:     at,
 	}
 }

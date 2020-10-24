@@ -30,10 +30,10 @@ namespace request.form {
     </li>;
   }
 
-  function renderAuth(key: String, as: auth.Auth[] | undefined) {
+  function renderAuth(key: String, as: auth.Auth | undefined) {
     return <li class="request-auth-panel">
       <div class="uk-margin-top">
-        <textarea class="uk-textarea" id={key + "-auth"} name="auth">{json.str(as)}</textarea>
+        <textarea class="uk-textarea hidden" id={key + "-auth"} name="auth">{json.str(as)}</textarea>
       </div>
     </li>;
   }

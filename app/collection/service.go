@@ -1,9 +1,10 @@
 package collection
 
 import (
-	"github.com/gofrs/uuid"
 	"os"
 	"path"
+
+	"github.com/gofrs/uuid"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"

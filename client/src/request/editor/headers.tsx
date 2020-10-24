@@ -12,7 +12,7 @@ namespace request.editor {
     const container = <ul id={el.id + "-ul"} class="uk-list uk-list-divider" />;
 
     const curr = json.parse(el.value) as header.Header[];
-    container.innerText = ""
+    dom.setText(container, "");
     container.appendChild(mapHeader(el.id, "addHeaderRow"));
     if (curr) {
       for (let idx = 0; idx < curr.length; idx++) {
@@ -45,7 +45,7 @@ namespace request.editor {
   function parseHeaders(elID: string) {
     let ret: header.Header[] = parseMapParams(elID)
     const ta = dom.req<HTMLTextAreaElement>("#" + elID);
-    ta.value = json.str(ret);
+    dom.setValue(ta, json.str(ret));
     check();
     return ret;
   }

@@ -109,12 +109,6 @@ var dom;
         return el;
     }
     dom.setText = setText;
-    function switchElements(el, tgt) {
-        setDisplay(el, false);
-        setDisplay(tgt, true);
-        return false;
-    }
-    dom.switchElements = switchElements;
     function clear(el) {
         return setHTML(el, "");
     }
@@ -179,7 +173,7 @@ var dom;
         if (e.selectionStart || e.selectionStart === 0) {
             var startPos = e.selectionStart;
             var endPos = e.selectionEnd;
-            e.value = e.value.substring(0, startPos) + text + e.value.substring(endPos, e.value.length);
+            dom.setValue(e, e.value.substring(0, startPos) + text + e.value.substring(endPos, e.value.length));
             e.selectionStart = startPos + text.length;
             e.selectionEnd = startPos + text.length;
         }
@@ -607,10 +601,14 @@ var socket;
     var onOpen;
     var onMessage;
     var onError;
-    function init(open, recv, err) {
+    var socketPath = "/s";
+    function init(open, recv, err, path) {
         onOpen = open;
         onMessage = recv;
         onError = err;
+        if (path) {
+            socketPath = path;
+        }
     }
     socket.init = init;
     function socketUrl() {
@@ -619,7 +617,10 @@ var socket;
         if (l.protocol === "https:") {
             protocol = "wss";
         }
-        return protocol + ("://" + l.host + "/s");
+        if (socketPath.indexOf("/") != 0) {
+            socketPath = "/" + socketPath;
+        }
+        return protocol + ("://" + l.host + socketPath);
     }
     function initSocket() {
         sock = new WebSocket(socketUrl());
@@ -1313,6 +1314,17 @@ var services;
     }
     services.fromKey = fromKey;
 })(services || (services = {}));
+var auth;
+(function (auth) {
+    auth.AllTypes = [
+        { key: "basic", title: "Basic", desc: "a simple username and password", hidden: false },
+        { key: "header", title: "Header", desc: "an API key passed as a request header", hidden: false },
+        { key: "queryparam", title: "Query Param", desc: "an API key passed as a query parameter", hidden: false },
+        { key: "bearertoken", title: "Bearer Token", desc: "uses an OAuth bearer token", hidden: false },
+        { key: "digest", title: "Digest", desc: "", hidden: true },
+        { key: "oauth", title: "OAuth", desc: "", hidden: true },
+    ];
+})(auth || (auth = {}));
 var rbody;
 (function (rbody) {
     function renderBody(url, b) {
@@ -1715,7 +1727,7 @@ var collection;
         var input = dom.req("#coll-add-input");
         var name = input.value.trim();
         if (name && name.length > 0) {
-            input.value = "";
+            dom.setValue(input, "");
             socket.send({ svc: services.collection.key, cmd: command.client.addCollection, param: name });
             log.info("adding request [" + name + "]");
         }
@@ -1725,7 +1737,7 @@ var collection;
         var input = dom.req("#coll-request-add-url");
         var url = input.value.trim();
         if (url && url.length > 0) {
-            input.value = "";
+            dom.setValue(input, "");
             var param = { "coll": coll, "url": url };
             socket.send({ svc: services.collection.key, cmd: command.client.addRequestURL, param: param });
             log.info("adding request [" + url + "]");
@@ -1997,7 +2009,7 @@ var diff;
         compArray("query", lp.query, rp.query, p);
         comp("fragment", lp.fragment, rp.fragment, p);
         compArray("headers", lp.headers, rp.headers, p);
-        compArray("auth", lp.auth, rp.auth, p);
+        comp("auth", lp.auth, rp.auth, p);
         if (!checkNull("body", lp.body, rp.body, p)) {
             if (lp.body && rp.body) {
                 comp("body.type", lp.body.type, rp.body.type, p);
@@ -2184,15 +2196,19 @@ var request;
         var url = new URL(u);
         var qp = [];
         url.searchParams.forEach(function (v, k) { return qp.push({ k: k, v: v }); });
-        var auth = [];
+        var auth;
         if (url.username.length > 0) {
-            auth.push({ type: "basic", config: { "username": url.username, "password": url.password, "showPassword": true } });
+            auth = { type: "basic", config: { "username": url.username, "password": url.password, "showPassword": true } };
         }
         var port;
         if (url.port && url.port.length > 0) {
             port = parseInt(url.port, 10);
         }
-        return newPrototype(url.protocol, url.hostname, port, url.pathname, qp, url.hash, auth);
+        var path = url.pathname;
+        if (path.indexOf("/") === 0) {
+            path = path.substr(1);
+        }
+        return newPrototype(url.protocol, url.hostname, port, path, qp, url.hash, auth);
     }
     request.prototypeFromURL = prototypeFromURL;
 })(request || (request = {}));
@@ -2313,23 +2329,17 @@ var request;
         };
         push("protocol", p.protocol);
         push("", "://");
-        if (p.auth) {
-            for (var _i = 0, _a = p.auth; _i < _a.length; _i++) {
-                var a = _a[_i];
-                if (a.type === "basic") {
-                    var cfg = a.config;
-                    push("username", cfg.username);
-                    push("", ":");
-                    if (cfg.showPassword) {
-                        push("password", cfg.password);
-                    }
-                    else {
-                        push("password", "****");
-                    }
-                    push("", "@");
-                    break;
-                }
+        if (p.auth && p.auth.type === "basic") {
+            var cfg = p.auth.config;
+            push("username", cfg.username);
+            push("", ":");
+            if (cfg.showPassword) {
+                push("password", cfg.password);
             }
+            else {
+                push("password", "****");
+            }
+            push("", "@");
         }
         push("domain", p.domain);
         if (p.port) {
@@ -2365,6 +2375,8 @@ var request;
                 return "bluegrey-fg";
             case "query":
                 return "purple-fg";
+            case "fragment":
+                return "orange-fg";
             default:
                 return "";
         }
@@ -2375,57 +2387,7 @@ var request;
     var editor;
     (function (editor) {
         function updateBasicAuth(cache, auth) {
-            var currentAuth = [];
-            try {
-                currentAuth = json.parse(cache.auth.value);
-            }
-            catch (e) {
-                console.warn("invalid auth JSON [" + cache.auth.value + "]");
-            }
-            var matched = -1;
-            if (!currentAuth) {
-                currentAuth = [];
-            }
-            for (var i = 0; i < currentAuth.length; i++) {
-                var x = currentAuth[i];
-                if (x.type === "basic") {
-                    matched = i;
-                }
-            }
-            var basic;
-            if (auth) {
-                for (var i = 0; i < auth.length; i++) {
-                    var x = auth[i];
-                    if (x.type === "basic") {
-                        basic = x.config;
-                    }
-                }
-            }
-            if (matched === -1) {
-                if (basic) {
-                    currentAuth.push({ type: "basic", config: basic });
-                }
-            }
-            else {
-                if (basic) {
-                    var curr = currentAuth[matched].config;
-                    if (curr) {
-                        curr = {
-                            username: basic.username,
-                            password: basic.password,
-                            showPassword: curr.showPassword
-                        };
-                    }
-                    else {
-                        curr = basic;
-                    }
-                    currentAuth[matched] = { type: "basic", config: curr };
-                }
-                else {
-                    currentAuth.splice(matched, 1);
-                }
-            }
-            cache.auth.value = json.str(currentAuth);
+            dom.setValue(cache.auth, json.str(auth));
         }
         editor.updateBasicAuth = updateBasicAuth;
     })(editor = request.editor || (request.editor = {}));
@@ -2439,45 +2401,97 @@ var request;
             parent.appendChild(createAuthEditor(el));
         }
         editor.initAuthEditor = initAuthEditor;
-        function setAuth(cache, auth) {
-            var url = new URL(cache.url.value);
+        function setAuth(input, view, a) {
+            var url = new URL(input.value);
             var u = "";
             var p = "";
-            if (auth) {
-                for (var _i = 0, auth_1 = auth; _i < auth_1.length; _i++) {
-                    var a = auth_1[_i];
-                    if (a.type === "basic") {
-                        var basic = a.config;
-                        u = encodeURIComponent(basic.username);
-                        p = encodeURIComponent(basic.password);
-                    }
-                }
+            if ((a === null || a === void 0 ? void 0 : a.type) === "basic") {
+                var basic = a.config;
+                u = encodeURIComponent(basic.username);
+                p = encodeURIComponent(basic.password);
             }
             url.username = u;
             url.password = p;
-            cache.url.value = url.toString();
+            var us = url.toString();
+            dom.setValue(input, us);
+            dom.setContent(view, request.prototypeToHTML(request.prototypeFromURL(us)));
         }
         editor.setAuth = setAuth;
         function createAuthEditor(el) {
-            var authSet = json.parse(el.value) || [];
-            var editors = authSet.map(function (a) {
-                switch (a.type) {
-                    case "basic":
-                        var b = a.config;
-                        return JSX("div", null,
-                            "BASIC: ",
-                            json.str(b));
-                    default:
-                        return JSX("div", null, a.type);
-                }
-            });
+            var a = json.parse(el.value);
             return JSX("div", { class: "uk-margin-top" },
-                JSX("div", { class: "current-auth-editors" }, editors),
-                JSX("a", { class: style.linkColor, href: "", onclick: "return false;" }, "Add New Auth"));
+                authSelect(el, a),
+                auth.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
+                    var cfg = (a && a.type == t.key) ? a.config : null;
+                    return configEditor(t.key, cfg, t.key === (a === null || a === void 0 ? void 0 : a.type), el);
+                }));
+        }
+        function authSelect(el, a) {
+            var ret = JSX("select", { class: "uk-select" },
+                JSX("option", { value: "" }, "No body"),
+                auth.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
+                    if (a && a.type === t.key) {
+                        return JSX("option", { value: t.key, selected: "selected" }, t.title);
+                    }
+                    else {
+                        return JSX("option", { value: t.key }, t.title);
+                    }
+                }));
+            editor.events(ret, function () {
+                dom.els(".body-editor", ret.parentElement).forEach(function (e) {
+                    var key = e.dataset["key"];
+                    if (ret.value === key) {
+                        if (key === "") {
+                            dom.setValue(el, "null");
+                            editor.check();
+                        }
+                        e.classList.remove("hidden");
+                    }
+                    else {
+                        e.classList.add("hidden");
+                    }
+                });
+            });
+            return ret;
+        }
+        function configEditor(key, config, active, el) {
+            var cls = "uk-margin-top body-editor";
+            if (!active) {
+                cls += " hidden";
+            }
+            var e;
+            switch (key) {
+                case "basic":
+                    e = basicEditor(key, active ? config : undefined, el);
+                    break;
+                default:
+                    e = JSX("div", null,
+                        "Unimplemented [",
+                        key,
+                        "] auth editor");
+            }
+            return JSX("div", { class: cls, "data-key": key }, e);
+        }
+        function basicEditor(key, b, el) {
+            var ret = JSX("textarea", { class: "uk-textarea" }, json.str(b));
+            var orig = b;
+            editor.events(ret, function () {
+                var msg = ret.value;
+                try {
+                    msg = json.parse(msg);
+                }
+                catch (e) { }
+                var changed = diff.comp("", orig, msg, function (k, lv, rv) { });
+                var n = { type: "basic", config: msg };
+                updateFn("json", n, el);
+            });
+            return ret;
         }
         function updateFn(t, cfg, el) {
-            var nb = [];
-            el.value = json.str(nb);
+            var e = dom.req("#" + el.id.replace("-auth", "-url"));
+            var v = dom.req("#" + el.id.replace("-auth", "-urlview"));
+            setAuth(e, v, cfg);
+            dom.setValue(el, json.str(cfg));
             editor.check();
         }
     })(editor = request.editor || (request.editor = {}));
@@ -2520,7 +2534,7 @@ var request;
                     var key = e.dataset["key"];
                     if (ret.value === key) {
                         if (key === "") {
-                            el.value = "null";
+                            dom.setValue(el, "null");
                             editor.check();
                         }
                         e.classList.remove("hidden");
@@ -2549,7 +2563,7 @@ var request;
                     e = JSX("div", null,
                         "Unimplemented [",
                         key,
-                        "] editor");
+                        "] body editor");
             }
             return JSX("div", { class: cls, "data-key": key }, e);
         }
@@ -2581,7 +2595,7 @@ var request;
         }
         function updateFn(t, cfg, length, el) {
             var nb = { type: t, config: cfg, length: length };
-            el.value = json.str(nb);
+            dom.setValue(el, json.str(nb));
             editor.check();
         }
     })(editor = request.editor || (request.editor = {}));
@@ -2599,6 +2613,7 @@ var request;
                 title: dom.req(id("title")),
                 desc: dom.req(id("description")),
                 url: dom.req(id("url")),
+                urlView: dom.req(id("urlview")),
                 method: dom.req(id("method")),
                 auth: dom.req(id("auth")),
                 qp: dom.req(id("queryparams")),
@@ -2611,7 +2626,7 @@ var request;
         }
         editor.wireForm = wireForm;
         function initEditors(prefix, cache) {
-            editor.initURLEditor(cache.url);
+            editor.initURLEditor(cache.url, cache.urlView);
             editor.initAuthEditor(cache.auth);
             editor.initQueryParamsEditor(cache.qp);
             editor.initHeadersEditor(cache.headers);
@@ -2619,13 +2634,18 @@ var request;
             editor.initOptionsEditor(cache.options);
         }
         function events(e, f) {
-            var x = function () {
-                f();
+            e.onchange = function () {
+                f("change");
                 return true;
             };
-            e.onchange = x;
-            e.onkeyup = x;
-            e.onblur = x;
+            e.onkeyup = function () {
+                f("keyup");
+                return true;
+            };
+            e.onblur = function () {
+                f("blur");
+                return true;
+            };
         }
         editor.events = events;
         function check() {
@@ -2637,9 +2657,12 @@ var request;
             events(cache.title, check);
             events(cache.desc, check);
             events(cache.method, check);
-            events(cache.url, function () {
+            events(cache.url, function (key) {
                 var p = request.prototypeFromURL(cache.url.value);
                 editor.setURL(cache, p);
+                if (key == "blur") {
+                    request.editor.toggleURLEditor(request.cache.active, false);
+                }
                 check();
             });
             events(cache.auth, function () {
@@ -2649,9 +2672,8 @@ var request;
                 }
                 catch (e) {
                     console.warn("invalid auth JSON [" + cache.auth.value + "]");
-                    auth = [];
                 }
-                editor.setAuth(cache, auth);
+                editor.setAuth(cache.url, cache.urlView, auth);
                 check();
             });
             events(cache.qp, function () {
@@ -2663,7 +2685,7 @@ var request;
                     console.warn("invalid qp JSON [" + cache.qp.value + "]");
                     qp = [];
                 }
-                editor.setQueryParams(cache.url, qp);
+                editor.setQueryParams(cache.url, cache.urlView, qp);
                 check();
             });
             events(cache.headers, function () {
@@ -2707,7 +2729,7 @@ var request;
         function createHeadersEditor(el) {
             var container = JSX("ul", { id: el.id + "-ul", class: "uk-list uk-list-divider" });
             var curr = json.parse(el.value);
-            container.innerText = "";
+            dom.setText(container, "");
             container.appendChild(editor.mapHeader(el.id, "addHeaderRow"));
             if (curr) {
                 for (var idx = 0; idx < curr.length; idx++) {
@@ -2737,7 +2759,7 @@ var request;
         function parseHeaders(elID) {
             var ret = editor.parseMapParams(elID);
             var ta = dom.req("#" + elID);
-            ta.value = json.str(ret);
+            dom.setValue(ta, json.str(ret));
             editor.check();
             return ret;
         }
@@ -2870,7 +2892,7 @@ var request;
             editor.events(ret, function () {
                 var opts = json.parse(el.value);
                 f(opts);
-                el.value = json.str(opts);
+                dom.setValue(el, json.str(opts));
                 editor.check();
             });
         }
@@ -2935,7 +2957,7 @@ var request;
             parent.appendChild(createQueryParamsEditor(el));
         }
         editor.initQueryParamsEditor = initQueryParamsEditor;
-        function setQueryParams(el, qp) {
+        function setQueryParams(el, view, qp) {
             var ret = [];
             if (qp) {
                 for (var _i = 0, qp_1 = qp; _i < qp_1.length; _i++) {
@@ -2964,17 +2986,18 @@ var request;
             if (f.length > 0) {
                 url += "#" + encodeURIComponent(f);
             }
-            el.value = url;
+            dom.setValue(el, url);
+            dom.setContent(view, request.prototypeToHTML(request.prototypeFromURL(url)));
         }
         editor.setQueryParams = setQueryParams;
         function updateQueryParams(cache, qp) {
-            cache.qp.value = json.str(qp);
+            dom.setValue(cache.qp, json.str(qp));
             updateFn(cache.qp, dom.req("#" + cache.qp.id + "-ul"));
         }
         editor.updateQueryParams = updateQueryParams;
         function updateFn(el, container) {
             var curr = json.parse(el.value);
-            container.innerText = "";
+            dom.clear(container);
             container.appendChild(editor.mapHeader(el.id, "addQueryParamRow"));
             if (curr) {
                 for (var idx = 0; idx < curr.length; idx++) {
@@ -3008,8 +3031,10 @@ var request;
         function parseQueryParams(elID) {
             var ret = editor.parseMapParams(elID);
             var ta = dom.req("#" + elID);
-            ta.value = json.str(ret);
-            setQueryParams(dom.req("#" + elID.replace("queryparams", "url")), ret);
+            dom.setValue(ta, json.str(ret));
+            var e = dom.req("#" + elID.replace("-queryparams", "-url"));
+            var v = dom.req("#" + elID.replace("-queryparams", "-urlview"));
+            setQueryParams(e, v, ret);
             editor.check();
             return ret;
         }
@@ -3019,18 +3044,27 @@ var request;
 (function (request) {
     var editor;
     (function (editor) {
-        function initURLEditor(el) {
+        function initURLEditor(el, view) {
         }
         editor.initURLEditor = initURLEditor;
-        function setURL(cache, u) {
-            if (!u) {
-                cache.qp.value = "[]";
+        function setURL(cache, p) {
+            if (!p) {
+                dom.setValue(cache.qp, "[]");
                 return;
             }
-            editor.updateQueryParams(cache, u.query);
-            editor.updateBasicAuth(cache, u.auth);
+            dom.setContent(cache.urlView, request.prototypeToHTML(p));
+            editor.updateQueryParams(cache, p.query);
+            editor.updateBasicAuth(cache, p.auth);
         }
         editor.setURL = setURL;
+        function toggleURLEditor(id, edit) {
+            dom.setDisplay("#" + id + "-link", !edit);
+            dom.setDisplay("#" + id + "-edit", edit);
+            if (edit) {
+                dom.req("#" + id + "-url").focus();
+            }
+        }
+        editor.toggleURLEditor = toggleURLEditor;
     })(editor = request.editor || (request.editor = {}));
 })(request || (request = {}));
 var request;
@@ -3058,7 +3092,7 @@ var request;
             if (o) {
                 var n = extractRequest(reqID);
                 var d = diff.diff(o, n);
-                console.debug("checking editor state", o, n, d);
+                // console.debug("checking editor state", o, n, d);
                 changed = d.length > 0;
             }
             else {
@@ -3169,7 +3203,7 @@ var request;
         function renderAuth(key, as) {
             return JSX("li", { class: "request-auth-panel" },
                 JSX("div", { class: "uk-margin-top" },
-                    JSX("textarea", { class: "uk-textarea", id: key + "-auth", name: "auth" }, json.str(as))));
+                    JSX("textarea", { class: "uk-textarea hidden", id: key + "-auth", name: "auth" }, json.str(as))));
         }
         function renderHeaders(key, hs) {
             return JSX("li", { class: "request-headers-panel" },
@@ -3194,6 +3228,7 @@ var request;
     (function (form) {
         function renderURL(coll, r) {
             var call = "nav.navigate(`/c/" + coll + "/" + r.key + "/call`);return false;";
+            var url = request.prototypeToURL(r.prototype);
             return JSX("div", { class: "uk-margin-top uk-panel" },
                 JSX("div", { class: "left", style: "width:120px;" },
                     JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(function (m) {
@@ -3204,10 +3239,14 @@ var request;
                             return JSX("option", null, m.key);
                         }
                     }))),
-                JSX("div", { class: "uk-inline right", style: "width:calc(100% - 120px);" },
+                JSX("div", { class: "url-view uk-inline right", id: r.key + "-link", style: "width:calc(100% - 120px);" },
                     JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: call, title: "send request", "uk-icon": "icon: play" }),
+                    JSX("div", { onclick: "request.editor.toggleURLEditor('" + r.key + "', true);" },
+                        JSX("span", { id: r.key + "-urlview", class: "url-link" }, request.prototypeToHTML(r.prototype)))),
+                JSX("div", { class: "url-input hidden uk-inline right", id: r.key + "-edit", style: "width:calc(100% - 120px);" },
+                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: "request.editor.toggleURLEditor('" + r.key + "', false);return false;", title: "cancel edit", "uk-icon": "icon: close" }),
                     JSX("form", { onsubmit: call },
-                        JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: request.prototypeToURL(r.prototype), "data-lpignore": "true" }))));
+                        JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: url, "data-lpignore": "true" }))));
         }
         form.renderURL = renderURL;
     })(form = request.form || (request.form = {}));

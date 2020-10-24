@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kyleu/npn/npnservice/auth"
+
 	"github.com/kyleu/npn/npnuser"
 
 	"github.com/kyleu/npn/npncore"
@@ -102,6 +104,21 @@ type JSONResponse struct {
 	Message  string    `json:"message"`
 	Path     string    `json:"path"`
 	Occurred time.Time `json:"occurred"`
+}
+
+func AuthAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestContext) (string, error)) {
+	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		allowed := auth.Check(ctx.App.Auth(), ctx.Profile.UserID, ctx.Logger)
+		if !allowed {
+			const msg = "you are not authorized to see this page"
+			if IsContentTypeJSON(GetContentType(r)) {
+				ae := JSONResponse{Status: "error", Message: msg, Path: r.URL.Path, Occurred: time.Now()}
+				return RespondJSON(w, "", ae, ctx.Logger)
+			}
+			return FlashAndRedir(false, msg, "home", w, r, ctx)
+		}
+		return f(ctx)
+	})
 }
 
 func AdminAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestContext) (string, error)) {

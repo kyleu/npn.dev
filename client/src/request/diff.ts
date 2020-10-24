@@ -28,7 +28,7 @@ namespace diff {
     compArray("query", lp.query, rp.query, p);
     comp("fragment", lp.fragment, rp.fragment, p);
     compArray("headers", lp.headers, rp.headers, p);
-    compArray("auth", lp.auth, rp.auth, p);
+    comp("auth", lp.auth, rp.auth, p);
 
     if(!checkNull("body", lp.body, rp.body, p)) {
       if (lp.body && rp.body) {

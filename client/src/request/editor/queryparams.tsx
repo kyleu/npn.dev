@@ -4,7 +4,7 @@ namespace request.editor {
     parent.appendChild(createQueryParamsEditor(el));
   }
 
-  export function setQueryParams(el: HTMLInputElement, qp: QueryParam[] | undefined) {
+  export function setQueryParams(el: HTMLInputElement, view: HTMLSpanElement, qp: QueryParam[] | undefined) {
     let ret: string[] = [];
     if (qp) {
       for (let p of qp) {
@@ -34,17 +34,18 @@ namespace request.editor {
     if (f.length > 0) {
       url += "#" + encodeURIComponent(f);
     }
-    el.value = url;
+    dom.setValue(el, url);
+    dom.setContent(view, prototypeToHTML(prototypeFromURL(url)));
   }
 
   export function updateQueryParams(cache: Cache, qp: QueryParam[] | undefined) {
-    cache.qp.value = json.str(qp);
+    dom.setValue(cache.qp, json.str(qp));
     updateFn(cache.qp, dom.req("#" + cache.qp.id + "-ul"))
   }
 
   function updateFn(el: HTMLTextAreaElement, container: HTMLElement) {
     const curr = json.parse(el.value) as QueryParam[];
-    container.innerText = ""
+    dom.clear(container);
     container.appendChild(mapHeader(el.id, "addQueryParamRow"));
     if (curr) {
       for (let idx = 0; idx < curr.length; idx++) {
@@ -81,8 +82,10 @@ namespace request.editor {
   function parseQueryParams(elID: string) {
     let ret: QueryParam[] = parseMapParams(elID);
     const ta = dom.req<HTMLTextAreaElement>("#" + elID);
-    ta.value = json.str(ret);
-    setQueryParams(dom.req("#" + elID.replace("queryparams", "url")), ret);
+    dom.setValue(ta, json.str(ret));
+    const e = dom.req<HTMLInputElement>("#" + elID.replace("-queryparams", "-url"));
+    const v = dom.req("#" + elID.replace("-queryparams", "-urlview"));
+    setQueryParams(e, v, ret);
     check();
     return ret;
   }

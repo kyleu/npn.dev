@@ -5,6 +5,7 @@ namespace request.editor {
     readonly desc: HTMLTextAreaElement;
     readonly method: HTMLSelectElement;
     readonly url: HTMLInputElement;
+    readonly urlView: HTMLSpanElement;
     readonly auth: HTMLTextAreaElement;
     readonly qp: HTMLTextAreaElement;
     readonly headers: HTMLTextAreaElement;
@@ -22,6 +23,7 @@ namespace request.editor {
       title: dom.req<HTMLInputElement>(id("title")),
       desc: dom.req<HTMLTextAreaElement>(id("description")),
       url: dom.req<HTMLInputElement>(id("url")),
+      urlView: dom.req<HTMLSpanElement>(id("urlview")),
       method: dom.req<HTMLSelectElement>(id("method")),
       auth: dom.req<HTMLTextAreaElement>(id("auth")),
       qp: dom.req<HTMLTextAreaElement>(id("queryparams")),
@@ -34,7 +36,7 @@ namespace request.editor {
   }
 
   function initEditors(prefix: string, cache: Cache) {
-    initURLEditor(cache.url);
+    initURLEditor(cache.url, cache.urlView);
     initAuthEditor(cache.auth);
     initQueryParamsEditor(cache.qp);
     initHeadersEditor(cache.headers);
@@ -42,14 +44,19 @@ namespace request.editor {
     initOptionsEditor(cache.options);
   }
 
-  export function events(e: HTMLElement, f: () => void) {
-    const x = () => {
-      f();
+  export function events(e: HTMLElement, f: (key: string) => void) {
+    e.onchange = () => {
+      f("change");
       return true;
-    }
-    e.onchange = x;
-    e.onkeyup = x;
-    e.onblur = x;
+    };
+    e.onkeyup = () => {
+      f("keyup");
+      return true;
+    };
+    e.onblur = () => {
+      f("blur");
+      return true;
+    };
   }
 
   export function check() {
@@ -62,21 +69,23 @@ namespace request.editor {
     events(cache.desc, check);
     events(cache.method, check);
 
-    events(cache.url, function () {
+    events(cache.url, function (key: string) {
       const p = prototypeFromURL(cache.url.value);
       setURL(cache, p);
+      if (key == "blur") {
+        request.editor.toggleURLEditor(request.cache.active!, false);
+      }
       check();
     });
 
     events(cache.auth, function () {
-      let auth: auth.Auth[];
+      let auth: auth.Auth | undefined;
       try {
         auth = json.parse(cache.auth.value);
       } catch (e) {
         console.warn("invalid auth JSON [" + cache.auth.value + "]")
-        auth = [];
       }
-      setAuth(cache, auth);
+      setAuth(cache.url, cache.urlView, auth);
       check();
     });
 
@@ -88,7 +97,7 @@ namespace request.editor {
         console.warn("invalid qp JSON [" + cache.qp.value + "]")
         qp = [];
       }
-      setQueryParams(cache.url, qp);
+      setQueryParams(cache.url, cache.urlView, qp);
       check();
     });
 

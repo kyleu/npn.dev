@@ -15,6 +15,8 @@ import (
 	"logur.dev/logur"
 )
 
+const multiuser = true
+
 type Service struct {
 	debug      bool
 	files      npncore.FileLoader
@@ -29,16 +31,16 @@ type Service struct {
 
 var _ npnweb.AppInfo = (*Service)(nil)
 
-func NewService(debug bool, files npncore.FileLoader, logger logur.Logger) *Service {
-	us := userfs.NewServiceFilesystem(false, files, logger)
+func NewService(debug bool, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
+	us := userfs.NewServiceFilesystem(multiuser, files, logger)
 	collSvc := collection.NewService(files, logger)
 	callSvc := call.NewService(logger)
+
 	return &Service{
-		debug: debug,
-		files: files,
-		user:  us,
-		// auth:       authdb.NewServiceDatabase(false, "", nil, logger, us),
-		auth:       authfs.NewServiceNoop(),
+		debug:      debug,
+		files:      files,
+		user:       us,
+		auth:       authfs.NewServiceFS(multiuser, redir, files, logger, us),
 		logger:     logger,
 		Collection: collSvc,
 		Import:     imprt.NewService(files, logger),

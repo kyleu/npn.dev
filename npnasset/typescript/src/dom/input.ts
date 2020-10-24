@@ -61,7 +61,7 @@ namespace dom {
     if (e.selectionStart || e.selectionStart === 0) {
       let startPos = e.selectionStart;
       let endPos = e.selectionEnd;
-      e.value = e.value.substring(0, startPos) + text + e.value.substring(endPos, e.value.length);
+      dom.setValue(e, e.value.substring(0, startPos) + text + e.value.substring(endPos, e.value.length));
       e.selectionStart = startPos + text.length;
       e.selectionEnd = startPos + text.length;
     } else {

@@ -39,9 +39,9 @@ func (p *Prototype) FullPathString() string {
 
 func (p *Prototype) URLString() string {
 	domain := p.Host()
-	if p.Auth.HasBasic() {
+	if p.Auth.IsBasic() {
 		user, pass := p.Auth.GetBasic()
-		domain = fmt.Sprintf("%v:%v@%v", url.PathEscape(user), url.PathEscape(pass), p.Host())
+		domain = fmt.Sprintf("%v:%v@%v", url.PathEscape(user), url.PathEscape(pass), domain)
 	}
 	ret := fmt.Sprintf("%v://%v", p.Protocol.Key, domain)
 	ret += p.FullPathString()
@@ -60,7 +60,7 @@ func (p *Prototype) URLParts() []*URLPart {
 	}
 	add("protocol", p.Protocol.String())
 	add("", "://")
-	if p.Auth.HasBasic() {
+	if p.Auth.IsBasic() {
 		user, pass := p.Auth.GetBasic()
 		add("username", url.PathEscape(user))
 		add("", ":")

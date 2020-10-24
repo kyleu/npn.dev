@@ -44,7 +44,7 @@ namespace request {
     query?: QueryParam[];
     readonly fragment?: string;
     headers?: header.Header[];
-    auth?: auth.Auth[];
+    auth?: auth.Auth;
     body?: rbody.Body;
     options?: Options;
   }

@@ -28,6 +28,7 @@ ADD ./npncore         /npn/npncore
 # ADD ./npndatabase     /npn/npndatabase
 # ADD ./npnexport       /npn/npnexport
 # ADD ./npngraphql      /npn/npngraphql
+# ADD ./npnqueue        /npn/npnqueue
 ADD ./npnscript       /npn/npnscript
 ADD ./npnservice      /npn/npnservice
 # ADD ./npnservice-db   /npn/npnservice-db

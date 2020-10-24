@@ -32,7 +32,7 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 }
 
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := s.Context.(*services)
+	svc := getContext(s)
 	frm := &paramGetRequest{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
@@ -47,7 +47,7 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 }
 
 func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := s.Context.(*services)
+	svc := getContext(s)
 	frm := &paramSaveRequest{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
@@ -62,7 +62,7 @@ func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npncon
 }
 
 func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := s.Context.(*services)
+	svc := getContext(s)
 	frm := &paramDeleteRequest{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
@@ -77,7 +77,7 @@ func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnc
 }
 
 func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := s.Context.(*services)
+	svc := getContext(s)
 	frm := &paramCall{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
@@ -113,4 +113,8 @@ func onTransform(c *npnconnection.Connection, param json.RawMessage, s *npnconne
 	txr := transformResponse{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageTransformResult, txr)
 	return s.WriteMessage(c.ID, msg)
+}
+
+func getContext(s *npnconnection.Service) *services {
+	return s.Context.(*services)
 }

@@ -36,6 +36,7 @@ tagall () {
   gt "npndatabase"
   gt "npnexport"
   gt "npngraphql"
+  gt "npnqueue"
   gt "npnscript"
   gt "npnservice"
   gt "npnservice-db"
@@ -48,3 +49,6 @@ tagall () {
 rplc
 bld
 tagall
+
+git push
+git push --tags

@@ -37,12 +37,12 @@ func (f *requestForm) ToRequest() (*request.Request, error) {
 	}
 	proto.Headers = *h
 
-	a := &auth.Auths{}
+	a := &auth.Auth{}
 	err = npncore.FromJSON([]byte(f.Auth), a)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse auth")
 	}
-	proto.Auth = *a
+	proto.Auth = a
 
 	b := &body.Body{}
 	err = npncore.FromJSON([]byte(f.Body), b)

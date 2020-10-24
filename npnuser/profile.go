@@ -52,6 +52,11 @@ func (t *Role) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+var (
+	DefaultNavColor  = "bluegrey"
+	DefaultLinkColor = "bluegrey"
+)
+
 type UserProfile struct {
 	UserID    uuid.UUID
 	Name      string
@@ -69,8 +74,8 @@ func NewUserProfile(userID uuid.UUID, name string) *UserProfile {
 		Name:      name,
 		Theme:     ThemeAuto,
 		Role:      RoleGuest,
-		NavColor:  "bluegrey",
-		LinkColor: "bluegrey",
+		NavColor:  DefaultNavColor,
+		LinkColor: DefaultLinkColor,
 		Locale:    language.AmericanEnglish,
 	}
 }

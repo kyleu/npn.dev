@@ -37,7 +37,7 @@ func AuthSubmit(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		u := ctx.App.Auth().URLFor(state, prv)
+		u := auth.URLFor(ctx.App.Auth(), state, prv)
 		if len(u) == 0 {
 			return ENew(prv.Title + " is disabled")
 		}
@@ -52,16 +52,28 @@ func AuthCallback(w http.ResponseWriter, r *http.Request) {
 		}
 		_, _ = ctx.App.User().SaveProfile(ctx.Profile)
 		prv := auth.ProviderFromString(mux.Vars(r)[npncore.KeyKey])
-		code, ok := r.URL.Query()["code"]
-		if !ok || len(code) == 0 {
+
+		e := r.URL.Query().Get("error")
+		if len(e) > 0 {
+			edesc := r.URL.Query().Get("error_description")
+			if len(edesc) > 0 {
+				return ENew(e + ": " + edesc)
+			}
+			return ENew(e)
+		}
+
+		code := r.URL.Query().Get("code")
+		if len(code) == 0 {
 			return ENew("no auth code provided")
 		}
-		stateS, ok := r.URL.Query()["state"]
+
+		stateS := r.URL.Query().Get("state")
 		u := "/"
-		if ok && len(stateS) > 0 && strings.HasPrefix(stateS[0], "/") {
-			u = stateS[0]
+		if len(stateS) > 0 && strings.HasPrefix(stateS, "/") {
+			u = stateS
 		}
-		record, err := ctx.App.Auth().Handle(ctx.Profile, prv, code[0])
+
+		record, err := auth.Handle(ctx.App.Auth(), ctx.Profile, prv, code)
 		if err != nil {
 			return EResp(err)
 		}
@@ -81,7 +93,7 @@ func AuthSignout(w http.ResponseWriter, r *http.Request) {
 			return EResp(err, npncore.IDErrorString(npncore.KeyAuth, ""))
 		}
 
-		err = ctx.App.Auth().Delete(*id)
+		err = ctx.App.Auth().Delete(ctx.Profile.UserID, *id)
 		if err != nil {
 			return EResp(err, "unable to delete auth record")
 		}
