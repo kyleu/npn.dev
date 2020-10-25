@@ -7,11 +7,9 @@ Vue.use(Vuex);
 export const store = new Vuex.Store({
   state: initialState(),
   mutations: {
-    updateCollection(state: State): void {
+    onMessage(state: State): void {
       console.log(state.activeCollection?.key || "no active collection");
     }
-  },
-  actions: {
   },
   modules: {}
 });

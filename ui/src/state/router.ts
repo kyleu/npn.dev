@@ -4,6 +4,7 @@ import Home from "@/views/Home.vue";
 import About from "@/views/About.vue";
 import NotFound from "@/views/NotFound.vue";
 import CollectionDetail from "@/collection/CollectionDetail.vue";
+import CollectionIndex from "@/collection/CollectionIndex.vue";
 
 Vue.use(VueRouter);
 
@@ -14,8 +15,13 @@ const routes: Array<RouteConfig> = [
     component: Home
   },
   {
+    path: "/c",
+    name: "CollectionIndex",
+    component: CollectionIndex,
+  },
+  {
     path: "/c/:coll",
-    name: "Collection",
+    name: "CollectionDetail",
     component: CollectionDetail
   },
   {

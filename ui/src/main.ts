@@ -16,10 +16,13 @@ import Icons from "uikit/dist/js/uikit-icons";
 // @ts-ignore
 (window as any).UIkit = UIkit;
 
-/* eslint-enable @typescript-eslint/no-explicit-any */
-
 Vue.config.productionTip = false;
 
 const render = (h: Vue.CreateElement): Vue.VNode => h(Workspace);
 
-new Vue({router, store, render}).$mount("#npn");
+const root = new Vue({router, store, render}).$mount("#npn");
+
+// @ts-ignore
+(window as any).npn = { root, router, store };
+
+/* eslint-enable @typescript-eslint/no-explicit-any */

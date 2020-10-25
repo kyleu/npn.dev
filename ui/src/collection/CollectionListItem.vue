@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link class="theme" :to="'/c/' + coll.key">{{ label }}</router-link>
+    <router-link class="theme collection-link" :to="'/c/' + coll.key">{{ label }}</router-link>
   </div>
 </template>
 
@@ -17,3 +17,9 @@ export default class CollectionListItem extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+  .collection-link.router-link-active {
+    font-weight: bold;
+  }
+</style>

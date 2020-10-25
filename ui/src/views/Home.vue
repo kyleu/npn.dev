@@ -8,6 +8,10 @@
         <h3 class="uk-card-title">Collections</h3>
         <CollectionGallery />
       </div>
+      <div class="uk-card uk-card-body uk-card-default mt">
+        <h3 class="uk-card-title">Debug</h3>
+        <pre>{{ dbg }}</pre>
+      </div>
     </div>
   </div>
 </template>
@@ -15,8 +19,12 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CollectionGallery from "@/collection/CollectionGallery.vue";
-@Component({
-  components: {CollectionGallery}
-})
-export default class Home extends Vue {}
+import { jsonStr } from '@/util/json';
+
+@Component({ components: { CollectionGallery } })
+export default class Home extends Vue {
+  get dbg (): string {
+    return jsonStr(this.$store.state.profile);
+  }
+}
 </script>

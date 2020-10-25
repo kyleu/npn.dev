@@ -1,7 +1,7 @@
 <template>
-  <div class="nav-list collection-list">
+  <ul class="uk-list uk-list-divider mt">
     <CollectionGalleryItem v-for="coll in $store.state.collections" :key="coll.key" :coll="coll" />
-  </div>
+  </ul>
 </template>
 
 <script lang="ts">

@@ -1,7 +1,8 @@
 <template>
-  <div>
-    <router-link class="theme" :to="'/c/' + coll.key">{{ label }}</router-link>
-  </div>
+  <li>
+    <router-link class="theme collection-link" :to="'/c/' + coll.key">{{ label }}</router-link>
+    <em v-if="coll.description.length > 0" class="ml">{{ coll.description }}</em>
+  </li>
 </template>
 
 <script lang="ts">

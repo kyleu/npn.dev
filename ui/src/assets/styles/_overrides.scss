@@ -57,6 +57,7 @@ h4 {
       color: #fff;
     }
   }
+
   .uk-navbar-toggle-icon {
     color: #ddd;
   }
@@ -75,9 +76,11 @@ h4 {
 .uk-navbar-nav > li > a {
   text-transform: none;
   transition: none;
+
   &.active {
     font-weight: bold;
   }
+
   padding: 0;
   margin: 0 10px;
 }
@@ -92,6 +95,10 @@ h4 {
   img {
     height: 54px;
   }
+}
+
+.uk-navbar-item.trim {
+  padding: 0;
 }
 
 // Search
@@ -126,6 +133,7 @@ h4 {
       color: #fff;
     }
   }
+
   .uk-offcanvas-overlay::before {
     background: rgba(128, 128, 128, 0.4);
   }
@@ -172,7 +180,13 @@ pre {
 
 // Cards
 .uk-card-default {
+  background: #fff;
+  color: #666;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+
+  .uk-card-title {
+    color: #333
+  }
 }
 
 .uk-light {
@@ -180,9 +194,8 @@ pre {
     background: #222;
     color: rgba(255, 255, 255, 0.7);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-  }
-
-  .uk-card-default .uk-card-title {
-    color: #fff;
+    .uk-card-title {
+      color: #fff;
+    }
   }
 }

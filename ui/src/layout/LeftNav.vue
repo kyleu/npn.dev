@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="nav-section">
-      <div class="nav-header">Collections</div>
+      <router-link tag="div" class="nav-header" :to="{name: 'CollectionIndex'}">Collections</router-link>
       <CollectionList />
     </div>
   </div>

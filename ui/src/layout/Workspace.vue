@@ -16,8 +16,15 @@ import { Component, Vue } from "vue-property-decorator";
 import NavBar from "@/layout/NavBar.vue";
 import LeftNav from "@/layout/LeftNav.vue";
 
-@Component({ components: { LeftNav, NavBar } })
-export default class Workspace extends Vue {}
+@Component({ components: {LeftNav, NavBar } })
+export default class Workspace extends Vue {
+  created(): void  {
+    console.log("STARTED!!!!");
+  }
+  onMessage(): void {
+    console.log("onMessage!");
+  }
+}
 </script>
 
 <style lang="scss"></style>
