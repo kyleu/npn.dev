@@ -8,8 +8,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {Component, Prop, Vue} from "vue-property-decorator";
+import {Collection} from "@/collection/collection";
 
 @Component
-export default class CollectionDetail extends Vue {}
+export default class CollectionDetail extends Vue {
+  @Prop() coll!: Collection
+}
 </script>

@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CollectionList from "@/components/CollectionList.vue";
+import CollectionList from "@/collection/CollectionList.vue";
 
 @Component({ components: { CollectionList } })
 export default class LeftNav extends Vue {}

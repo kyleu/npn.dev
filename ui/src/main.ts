@@ -1,7 +1,7 @@
 import Vue from "vue";
-import Workspace from "./Workspace.vue";
-import {router} from "./router";
-import {store} from "./store";
+import Workspace from "./layout/Workspace.vue";
+import {router} from "./state/router";
+import {store} from "./state/store";
 import UIkit from "uikit";
 import "@/assets/styles/styles.scss";
 

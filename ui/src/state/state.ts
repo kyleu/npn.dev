@@ -1,5 +1,5 @@
-import {Collection, MockCollections} from "@/model/collection";
-import Profile from "@/model/profile";
+import {Collection, MockCollections} from "@/collection/collection";
+import Profile from "@/user/profile";
 
 export interface State {
   profile: Profile;

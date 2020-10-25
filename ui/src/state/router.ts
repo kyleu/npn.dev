@@ -2,7 +2,8 @@ import Vue from "vue";
 import VueRouter, { RouteConfig } from "vue-router";
 import Home from "@/views/Home.vue";
 import About from "@/views/About.vue";
-import CollectionDetail from "@/views/CollectionDetail.vue";
+import NotFound from "@/views/NotFound.vue";
+import CollectionDetail from "@/collection/CollectionDetail.vue";
 
 Vue.use(VueRouter);
 
@@ -21,6 +22,11 @@ const routes: Array<RouteConfig> = [
     path: "/about",
     name: "About",
     component: About
+  },
+  {
+    path: "*",
+    name: "NotFound",
+    component: NotFound
   }
 ];
 

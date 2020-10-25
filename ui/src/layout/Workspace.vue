@@ -13,8 +13,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import NavBar from "@/components/NavBar.vue";
-import LeftNav from "@/components/LeftNav.vue";
+import NavBar from "@/layout/NavBar.vue";
+import LeftNav from "@/layout/LeftNav.vue";
 
 @Component({ components: { LeftNav, NavBar } })
 export default class Workspace extends Vue {}

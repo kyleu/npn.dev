@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CollectionListItem from "@/components/CollectionListItem.vue";
+import CollectionListItem from "@/collection/CollectionListItem.vue";
 
 @Component({ components: { CollectionListItem } })
 export default class CollectionList extends Vue {}
