@@ -1,8 +1,8 @@
 <template>
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
-      <h3>Welcome to npn!</h3>
-      <img class="mt" alt="logo" src="../assets/logo.png" />
+      <h3>Collection [{{ $route.params.coll }}]</h3>
+      <p>TODO!</p>
     </div>
   </div>
 </template>
@@ -11,5 +11,5 @@
 import { Component, Vue } from "vue-property-decorator";
 
 @Component
-export default class Home extends Vue {}
+export default class CollectionDetail extends Vue {}
 </script>

@@ -5,11 +5,6 @@
     <div id="workspace-content">
       <router-view />
     </div>
-    <div id="log-container" class="hidden">
-      <div id="log-content">
-        <ul id="log-list" class="uk-list uk-list-divider"></ul>
-      </div>
-    </div>
     <div id="nav-offcanvas" data-uk-offcanvas="mode: push; overlay: true">
       <div class="uk-offcanvas-bar"><LeftNav /></div>
     </div>
@@ -21,9 +16,7 @@ import { Component, Vue } from "vue-property-decorator";
 import NavBar from "@/components/NavBar.vue";
 import LeftNav from "@/components/LeftNav.vue";
 
-@Component({
-  components: {LeftNav, NavBar}
-})
+@Component({ components: { LeftNav, NavBar } })
 export default class Workspace extends Vue {}
 </script>
 

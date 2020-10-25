@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link class="theme" :to="'/c/' + coll.key">{{ coll.title.length === 0 ? coll.key : coll.title }}</router-link>
+    <router-link class="theme" :to="'/c/' + coll.key">{{ label }}</router-link>
   </div>
 </template>
 
@@ -11,5 +11,9 @@ import {Collection} from "@/model/collection";
 @Component
 export default class CollectionListItem extends Vue {
   @Prop() coll!: Collection;
+
+  get label(): string {
+    return this.coll.title.length === 0 ? this.coll.key : this.coll.title;
+  }
 }
 </script>
