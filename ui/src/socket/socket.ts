@@ -62,7 +62,6 @@ export class Socket {
     // log.info("socket connected");
     this.connected = true;
     this.pauseSeconds = 1;
-    console.log(this);
     this.pendingMessages.forEach(this.send);
     this.pendingMessages = [];
     this.onOpen("");

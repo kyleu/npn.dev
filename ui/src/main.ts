@@ -1,12 +1,13 @@
 import Vue from "vue";
 import Workspace from "./layout/Workspace.vue";
 import {router} from "./state/router";
-import {store} from "./state/store";
+import {newStore} from "./state/store";
 import UIkit from "uikit";
 import "@/assets/styles/styles.scss";
 
 // @ts-ignore
 import Icons from "uikit/dist/js/uikit-icons";
+import {Message} from "@/socket/socket";
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -19,6 +20,12 @@ import Icons from "uikit/dist/js/uikit-icons";
 Vue.config.productionTip = false;
 
 const render = (h: Vue.CreateElement): Vue.VNode => h(Workspace);
+
+const handler = (msg: Message): void => {
+  console.log(msg);
+}
+
+const store = newStore(handler);
 
 const root = new Vue({router, store, render}).$mount("#npn");
 
