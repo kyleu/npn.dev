@@ -17,14 +17,7 @@ import NavBar from "@/layout/NavBar.vue";
 import LeftNav from "@/layout/LeftNav.vue";
 
 @Component({ components: {LeftNav, NavBar } })
-export default class Workspace extends Vue {
-  created(): void  {
-    console.log("STARTED!!!!");
-  }
-  onMessage(): void {
-    console.log("onMessage!");
-  }
-}
+export default class Workspace extends Vue {}
 </script>
 
 <style lang="scss"></style>

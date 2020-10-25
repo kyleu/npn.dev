@@ -7,6 +7,7 @@ export interface Breadcrumb {
 }
 
 export interface State {
+  readonly url: string;
   profile: Profile;
   breadcrumbs: Breadcrumb[];
 
@@ -20,26 +21,21 @@ interface InitialData {
 }
 
 export function initialState(): State {
-  /* eslint-disable @typescript-eslint/no-explicit-any */
   // @ts-ignore
+  // eslint-disable-next-line
   const cfg = (window as any).initialData as InitialData;
-  /* eslint-enable @typescript-eslint/no-explicit-any */
 
   let profile = {} as Profile;
-  if (cfg) {
+  const url = cfg && cfg.url ? cfg.url : "";
+
+  if (cfg && cfg.profile) {
     profile = cfg.profile;
   }
+
   return {
+    url: url,
     profile: profile,
-    breadcrumbs: [
-      {
-        title: "asdf",
-        path: "/asdf"
-      }, {
-        title: "qwer",
-        path: "/asdf/qwer"
-      }
-    ],
+    breadcrumbs: [],
 
     collections: MockCollections,
     activeCollection: undefined

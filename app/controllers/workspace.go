@@ -24,13 +24,24 @@ func WorkspaceVue(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-var upgrader = websocket.Upgrader{}
+var upgrader = websocket.Upgrader{
+	HandshakeTimeout:  0,
+	ReadBufferSize:    0,
+	WriteBufferSize:   0,
+	WriteBufferPool:   nil,
+	Subprotocols:      nil,
+	Error:             nil,
+	CheckOrigin:       func(r *http.Request) bool {
+		return true
+	},
+	EnableCompression: false,
+}
 
 func Socket(w http.ResponseWriter, r *http.Request) {
 	ctx := npnweb.ExtractContext(w, r, true)
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		ctx.Logger.Info("unable to upgrade connection to websocket")
+		ctx.Logger.Info(fmt.Sprintf("unable to upgrade connection to websocket: %+v", err))
 		return
 	}
 

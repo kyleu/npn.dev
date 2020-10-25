@@ -3,11 +3,22 @@ import {jsonParse, jsonStr} from "@/util/json";
 export interface Message {
   readonly svc: string;
   readonly cmd: string;
+  // @ts-ignore
+  // eslint-disable-next-line
   readonly param: any;
 }
 
-export default class Socket {
-  private url: string
+function socketUrl(): string {
+  const l = document.location;
+  let protocol = "ws";
+  if (l.protocol === "https:") {
+    protocol = "wss";
+  }
+  return protocol + `://${l.host}/s`;
+}
+
+export class Socket {
+  private readonly url: string
   private sock!: WebSocket
 
   connected = false
@@ -22,48 +33,49 @@ export default class Socket {
   private pendingMessages: Message[] = [];
 
   constructor(openF: (id: string) => void, recvF: (m: Message) => void, errF: (svc: string, err: string) => void, url?: string) {
-    this.url = url ? url : socketUrl();
-
+    this.url = (url && url.length > 0) ? url : socketUrl();
+    console.log(this.url);
     this.onOpen = openF;
     this.onMessage = recvF;
     this.onError = errF;
 
-    window.onbeforeunload = () => {
+    window.onbeforeunload = (): void => {
       this.setAppUnloading();
     };
 
     this.init()
   }
 
-  setAppUnloading() {
+  setAppUnloading(): void {
     this.appUnloading = true;
   }
 
-  private init() {
+  private init(): void {
     this.sock = new WebSocket(this.url);
-    this.sock.onopen = this.onSocketOpen;
-    this.sock.onmessage = (event) => this.onMessage(jsonParse(event.data));
-    this.sock.onerror = (event) => this.onError("socket", event.type);
-    this.sock.onclose = this.onSocketClose;
+    this.sock.onopen = (): void => this.onSocketOpen();
+    this.sock.onmessage = (event): void => this.onMessage(jsonParse(event.data));
+    this.sock.onerror = (event): void => this.onError("socket", event.type);
+    this.sock.onclose = (): void => this.onSocketClose();
   }
 
   private onSocketOpen(): void {
     // log.info("socket connected");
     this.connected = true;
     this.pauseSeconds = 1;
+    console.log(this);
     this.pendingMessages.forEach(this.send);
     this.pendingMessages = [];
     this.onOpen("");
   }
 
-  private socketConnect() {
+  private socketConnect(): void {
     if (!this.onMessage) {
       throw "onMessage not initialized";
     }
     this.init();
   }
 
-  private send(msg: Message) {
+  private send(msg: Message): void {
     // console.debug("out", msg);
     if (this.connected) {
       const m = jsonStr(msg);
@@ -73,35 +85,25 @@ export default class Socket {
     }
   }
 
-  private onSocketClose() {
-    const self = this;
-    function disconnect() {
-      self.connected = false;
-      const elapsed = Date.now() - self.connectTime!;
+  private disconnect(): void {
+    this.connected = false;
+    const elapsed = Date.now() - (this.connectTime || 0);
 
-      if (elapsed < 2000) {
-        self.pauseSeconds = self.pauseSeconds * 2;
-        // console.debug(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
-        setTimeout(() => {
-          self.socketConnect();
-        }, self.pauseSeconds * 1000);
-      } else {
-        // log.info("socket closed after [" + elapsed + "ms]");
-        self.socketConnect();
-      }
-    }
-
-    if (!self.appUnloading) {
-      disconnect();
+    if (elapsed < 2000) {
+      this.pauseSeconds = this.pauseSeconds * 2;
+      // console.debug(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
+      setTimeout(() => {
+        this.socketConnect();
+      }, this.pauseSeconds * 1000);
+    } else {
+      // log.info("socket closed after [" + elapsed + "ms]");
+      this.socketConnect();
     }
   }
-}
 
-function socketUrl() {
-  const l = document.location;
-  let protocol = "ws";
-  if (l.protocol === "https:") {
-    protocol = "wss";
+  private onSocketClose(): void {
+    if (!this.appUnloading) {
+      this.disconnect();
+    }
   }
-  return protocol + `://${l.host}/s`;
 }
