@@ -29,10 +29,10 @@ namespace rbody {
       <span class="preview-link right">(<a class={style.linkColor} href="" onclick="rbody.renderHTMLPreview(this);return false">preview</a>)</span>
       <span class="text-link right hidden">(<a class={style.linkColor} href="" onclick="rbody.renderHTMLText(this);return false">text</a>)</span>
       <em>HTML</em>
-      <div class="text-content prism uk-margin-top" style="overflow: auto; max-height: 720px;">
+      <div class="text-content prism mt" style="overflow: auto; max-height: 720px;">
         <pre class="language-html" data-start="0" style="white-space:pre-wrap;"><code dangerouslySetInnerHTML={{__html: html}} /></pre>
       </div>
-      <div class="preview-content uk-margin-top hidden" style="overflow: auto; max-height: 720px; border: 1px solid #666;" />
+      <div class="preview-content mt hidden" style="overflow: auto; max-height: 720px; border: 1px solid #666;" />
     </div>;
   }
 
@@ -40,7 +40,7 @@ namespace rbody {
     let html: string = Prism.highlight(JSON.stringify(j.msg, null, 2), Prism.languages.javascript, 'javascript');
     return <div>
       <em>JSON</em>
-      <div class="uk-margin-top">
+      <div class="mt">
         <pre class="language-html" data-start="0" style="white-space:pre-wrap;"><code dangerouslySetInnerHTML={{__html: html}} /></pre>
       </div>
     </div>;

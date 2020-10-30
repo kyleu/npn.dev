@@ -22,6 +22,6 @@ namespace transform {
   }
 
   function render(r: Result) {
-    return <div class="uk-margin-top"><pre>{r.out}</pre></div>;
+    return <div class="mt"><pre>{r.out}</pre></div>;
   }
 }

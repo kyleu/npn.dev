@@ -87,10 +87,10 @@ namespace socket {
   }
 
   export function socketSend(msg: socket.Message) {
-    if (debug) {
-      console.debug("out", msg);
-    }
     if (connected) {
+      if (debug) {
+        console.debug("out", msg);
+      }
       const m = json.str(msg);
       sock.send(m);
     } else {

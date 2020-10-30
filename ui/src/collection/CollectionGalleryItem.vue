@@ -1,7 +1,7 @@
 <template>
   <li>
-    <router-link class="theme collection-link" :to="'/c/' + coll.key">{{ label }}</router-link>
-    <em v-if="coll.description.length > 0" class="ml">{{ coll.description }}</em>
+    <em v-if="coll.description && coll.description.length > 0" class="right ml">{{ coll.description }}</em>
+    <router-link :class="'collection-link ' + $store.state.profile.linkColor + '-fg'" :to="'/c/' + coll.key">{{ label }}</router-link>
   </li>
 </template>
 

@@ -17,7 +17,7 @@ namespace request.editor {
     dom.setDisplay("#" + id + "-link", !edit);
     dom.setDisplay("#" + id + "-edit", edit);
     if (edit) {
-        dom.req<HTMLInputElement>("#" + id + "-url").focus();
+      dom.req<HTMLInputElement>("#" + id + "-url").focus();
     }
   }
 }

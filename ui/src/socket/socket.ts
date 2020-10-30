@@ -1,4 +1,5 @@
 import {jsonParse, jsonStr} from "@/util/json";
+import {logDebug} from "@/util/log";
 
 export interface Message {
   readonly svc: string;
@@ -34,7 +35,7 @@ export class Socket {
 
   constructor(openF: (id: string) => void, recvF: (m: Message) => void, errF: (svc: string, err: string) => void, url?: string) {
     this.url = (url && url.length > 0) ? url : socketUrl();
-    console.log(this.url);
+    logDebug(this.url);
     this.onOpen = openF;
     this.onMessage = recvF;
     this.onError = errF;
@@ -62,7 +63,7 @@ export class Socket {
     // log.info("socket connected");
     this.connected = true;
     this.pauseSeconds = 1;
-    this.pendingMessages.forEach(this.send);
+    this.pendingMessages.forEach((msg) => this.send(msg));
     this.pendingMessages = [];
     this.onOpen("");
   }
@@ -74,9 +75,9 @@ export class Socket {
     this.init();
   }
 
-  private send(msg: Message): void {
-    // console.debug("out", msg);
+  send(msg: Message): void {
     if (this.connected) {
+      logDebug("OUT", msg);
       const m = jsonStr(msg);
       this.sock.send(m);
     } else {

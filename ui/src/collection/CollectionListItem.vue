@@ -1,6 +1,6 @@
 <template>
   <div>
-    <router-link class="theme collection-link" :to="'/c/' + coll.key">{{ label }}</router-link>
+    <router-link :class="'collection-link ' + $store.state.profile.linkColor + '-fg'" :to="'/c/' + coll.key">{{ label }}</router-link>
   </div>
 </template>
 

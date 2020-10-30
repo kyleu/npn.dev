@@ -22,7 +22,6 @@ const (
 
 const (
 	ServerMessagePong      = "pong"
-	ServerMessageConnected = "connected"
 
 	// Collection
 	ServerMessageCollections       = "collections"

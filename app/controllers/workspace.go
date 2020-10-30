@@ -25,16 +25,10 @@ func WorkspaceVue(w http.ResponseWriter, r *http.Request) {
 }
 
 var upgrader = websocket.Upgrader{
-	HandshakeTimeout:  0,
-	ReadBufferSize:    0,
-	WriteBufferSize:   0,
-	WriteBufferPool:   nil,
-	Subprotocols:      nil,
-	Error:             nil,
-	CheckOrigin:       func(r *http.Request) bool {
+	CheckOrigin: func(r *http.Request) bool {
 		return true
 	},
-	EnableCompression: false,
+	EnableCompression: true,
 }
 
 func Socket(w http.ResponseWriter, r *http.Request) {

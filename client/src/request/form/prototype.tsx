@@ -24,7 +24,7 @@ namespace request.form {
 
   function renderQueryParams(key: String, qp: request.QueryParam[] | undefined) {
     return <li class="request-queryparams-panel">
-      <div class="uk-margin-top">
+      <div class="mt">
         <textarea class="uk-textarea hidden" id={key + "-queryparams"} name="queryparams">{json.str(qp)}</textarea>
       </div>
     </li>;
@@ -32,7 +32,7 @@ namespace request.form {
 
   function renderAuth(key: String, as: auth.Auth | undefined) {
     return <li class="request-auth-panel">
-      <div class="uk-margin-top">
+      <div class="mt">
         <textarea class="uk-textarea hidden" id={key + "-auth"} name="auth">{json.str(as)}</textarea>
       </div>
     </li>;
@@ -40,7 +40,7 @@ namespace request.form {
 
   function renderHeaders(key: String, hs: header.Header[] | undefined) {
     return <li class="request-headers-panel">
-      <div class="uk-margin-top">
+      <div class="mt">
         <textarea class="uk-textarea hidden" id={key + "-headers"} name="headers">{json.str(hs)}</textarea>
       </div>
     </li>;
@@ -48,7 +48,7 @@ namespace request.form {
 
   function renderBody(key: String, b: rbody.Body | undefined) {
     return <li class="request-body-panel">
-      <div class="uk-margin-top">
+      <div class="mt">
         <textarea class="uk-textarea hidden" id={key + "-body"} name="body">{json.str(b)}</textarea>
       </div>
     </li>;
@@ -56,7 +56,7 @@ namespace request.form {
 
   function renderOptions(key: String, opts: request.Options | undefined) {
     return <li class="request-options-panel">
-      <div class="uk-margin-top">
+      <div class="mt">
         <textarea class="uk-textarea hidden" id={key + "-options"} name="options">{json.str(opts)}</textarea>
       </div>
     </li>;

@@ -24,7 +24,7 @@ namespace request.editor {
   function createAuthEditor(el: HTMLTextAreaElement) {
     const a = json.parse(el.value) as auth.Auth;
 
-    return <div class="uk-margin-top">
+    return <div class="mt">
       {authSelect(el, a)}
       {auth.AllTypes.filter(t => !t.hidden).map(t => {
         let cfg = (a && a.type == t.key) ? a.config : null;
@@ -62,7 +62,7 @@ namespace request.editor {
   }
 
   function configEditor(key: string, config: any, active: boolean, el: HTMLTextAreaElement) {
-    let cls = "uk-margin-top body-editor";
+    let cls = "mt body-editor";
     if (!active) {
       cls += " hidden";
     }

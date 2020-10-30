@@ -41,12 +41,6 @@ func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, 
 }
 
 func onOpen(s *npnconnection.Service, c *npnconnection.Connection) error {
-	p := ConnectedResponse{Profile: c.Profile}
-	msg := npnconnection.NewMessage(npncore.KeySystem, ServerMessageConnected, p)
-	err := s.WriteMessage(c.ID, msg)
-	if err != nil {
-		return errors.Wrap(err, "unable to write to socket")
-	}
 	go sendCollections(s, c)
 	return nil
 }

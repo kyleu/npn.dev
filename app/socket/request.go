@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"github.com/kyleu/npn/app/request"
 
 	"github.com/kyleu/npn/app/transform"
 
@@ -31,6 +32,11 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 	return err
 }
 
+type reqDetail struct {
+	Coll string           `json:"coll"`
+	Req  *request.Request `json:"req"`
+}
+
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
 	frm := &paramGetRequest{}
@@ -42,7 +48,8 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 	if err != nil {
 		return errors.Wrap(err, "can't load request")
 	}
-	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, req)
+	ret := &reqDetail{Coll: frm.Coll, Req: req}
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }
 
@@ -57,7 +64,8 @@ func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npncon
 	if err != nil {
 		return errors.Wrap(err, "can't save request")
 	}
-	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, frm.Req)
+	ret := &reqDetail{Coll: frm.Coll, Req: frm.Req}
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }
 

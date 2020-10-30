@@ -11,10 +11,15 @@
   <meta property="og:locale" content="en_US">
 
   <link href="/assets/vendor/ui/<%= npncore.AppKey %>.css" rel="preload" as="style">
-  <link href="/assets/vendor/ui/<%= npncore.AppKey %>.js" rel="preload" as="script">
   <link href="/assets/vendor/ui/vendor.js" rel="preload" as="script">
+  <link href="/assets/vendor/ui/<%= npncore.AppKey %>.js" rel="preload" as="script">
 
   <link href="/assets/vendor/ui/<%= npncore.AppKey %>.css" rel="stylesheet">
+  <script>
+    window.initialData = {
+      profile: <%== npncore.ToJSON(ctx.Profile.ToProfile(), ctx.Logger) %>
+    };
+  </script>
 </head>
 <body class="<%= ctx.Profile.Theme.CSS %>">
   <div id="npn">TODO</div>

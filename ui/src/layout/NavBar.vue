@@ -1,7 +1,7 @@
 <template>
   <header>
     <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky; media: 960">
-      <nav id="navbar" class="uk-navbar-container bluegrey-bg" data-uk-navbar>
+      <nav id="navbar" :class="'uk-navbar-container ' + $store.state.profile.navColor + '-bg'" data-uk-navbar>
         <Breadcrumbs />
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">

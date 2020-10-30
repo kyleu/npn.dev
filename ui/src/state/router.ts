@@ -5,6 +5,7 @@ import About from "@/views/About.vue";
 import NotFound from "@/views/NotFound.vue";
 import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";
+import RequestDetail from "@/request/RequestDetail.vue";
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,11 @@ const routes: Array<RouteConfig> = [
     path: "/c/:coll",
     name: "CollectionDetail",
     component: CollectionDetail
+  },
+  {
+    path: "/c/:coll/:req",
+    name: "RequestDetail",
+    component: RequestDetail
   },
   {
     path: "/about",

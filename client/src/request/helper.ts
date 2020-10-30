@@ -25,12 +25,12 @@ namespace request {
     const coll = collection.cache.active!;
     switch (cmd) {
       case command.server.requestDetail:
-        const req = param as Request
+        const req = param.req as Request;
         log.info("received details for request [" + req.key + "]");
-        cache.updateRequest(coll, req)
+        cache.updateRequest(param.coll, req)
         if (cache.active === req.key) {
-          renderActiveRequest(coll);
-          renderAction(coll, cache.active, cache.action, cache.extra);
+          renderActiveRequest(param.coll);
+          renderAction(param.coll, cache.active, cache.action, cache.extra);
         }
         break;
       case command.server.requestAdded:

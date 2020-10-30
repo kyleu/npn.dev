@@ -10,28 +10,28 @@ namespace request.form {
         {renderSavePanel(coll, r)}
         {renderActions(coll, r)}
       </div>
-      <div class="request-editor uk-card uk-card-body uk-card-default uk-margin-top">
+      <div class="request-editor uk-card uk-card-body uk-card-default mt">
         <form action="" method="post" onsubmit="console.log('XXXXXXX');return false;">
           {renderSwitcher(r, location.hash)}
         </form>
       </div>
-      <div class="request-action uk-card uk-card-body uk-card-default uk-margin-top hidden"/>
+      <div class="request-action uk-card uk-card-body uk-card-default mt hidden"/>
     </div>
   }
 
   export function renderDetails(r: request.Request) {
     return <li class="request-details-panel">
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={r.key + "-key"}>Key</label>
         <input class="uk-input" id={r.key + "-key"} name="key" type="text" value={ r.key || "" } data-lpignore="true" />
       </div>
 
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={r.key + "-title"}>Title</label>
         <input class="uk-input" id={r.key + "-title"} name="title" type="text" value={ r.title || "" } data-lpignore="true" />
       </div>
 
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={r.key + "-description"}>Description</label>
         <textarea class="uk-textarea" id={r.key + "-description"} name="description" data-lpignore="true">{ r.description || "" }</textarea>
       </div>
@@ -50,14 +50,14 @@ namespace request.form {
 
   function renderSavePanel(coll: string, r: request.Request) {
     return <div id="save-panel" class="right hidden">
-      <button class="uk-button uk-button-default uk-margin-small-right uk-margin-top" onclick={"request.form.reset('" + coll + "', '" + r.key + "');"}>Reset</button>
-      <button class="uk-button uk-button-default uk-margin-top" onclick={"request.form.saveCurrentRequest('" + coll + "', '" + r.key + "');"}>Save Changes</button>
+      <button class="uk-button uk-button-default uk-margin-small-right mt" onclick={"request.form.reset('" + coll + "', '" + r.key + "');"}>Reset</button>
+      <button class="uk-button uk-button-default mt" onclick={"request.form.saveCurrentRequest('" + coll + "', '" + r.key + "');"}>Save Changes</button>
     </div>;
   }
 
   function renderActions(coll: string, r: request.Request) {
     const path = "/c/" + coll + "/" + r.key;
-    const btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top"
+    const btnClass = "uk-button uk-button-default uk-margin-small-right mt"
     const delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }"
 
     return <div>

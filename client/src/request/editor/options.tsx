@@ -12,11 +12,11 @@ namespace request.editor {
     }
 
     return <div>
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={el.id + "-timeout"}>Timeout</label>
         {timeoutInput(el, opts.timeout)}
       </div>
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label">Ignore</label>
         <div>
           {ignoreRedirectsInput(el, opts.ignoreRedirects)}
@@ -25,23 +25,23 @@ namespace request.editor {
           {ignoreCookiesInput(el, opts.ignoreCookies)}
         </div>
       </div>
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={el.id + "-excludeDefaultHeaders"}>Exclude Default Headers</label>
         {excludeDefaultHeadersInput(el, opts.excludeDefaultHeaders)}
       </div>
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={el.id + "-readCookieJars"}>Read Cookie Jars</label>
         {readCookieJarsInput(el, opts.readCookieJars)}
       </div>
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={el.id + "writeCookieJar"}>Write Cookie Jar</label>
         {writeCookieJarInput(el, opts.writeCookieJar)}
       </div>
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={el.id + "-sslCert"}>SSL Cert</label>
         {sslCertInput(el, opts.sslCert)}
       </div>
-      <div class="uk-margin-top">
+      <div class="mt">
         <label class="uk-form-label" for={el.id + "-userAgentOverride"}>User Agent Override</label>
         {userAgentOverrideInput(el, opts.userAgentOverride)}
       </div>

@@ -676,10 +676,10 @@ var socket;
         }
     }
     function socketSend(msg) {
-        if (socket.debug) {
-            console.debug("out", msg);
-        }
         if (socket.connected) {
+            if (socket.debug) {
+                console.debug("out", msg);
+            }
             var m = json.str(msg);
             sock.send(m);
         }
@@ -1364,16 +1364,16 @@ var rbody;
                 JSX("a", { class: style.linkColor, href: "", onclick: "rbody.renderHTMLText(this);return false" }, "text"),
                 ")"),
             JSX("em", null, "HTML"),
-            JSX("div", { class: "text-content prism uk-margin-top", style: "overflow: auto; max-height: 720px;" },
+            JSX("div", { class: "text-content prism mt", style: "overflow: auto; max-height: 720px;" },
                 JSX("pre", { class: "language-html", "data-start": "0", style: "white-space:pre-wrap;" },
                     JSX("code", { dangerouslySetInnerHTML: { __html: html } }))),
-            JSX("div", { class: "preview-content uk-margin-top hidden", style: "overflow: auto; max-height: 720px; border: 1px solid #666;" }));
+            JSX("div", { class: "preview-content mt hidden", style: "overflow: auto; max-height: 720px; border: 1px solid #666;" }));
     }
     function renderJSON(j) {
         var html = Prism.highlight(JSON.stringify(j.msg, null, 2), Prism.languages.javascript, 'javascript');
         return JSX("div", null,
             JSX("em", null, "JSON"),
-            JSX("div", { class: "uk-margin-top" },
+            JSX("div", { class: "mt" },
                 JSX("pre", { class: "language-html", "data-start": "0", style: "white-space:pre-wrap;" },
                     JSX("code", { dangerouslySetInnerHTML: { __html: html } }))));
     }
@@ -1701,13 +1701,13 @@ var collection;
                     cn),
                 JSX("p", null, coll.description || ""),
                 renderCollectionActions(coll)),
-            JSX("div", { class: "uk-card uk-card-body uk-card-default uk-margin-top" },
+            JSX("div", { class: "uk-card uk-card-body uk-card-default mt" },
                 JSX("h3", { class: "uk-card-title" }, "Requests"),
                 JSX("form", { onsubmit: "collection.addRequestURL('" + coll.key + "');return false;" },
-                    JSX("div", { class: "uk-margin-top uk-inline uk-width-expand" },
+                    JSX("div", { class: "mt uk-inline uk-width-expand" },
                         JSX("button", { class: "uk-form-icon uk-form-icon-flip", type: "submit", title: "add request", "uk-icon": "icon: plus" }),
                         JSX("input", { id: "coll-request-add-url", class: "uk-input", placeholder: "add a request by url", "data-lpignore": "true" }))),
-                JSX("div", { id: "request-list", class: "uk-margin-top" }, renderRequests(coll.key, requests))));
+                JSX("div", { id: "request-list", class: "mt" }, renderRequests(coll.key, requests))));
     }
     collection.renderCollection = renderCollection;
     function renderNotFound(key) {
@@ -1760,7 +1760,7 @@ var collection;
     }
     function renderCollectionActions(coll) {
         var path = "/c/" + coll.key;
-        var btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
+        var btnClass = "uk-button uk-button-default uk-margin-small-right mt";
         var delWarn = "confirm('Are you sure you want to delete collection [" + coll.key + "]?')";
         return JSX("div", null,
             JSX("button", { class: btnClass, onclick: "return false;" }, "Edit"),
@@ -2133,12 +2133,12 @@ var request;
         var coll = collection.cache.active;
         switch (cmd) {
             case command.server.requestDetail:
-                var req = param;
+                var req = param.req;
                 log.info("received details for request [" + req.key + "]");
-                request.cache.updateRequest(coll, req);
+                request.cache.updateRequest(param.coll, req);
                 if (request.cache.active === req.key) {
-                    request.renderActiveRequest(coll);
-                    request.renderAction(coll, request.cache.active, request.cache.action, request.cache.extra);
+                    request.renderActiveRequest(param.coll);
+                    request.renderAction(param.coll, request.cache.active, request.cache.action, request.cache.extra);
                 }
                 break;
             case command.server.requestAdded:
@@ -2419,7 +2419,7 @@ var request;
         editor.setAuth = setAuth;
         function createAuthEditor(el) {
             var a = json.parse(el.value);
-            return JSX("div", { class: "uk-margin-top" },
+            return JSX("div", { class: "mt" },
                 authSelect(el, a),
                 auth.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
                     var cfg = (a && a.type == t.key) ? a.config : null;
@@ -2455,7 +2455,7 @@ var request;
             return ret;
         }
         function configEditor(key, config, active, el) {
-            var cls = "uk-margin-top body-editor";
+            var cls = "mt body-editor";
             if (!active) {
                 cls += " hidden";
             }
@@ -2510,7 +2510,7 @@ var request;
         editor.setBody = setBody;
         function createBodyEditor(el) {
             var b = json.parse(el.value);
-            return JSX("div", { class: "uk-margin-top" },
+            return JSX("div", { class: "mt" },
                 bodySelect(el, b),
                 JSX("div", { class: "body-editor", "data-key": "" }),
                 rbody.AllTypes.filter(function (t) { return !t.hidden; }).map(function (t) {
@@ -2547,7 +2547,7 @@ var request;
             return ret;
         }
         function configEditor(key, config, active, el) {
-            var cls = "uk-margin-top body-editor";
+            var cls = "mt body-editor";
             if (!active) {
                 cls += " hidden";
             }
@@ -2792,7 +2792,7 @@ var request;
                         JSX("div", { class: "right", style: "margin-top: 6px;" },
                             JSX("a", { class: style.linkColor, href: "", onclick: "return request.editor." + cb + "('" + elID + "', this);", title: "remove row" },
                                 JSX("span", { "data-uk-icon": "icon: close" }))),
-                        JSX("input", { style: "width: calc(100% - 48px);", class: "uk-input", "data-field": idx + "-desc", type: "text", value: h.desc }))));
+                        JSX("input", { style: "width: calc(100% - 36px);", class: "uk-input", "data-field": idx + "-desc", type: "text", value: h.desc }))));
         }
         editor.newChild = newChild;
         function parseMapParams(elID) {
@@ -2846,29 +2846,29 @@ var request;
                 opts = {};
             }
             return JSX("div", null,
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-timeout" }, "Timeout"),
                     timeoutInput(el, opts.timeout)),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label" }, "Ignore"),
                     JSX("div", null,
                         ignoreRedirectsInput(el, opts.ignoreRedirects),
                         ignoreReferrerInput(el, opts.ignoreReferrer),
                         ignoreCertsInput(el, opts.ignoreCerts),
                         ignoreCookiesInput(el, opts.ignoreCookies))),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-excludeDefaultHeaders" }, "Exclude Default Headers"),
                     excludeDefaultHeadersInput(el, opts.excludeDefaultHeaders)),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-readCookieJars" }, "Read Cookie Jars"),
                     readCookieJarsInput(el, opts.readCookieJars)),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: el.id + "writeCookieJar" }, "Write Cookie Jar"),
                     writeCookieJarInput(el, opts.writeCookieJar)),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-sslCert" }, "SSL Cert"),
                     sslCertInput(el, opts.sslCert)),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: el.id + "-userAgentOverride" }, "User Agent Override"),
                     userAgentOverrideInput(el, opts.userAgentOverride)));
         }
@@ -3125,20 +3125,20 @@ var request;
                     form.renderURL(coll, r),
                     renderSavePanel(coll, r),
                     renderActions(coll, r)),
-                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default uk-margin-top" },
+                JSX("div", { class: "request-editor uk-card uk-card-body uk-card-default mt" },
                     JSX("form", { action: "", method: "post", onsubmit: "console.log('XXXXXXX');return false;" }, form.renderSwitcher(r, location.hash))),
-                JSX("div", { class: "request-action uk-card uk-card-body uk-card-default uk-margin-top hidden" }));
+                JSX("div", { class: "request-action uk-card uk-card-body uk-card-default mt hidden" }));
         }
         form.renderFormPanel = renderFormPanel;
         function renderDetails(r) {
             return JSX("li", { class: "request-details-panel" },
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: r.key + "-key" }, "Key"),
                     JSX("input", { class: "uk-input", id: r.key + "-key", name: "key", type: "text", value: r.key || "", "data-lpignore": "true" })),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: r.key + "-title" }, "Title"),
                     JSX("input", { class: "uk-input", id: r.key + "-title", name: "title", type: "text", value: r.title || "", "data-lpignore": "true" })),
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("label", { class: "uk-form-label", for: r.key + "-description" }, "Description"),
                     JSX("textarea", { class: "uk-textarea", id: r.key + "-description", name: "description", "data-lpignore": "true" }, r.description || "")));
         }
@@ -3154,12 +3154,12 @@ var request;
         };
         function renderSavePanel(coll, r) {
             return JSX("div", { id: "save-panel", class: "right hidden" },
-                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right uk-margin-top", onclick: "request.form.reset('" + coll + "', '" + r.key + "');" }, "Reset"),
-                JSX("button", { class: "uk-button uk-button-default uk-margin-top", onclick: "request.form.saveCurrentRequest('" + coll + "', '" + r.key + "');" }, "Save Changes"));
+                JSX("button", { class: "uk-button uk-button-default uk-margin-small-right mt", onclick: "request.form.reset('" + coll + "', '" + r.key + "');" }, "Reset"),
+                JSX("button", { class: "uk-button uk-button-default mt", onclick: "request.form.saveCurrentRequest('" + coll + "', '" + r.key + "');" }, "Save Changes"));
         }
         function renderActions(coll, r) {
             var path = "/c/" + coll + "/" + r.key;
-            var btnClass = "uk-button uk-button-default uk-margin-small-right uk-margin-top";
+            var btnClass = "uk-button uk-button-default uk-margin-small-right mt";
             var delWarn = "if (!confirm('Are you sure you want to delete request [" + r.key + "]?')) { return false; }";
             return JSX("div", null,
                 nav.link({ path: path + "/call", title: "Call", cls: btnClass, isButton: true }),
@@ -3197,27 +3197,27 @@ var request;
         form.renderSwitcher = renderSwitcher;
         function renderQueryParams(key, qp) {
             return JSX("li", { class: "request-queryparams-panel" },
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("textarea", { class: "uk-textarea hidden", id: key + "-queryparams", name: "queryparams" }, json.str(qp))));
         }
         function renderAuth(key, as) {
             return JSX("li", { class: "request-auth-panel" },
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("textarea", { class: "uk-textarea hidden", id: key + "-auth", name: "auth" }, json.str(as))));
         }
         function renderHeaders(key, hs) {
             return JSX("li", { class: "request-headers-panel" },
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("textarea", { class: "uk-textarea hidden", id: key + "-headers", name: "headers" }, json.str(hs))));
         }
         function renderBody(key, b) {
             return JSX("li", { class: "request-body-panel" },
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("textarea", { class: "uk-textarea hidden", id: key + "-body", name: "body" }, json.str(b))));
         }
         function renderOptions(key, opts) {
             return JSX("li", { class: "request-options-panel" },
-                JSX("div", { class: "uk-margin-top" },
+                JSX("div", { class: "mt" },
                     JSX("textarea", { class: "uk-textarea hidden", id: key + "-options", name: "options" }, json.str(opts))));
         }
     })(form = request.form || (request.form = {}));
@@ -3229,7 +3229,7 @@ var request;
         function renderURL(coll, r) {
             var call = "nav.navigate(`/c/" + coll + "/" + r.key + "/call`);return false;";
             var url = request.prototypeToURL(r.prototype);
-            return JSX("div", { class: "uk-margin-top uk-panel" },
+            return JSX("div", { class: "mt uk-panel" },
                 JSX("div", { class: "left", style: "width:120px;" },
                     JSX("select", { class: "uk-select", id: r.key + "-method", name: "method" }, request.allMethods.map(function (m) {
                         if (m.key === r.prototype.method) {
@@ -3240,11 +3240,11 @@ var request;
                         }
                     }))),
                 JSX("div", { class: "url-view uk-inline right", id: r.key + "-link", style: "width:calc(100% - 120px);" },
-                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: call, title: "send request", "uk-icon": "icon: play" }),
+                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: call, title: "send request", "data-uk-icon": "icon: play" }),
                     JSX("div", { onclick: "request.editor.toggleURLEditor('" + r.key + "', true);" },
                         JSX("span", { id: r.key + "-urlview", class: "url-link" }, request.prototypeToHTML(r.prototype)))),
                 JSX("div", { class: "url-input hidden uk-inline right", id: r.key + "-edit", style: "width:calc(100% - 120px);" },
-                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: "request.editor.toggleURLEditor('" + r.key + "', false);return false;", title: "cancel edit", "uk-icon": "icon: close" }),
+                    JSX("a", { class: "uk-form-icon uk-form-icon-flip", href: "", onclick: "request.editor.toggleURLEditor('" + r.key + "', false);return false;", title: "cancel edit", "data-uk-icon": "icon: close" }),
                     JSX("form", { onsubmit: call },
                         JSX("input", { class: "uk-input", id: r.key + "-url", name: "url", type: "text", value: url, "data-lpignore": "true" }))));
         }
@@ -3267,7 +3267,7 @@ var transform;
     }
     transform.setResult = setResult;
     function render(r) {
-        return JSX("div", { class: "uk-margin-top" },
+        return JSX("div", { class: "mt" },
             JSX("pre", null, r.out));
     }
 })(transform || (transform = {}));

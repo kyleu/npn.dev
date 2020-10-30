@@ -35,7 +35,7 @@ namespace request.editor {
           <div class="right" style="margin-top: 6px;">
             <a class={style.linkColor} href="" onclick={"return request.editor." + cb + "('" + elID + "', this);"} title="remove row"><span data-uk-icon="icon: close" /></a>
           </div>
-          <input style="width: calc(100% - 48px);" class="uk-input" data-field={idx + "-desc"} type="text" value={h.desc} />
+          <input style="width: calc(100% - 36px);" class="uk-input" data-field={idx + "-desc"} type="text" value={h.desc} />
         </div>
       </div>
     </li>

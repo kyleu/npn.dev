@@ -10,7 +10,7 @@ namespace request.editor {
 
   function createBodyEditor(el: HTMLTextAreaElement) {
     const b = json.parse(el.value) as rbody.Body;
-    return <div class="uk-margin-top">
+    return <div class="mt">
       {bodySelect(el, b)}
       <div class="body-editor" data-key="" />
       {rbody.AllTypes.filter(t => !t.hidden).map(t => {
@@ -49,7 +49,7 @@ namespace request.editor {
   }
 
   function configEditor(key: string, config: any, active: boolean, el: HTMLTextAreaElement) {
-    let cls = "uk-margin-top body-editor";
+    let cls = "mt body-editor";
     if (!active) {
       cls += " hidden";
     }
