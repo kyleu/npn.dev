@@ -34,11 +34,11 @@
             </div>
           </li>
 
-          <li><RequestEditorQueryParams :qp="req.prototype.query" /></li>
-          <li><RequestEditorAuth :auth="req.prototype.auth" /></li>
-          <li><RequestEditorHeaders :headers="req.prototype.headers" /></li>
-          <li><RequestEditorBody :body="req.prototype.body" /></li>
-          <li><RequestEditorOptions :opts="req.prototype.options" /></li>
+          <li><QueryParamsEditor :qp="req.prototype.query" /></li>
+          <li><AuthEditor :auth="req.prototype.auth" /></li>
+          <li><HeadersEditor :headers="req.prototype.headers" /></li>
+          <li><BodyEditor :body="req.prototype.body" /></li>
+          <li><OptionsEditor :opts="req.prototype.options" /></li>
         </ul>
       </div>
     </form>
@@ -46,16 +46,19 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {NPNRequest} from "@/request/model";
-import RequestEditorAuth from "@/request/RequestEditorAuth.vue";
-import RequestEditorBody from "@/request/RequestEditorBody.vue";
-import RequestEditorHeaders from "@/request/RequestEditorHeaders.vue";
-import RequestEditorOptions from "@/request/RequestEditorOptions.vue";
-import RequestEditorQueryParams from "@/request/RequestEditorQueryParams.vue";
+import AuthEditor from "@/auth/AuthEditor.vue";
+import BodyEditor from "@/body/BodyEditor.vue";
+import HeadersEditor from "@/header/HeadersEditor.vue";
+import OptionsEditor from "@/request/editor/OptionsEditor.vue";
+import QueryParamsEditor from "@/request/editor/QueryParamsEditor.vue";
+import {getState} from "@/util/vutils";
 
-@Component({ components: { RequestEditorAuth, RequestEditorBody, RequestEditorHeaders, RequestEditorOptions, RequestEditorQueryParams } })
+@Component({ components: { AuthEditor, BodyEditor, HeadersEditor, OptionsEditor, QueryParamsEditor } })
 export default class RequestEditor extends Vue {
-  @Prop() req!: NPNRequest;
+  get req(): NPNRequest | undefined {
+    return this.$parent.req;
+  }
 }
 </script>

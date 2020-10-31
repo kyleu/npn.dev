@@ -1,6 +1,7 @@
 import {Collection} from "@/collection/collection";
 import Profile from "@/user/profile";
 import {NPNRequest, Summary} from "@/request/model";
+import {ActiveRequest} from "@/state/store";
 
 export interface Breadcrumb {
   readonly title: string;
@@ -20,6 +21,10 @@ export class State {
   collections: Collection[] = [];
   collectionSummaries: CollectionData<Summary>[] = [];
   requestDetails: CollectionData<NPNRequest>[] = [];
+
+  requestOriginal: NPNRequest | undefined;
+  requestEditing: NPNRequest | undefined;
+  activeRequest: ActiveRequest | undefined;
 
   constructor(url: string, profile: Profile) {
     this.url = url;

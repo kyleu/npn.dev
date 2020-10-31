@@ -1,5 +1,5 @@
 <template>
-  <ul v-if="qp" class="uk-list uk-list-divider">
+  <ul class="uk-list uk-list-divider">
     <li>
       <div data-uk-grid="">
         <div class="uk-width-1-4">Name</div>
@@ -40,7 +40,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {QueryParam} from "@/request/model";
 
 @Component
-export default class RequestEditorQueryParams extends Vue {
+export default class QueryParamsEditor extends Vue {
   @Prop() qp!: QueryParam[] | undefined;
 }
 </script>

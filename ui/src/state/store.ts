@@ -3,8 +3,14 @@ import Vuex, {Store} from "vuex";
 import {initialState, State} from "@/state";
 import {Message, Socket} from "@/socket/socket";
 import {logDebug, logError, logWarn} from "@/util/log";
+import {cloneRequest} from "@/request/model";
 
 Vue.use(Vuex);
+
+export interface ActiveRequest {
+  readonly coll: string;
+  readonly req: string;
+}
 
 export function newStore(onMsg: (s: State, m: Message) => void): Store<State> {
   const state = initialState();
@@ -18,9 +24,18 @@ export function newStore(onMsg: (s: State, m: Message) => void): Store<State> {
     }
   }
 
+  function setActiveRequest(s: State, x: ActiveRequest): void {
+    s.activeRequest = x;
+    const rd = s.getRequestDetail(x.coll, x.req);
+    s.requestEditing = rd;
+    if (rd && ((!s.requestOriginal) || s.requestOriginal.key !== x.req)) {
+      s.requestOriginal = cloneRequest(s.requestEditing);
+    }
+  }
+
   const ret = new Vuex.Store({
     state: state,
-    mutations: { onMessage: onMsg, send: send },
+    mutations: { onMessage: onMsg, send: send, setActiveRequest: setActiveRequest },
     modules: {}
   });
 

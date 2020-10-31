@@ -9,7 +9,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {Auth} from "@/auth/model";
 
 @Component
-export default class RequestEditorAuth extends Vue {
+export default class AuthEditor extends Vue {
   @Prop() auth!: Auth | undefined;
 }
 </script>

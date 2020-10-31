@@ -53,7 +53,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {Options} from "@/request/model";
 
 @Component
-export default class RequestEditorOptions extends Vue {
+export default class OptionsEditor extends Vue {
   @Prop() opts!: Options | undefined;
 }
 </script>

@@ -6,6 +6,8 @@ import NotFound from "@/views/NotFound.vue";
 import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
+import RequestEditor from "@/request/editor/RequestEditor.vue";
+import RequestCall from "@/request/RequestCall.vue";
 
 Vue.use(VueRouter);
 
@@ -27,8 +29,19 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/c/:coll/:req",
-    name: "RequestDetail",
-    component: RequestDetail
+    component: RequestDetail,
+    children: [
+      {
+        path: "",
+        name: "RequestDetail",
+        component: RequestEditor,
+      },
+      {
+        path: "call",
+        name: "RequestCall",
+        component: RequestCall,
+      }
+    ]
   },
   {
     path: "/about",

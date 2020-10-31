@@ -11,7 +11,7 @@ import {Message} from "@/socket/socket";
 import {State} from "@/state";
 import {Collection} from "@/collection/collection";
 import {logDebug, logWarn} from "@/util/log";
-import {NPNRequest} from "@/request/model";
+import {cloneRequest, NPNRequest} from "@/request/model";
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -35,7 +35,11 @@ const handler = (state: State, msg: Message): void => {
       state.setCollectionRequestSummaries(msg.param.key, msg.param.requests);
       break;
     case "requestDetail":
-      state.setRequestDetail(msg.param.coll, msg.param.req as NPNRequest);
+      state.setRequestDetail(msg.param.coll, msg.param.req);
+      if (msg.param.req.key === state.activeRequest?.req && msg.param.coll === state.activeRequest?.coll) {
+        state.requestOriginal = cloneRequest(msg.param.req);
+        state.requestEditing = msg.param.req;
+      }
       break;
     default:
       logWarn("unhandled message [" + msg.cmd + "]", msg);
