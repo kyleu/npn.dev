@@ -53,12 +53,21 @@ import BodyEditor from "@/body/BodyEditor.vue";
 import HeadersEditor from "@/header/HeadersEditor.vue";
 import OptionsEditor from "@/request/editor/OptionsEditor.vue";
 import QueryParamsEditor from "@/request/editor/QueryParamsEditor.vue";
-import {getState} from "@/util/vutils";
+import {getStateSetBC} from "@/util/vutils";
+import RequestDetail from "@/request/RequestDetail.vue";
 
 @Component({ components: { AuthEditor, BodyEditor, HeadersEditor, OptionsEditor, QueryParamsEditor } })
 export default class RequestEditor extends Vue {
   get req(): NPNRequest | undefined {
-    return this.$parent.req;
+    return (this.$parent as RequestDetail).req;
+  }
+
+  created(): void {
+    getStateSetBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
+  }
+
+  updated(): void {
+    getStateSetBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
   }
 }
 </script>

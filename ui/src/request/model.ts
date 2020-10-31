@@ -40,12 +40,12 @@ export const allMethods: Method[] = [MethodGet, MethodHead, MethodPost, MethodPu
 
 export interface Prototype {
   method: string;
-  readonly protocol: string;
-  readonly domain: string;
-  readonly port?: number;
-  readonly path?: string;
+  protocol: string;
+  domain: string;
+  port?: number;
+  path?: string;
   query?: QueryParam[];
-  readonly fragment?: string;
+  fragment?: string;
   headers?: Header[];
   auth?: Auth;
   body?: RBody;

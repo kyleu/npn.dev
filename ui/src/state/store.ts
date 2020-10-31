@@ -29,13 +29,18 @@ export function newStore(onMsg: (s: State, m: Message) => void): Store<State> {
     const rd = s.getRequestDetail(x.coll, x.req);
     s.requestEditing = rd;
     if (rd && ((!s.requestOriginal) || s.requestOriginal.key !== x.req)) {
+      console.log("1")
       s.requestOriginal = cloneRequest(s.requestEditing);
     }
   }
 
   const ret = new Vuex.Store({
     state: state,
-    mutations: { onMessage: onMsg, send: send, setActiveRequest: setActiveRequest },
+    mutations: {
+      onMessage: onMsg,
+      send: send,
+      setActiveRequest: setActiveRequest
+    },
     modules: {}
   });
 

@@ -2,6 +2,7 @@ import {Collection} from "@/collection/collection";
 import Profile from "@/user/profile";
 import {NPNRequest, Summary} from "@/request/model";
 import {ActiveRequest} from "@/state/store";
+import {Result} from "@/call/model";
 
 export interface Breadcrumb {
   readonly title: string;
@@ -25,6 +26,7 @@ export class State {
   requestOriginal: NPNRequest | undefined;
   requestEditing: NPNRequest | undefined;
   activeRequest: ActiveRequest | undefined;
+  callResult: Result | undefined;
 
   constructor(url: string, profile: Profile) {
     this.url = url;
@@ -108,6 +110,10 @@ export class State {
       rs.push(req);
     }
     this.setCollectionRequestDetails(coll, rs);
+  }
+
+  setCallResult(result: Result): void {
+    this.callResult = result;
   }
 }
 

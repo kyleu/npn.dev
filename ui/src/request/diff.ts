@@ -135,7 +135,7 @@ export function diff(l: NPNRequest | undefined, r: NPNRequest | undefined): Diff
   comp("ignoreCerts", lpo.ignoreCerts, rpo.ignoreCerts, p);
   comp("ignoreCookies", lpo.ignoreCookies, rpo.ignoreCookies, p);
   compArray("excludeDefaultHeaders", lpo.excludeDefaultHeaders, rpo.excludeDefaultHeaders, p);
-  comp("readCookieJars", lpo.readCookieJars, rpo.readCookieJars, p);
+  compArray("readCookieJars", lpo.readCookieJars, rpo.readCookieJars, p);
   comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar, p);
   comp("sslCert", lpo.sslCert, rpo.sslCert, p);
   comp("userAgentOverride", lpo.userAgentOverride, rpo.userAgentOverride, p);

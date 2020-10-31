@@ -11,7 +11,8 @@ import {Message} from "@/socket/socket";
 import {State} from "@/state";
 import {Collection} from "@/collection/collection";
 import {logDebug, logWarn} from "@/util/log";
-import {cloneRequest, NPNRequest} from "@/request/model";
+import {cloneRequest} from "@/request/model";
+import {Result} from "@/call/model";
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -41,6 +42,9 @@ const handler = (state: State, msg: Message): void => {
         state.requestEditing = msg.param.req;
       }
       break;
+    case "callResult":
+      state.setCallResult(msg.param as Result);
+      break;
     default:
       logWarn("unhandled message [" + msg.cmd + "]", msg);
   }
@@ -52,4 +56,4 @@ const root = new Vue({router, store, el: "#npn", render});
 
 // @ts-ignore
 // eslint-disable-next-line
-(window as any).npn = { root, router, store };
+(window as any).npn = {root, router, store};

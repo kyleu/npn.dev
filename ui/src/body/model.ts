@@ -14,11 +14,11 @@ export const AllTypes: BodyType[] = [
 ]
 
 export interface RBody {
-  readonly type: string;
-  readonly length?: number;
+  type: string;
+  length?: number;
   // @ts-ignore
   // eslint-disable-next-line
-  readonly config: any;
+  config: any;
 }
 
 export interface JSONConfig {

@@ -7,7 +7,8 @@ import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
-import RequestCall from "@/request/RequestCall.vue";
+import RequestTransform from "@/request/RequestTransform.vue";
+import CallResult from "@/call/CallResult.vue";
 
 Vue.use(VueRouter);
 
@@ -38,8 +39,13 @@ const routes: Array<RouteConfig> = [
       },
       {
         path: "call",
-        name: "RequestCall",
-        component: RequestCall,
+        name: "CallResult",
+        component: CallResult,
+      },
+      {
+        path: "transform/:tx",
+        name: "RequestTransform",
+        component: RequestTransform,
       }
     ]
   },

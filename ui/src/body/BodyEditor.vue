@@ -1,18 +1,21 @@
 <template>
-  <div>
+  <div v-if="body">
     <select v-model="body.type" class="uk-select">
       <option value="">No body</option>
       <option v-for="t in types()" :key="t.key" :value="t.key">{{ t.title }}</option>;
     </select>
-    <div v-if="body && body.type === 'html'" class="mt">
+    <div v-if="body.type === 'html'" class="mt">
       <textarea v-model="body.config.content" class="uk-textarea"></textarea>
     </div>
-    <div v-else-if="body && body.type === 'json'" class="mt">
+    <div v-else-if="body.type === 'json'" class="mt">
       <textarea :value="JSON.stringify(body.config.msg, null, 2)" class="uk-textarea" @input="body.config.msg = JSON.parse($event.target.value)"></textarea>
     </div>
     <div v-else class="mt">
-      Unhandled {{ body ? body.type : "" }} editor
+      Unhandled {{ body.type }} editor
     </div>
+  </div>
+  <div v-else>
+    TODO
   </div>
 </template>
 

@@ -3,7 +3,7 @@
     <div class="mt">
       <label class="uk-form-label">
         Timeout
-        <input v-model="opts.timeout" class="uk-input" name="opt-timeout" type="number" />
+        <input v-model.number="opts.timeout" class="uk-input" name="opt-timeout" type="number" />
       </label>
     </div>
     <div class="mt">
@@ -18,13 +18,13 @@
     <div class="mt">
       <label class="uk-form-label">
         Exclude Default Headers
-        <input v-model="opts.excludeDefaultHeaders" class="uk-input" name="opt-excludeDefaultHeaders" type="text" />
+        <input type="text" class="uk-input" name="opt-excludeDefaultHeaders" :value="opts.excludeDefaultHeaders" @input="opts.excludeDefaultHeaders = $event.target.value.split(',')" />
       </label>
     </div>
     <div class="mt">
       <label class="uk-form-label">
         Read Cookie Jars
-        <input v-model="opts.readCookieJars" class="uk-input" name="opt-readCookieJars" type="text" />
+        <input class="uk-input" name="opt-readCookieJars" type="text" :value="opts.readCookieJars" @input="opts.readCookieJars = $event.target.value.split(',')" />
       </label>
     </div>
     <div class="mt">
@@ -49,11 +49,14 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {Options} from "@/request/model";
+import {getState} from "@/util/vutils";
 
 @Component
 export default class OptionsEditor extends Vue {
-  @Prop() opts!: Options | undefined;
+  get opts(): Options | undefined {
+    return getState(this).requestEditing?.prototype?.options
+  }
 }
 </script>

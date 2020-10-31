@@ -5,29 +5,50 @@
         <option v-for="m in methods" :key="m.key">{{ m.key }}</option>;
       </select>
     </div>
-    <div class="url-view uk-inline right" style="width:calc(100% - 120px);">
-      <a class="uk-form-icon uk-form-icon-flip" href="" onclick="TODO(); call" title="send request" data-uk-icon="icon: play" />
-      <div onclick="TODO();">
-        <span class="url-link">{{ protoHTML }}</span>
+    <div v-if="!editing" class="url-view uk-inline right" style="width:calc(100% - 120px);">
+      <router-link class="uk-form-icon uk-form-icon-flip" title="send request" data-uk-icon="icon: play" :to="'/c/' + $route.params.coll + '/' + $route.params.req + '/call'"></router-link>
+      <div @click="editing = true">
+        <span class="url-link"><span v-for="part in protoParts" :key="part.idx" :class="part.color">{{ part.v }}</span> </span>
       </div>
     </div>
-    <div class="url-input hidden uk-inline right" style="width:calc(100% - 120px);">
-      <a class="uk-form-icon uk-form-icon-flip" href="" onclick="TODO();return false;" title="cancel edit" data-uk-icon="icon: close" />
-      <form onsubmit="TODO();return false;">
-        <input class="uk-input" name="url" type="text" :value="req.prototype.path" data-lpignore="true" />
+    <div v-if="editing" class="url-input uk-inline right" style="width:calc(100% - 120px);">
+      <a class="uk-form-icon uk-form-icon-flip" title="cancel edit" data-uk-icon="icon: close" href="" onclick="return false;" @click="editing = false" />
+      <form @submit="TODO()">
+        <input id="url-input-el" v-model="protoString" class="uk-input" name="url" type="text" data-lpignore="true" @blur="editing = false" />
       </form>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {allMethods, Method, NPNRequest} from "@/request/model";
-import {prototypeToURL} from "@/request/url";
+import {Part, prototypeToURL, prototypeToURLParts} from "@/request/url";
+import {prototypeFromURL} from "@/request/prototype";
+import {getState} from "@/util/vutils";
 
 @Component
 export default class URLEditor extends Vue {
-  @Prop() req!: NPNRequest
+  private e = false
+
+  get editing(): boolean {
+    return this.e
+  }
+  set editing(e: boolean) {
+    if (e) {
+      setTimeout(() => {
+        const el = document.getElementById("url-input-el");
+        if (el) {
+          el.focus();
+        }
+      }, 0)
+    }
+    this.e = e;
+  }
+
+  get req(): NPNRequest | undefined {
+    return getState(this).requestEditing
+  }
 
   get methods(): Method[] {
     return allMethods;
@@ -37,8 +58,27 @@ export default class URLEditor extends Vue {
     return prototypeToURL(this.req?.prototype);
   }
 
-  get protoHTML(): string {
-    return prototypeToURL(this.req?.prototype);
+  set protoString(s: string) {
+    if (this.req) {
+      const o = this.req.prototype;
+      const n = prototypeFromURL(s);
+      o.protocol = n.protocol;
+      o.domain = n.domain;
+      o.port = n.port;
+      o.path = n.path;
+      o.query = n.query;
+      o.fragment = n.fragment;
+      if ((!o.auth) || o.auth.type === "basic") {
+        o.auth = n.auth;
+      }
+    }
+  }
+
+  get protoParts(): Part[] {
+    if (!this.req) {
+      return [];
+    }
+    return prototypeToURLParts(this.req?.prototype);
   }
 }
 </script>

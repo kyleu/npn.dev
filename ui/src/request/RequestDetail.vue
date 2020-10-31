@@ -10,8 +10,8 @@
         <div v-if="req">
           <URLEditor :req="req" />
           <div v-if="different" class="right">
-            <button class="uk-button uk-button-default uk-margin-small-right mt" onclick="TODO();request.form.reset('coll', 'req.key');">Reset</button>
-            <button class="uk-button uk-button-default mt" onclick="TODO();request.form.saveCurrentRequest('coll', 'req.key');">Save Changes</button>
+            <button class="uk-button uk-button-default uk-margin-small-right mt" onclick="TODO();">Reset</button>
+            <button class="uk-button uk-button-default mt" onclick="TODO();">Save Changes</button>
           </div>
           <router-link class="uk-button uk-button-default uk-margin-small-right mt" :to="'/c/' + this.$route.params.coll + '/' + req.key + '/call'">Call</router-link>
           <ExportActions />
@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {getState, getStateSetBC} from "@/util/vutils";
+import {getState} from "@/util/vutils";
 import RequestSummaryList from "@/request/RequestSummaryList.vue";
 import {NPNRequest} from "@/request/model";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
@@ -44,19 +44,11 @@ export default class RequestDetail extends Vue {
     return s.requestEditing;
   }
 
-  created(): void {
-    getStateSetBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
-  }
-
-  updated(): void {
-    getStateSetBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
-  }
-
   get different(): boolean {
     const s = getState(this);
     const diffs = diff(s.requestOriginal, s.requestEditing);
+    console.debug(s.requestOriginal, s.requestEditing);
     if (diffs.length > 0) {
-      // console.debug(this.o, this.req);
       console.debug(diffs);
     }
     return diffs.length > 0;

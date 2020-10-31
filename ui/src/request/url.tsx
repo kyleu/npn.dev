@@ -1,28 +1,38 @@
-import {MethodGet, Prototype} from "@/request/model";
-import {trimPrefix, trimSuffix} from "@/util/string";
+import {Prototype} from "@/request/model";
 import {Basic} from "@/auth/basic";
 
-export function urlToPrototype(url: string): Prototype {
-  const u = new URL(url);
-  return {
-    method: MethodGet.key,
-    protocol: trimSuffix(u.protocol, ":"),
-    domain: u.hostname,
-    port: u.port ? parseInt(u.port, 10) : undefined,
-    path: trimPrefix(u.pathname, "/"),
-    fragment: trimPrefix(u.hash, "#")
-  };
-}
-
-interface Part {
+export interface Part {
   readonly t: string;
   readonly v: string;
+  readonly idx: number;
+  readonly color: string;
 }
 
-function prototypeToURLParts(p: Prototype): Part[] {
+function urlColor(key: string): string {
+  switch (key) {
+    case "username":
+    case "password":
+    case "protocol":
+    case "auth":
+      return "green-fg";
+    case "domain":
+    case "port":
+      return "blue-fg";
+    case "path":
+      return "bluegrey-fg";
+    case "query":
+      return "purple-fg";
+    case "fragment":
+      return "orange-fg";
+    default:
+      return "";
+  }
+}
+
+export function prototypeToURLParts(p: Prototype): Part[] {
   const ret: Part[] = []
   const push = (t: string, v: string): void => {
-    ret.push({t: t, v: v});
+    ret.push({t: t, v: v, idx: ret.length, color: urlColor(t)});
   }
 
   push("protocol", p.protocol);
@@ -66,47 +76,4 @@ export function prototypeToURL(p: Prototype | undefined): string {
     return "..."
   }
   return prototypeToURLParts(p).map(x => x.v).join("");
-}
-
-function urlColor(key: string): string {
-  switch (key) {
-    case "username":
-    case "password":
-    case "protocol":
-    case "auth":
-      return "green-fg";
-    case "domain":
-    case "port":
-      return "blue-fg";
-    case "path":
-      return "bluegrey-fg";
-    case "query":
-      return "purple-fg";
-    case "fragment":
-      return "orange-fg";
-    default:
-      return "";
-  }
-}
-
-export function prototypeToHTML(p: Prototype | undefined): JSX.Element {
-  if (!p) {
-    return <span>...</span>
-  }
-  return <span>{prototypeToURLParts(p).map(x => <span title={x.t} class={urlColor(x.t)}>{ x.v }</span>)}</span>;
-}
-
-export function prototypeBaseURL(p: Prototype | undefined): string {
-  if (!p) {
-    return "invalid";
-  }
-  let d = p.domain;
-  if (p.port && p.port > 0) {
-    d += `:${p.port}`;
-  }
-  return `${p.protocol}://${d}/`;
-}
-
-export function baseURL(s: string): string {
-  return prototypeBaseURL(urlToPrototype(s))
 }
