@@ -35,20 +35,20 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {NPNRequest} from "@/request/model";
-import {getStateSetBCReq} from "@/util/vutils";
-import RequestDetail from "@/request/RequestDetail.vue";
+import {getState, getStateSetBCReq} from "@/util/vutils";
 import {Result} from "@/call/model";
 import ResultHeaders from "@/call/ResultHeaders.vue";
 import ResultBody from "@/call/ResultBody.vue";
+import RequestDetail from "@/request/RequestDetail.vue";
 
 @Component({ components: { ResultBody, ResultHeaders } })
-export default class RequestCall extends Vue {
+export default class CallResult extends Vue {
   get req(): NPNRequest | undefined {
     return (this.$parent as RequestDetail).req;
   }
 
   get result(): Result | undefined {
-    return this.$store.state.callResult;
+    return getState(this).callResult;
   }
 
   created(): void {

@@ -25,7 +25,7 @@ import {Component, Vue} from "vue-property-decorator";
 import {allMethods, Method, NPNRequest} from "@/request/model";
 import {Part, prototypeToURL, prototypeToURLParts} from "@/request/url";
 import {prototypeFromURL} from "@/request/prototype";
-import {getState} from "@/util/vutils";
+import RequestDetail from "@/request/RequestDetail.vue";
 
 @Component
 export default class URLEditor extends Vue {
@@ -47,7 +47,7 @@ export default class URLEditor extends Vue {
   }
 
   get req(): NPNRequest | undefined {
-    return getState(this).requestEditing
+    return (this.$parent as RequestDetail).req;
   }
 
   get methods(): Method[] {
