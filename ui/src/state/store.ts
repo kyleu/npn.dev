@@ -1,40 +1,41 @@
 import Vue from "vue";
 import Vuex, {Store} from "vuex";
-import {State} from "@/state/state";
+import {activeRequestRef, getRequestDetail, hostRef, requestEditingRef, requestOriginalRef, socketRef} from "@/state/state";
 import {Message, Socket} from "@/socket/socket";
 import {logDebug, logError, logWarn} from "@/util/log";
 import {cloneRequest} from "@/request/model";
-import {initialState} from "@/state/initial";
+import {initState} from "@/state/initial";
 
 Vue.use(Vuex);
+
+export interface NPNState {}
 
 export interface ActiveRequest {
   readonly coll: string;
   readonly req: string;
 }
 
-function send(s: State, msg: Message): void {
-  if (!s.socket) {
+function send(s: NPNState, msg: Message): void {
+  if (!socketRef.value) {
     logError("no socket available");
   } else {
-    s.socket.send(msg);
+    socketRef.value.send(msg);
   }
 }
 
-function setActiveRequest(s: State, x: ActiveRequest): void {
-  s.activeRequest = x;
-  const rd = s.getRequestDetail(x.coll, x.req);
-  s.requestEditing = rd;
-  if (rd && ((!s.requestOriginal) || s.requestOriginal.key !== x.req)) {
-    console.log("1")
-    s.requestOriginal = cloneRequest(s.requestEditing);
+function setActiveRequest(s: NPNState, x: ActiveRequest): void {
+  activeRequestRef.value = x;
+  const rd = getRequestDetail(x.coll, x.req);
+  requestEditingRef.value = rd;
+  if (rd && ((!requestOriginalRef.value) || requestOriginalRef.value.key !== x.req)) {
+    requestOriginalRef.value = cloneRequest(requestEditingRef.value);
   }
 }
 
-export function newStore(onMessage: (s: State, m: Message) => void): Store<State> {
-  let ret: Store<State> | undefined = undefined;
+export function newStore(onMessage: (s: NPNState, m: Message) => void): Store<NPNState> {
+  let ret: Store<NPNState> | undefined = undefined;
 
-  const state = initialState();
+  initState();
   function openF(): void {
     logDebug("websocket open");
   }
@@ -47,13 +48,12 @@ export function newStore(onMessage: (s: State, m: Message) => void): Store<State
     logWarn("websocket err: " + err);
   }
   let url = "";
-  if(state.host && state.host.length > 0) {
-    url = `ws://${state.host}/s`
+  if(hostRef.value.length > 0) {
+    url = `ws://${hostRef.value}/s`
   }
-  state.socket = new Socket(openF, recvF, errF, url);
+  socketRef.value = new Socket(openF, recvF, errF, url);
 
   ret = new Vuex.Store({
-    state: state,
     mutations: { onMessage, send, setActiveRequest },
     modules: {}
   })

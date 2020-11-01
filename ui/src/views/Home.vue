@@ -20,20 +20,21 @@
 import { Component, Vue } from "vue-property-decorator";
 import CollectionGallery from "@/collection/CollectionGallery.vue";
 import {jsonStr} from "@/util/json";
-import {getStateSetBC} from "@/util/vutils";
+import {setBC} from "@/util/vutils";
+import {profileRef} from "@/state/state";
 
 @Component({ components: { CollectionGallery } })
 export default class Home extends Vue {
   get dbg (): string {
-    return jsonStr(this.$store.state.profile);
+    return jsonStr(profileRef.value);
   }
 
   created(): void {
-    getStateSetBC(this);
+    setBC(this);
   }
 
   updated(): void {
-    getStateSetBC(this);
+    setBC(this);
   }
 }
 </script>

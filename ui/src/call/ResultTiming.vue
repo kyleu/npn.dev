@@ -14,7 +14,7 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Timing, timingGraph, TimingSection, timingSections} from "@/call/timing";
-import {getState} from "@/util/vutils";
+import {hostRef} from "@/state/state";
 
 @Component
 export default class ResultTiming extends Vue {
@@ -26,8 +26,8 @@ export default class ResultTiming extends Vue {
 
   get graphMarkup(): string {
     let url = ""
-    if (getState(this).host.length > 0) {
-      url = `http://${getState(this).host}`;
+    if (hostRef.value.length > 0) {
+      url = `http://${hostRef.value}`;
     }
     return timingGraph(url, this.sections);
   }

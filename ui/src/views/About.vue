@@ -12,16 +12,16 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CollectionGallery from "@/collection/CollectionGallery.vue";
-import {getStateSetBC} from "@/util/vutils";
+import {setBC} from "@/util/vutils";
 
 @Component({ components: { CollectionGallery } })
 export default class About extends Vue {
   created(): void {
-    getStateSetBC(this, {path: "", title: "about"});
+    setBC(this, {path: "", title: "about"});
   }
 
   updated(): void {
-    getStateSetBC(this, {path: "", title: "about"});
+    setBC(this, {path: "", title: "about"});
   }
 }
 </script>

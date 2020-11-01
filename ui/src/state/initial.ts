@@ -1,12 +1,12 @@
 import Profile from "@/user/profile";
-import {State} from "@/state/state";
+import {hostRef, profileRef} from "@/state/state";
 
 interface InitialData {
   readonly host: string;
   readonly profile: Profile;
 }
 
-export function initialState(): State {
+export function initState(): void {
   // @ts-ignore
   // eslint-disable-next-line
   const cfg = (window as any).initialData as InitialData;
@@ -18,5 +18,6 @@ export function initialState(): State {
     profile = cfg.profile;
   }
 
-  return new State(host, profile);
+  hostRef.value = host;
+  profileRef.value = profile;
 }

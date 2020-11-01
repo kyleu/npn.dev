@@ -5,6 +5,10 @@ import {ActiveRequest} from "@/state/store";
 import {CallResult} from "@/call/model";
 import {Socket} from "@/socket/socket";
 import {TransformResult} from "@/request/transformResult";
+import VueCompositionAPI, {ref} from "@vue/composition-api";
+import Vue from "vue";
+
+Vue.use(VueCompositionAPI);
 
 export interface Breadcrumb {
   readonly title: string;
@@ -16,114 +20,90 @@ interface CollectionData<T> {
   requests: T[];
 }
 
-export class State {
-  readonly host: string;
-  profile: Profile;
-  breadcrumbs: Breadcrumb[] = [];
+export const hostRef = ref<string>("");
+export const breadcrumbsRef = ref<Breadcrumb[]>();
+export const profileRef = ref<Profile>();
 
-  collections: Collection[] = [];
-  collectionSummaries: CollectionData<Summary>[] = [];
-  requestDetails: CollectionData<NPNRequest>[] = [];
+export const collectionsRef = ref<Collection[]>([]);
 
-  activeRequest: ActiveRequest | undefined;
+export const collectionSummariesRef = ref<CollectionData<Summary>[]>([]);
+export const requestDetailsRef = ref<CollectionData<NPNRequest>[]>([]);
 
-  requestOriginal: NPNRequest | undefined;
-  requestEditing: NPNRequest | undefined;
+export const activeRequestRef = ref<ActiveRequest>();
+export const requestOriginalRef = ref<NPNRequest>();
+export const requestEditingRef = ref<NPNRequest>();
 
-  callResult: CallResult | undefined;
-  transformResult: TransformResult | undefined;
+export const callResultRef = ref<CallResult>();
+export const transformResultRef = ref<TransformResult>();
 
-  socket: Socket | undefined;
+export const socketRef = ref<Socket>();
 
-  constructor(host: string, profile: Profile) {
-    this.host = host;
-    this.profile = profile;
-  }
-
-  getCollection(key: string): Collection | undefined {
-    for (const c of this.collections) {
-      if (c.key === key) {
-        return c;
-      }
+export function getCollection(key: string): Collection | undefined {
+  for (const c of collectionsRef.value) {
+    if (c.key === key) {
+      return c;
     }
   }
+}
 
-  getCollectionRequestSummaries(key: string): Summary[] | undefined {
-    for (const c of this.collectionSummaries) {
-      if (c.key === key) {
-        return c.requests;
-      }
+export function getCollectionRequestSummaries(key: string): Summary[] | undefined {
+  for (const c of collectionSummariesRef.value) {
+    if (c.key === key) {
+      return c.requests;
     }
-    return undefined;
   }
+  return undefined;
+}
 
-  setCollectionRequestSummaries(key: string, reqs: Summary[]): void {
-    for (const c of this.collectionSummaries) {
-      if (c.key === key) {
-        c.requests = reqs;
-        return;
-      }
+export function setCollectionRequestSummaries(key: string, reqs: Summary[]): void {
+  for (const c of collectionSummariesRef.value) {
+    if (c.key === key) {
+      c.requests = reqs;
+      return;
     }
-    this.collectionSummaries.push({key: key, requests: reqs});
   }
+  collectionSummariesRef.value.push({key: key, requests: reqs});
+}
 
-  getRequestSummary(coll: string, req: string): Summary | undefined {
-    for (const r of this.getCollectionRequestSummaries(coll) || []) {
-      if (r.key == req) {
-        return r;
-      }
+function getCollectionRequestDetails(key: string): NPNRequest[] | undefined {
+  for (const c of requestDetailsRef.value) {
+    if (c.key === key) {
+      return c.requests;
     }
-    return undefined;
   }
+  return undefined;
+}
 
-  getCollectionRequestDetails(key: string): NPNRequest[] | undefined {
-    for (const c of this.requestDetails) {
-      if (c.key === key) {
-        return c.requests;
-      }
+function setCollectionRequestDetails(key: string, requests: NPNRequest[]): void {
+  for (const c of requestDetailsRef.value) {
+    if (c.key === key) {
+      c.requests = requests;
+      return;
     }
-    return undefined;
   }
+  requestDetailsRef.value.push({key, requests})
+}
 
-  setCollectionRequestDetails(key: string, requests: NPNRequest[]): void {
-    for (const c of this.requestDetails) {
-      if (c.key === key) {
-        c.requests = requests;
-        return;
-      }
+export function getRequestDetail(coll: string, req: string): NPNRequest | undefined {
+  for (const r of getCollectionRequestDetails(coll) || []) {
+    if (r.key == req) {
+      return r;
     }
-    this.requestDetails.push({key, requests})
   }
+  return undefined;
+}
 
-  getRequestDetail(coll: string, req: string): NPNRequest | undefined {
-    for (const r of this.getCollectionRequestDetails(coll) || []) {
-      if (r.key == req) {
-        return r;
-      }
+export function setRequestDetail(coll: string, req: NPNRequest): void {
+  const rs = getCollectionRequestDetails(coll) || []
+  let matched = false;
+  for (const r in rs) {
+    if (rs[r].key == req.key) {
+      matched = true;
+      rs[r] = req;
     }
-    return undefined;
   }
-
-  setRequestDetail(coll: string, req: NPNRequest): void {
-    const rs = this.getCollectionRequestDetails(coll) || []
-    let matched = false;
-    for (const r in rs) {
-      if (rs[r].key == req.key) {
-        matched = true;
-        rs[r] = req;
-      }
-    }
-    if (!matched) {
-      rs.push(req);
-    }
-    this.setCollectionRequestDetails(coll, rs);
+  if (!matched) {
+    rs.push(req);
   }
-
-  setCallResult(result: CallResult): void {
-    this.callResult = result;
-  }
-
-  setTransformResult(result: TransformResult): void {
-    this.transformResult = result;
-  }
+  setCollectionRequestDetails(coll, rs);
 }

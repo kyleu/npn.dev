@@ -35,17 +35,17 @@ const routes: Array<RouteConfig> = [
       {
         path: "",
         name: "RequestDetail",
-        component: RequestEditor,
+        component: RequestEditor
       },
       {
         path: "call",
         name: "CallResult",
-        component: CallResultPanel,
+        component: CallResultPanel
       },
       {
         path: "transform/:tx",
         name: "RequestTransform",
-        component: RequestTransform,
+        component: RequestTransform
       }
     ]
   },

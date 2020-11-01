@@ -8,16 +8,16 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CollectionGallery from "@/collection/CollectionGallery.vue";
-import {getStateSetBC} from "@/util/vutils";
+import {setBC} from "@/util/vutils";
 
 @Component({ components: { CollectionGallery } })
 export default class NotFound extends Vue {
   created(): void {
-    getStateSetBC(this, {path: "", title: "not found"});
+    setBC(this, {path: "", title: "not found"});
   }
 
   updated(): void {
-    getStateSetBC(this, {path: "", title: "not found"});
+    setBC(this, {path: "", title: "not found"});
   }
 }
 </script>

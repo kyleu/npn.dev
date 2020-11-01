@@ -2,7 +2,7 @@
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <div class="right"><router-link :class="'uk-icon ' + $store.state.profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll"></router-link></div>
+        <div class="right"><router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll"></router-link></div>
         <h3 class="uk-card-title">
           <span v-if="req">{{ req.title || req.key }}</span>
           <span v-else>{{ $route.params.req }}</span>
@@ -25,29 +25,32 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {getState} from "@/util/vutils";
 import RequestSummaryList from "@/request/RequestSummaryList.vue";
 import {NPNRequest} from "@/request/model";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
 import {diff} from "@/request/diff";
 import ExportActions from "@/request/editor/ExportActions.vue";
+import {profileRef, requestEditingRef, requestOriginalRef} from "@/state/state";
+import Profile from "@/user/profile";
 
 @Component({ components: {ExportActions, RequestEditor, RequestSummaryList, URLEditor } })
 export default class RequestDetail extends Vue {
+  get profile(): Profile | undefined {
+    return profileRef.value;
+  }
+
   get req(): NPNRequest | undefined {
     this.$store.commit("setActiveRequest", {coll: this.$route.params.coll, req: this.$route.params.req});
-    const s = getState(this);
-    if ((!s.requestEditing) && this.$route.params.req) {
+    if ((!requestEditingRef.value) && this.$route.params.req) {
       this.$store.commit("send", {svc: "request", cmd: "getRequest", param: {coll: this.$route.params.coll, req: this.$route.params.req}});
     }
-    return s.requestEditing;
+    return requestEditingRef.value;
   }
 
   get different(): boolean {
-    const s = getState(this);
-    const diffs = diff(s.requestOriginal, s.requestEditing);
-    console.debug(s.requestOriginal, s.requestEditing);
+    const diffs = diff(requestOriginalRef.value, requestEditingRef.value);
+    console.debug(requestOriginalRef.value, requestEditingRef.value);
     if (diffs.length > 0) {
       console.debug(diffs);
     }

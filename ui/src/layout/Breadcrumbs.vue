@@ -9,7 +9,7 @@
     </router-link>
     <router-link title="npn" class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" to="/" exact>npn</router-link>
 
-    <span v-for="bc in $store.state.breadcrumbs" :key="bc.path" class="uk-navbar-item trim dynamic">
+    <span v-for="bc in breadcrumbs" :key="bc.path" class="uk-navbar-item trim dynamic">
       <span style="padding: 0 8px;"> / </span>
       <router-link title="npn" class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" :to="bc.path" exact>{{ bc.title }}</router-link>
     </span>
@@ -18,7 +18,15 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import {Breadcrumb, breadcrumbsRef} from "@/state/state";
 
 @Component
-export default class Breadcrumbs extends Vue {}
+export default class Breadcrumbs extends Vue {
+  get breadcrumbs(): Breadcrumb[] {
+    if (!breadcrumbsRef.value) {
+      return [];
+    }
+    return breadcrumbsRef.value
+  }
+}
 </script>

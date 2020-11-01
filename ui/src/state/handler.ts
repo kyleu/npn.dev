@@ -1,32 +1,38 @@
-import {State} from "@/state/state";
+import {
+  activeRequestRef,
+  callResultRef,
+  collectionsRef,
+  requestEditingRef,
+  requestOriginalRef,
+  setCollectionRequestSummaries, setRequestDetail,
+  transformResultRef
+} from "@/state/state";
 import {Message} from "@/socket/socket";
 import {logDebug, logWarn} from "@/util/log";
 import {Collection} from "@/collection/collection";
 import {cloneRequest} from "@/request/model";
-import {CallResult} from "@/call/model";
-import {TransformResult} from "@/request/transformResult";
 
-export const messageHandler = (state: State, msg: Message): void => {
+export const messageHandler = (_: object, msg: Message): void => {
   logDebug("IN", msg);
   switch (msg.cmd) {
     case "collections":
-      state.collections = msg.param as Collection[];
+      collectionsRef.value = msg.param as Collection[];
       break;
     case "collectionDetail":
-      state.setCollectionRequestSummaries(msg.param.key, msg.param.requests);
+      setCollectionRequestSummaries(msg.param.key, msg.param.requests);
       break;
     case "requestDetail":
-      state.setRequestDetail(msg.param.coll, msg.param.req);
-      if (msg.param.req.key === state.activeRequest?.req && msg.param.coll === state.activeRequest?.coll) {
-        state.requestOriginal = cloneRequest(msg.param.req);
-        state.requestEditing = msg.param.req;
+      setRequestDetail(msg.param.coll, msg.param.req);
+      if (activeRequestRef.value && msg.param.req.key === activeRequestRef.value.req && msg.param.coll === activeRequestRef.value.coll) {
+        requestOriginalRef.value = cloneRequest(msg.param.req);
+        requestEditingRef.value = msg.param.req;
       }
       break;
     case "callResult":
-      state.setCallResult(msg.param as CallResult);
+      callResultRef.value = msg.param;
       break;
     case "transformResult":
-      state.setTransformResult(msg.param as TransformResult);
+      transformResultRef.value = msg.param;
       break;
     default:
       logWarn("unhandled message [" + msg.cmd + "]", msg);

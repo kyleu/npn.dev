@@ -1,6 +1,6 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
-    <div class="right"><router-link :class="'uk-icon ' + $store.state.profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link></div>
+    <div class="right"><router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link></div>
     <h3 v-if="result" class="uk-card-title">{{ result.status }}</h3>
     <h3 v-else class="uk-card-title">Loading...</h3>
     <em v-if="result">{{ result.response.method }} {{ result.response.url }}</em>
@@ -35,34 +35,56 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {getState, getStateSetBCReq} from "@/util/vutils";
+import {setBCReq} from "@/util/vutils";
 import ResultHeaders from "@/call/ResultHeaders.vue";
 import ResultBody from "@/call/ResultBody.vue";
 import ResultTiming from "@/call/ResultTiming.vue";
 import {CallResult} from "@/call/model";
+import {callResultRef, profileRef, requestEditingRef} from "@/state/state";
+import {Prototype} from "@/request/model";
+import Profile from "@/user/profile";
+
+interface CallParam {
+  coll: string;
+  req: string;
+  proto: Prototype;
+}
 
 @Component({ components: {ResultTiming, ResultBody, ResultHeaders } })
 export default class CallResultPanel extends Vue {
+  private pending: CallParam | undefined;
+
+  get profile(): Profile | undefined {
+    return profileRef.value;
+  }
+
   get result(): CallResult | undefined {
-    return getState(this).callResult;
+    return callResultRef.value;
   }
 
   created(): void {
-    const re = getState(this).requestEditing;
+    callResultRef.value = undefined;
+    const re = requestEditingRef.value;
     if (re) {
       const param = {coll: this.$route.params.coll, req: this.$route.params.req, proto: re.prototype};
       this.$store.commit("send", {svc: "request", cmd: "call", param: param});
     }
-    getStateSetBCReq(this, "call");
+    setBCReq(this, "call");
   }
 
   updated(): void {
-    const re = getState(this).requestEditing;
+    const re = requestEditingRef.value;
     if (re) {
-      const param = {coll: this.$route.params.coll, req: this.$route.params.req, proto: re.prototype};
-      this.$store.commit("send", {svc: "request", cmd: "call", param: param});
+      const param: CallParam = {coll: this.$route.params.coll, req: this.$route.params.req, proto: re.prototype};
+      if ((this.pending) && (this.pending.coll === param.coll && this.pending.req === param.req)) {
+        // console.log("?");
+      } else {
+        callResultRef.value = undefined;
+        this.$store.commit("send", {svc: "request", cmd: "call", param: param});
+        this.pending = param;
+      }
     }
-    getStateSetBCReq(this, "call");
+    setBCReq(this, "call");
   }
 }
 </script>

@@ -26,6 +26,7 @@ import {allMethods, Method, NPNRequest} from "@/request/model";
 import {Part, prototypeToURL, prototypeToURLParts} from "@/request/url";
 import {prototypeFromURL} from "@/request/prototype";
 import RequestDetail from "@/request/RequestDetail.vue";
+import {requestEditingRef} from "@/state/state";
 
 @Component
 export default class URLEditor extends Vue {
@@ -47,7 +48,7 @@ export default class URLEditor extends Vue {
   }
 
   get req(): NPNRequest | undefined {
-    return (this.$parent as RequestDetail).req;
+    return requestEditingRef.value
   }
 
   get methods(): Method[] {

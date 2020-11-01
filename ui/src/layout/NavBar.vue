@@ -1,14 +1,14 @@
 <template>
   <header>
     <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky; media: 960">
-      <nav id="navbar" :class="'uk-navbar-container ' + $store.state.profile.navColor + '-bg'" data-uk-navbar>
+      <nav id="navbar" :class="'uk-navbar-container ' + profile.navColor + '-bg'" data-uk-navbar>
         <Breadcrumbs />
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
             <li class="uk-margin-small-right">
-              <a v-if="$store.state.profile.picture.length === 0 || $store.state.profile.picture === 'none'" href="/profile" data-uk-icon="icon:user" title="Profile"></a>
-              <a v-if="$store.state.profile.picture.length !== 0 && $store.state.profile.picture !== 'none'" href="/profile" title="Profile">
-                <img class="uk-border-circle" alt="user profile" :src="$store.state.profile.picture" />
+              <a v-if="profile.picture.length === 0 || profile.picture === 'none'" href="/profile" data-uk-icon="icon:user" title="Profile"></a>
+              <a v-if="profile.picture.length !== 0 && profile.picture !== 'none'" href="/profile" title="Profile">
+                <img class="uk-border-circle" alt="user profile" :src="profile.picture" />
               </a>
             </li>
           </ul>
@@ -22,7 +22,13 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Breadcrumbs from "@/layout/Breadcrumbs.vue";
+import Profile from "@/user/profile";
+import {profileRef} from "@/state/state";
 
 @Component({ components: { Breadcrumbs } })
-export default class NavBar extends Vue {}
+export default class NavBar extends Vue {
+  get profile(): Profile | undefined {
+    return profileRef.value;
+  }
+}
 </script>

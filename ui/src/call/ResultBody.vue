@@ -4,7 +4,7 @@
       <div v-if="body.type === 'html'">
         <pre><code class="language-html">{{ content }}</code></pre>
       </div>
-      <div v-if="body.type === 'json'">
+      <div v-else-if="body.type === 'json'">
         <pre><code class="language-json">{{ content }}</code></pre>
       </div>
       <div v-else>

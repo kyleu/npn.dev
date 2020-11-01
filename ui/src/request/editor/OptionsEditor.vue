@@ -51,12 +51,12 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {Options} from "@/request/model";
-import {getState} from "@/util/vutils";
+import {requestEditingRef} from "@/state/state";
 
 @Component
 export default class OptionsEditor extends Vue {
   get opts(): Options | undefined {
-    return getState(this).requestEditing?.prototype?.options
+    return requestEditingRef.value?.prototype?.options
   }
 }
 </script>
