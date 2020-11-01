@@ -1,16 +1,16 @@
 export interface Timing {
-  readonly began: number,
-  readonly dnsStart: number,
-  readonly dnsEnd: number,
-  readonly connectStart: number,
-  readonly connectEnd: number,
-  readonly tlsStart?: number,
-  readonly tlsEnd?: number,
-  readonly wroteHeaders: number,
-  readonly wroteRequest: number,
-  readonly firstResponseByte: number,
-  readonly responseHeaders: number,
-  readonly completed: number
+  readonly began: number;
+  readonly dnsStart: number;
+  readonly dnsEnd: number;
+  readonly connectStart: number;
+  readonly connectEnd: number;
+  readonly tlsStart?: number;
+  readonly tlsEnd?: number;
+  readonly wroteHeaders: number;
+  readonly wroteRequest: number;
+  readonly firstResponseByte: number;
+  readonly responseHeaders: number;
+  readonly completed: number;
 }
 
 export interface TimingSection {
@@ -23,7 +23,7 @@ export interface TimingSection {
 export function timingSections(t: Timing): TimingSection[] {
   const ret: TimingSection[] = [];
 
-  const add = (k: string, g: string, s?: number, e?: number) => {
+  const add = (k: string, g: string, s?: number, e?: number): void => {
     if (s && e) {
       ret.push({key: k, group: g, start: s, end: e});
     }
@@ -48,7 +48,7 @@ export function timingSections(t: Timing): TimingSection[] {
   return ret;
 }
 
-export function timingGraph(ts: TimingSection[]) {
+export function timingGraph(url: string, ts: TimingSection[]): string {
   const ret: string[] = [];
   for (const t of ts) {
     if (t.group.length > 0) {
@@ -60,5 +60,9 @@ export function timingGraph(ts: TimingSection[]) {
   const TODO = undefined;
   ret.push("t=" + TODO || "light");
 
-  return "/svg/gantt?" + ret.join("&");
+  if (url.endsWith("/")) {
+    url = url.substr(0, url.length - 1);
+  }
+
+  return url + "/svg/gantt?" + ret.join("&");
 }

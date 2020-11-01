@@ -2,7 +2,9 @@ import {Collection} from "@/collection/collection";
 import Profile from "@/user/profile";
 import {NPNRequest, Summary} from "@/request/model";
 import {ActiveRequest} from "@/state/store";
-import {Result} from "@/call/model";
+import {CallResult} from "@/call/model";
+import {Socket} from "@/socket/socket";
+import {TransformResult} from "@/request/transformResult";
 
 export interface Breadcrumb {
   readonly title: string;
@@ -15,7 +17,7 @@ interface CollectionData<T> {
 }
 
 export class State {
-  readonly url: string;
+  readonly host: string;
   profile: Profile;
   breadcrumbs: Breadcrumb[] = [];
 
@@ -23,13 +25,18 @@ export class State {
   collectionSummaries: CollectionData<Summary>[] = [];
   requestDetails: CollectionData<NPNRequest>[] = [];
 
+  activeRequest: ActiveRequest | undefined;
+
   requestOriginal: NPNRequest | undefined;
   requestEditing: NPNRequest | undefined;
-  activeRequest: ActiveRequest | undefined;
-  callResult: Result | undefined;
 
-  constructor(url: string, profile: Profile) {
-    this.url = url;
+  callResult: CallResult | undefined;
+  transformResult: TransformResult | undefined;
+
+  socket: Socket | undefined;
+
+  constructor(host: string, profile: Profile) {
+    this.host = host;
     this.profile = profile;
   }
 
@@ -112,27 +119,11 @@ export class State {
     this.setCollectionRequestDetails(coll, rs);
   }
 
-  setCallResult(result: Result): void {
+  setCallResult(result: CallResult): void {
     this.callResult = result;
   }
-}
 
-interface InitialData {
-  readonly url: string;
-  readonly profile: Profile;
-}
-
-export function initialState(): State {
-  // @ts-ignore
-  // eslint-disable-next-line
-  const cfg = (window as any).initialData as InitialData;
-
-  let profile = {} as Profile;
-  const url = cfg && cfg.url ? cfg.url : "";
-
-  if (cfg && cfg.profile) {
-    profile = cfg.profile;
+  setTransformResult(result: TransformResult): void {
+    this.transformResult = result;
   }
-
-  return new State(url, profile);
 }

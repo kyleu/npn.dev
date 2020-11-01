@@ -1523,7 +1523,7 @@ var call;
         return ret;
     }
     function renderResult(r, hash) {
-        var ret = [
+        return [
             JSX("div", { class: "right" },
                 JSX("a", { class: "theme uk-icon", "data-uk-icon": "close", href: "", onclick: "nav.pop();return false;", title: "close result" })),
             r.error ? JSX("div", null,
@@ -1532,7 +1532,6 @@ var call;
                     r.error)) : JSX("div", null),
             renderResponse(r.response, hash)
         ];
-        return ret;
     }
     call.renderResult = renderResult;
     function renderHeaders(title, headers) {

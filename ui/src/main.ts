@@ -7,12 +7,7 @@ import "@/assets/styles/styles.scss";
 
 // @ts-ignore
 import Icons from "uikit/dist/js/uikit-icons";
-import {Message} from "@/socket/socket";
-import {State} from "@/state";
-import {Collection} from "@/collection/collection";
-import {logDebug, logWarn} from "@/util/log";
-import {cloneRequest} from "@/request/model";
-import {Result} from "@/call/model";
+import {messageHandler} from "@/state/handler";
 
 // @ts-ignore
 // eslint-disable-next-line
@@ -22,35 +17,18 @@ import {Result} from "@/call/model";
 // eslint-disable-next-line
 (window as any).UIkit = UIkit;
 
+// @ts-ignore
+// eslint-disable-next-line
+(window as any).Prism = (window as any).Prism || {};
+// @ts-ignore
+// eslint-disable-next-line
+(window as any).Prism.manual = true;
+
 Vue.config.productionTip = false;
 
 const render = (h: Vue.CreateElement): Vue.VNode => h(Workspace);
 
-const handler = (state: State, msg: Message): void => {
-  logDebug("IN", msg);
-  switch (msg.cmd) {
-    case "collections":
-      state.collections = msg.param as Collection[];
-      break;
-    case "collectionDetail":
-      state.setCollectionRequestSummaries(msg.param.key, msg.param.requests);
-      break;
-    case "requestDetail":
-      state.setRequestDetail(msg.param.coll, msg.param.req);
-      if (msg.param.req.key === state.activeRequest?.req && msg.param.coll === state.activeRequest?.coll) {
-        state.requestOriginal = cloneRequest(msg.param.req);
-        state.requestEditing = msg.param.req;
-      }
-      break;
-    case "callResult":
-      state.setCallResult(msg.param as Result);
-      break;
-    default:
-      logWarn("unhandled message [" + msg.cmd + "]", msg);
-  }
-}
-
-const store = newStore(handler);
+const store = newStore(messageHandler);
 
 const root = new Vue({router, store, el: "#npn", render});
 

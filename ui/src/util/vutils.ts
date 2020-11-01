@@ -1,5 +1,5 @@
 import {Vue} from "vue-property-decorator";
-import {Breadcrumb, State} from "@/state";
+import {Breadcrumb, State} from "@/state/state";
 
 export function getState(me: Vue): State {
   return (me.$store.state as State);

@@ -8,11 +8,11 @@
     <div v-if="!editing" class="url-view uk-inline right" style="width:calc(100% - 120px);">
       <router-link class="uk-form-icon uk-form-icon-flip" title="send request" data-uk-icon="icon: play" :to="'/c/' + $route.params.coll + '/' + $route.params.req + '/call'"></router-link>
       <div @click="editing = true">
-        <span class="url-link"><span v-for="part in protoParts" :key="part.idx" :class="part.color">{{ part.v }}</span> </span>
+        <span class="url-link"><span v-for="part in protoParts" :key="part.idx" :class="part.color" :title="part.t">{{ part.v }}</span> </span>
       </div>
     </div>
     <div v-if="editing" class="url-input uk-inline right" style="width:calc(100% - 120px);">
-      <a class="uk-form-icon uk-form-icon-flip" title="cancel edit" data-uk-icon="icon: close" href="" onclick="return false;" @click="editing = false" />
+      <a class="uk-form-icon uk-form-icon-flip" title="cancel edit" data-uk-icon="icon: close" href="" @click.prevent="editing = false" />
       <form @submit="TODO()">
         <input id="url-input-el" v-model="protoString" class="uk-input" name="url" type="text" data-lpignore="true" @blur="editing = false" />
       </form>

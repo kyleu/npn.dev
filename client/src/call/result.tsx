@@ -41,7 +41,7 @@ namespace call {
   }
 
   export function renderResult(r: Result, hash: string) {
-    const ret = [
+    return [
       <div class="right">
         <a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.pop();return false;" title="close result" />
       </div>,
@@ -50,7 +50,6 @@ namespace call {
       </div> : <div />,
       renderResponse(r.response, hash)
     ];
-    return ret;
   }
 
   function renderHeaders(title: string, headers: header.Header[] = []) {

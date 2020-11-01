@@ -1,26 +1,40 @@
 <template>
-  <div v-if="req" class="uk-card uk-card-body uk-card-default mt">
-    TRANSFORM: {{ this.$route.params.tx }}!
+  <div class="uk-card uk-card-body uk-card-default mt">
+    <div class="right"><router-link :class="'uk-icon ' + $store.state.profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link></div>
+    <h3 v-if="result" class="uk-card-title">{{ result.req }}: {{ result.fmt }}</h3>
+    <h3 v-else class="uk-card-title">Loading...</h3>
+    <div v-if="result" class="mt">
+      <pre>{{ result.out }}</pre>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {NPNRequest} from "@/request/model";
-import {getStateSetBCReq} from "@/util/vutils";
-import RequestDetail from "@/request/RequestDetail.vue";
+import {getState, getStateSetBCReq} from "@/util/vutils";
+import {TransformResult} from "@/request/transformResult";
 
 @Component
 export default class RequestTransform extends Vue {
-  get req(): NPNRequest | undefined {
-    return (this.$parent as RequestDetail).req;
+  get result(): TransformResult | undefined {
+    return getState(this).transformResult;
   }
 
   created(): void {
+    const re = getState(this).requestEditing;
+    if (re) {
+      const param = {coll: this.$route.params.coll, req: this.$route.params.req, fmt: this.$route.params.tx, proto: re.prototype};
+      this.$store.commit("send", {svc: "request", cmd: "transform", param: param});
+    }
     getStateSetBCReq(this, this.$route.params.tx);
   }
 
   updated(): void {
+    const re = getState(this).requestEditing;
+    if (re) {
+      const param = {coll: this.$route.params.coll, req: this.$route.params.req, fmt: this.$route.params.tx, proto: re.prototype};
+      this.$store.commit("send", {svc: "request", cmd: "transform", param: param});
+    }
     getStateSetBCReq(this, this.$route.params.tx);
   }
 }

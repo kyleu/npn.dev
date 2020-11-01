@@ -8,7 +8,7 @@ import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import RequestTransform from "@/request/RequestTransform.vue";
-import CallResult from "@/call/CallResult.vue";
+import CallResultPanel from "@/call/CallResultPanel.vue";
 
 Vue.use(VueRouter);
 
@@ -40,7 +40,7 @@ const routes: Array<RouteConfig> = [
       {
         path: "call",
         name: "CallResult",
-        component: CallResult,
+        component: CallResultPanel,
       },
       {
         path: "transform/:tx",

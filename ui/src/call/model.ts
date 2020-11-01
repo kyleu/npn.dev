@@ -24,7 +24,7 @@ export interface Response {
   readonly error?: string;
 }
 
-export interface Result {
+export interface CallResult {
   readonly id: string;
   readonly collection: string;
   readonly request: string;

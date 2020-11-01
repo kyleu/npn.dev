@@ -1,8 +1,9 @@
 <template>
-  <div v-if="req" class="uk-card uk-card-body uk-card-default mt">
+  <div class="uk-card uk-card-body uk-card-default mt">
+    <div class="right"><router-link :class="'uk-icon ' + $store.state.profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link></div>
     <h3 v-if="result" class="uk-card-title">{{ result.status }}</h3>
-    <em v-if="result">{{ result.response.method }} {{ result.response.url }}</em>
     <h3 v-else class="uk-card-title">Loading...</h3>
+    <em v-if="result">{{ result.response.method }} {{ result.response.url }}</em>
     <div v-if="result" class="mt">
       <ul data-uk-tab="">
         <li><a href="#result">Result</a></li>
@@ -26,7 +27,7 @@
         <li><ResultHeaders title="Final Request Headers" :headers="result.response.requestHeaders" /></li>
         <li><ResultHeaders title="Response Headers" :headers="result.response.headers" /></li>
         <li><ResultBody :url="result.response.url" :body="result.response.body" /></li>
-        <li>{renderTiming(rsp.timing)}</li>
+        <li><ResultTiming :timing="result.response.timing" /></li>
       </ul>
     </div>
   </div>
@@ -34,34 +35,31 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {NPNRequest} from "@/request/model";
 import {getState, getStateSetBCReq} from "@/util/vutils";
-import {Result} from "@/call/model";
 import ResultHeaders from "@/call/ResultHeaders.vue";
 import ResultBody from "@/call/ResultBody.vue";
-import RequestDetail from "@/request/RequestDetail.vue";
+import ResultTiming from "@/call/ResultTiming.vue";
+import {CallResult} from "@/call/model";
 
-@Component({ components: { ResultBody, ResultHeaders } })
-export default class CallResult extends Vue {
-  get req(): NPNRequest | undefined {
-    return (this.$parent as RequestDetail).req;
-  }
-
-  get result(): Result | undefined {
+@Component({ components: {ResultTiming, ResultBody, ResultHeaders } })
+export default class CallResultPanel extends Vue {
+  get result(): CallResult | undefined {
     return getState(this).callResult;
   }
 
   created(): void {
-    if (this.req) {
-      const param = {coll: this.$route.params.coll, req: this.$route.params.req, proto: this.req?.prototype};
+    const re = getState(this).requestEditing;
+    if (re) {
+      const param = {coll: this.$route.params.coll, req: this.$route.params.req, proto: re.prototype};
       this.$store.commit("send", {svc: "request", cmd: "call", param: param});
     }
     getStateSetBCReq(this, "call");
   }
 
   updated(): void {
-    if (this.req) {
-      const param = {coll: this.$route.params.coll, req: this.$route.params.req, proto: this.req?.prototype};
+    const re = getState(this).requestEditing;
+    if (re) {
+      const param = {coll: this.$route.params.coll, req: this.$route.params.req, proto: re.prototype};
       this.$store.commit("send", {svc: "request", cmd: "call", param: param});
     }
     getStateSetBCReq(this, "call");
