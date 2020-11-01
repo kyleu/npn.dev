@@ -54,6 +54,7 @@ import OptionsEditor from "@/request/editor/OptionsEditor.vue";
 import QueryParamsEditor from "@/request/editor/QueryParamsEditor.vue";
 import {setBC} from "@/util/vutils";
 import {requestEditingRef} from "@/state/state";
+import {NPNRequest} from "@/request/model";
 
 @Component({ components: { AuthEditor, BodyEditor, HeadersEditor, OptionsEditor, QueryParamsEditor } })
 export default class RequestEditor extends Vue {

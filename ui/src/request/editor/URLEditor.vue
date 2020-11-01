@@ -25,7 +25,6 @@ import {Component, Vue} from "vue-property-decorator";
 import {allMethods, Method, NPNRequest} from "@/request/model";
 import {Part, prototypeToURL, prototypeToURLParts} from "@/request/url";
 import {prototypeFromURL} from "@/request/prototype";
-import RequestDetail from "@/request/RequestDetail.vue";
 import {requestEditingRef} from "@/state/state";
 
 @Component
