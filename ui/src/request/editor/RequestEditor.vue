@@ -53,7 +53,7 @@ import HeadersEditor from "@/header/HeadersEditor.vue";
 import OptionsEditor from "@/request/editor/OptionsEditor.vue";
 import QueryParamsEditor from "@/request/editor/QueryParamsEditor.vue";
 import {setBC} from "@/util/vutils";
-import {requestEditingRef} from "@/state/state";
+import {requestEditingRef} from "@/request/state";
 import {NPNRequest} from "@/request/model";
 
 @Component({ components: { AuthEditor, BodyEditor, HeadersEditor, OptionsEditor, QueryParamsEditor } })

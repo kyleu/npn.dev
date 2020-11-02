@@ -1,5 +1,4 @@
-import Vue from "vue";
-import VueRouter, { RouteConfig } from "vue-router";
+import VueRouter, {RouteConfig} from "vue-router";
 import Home from "@/views/Home.vue";
 import About from "@/views/About.vue";
 import NotFound from "@/views/NotFound.vue";
@@ -9,8 +8,7 @@ import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import RequestTransform from "@/request/RequestTransform.vue";
 import CallResultPanel from "@/call/CallResultPanel.vue";
-
-Vue.use(VueRouter);
+import {callResultRef, transformResultRef} from "@/request/state";
 
 const routes: Array<RouteConfig> = [
   {
@@ -40,12 +38,20 @@ const routes: Array<RouteConfig> = [
       {
         path: "call",
         name: "CallResult",
-        component: CallResultPanel
+        component: CallResultPanel,
+        beforeEnter: (to, from, next): void => {
+          callResultRef.value = undefined;
+          next();
+        }
       },
       {
         path: "transform/:tx",
         name: "RequestTransform",
-        component: RequestTransform
+        component: RequestTransform,
+        beforeEnter: (to, from, next): void => {
+          transformResultRef.value = undefined;
+          next();
+        }
       }
     ]
   },

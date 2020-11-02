@@ -29,9 +29,9 @@
               <div class="uk-form-controls uk-form-controls-text">
                 <label for="theme-<%= t.String() %>">
                   <% if t == ctx.Profile.Theme { %>
-                  <input class="uk-radio" id="theme-<%= t.String() %>" name="<%= npncore.KeyTheme %>" type="radio" onchange="if (this.checked) { window.style.setTheme(this.value); }" value="<%= t.String() %>" checked="checked" />
+                  <input class="uk-radio" id="theme-<%= t.String() %>" name="<%= npncore.KeyTheme %>" type="radio" onchange="if (this.checked) { window.setTheme(this.value); }" value="<%= t.String() %>" checked="checked" />
                   <% } else { %>
-                  <input class="uk-radio" id="theme-<%= t.String() %>" name="<%= npncore.KeyTheme %>" type="radio" onchange="if (this.checked) { window.style.setTheme(this.value); }" value="<%= t.String() %>" />
+                  <input class="uk-radio" id="theme-<%= t.String() %>" name="<%= npncore.KeyTheme %>" type="radio" onchange="if (this.checked) { window.setTheme(this.value); }" value="<%= t.String() %>" />
                   <% } %>
                   <%= t.String() %>
                 </label>
@@ -56,4 +56,38 @@
     </div>
   </div>
 </div>
+<script>
+  function setNavColor(el, c) {
+    document.getElementById("nav-color").value = c;
+    const nb = document.getElementById("navbar");
+    nb.className = `${c}-bg uk-navbar-container uk-navbar`;
+    const colors = document.querySelectorAll(".nav_swatch");
+    colors.forEach(function (i) {
+      i.classList.remove("active");
+    });
+    el.classList.add("active");
+  }
+
+  function setLinkColor(el, c) {
+    document.getElementById("link-color").value = c;
+    const links = document.querySelectorAll(".profile-link");
+    links.forEach(l => {
+      l.classList.forEach(x => {
+        if (x.indexOf("-fg") > -1) {
+          l.classList.remove(x);
+        }
+        l.classList.add(`${c}-fg`);
+      });
+    });
+    const colors = document.querySelectorAll(".link_swatch");
+    colors.forEach(function (i) {
+      i.classList.remove("active");
+    });
+    el.classList.add("active");
+  }
+
+  function setPicture(p) {
+    document.getElementById("self-picture-input").value = p;
+  }
+</script>
 <% } %>

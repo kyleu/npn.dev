@@ -6,8 +6,9 @@
     </div>
     <div class="nav-section">
       <div class="nav-header">System</div>
-      <div class="nav-list collection-list">
-        <router-link :class="'collection-link ' + profile.linkColor + '-fg'" to="/about">About</router-link>
+      <div class="nav-list">
+        <div><a :class="'collection-link ' + profile.linkColor + '-fg'" href="" onclick="npn.debug();return false">Debug</a></div>
+        <div><router-link :class="'collection-link ' + profile.linkColor + '-fg'" to="/about">About</router-link></div>
       </div>
     </div>
   </div>
@@ -16,8 +17,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CollectionList from "@/collection/CollectionList.vue";
-import Profile from "@/user/profile";
-import {profileRef} from "@/state/state";
+import {Profile, profileRef} from "@/user/profile";
 
 @Component({ components: { CollectionList } })
 export default class LeftNav extends Vue {

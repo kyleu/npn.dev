@@ -13,8 +13,6 @@ They're designed for macOS, but should work on Linux or Windows (via WSL).
 - `build-android.sh`: Builds the project as an android framework and builds the native app in `projects/android`
 - `build-client.sh`: Uses `scss` to compile the TypeScript files in `./client`
 - `build-client-watch.sh`: Builds the TypeScript resources using `build-client`, then watches for changes in `./client`
-- `build-css.sh`: Uses `scss` to compile the stylesheets in `./web/stylesheets`
-- `build-css-watch.sh`: Builds the css resources using `build-css`, then watches for changes in `./web/stylesheets`
 - `build-desktop.sh`: Builds all the desktop apps, XCode required
 - `build-docker.sh`: Makes a release build, builds a docker image, then exports and zips the output
 - `build-ios.sh`: Builds the project as an iOS framework and builds the native app in `projects/ios`

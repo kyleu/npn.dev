@@ -79,7 +79,7 @@ func Profile(auths auth.Records, ref string, ctx *npnweb.RequestContext, w io.Wr
 			hero.EscapeHTML(t.String(), _buffer)
 			_buffer.WriteString(`" name="`)
 			hero.EscapeHTML(npncore.KeyTheme, _buffer)
-			_buffer.WriteString(`" type="radio" onchange="if (this.checked) { window.style.setTheme(this.value); }" value="`)
+			_buffer.WriteString(`" type="radio" onchange="if (this.checked) { window.setTheme(this.value); }" value="`)
 			hero.EscapeHTML(t.String(), _buffer)
 			_buffer.WriteString(`" checked="checked" />
                   `)
@@ -89,7 +89,7 @@ func Profile(auths auth.Records, ref string, ctx *npnweb.RequestContext, w io.Wr
 			hero.EscapeHTML(t.String(), _buffer)
 			_buffer.WriteString(`" name="`)
 			hero.EscapeHTML(npncore.KeyTheme, _buffer)
-			_buffer.WriteString(`" type="radio" onchange="if (this.checked) { window.style.setTheme(this.value); }" value="`)
+			_buffer.WriteString(`" type="radio" onchange="if (this.checked) { window.setTheme(this.value); }" value="`)
 			hero.EscapeHTML(t.String(), _buffer)
 			_buffer.WriteString(`" />
                   `)
@@ -128,6 +128,40 @@ func Profile(auths auth.Records, ref string, ctx *npnweb.RequestContext, w io.Wr
     </div>
   </div>
 </div>
+<script>
+  function setNavColor(el, c) {
+    document.getElementById("nav-color").value = c;
+    const nb = document.getElementById("navbar");
+    nb.className = ` + "`" + `${c}-bg uk-navbar-container uk-navbar` + "`" + `;
+    const colors = document.querySelectorAll(".nav_swatch");
+    colors.forEach(function (i) {
+      i.classList.remove("active");
+    });
+    el.classList.add("active");
+  }
+
+  function setLinkColor(el, c) {
+    document.getElementById("link-color").value = c;
+    const links = document.querySelectorAll(".profile-link");
+    links.forEach(l => {
+      l.classList.forEach(x => {
+        if (x.indexOf("-fg") > -1) {
+          l.classList.remove(x);
+        }
+        l.classList.add(` + "`" + `${c}-fg` + "`" + `);
+      });
+    });
+    const colors = document.querySelectorAll(".link_swatch");
+    colors.forEach(function (i) {
+      i.classList.remove("active");
+    });
+    el.classList.add("active");
+  }
+
+  function setPicture(p) {
+    document.getElementById("self-picture-input").value = p;
+  }
+</script>
 `)
 
 	_buffer.WriteString(`</div></body>

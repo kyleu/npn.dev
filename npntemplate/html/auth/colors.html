@@ -16,7 +16,7 @@
         if current == c {
           cls = "active "
         }
-        onClick := "profile.set" + title + "Color(this, '" + c + "');"
+        onClick := "set" + title + "Color(this, '" + c + "');"
       %>
       <div class="swatch <%= key %>_swatch <%= cls %><%= c %>-bg uk-text-center" title="<%= c %>" onclick="<%= onClick %>">
         <div class="icon" data-uk-icon="icon: check"></div>

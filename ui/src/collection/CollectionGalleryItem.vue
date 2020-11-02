@@ -8,8 +8,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import {Collection} from "@/collection/collection";
-import Profile from "@/user/profile";
-import {profileRef} from "@/state/state";
+import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class CollectionGalleryItem extends Vue {

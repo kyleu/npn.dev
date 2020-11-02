@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-list collection-list">
+  <div class="nav-list">
     <CollectionListItem v-for="coll in collections" :key="coll.key" :coll="coll" />
   </div>
 </template>
@@ -8,7 +8,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import CollectionListItem from "@/collection/CollectionListItem.vue";
 import {Collection} from "@/collection/collection";
-import {collectionsRef} from "@/state/state";
+import {collectionsRef} from "@/collection/state";
 
 @Component({ components: { CollectionListItem } })
 export default class CollectionList extends Vue {

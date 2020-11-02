@@ -20,8 +20,8 @@ import {Collection} from "@/collection/collection";
 import {setBC} from "@/util/vutils";
 import {Summary} from "@/request/model";
 import RequestSummaryList from "@/request/RequestSummaryList.vue";
-import Profile from "@/user/profile";
-import {getCollection, getCollectionRequestSummaries, profileRef} from "@/state/state";
+import {Profile, profileRef} from "@/user/profile";
+import {getCollection, getCollectionRequestSummaries} from "@/collection/state";
 
 @Component({ components: { RequestSummaryList } })
 export default class CollectionDetail extends Vue {
@@ -34,15 +34,7 @@ export default class CollectionDetail extends Vue {
   }
 
   get requests(): Summary[] | undefined {
-    const coll = this.$route.params.coll;
-    if (coll) {
-      const reqs = getCollectionRequestSummaries(this.$route.params.coll);
-      if (!reqs) {
-        this.$store.commit("send", {svc: "collection", cmd: "getCollection", param: this.$route.params.coll});
-      }
-      return reqs
-    }
-    return undefined;
+    return getCollectionRequestSummaries(this.$route.params.coll);
   }
 
   created(): void {

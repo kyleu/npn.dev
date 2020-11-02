@@ -8,11 +8,11 @@ cd $dir/..
 
 bin/build.sh
 
-mkdir -p ../web/assets/vendor/ui
+mkdir -p ../web/assets/vendor
 
-rm -rf ../web/assets/vendor/ui/*
+rm -rf ../web/assets/vendor/*
 
-cp dist/js/app.*.js ../web/assets/vendor/ui/npn.js
-cp dist/js/chunk*.*.js ../web/assets/vendor/ui/vendor.js
-cp dist/js/*.map ../web/assets/vendor/ui
-cp dist/css/app.*.css ../web/assets/vendor/ui/npn.css
+cp dist/js/app.*.js ../web/assets/vendor/npn.js
+cp dist/js/chunk*.*.js ../web/assets/vendor/vendor.js
+cp dist/js/*.map ../web/assets/vendor
+cp dist/css/app.*.css ../web/assets/vendor/npn.css

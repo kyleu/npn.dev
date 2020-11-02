@@ -40,9 +40,9 @@ import ResultHeaders from "@/call/ResultHeaders.vue";
 import ResultBody from "@/call/ResultBody.vue";
 import ResultTiming from "@/call/ResultTiming.vue";
 import {CallResult} from "@/call/model";
-import {callResultRef, profileRef, requestEditingRef} from "@/state/state";
+import {getCallResult} from "@/request/state";
 import {Prototype} from "@/request/model";
-import Profile from "@/user/profile";
+import {Profile, profileRef} from "@/user/profile";
 
 interface CallParam {
   coll: string;
@@ -59,31 +59,14 @@ export default class CallResultPanel extends Vue {
   }
 
   get result(): CallResult | undefined {
-    return callResultRef.value;
+    return getCallResult(this.$route.params.coll, this.$route.params.req);
   }
 
   created(): void {
-    callResultRef.value = undefined;
-    const re = requestEditingRef.value;
-    if (re) {
-      const param = {coll: this.$route.params.coll, req: this.$route.params.req, proto: re.prototype};
-      this.$store.commit("send", {svc: "request", cmd: "call", param: param});
-    }
     setBCReq(this, "call");
   }
 
   updated(): void {
-    const re = requestEditingRef.value;
-    if (re) {
-      const param: CallParam = {coll: this.$route.params.coll, req: this.$route.params.req, proto: re.prototype};
-      if ((this.pending) && (this.pending.coll === param.coll && this.pending.req === param.req)) {
-        // console.log("?");
-      } else {
-        callResultRef.value = undefined;
-        this.$store.commit("send", {svc: "request", cmd: "call", param: param});
-        this.pending = param;
-      }
-    }
     setBCReq(this, "call");
   }
 }

@@ -46,7 +46,7 @@ func ProfileColors(key string, title string, current string, buffer *bytes.Buffe
 		if current == c {
 			cls = "active "
 		}
-		onClick := "profile.set" + title + "Color(this, '" + c + "');"
+		onClick := "set" + title + "Color(this, '" + c + "');"
 
 		buffer.WriteString(`
       <div class="swatch `)

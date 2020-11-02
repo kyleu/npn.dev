@@ -26,29 +26,13 @@ func Head(ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
 
-<link rel="stylesheet" media="screen" href="/vendor/uikit/uikit.min.css">
-<script src="/vendor/uikit/uikit.min.js"></script>
-<script src="/vendor/uikit/uikit-icons.min.js"></script>
-
-`)
-	if ctx.App.Debug() {
-		buffer.WriteString(`
 <link rel="stylesheet" media="screen" href="/assets/vendor/`)
-		hero.EscapeHTML(npncore.AppKey, buffer)
-		buffer.WriteString(`.css">
+	hero.EscapeHTML(npncore.AppKey, buffer)
+	buffer.WriteString(`.css">
+<script src="/assets/vendor/vendor.js"></script>
 <script src="/assets/vendor/`)
-		hero.EscapeHTML(npncore.AppKey, buffer)
-		buffer.WriteString(`.js"></script>
+	hero.EscapeHTML(npncore.AppKey, buffer)
+	buffer.WriteString(`.js"></script>
 `)
-	} else {
-		buffer.WriteString(`
-<link rel="stylesheet" media="screen" href="/assets/vendor/`)
-		hero.EscapeHTML(npncore.AppKey, buffer)
-		buffer.WriteString(`.min.css")>
-<script src="/assets/vendor/`)
-		hero.EscapeHTML(npncore.AppKey, buffer)
-		buffer.WriteString(`.min.js"></script>
-`)
-	}
 
 }

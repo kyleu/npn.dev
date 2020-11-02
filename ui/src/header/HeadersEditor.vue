@@ -38,8 +38,7 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Header} from "@/header/model";
-import Profile from "@/user/profile";
-import {profileRef} from "@/state/state";
+import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class HeadersEditor extends Vue {

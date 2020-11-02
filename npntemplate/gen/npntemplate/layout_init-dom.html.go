@@ -12,7 +12,7 @@ import (
 
 func InitDom(ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 	buffer.WriteString(`
-<script>window.addEventListener("load", function() { dom.initDom('`)
+<script>window.addEventListener("load", function() { initDom('`)
 	hero.EscapeHTML(ctx.Profile.Theme.String(), buffer)
 	buffer.WriteString(`', '`)
 	hero.EscapeHTML(ctx.Profile.LinkColor, buffer)

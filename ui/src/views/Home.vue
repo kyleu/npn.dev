@@ -21,7 +21,7 @@ import { Component, Vue } from "vue-property-decorator";
 import CollectionGallery from "@/collection/CollectionGallery.vue";
 import {jsonStr} from "@/util/json";
 import {setBC} from "@/util/vutils";
-import {profileRef} from "@/state/state";
+import {profileRef} from "@/user/profile";
 
 @Component({ components: { CollectionGallery } })
 export default class Home extends Vue {

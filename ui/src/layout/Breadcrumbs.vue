@@ -18,7 +18,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import {Breadcrumb, breadcrumbsRef} from "@/state/state";
+import {Breadcrumb, breadcrumbsRef} from "@/layout/breadcrumb";
 
 @Component
 export default class Breadcrumbs extends Vue {

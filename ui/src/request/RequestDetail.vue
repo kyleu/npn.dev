@@ -13,7 +13,7 @@
             <button class="uk-button uk-button-default uk-margin-small-right mt" onclick="TODO();">Reset</button>
             <button class="uk-button uk-button-default mt" onclick="TODO();">Save Changes</button>
           </div>
-          <router-link class="uk-button uk-button-default uk-margin-small-right mt" :to="'/c/' + this.$route.params.coll + '/' + req.key + '/call'">Call</router-link>
+          <button class="uk-button uk-button-default uk-margin-small-right mt" @click="doCall()">Call</button>
           <ExportActions />
           <router-link class="uk-button uk-button-default uk-margin-small-right mt" :to="'/c/' + this.$route.params.coll + '/' + req.key + '/delete'">Delete</router-link>
         </div>
@@ -31,8 +31,9 @@ import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
 import {diff} from "@/request/diff";
 import ExportActions from "@/request/editor/ExportActions.vue";
-import {profileRef, requestEditingRef, requestOriginalRef} from "@/state/state";
-import Profile from "@/user/profile";
+import {setActiveRequest, requestEditingRef, requestOriginalRef} from "@/request/state";
+import {Profile, profileRef} from "@/user/profile";
+import { callResultRef } from '@/request/state'
 
 @Component({ components: {ExportActions, RequestEditor, RequestSummaryList, URLEditor } })
 export default class RequestDetail extends Vue {
@@ -41,18 +42,23 @@ export default class RequestDetail extends Vue {
   }
 
   get req(): NPNRequest | undefined {
-    this.$store.commit("setActiveRequest", {coll: this.$route.params.coll, req: this.$route.params.req});
-    if ((!requestEditingRef.value) && this.$route.params.req) {
-      this.$store.commit("send", {svc: "request", cmd: "getRequest", param: {coll: this.$route.params.coll, req: this.$route.params.req}});
-    }
+    setActiveRequest(this.$route.params.coll, this.$route.params.req);
     return requestEditingRef.value;
+  }
+
+  doCall(): void {
+    if (this.$route.name === 'CallResult') {
+      callResultRef.value = undefined;
+    } else {
+      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}})
+    }
   }
 
   get different(): boolean {
     const diffs = diff(requestOriginalRef.value, requestEditingRef.value);
-    // console.debug(requestOriginalRef.value, requestEditingRef.value);
+    // console.debug(jsonParse(jsonStr(requestOriginalRef.value)), jsonParse(jsonStr(requestEditingRef.value)));
     if (diffs.length > 0) {
-      // console.debug(diffs);
+      console.debug(diffs);
     }
     return diffs.length > 0;
   }

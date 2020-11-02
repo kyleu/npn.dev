@@ -13,51 +13,24 @@
 import {Component, Vue} from "vue-property-decorator";
 import {setBCReq} from "@/util/vutils";
 import {TransformResult} from "@/request/transformResult";
-import {profileRef, requestEditingRef, transformResultRef} from "@/state/state";
-import {Prototype} from "@/request/model";
-import Profile from "@/user/profile";
-
-interface TransformParam {
-  coll: string;
-  req: string;
-  fmt: string;
-  proto: Prototype;
-}
+import {getTransformResult} from "@/request/state";
+import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class RequestTransform extends Vue {
-  private pending: TransformParam | undefined;
-
   get profile(): Profile | undefined {
     return profileRef.value;
   }
 
   get result(): TransformResult | undefined {
-    return transformResultRef.value;
+    return getTransformResult(this.$route.params.coll, this.$route.params.req, this.$route.params.tx);
   }
 
   created(): void {
-    transformResultRef.value = undefined;
-    const re = requestEditingRef.value;
-    if (re) {
-      const param = {coll: this.$route.params.coll, req: this.$route.params.req, fmt: this.$route.params.tx, proto: re.prototype};
-      this.$store.commit("send", {svc: "request", cmd: "transform", param: param});
-    }
     setBCReq(this, this.$route.params.tx);
   }
 
   updated(): void {
-    const re = requestEditingRef.value;
-    if (re) {
-      const param: TransformParam = {coll: this.$route.params.coll, req: this.$route.params.req, fmt: this.$route.params.tx, proto: re.prototype};
-      if ((this.pending) && (this.pending.coll === param.coll && this.pending.req === param.req && this.pending.fmt === param.fmt)) {
-        // console.log("?");
-      } else {
-        transformResultRef.value = undefined;
-        this.$store.commit("send", {svc: "request", cmd: "transform", param: param});
-        this.pending = param;
-      }
-    }
     setBCReq(this, this.$route.params.tx);
   }
 }

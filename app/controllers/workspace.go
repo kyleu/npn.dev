@@ -14,13 +14,7 @@ import (
 
 func Workspace(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		return npncontroller.T(templates.Workspace(ctx, w))
-	})
-}
-
-func WorkspaceVue(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		return npncontroller.T(templates.WorkspaceVue(ctx, w))
+		return npncontroller.T(templates.WorkspaceUI(ctx, w))
 	})
 }
 

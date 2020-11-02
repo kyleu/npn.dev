@@ -8,7 +8,7 @@
 import { Component, Vue } from "vue-property-decorator";
 import CollectionGalleryItem from "@/collection/CollectionGalleryItem.vue";
 import {Collection} from "@/collection/collection";
-import {collectionsRef} from "@/state/state";
+import {collectionsRef} from "@/collection/state";
 
 @Component({ components: { CollectionGalleryItem } })
 export default class CollectionGallery extends Vue {

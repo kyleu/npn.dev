@@ -1,7 +1,6 @@
-import Vue from "vue";
+import {initState} from "@/state/initial";
 import Workspace from "./layout/Workspace.vue";
 import {router} from "./state/router";
-import {newStore} from "./state/store";
 import UIkit from "uikit";
 import "@/assets/styles/styles.scss";
 
@@ -9,29 +8,54 @@ import "@/assets/styles/styles.scss";
 import Icons from "uikit/dist/js/uikit-icons";
 import {messageHandler} from "@/state/handler";
 
-// @ts-ignore
-// eslint-disable-next-line
-(UIkit as any).use(Icons);
+import Vue from "vue";
+import {collectionsRef, collectionSummariesRef, requestDetailsRef} from "@/collection/state";
+import {jsonParse, jsonStr} from "@/util/json";
+import {breadcrumbsRef} from "@/layout/breadcrumb";
+import {activeRequestRef, callResultRef, requestEditingRef, requestOriginalRef, transformResultRef} from "@/request/state";
+import {initDom, setTheme} from "@/npn";
 
 // @ts-ignore
 // eslint-disable-next-line
-(window as any).UIkit = UIkit;
+const w = (window as any)
 
-// @ts-ignore
-// eslint-disable-next-line
-(window as any).Prism = (window as any).Prism || {};
-// @ts-ignore
-// eslint-disable-next-line
-(window as any).Prism.manual = true;
+function init(): void {
+  // @ts-ignore
+  // eslint-disable-next-line
+  (UIkit as any).use(Icons);
 
-Vue.config.productionTip = false;
+  w.UIkit = UIkit;
 
-const render = (h: Vue.CreateElement): Vue.VNode => h(Workspace);
+  w.Prism = w.Prism || {};
+  w.Prism.manual = true;
 
-const store = newStore(messageHandler);
+  Vue.config.productionTip = false;
 
-const root = new Vue({router, store, el: "#npn", render});
+  initState(messageHandler);
 
-// @ts-ignore
-// eslint-disable-next-line
-(window as any).npn = {root, router, store};
+  const render = (h: Vue.CreateElement): Vue.VNode => h(Workspace);
+
+  const root = new Vue({router, el: "#npn", render});
+
+  function debug(): void {
+    const ret = {
+      breadcrumbs: breadcrumbsRef.value,
+      collections: collectionsRef.value,
+      collectionSummaries: collectionSummariesRef.value,
+      requestDetails: requestDetailsRef.value,
+      activeRequest: activeRequestRef.value,
+      requestOriginal: requestOriginalRef.value,
+      requestEditing: requestEditingRef.value,
+      callResult: callResultRef.value,
+      transformResult: transformResultRef.value
+    };
+    console.log(`debug output at [${new Date().toString()}]`)
+    console.log(jsonParse(jsonStr(ret)));
+  }
+
+  w.npn = {root, router, debug};
+}
+
+w.init = init;
+w.initDom = initDom;
+w.setTheme = setTheme;

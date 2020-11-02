@@ -1,5 +1,6 @@
 import {jsonParse, jsonStr} from "@/util/json";
 import {logDebug} from "@/util/log";
+import {ref} from "@vue/composition-api";
 
 export interface Message {
   readonly svc: string;
@@ -63,9 +64,9 @@ export class Socket {
     // log.info("socket connected");
     this.connected = true;
     this.pauseSeconds = 1;
+    this.onOpen("");
     this.pendingMessages.forEach((msg) => this.send(msg));
     this.pendingMessages = [];
-    this.onOpen("");
   }
 
   private socketConnect(): void {
@@ -107,3 +108,6 @@ export class Socket {
     }
   }
 }
+
+export const hostRef = ref<string>("");
+export const socketRef = ref<Socket>();

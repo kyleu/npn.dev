@@ -14,7 +14,7 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Timing, timingGraph, TimingSection, timingSections} from "@/call/timing";
-import {hostRef} from "@/state/state";
+import {hostRef} from "@/socket/socket";
 
 @Component
 export default class ResultTiming extends Vue {

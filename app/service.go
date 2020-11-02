@@ -15,7 +15,7 @@ import (
 	"logur.dev/logur"
 )
 
-const multiuser = true
+const multiuser = false
 
 type Service struct {
 	debug      bool

@@ -6,14 +6,14 @@
       </select>
     </div>
     <div v-if="!editing" class="url-view uk-inline right" style="width:calc(100% - 120px);">
-      <router-link class="uk-form-icon uk-form-icon-flip" title="send request" data-uk-icon="icon: play" :to="'/c/' + $route.params.coll + '/' + $route.params.req + '/call'"></router-link>
+      <button class="uk-form-icon uk-form-icon-flip" title="send request" data-uk-icon="icon: play" @click="doCall()"></button>
       <div @click="editing = true">
         <span class="url-link"><span v-for="part in protoParts" :key="part.idx" :class="part.color" :title="part.t">{{ part.v }}</span> </span>
       </div>
     </div>
     <div v-if="editing" class="url-input uk-inline right" style="width:calc(100% - 120px);">
       <a class="uk-form-icon uk-form-icon-flip" title="cancel edit" data-uk-icon="icon: close" href="" @click.prevent="editing = false" />
-      <form @submit="TODO()">
+      <form @submit.prevent="doCall()">
         <input id="url-input-el" v-model="protoString" class="uk-input" name="url" type="text" data-lpignore="true" @blur="editing = false" />
       </form>
     </div>
@@ -25,7 +25,7 @@ import {Component, Vue} from "vue-property-decorator";
 import {allMethods, Method, NPNRequest} from "@/request/model";
 import {Part, prototypeToURL, prototypeToURLParts} from "@/request/url";
 import {prototypeFromURL} from "@/request/prototype";
-import {requestEditingRef} from "@/state/state";
+import {callResultRef, requestEditingRef} from "@/request/state";
 
 @Component
 export default class URLEditor extends Vue {
@@ -79,6 +79,14 @@ export default class URLEditor extends Vue {
       return [];
     }
     return prototypeToURLParts(this.req?.prototype);
+  }
+
+  doCall(): void {
+    if (this.$route.name === 'CallResult') {
+      callResultRef.value = undefined;
+    } else {
+      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}})
+    }
   }
 }
 </script>

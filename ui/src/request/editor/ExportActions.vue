@@ -13,8 +13,7 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import Profile from "@/user/profile";
-import {profileRef} from "@/state/state";
+import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class ExportActions extends Vue {

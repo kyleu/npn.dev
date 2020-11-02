@@ -14,8 +14,7 @@
 import {Component, Vue} from "vue-property-decorator";
 import CollectionGallery from "@/collection/CollectionGallery.vue";
 import {setBC} from "@/util/vutils";
-import Profile from "@/user/profile";
-import {profileRef} from "@/state/state";
+import {Profile, profileRef} from "@/user/profile";
 
 @Component({components: {CollectionGallery}})
 export default class CollectionIndex extends Vue {

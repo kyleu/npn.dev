@@ -51,7 +51,7 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {Options} from "@/request/model";
-import {requestEditingRef} from "@/state/state";
+import {requestEditingRef} from "@/request/state";
 
 @Component
 export default class OptionsEditor extends Vue {

@@ -1,5 +1,11 @@
-import {Vue} from "vue-property-decorator";
-import {Breadcrumb, breadcrumbsRef} from "@/state/state";
+import Vue from "vue";
+import VueCompositionAPI from "@vue/composition-api";
+import VueRouter from "vue-router";
+
+import {Breadcrumb, breadcrumbsRef} from "@/layout/breadcrumb";
+
+Vue.use(VueCompositionAPI);
+Vue.use(VueRouter);
 
 export function setBC(me: Vue, ...bc: Breadcrumb[]): void {
   breadcrumbsRef.value = bc;
