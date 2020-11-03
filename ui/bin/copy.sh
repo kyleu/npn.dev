@@ -10,7 +10,9 @@ bin/build.sh
 
 mkdir -p ../web/assets/vendor
 
-rm -rf ../web/assets/vendor/*
+rm -f ../web/assets/vendor/*.js
+rm -f ../web/assets/vendor/*.css
+rm -f ../web/assets/vendor/*.map
 
 cp dist/js/app.*.js ../web/assets/vendor/npn.js
 cp dist/js/chunk*.*.js ../web/assets/vendor/vendor.js
