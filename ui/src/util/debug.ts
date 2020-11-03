@@ -4,6 +4,14 @@ import {collectionsRef, collectionSummariesRef, requestDetailsRef} from "@/colle
 import {pendingRequestsRef} from "@/socket/pending";
 import {profileRef} from "@/user/profile";
 import {jsonParse, jsonStr} from "@/util/json";
+import Vue from "vue";
+import {VueRouter} from "vue-router/types/router";
+
+export interface NPNDebug {
+  root: Vue;
+  router: VueRouter;
+  debug: () => void;
+}
 
 export function debug(): void {
   const ret = {

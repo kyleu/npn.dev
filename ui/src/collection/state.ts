@@ -5,8 +5,8 @@ import {ref} from "@vue/composition-api";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
-import {VueRouter} from "vue-router/types/router";
 import {setRequestDetail} from "@/request/state";
+import {globalRouter} from "@/util/vutils";
 
 interface CollectionData<T> {
   readonly key: string;
@@ -28,11 +28,7 @@ export function getCollection(key: string): Collection | undefined {
 
 export function onCollectionAdded(active: string, colls: Collection[]): void {
   collectionsRef.value = colls;
-
-  // @ts-ignore
-  // eslint-disable-next-line
-  const router = (window as any).npn.router as VueRouter;
-  router.push({name: "CollectionDetail", params: {coll: active}});
+  globalRouter().push({name: "CollectionDetail", params: {coll: active}});
 }
 
 export function onCollectionDeleted(param: string): void {
@@ -40,10 +36,7 @@ export function onCollectionDeleted(param: string): void {
   collectionSummariesRef.value = collectionSummariesRef.value.filter(x => x.key !== param);
   requestDetailsRef.value = requestDetailsRef.value.filter(x => x.key !== param);
 
-  // @ts-ignore
-  // eslint-disable-next-line
-  const router = (window as any).npn.router as VueRouter;
-  router.push({name: "CollectionIndex"});
+  globalRouter().push({name: "CollectionIndex"});
 }
 
 export function getCollectionRequestSummaries(key: string): Summary[] | undefined {
@@ -97,9 +90,6 @@ export interface RequestAdded {
 export function onRequestAdded(coll: RequestAdded, req: NPNRequest): void {
   setCollectionRequestSummaries(coll.key, coll.requests);
   setRequestDetail(coll.key, req);
-  // @ts-ignore
-  // eslint-disable-next-line
-  const router = (window as any).npn.router as VueRouter;
-  router.push({name: "RequestDetail", params: {coll: coll.key, req: req.key}});
+  globalRouter().push({name: "RequestDetail", params: {coll: coll.key, req: req.key}});
 }
 

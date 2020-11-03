@@ -1,8 +1,13 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
-    <div class="right"><router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link></div>
-    <h3 class="uk-card-title">{{ result ? result.status : 'Loading...' }}</h3>
-    <ResponsePanel v-for="(r, idx) in responses" :key="idx" :response="r" />
+    <div class="right">
+      <router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link>
+    </div>
+    <div v-for="(r, idx) in responses" :key="idx">
+      <hr v-if="idx > 0" />
+      <ResponsePanel :response="r" />
+    </div>
+    <h3 v-if="responses.length === 0" class="uk-card-title">Loading...</h3>
   </div>
 </template>
 

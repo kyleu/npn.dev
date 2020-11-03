@@ -17,7 +17,7 @@ import {Timing, timingGraph, TimingSection, timingSections} from "@/call/timing"
 import {hostRef} from "@/socket/socket";
 
 @Component
-export default class ResultTiming extends Vue {
+export default class ResponseTiming extends Vue {
   @Prop() timing: Timing | undefined
 
   get sections(): TimingSection[] {

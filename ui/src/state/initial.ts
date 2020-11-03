@@ -9,12 +9,16 @@ interface InitialData {
   readonly profile: Profile;
 }
 
-export function initState(onMessage: (m: Message) => void): void {
-  // @ts-ignore
-  // eslint-disable-next-line
-  const cfg = (window as any).initialData as InitialData;
+declare global {
+  interface Window {
+    initialData: InitialData | undefined;
+  }
+}
 
-  let profile = {} as Profile;
+export function initState(onMessage: (m: Message) => void): void {
+  const cfg = window.initialData;
+
+  let profile: Profile | undefined;
   const host = cfg && cfg.host ? cfg.host : "";
 
   if (cfg && cfg.profile) {

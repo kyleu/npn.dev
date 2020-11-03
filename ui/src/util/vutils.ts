@@ -18,3 +18,7 @@ export function setBCReq(me: Vue, action: string): void {
     {path: "", title: action}
   ];
 }
+
+export function globalRouter(): VueRouter {
+  return window.npn.router;
+}

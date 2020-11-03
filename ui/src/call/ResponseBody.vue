@@ -25,7 +25,7 @@ import {RBody} from "@/body/model";
 import {jsonStr} from "@/util/json";
 
 @Component
-export default class ResultBody extends Vue {
+export default class ResponseBody extends Vue {
   @Prop() url!: string
   @Prop() body!: RBody
 

@@ -17,7 +17,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {NPNResponse} from "@/call/model";
 
 @Component
-export default class ResultSummary extends Vue {
+export default class ResponseSummary extends Vue {
   @Prop() response!: NPNResponse
 }
 </script>

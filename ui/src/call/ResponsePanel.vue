@@ -1,5 +1,6 @@
 <template>
-  <div v-if="response" class="mt">
+  <div v-if="response">
+    <h3 class="uk-card-title">{{ response.status }}</h3>
     <em>{{ response.method }} {{ response.url }}</em>
     <div>
       <ul data-uk-tab="">
@@ -10,11 +11,11 @@
         <li><a href="#timing">Timing</a></li>
       </ul>
       <ul class="uk-switcher uk-margin">
-        <li><ResultSummary :response="response" /></li>
-        <li><ResultHeaders title="Final Request Headers" :headers="response.requestHeaders" /></li>
-        <li><ResultHeaders title="Response Headers" :headers="response.headers" /></li>
-        <li><ResultBody :url="response.url" :body="response.body" /></li>
-        <li><ResultTiming :timing="response.timing" /></li>
+        <li><ResponseSummary :response="response" /></li>
+        <li><ResponseHeaders title="Final Request Headers" :headers="response.requestHeaders" /></li>
+        <li><ResponseHeaders title="Response Headers" :headers="response.headers" /></li>
+        <li><ResponseBody :url="response.url" :body="response.body" /></li>
+        <li><ResponseTiming :timing="response.timing" /></li>
       </ul>
     </div>
   </div>
@@ -23,12 +24,12 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {NPNResponse} from "@/call/model";
-import ResultTiming from "@/call/ResultTiming.vue";
-import ResultSummary from "@/call/ResultSummary.vue";
-import ResultBody from "@/call/ResultBody.vue";
-import ResultHeaders from "@/call/ResultHeaders.vue";
+import ResponseTiming from "@/call/ResponseTiming.vue";
+import ResponseSummary from "@/call/ResponseSummary.vue";
+import ResponseBody from "@/call/ResponseBody.vue";
+import ResponseHeaders from "@/call/ResponseHeaders.vue";
 
-@Component({ components: {ResultTiming, ResultBody, ResultSummary, ResultHeaders } })
+@Component({ components: {ResponseTiming, ResponseBody, ResponseSummary, ResponseHeaders } })
 export default class ResponsePanel extends Vue {
   @Prop() response!: NPNResponse
 }

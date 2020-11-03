@@ -60,7 +60,7 @@ export interface NPNRequest {
 }
 
 export function cloneRequest(r: NPNRequest | undefined): NPNRequest | undefined {
-  return JSON.parse(JSON.stringify(r)) as NPNRequest;
+  return JSON.parse(JSON.stringify(r));
 }
 
 export interface Summary {

@@ -53,6 +53,7 @@ export class Socket {
   }
 
   private init(): void {
+    this.connectTime = Date.now();
     this.sock = new WebSocket(this.url);
     this.sock.onopen = (): void => this.onSocketOpen();
     this.sock.onmessage = (event): void => this.onMessage(jsonParse(event.data));
@@ -92,12 +93,12 @@ export class Socket {
 
     if (elapsed < 2000) {
       this.pauseSeconds = this.pauseSeconds * 2;
-      // console.debug(`socket closed immediately, reconnecting in ${pauseSeconds} seconds`);
+      logDebug(`socket closed immediately, reconnecting in ${this.pauseSeconds} seconds`);
       setTimeout(() => {
         this.socketConnect();
       }, this.pauseSeconds * 1000);
     } else {
-      // log.info("socket closed after [" + elapsed + "ms]");
+      logDebug("socket closed after [" + elapsed + "ms]");
       this.socketConnect();
     }
   }

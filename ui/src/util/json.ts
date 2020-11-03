@@ -8,5 +8,5 @@ export function jsonStr(x: any | undefined): string {
 }
 
 export function jsonParse<T>(s: string): T {
-  return JSON.parse(s) as T;
+  return JSON.parse(s);
 }

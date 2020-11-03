@@ -38,7 +38,7 @@ export function prototypeToURLParts(p: Prototype): Part[] {
   push("protocol", p.protocol);
   push("", "://");
   if(p.auth && p.auth.type === "basic") {
-    const cfg = p.auth.config as Basic
+    const cfg: Basic = p.auth.config
     push("username", cfg.username);
     push("", ":");
 
