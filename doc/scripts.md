@@ -11,13 +11,12 @@ They're designed for macOS, but should work on Linux or Windows (via WSL).
 - `build.sh`: Builds the app (or just use make build)
 - `build-all.sh`: Attempts to build for all available platforms and architectures; Requires docker and a bunch of other stuff
 - `build-android.sh`: Builds the project as an android framework and builds the native app in `projects/android`
-- `build-client.sh`: Uses `scss` to compile the TypeScript files in `./client`
-- `build-client-watch.sh`: Builds the TypeScript resources using `build-client`, then watches for changes in `./client`
 - `build-desktop.sh`: Builds all the desktop apps, XCode required
 - `build-docker.sh`: Makes a release build, builds a docker image, then exports and zips the output
 - `build-ios.sh`: Builds the project as an iOS framework and builds the native app in `projects/ios`
 - `build-linux.sh`: Makes a release build for 64-bit Linux
 - `build-macos.sh`: Builds the project as a macOS server and builds the native app in `projects/macos`
+- `build-ui.sh`: Uses `yarn` to build the TypeScript application in `./ui`
 - `build-wasm.sh`: Builds the app as a WASM server
 - `check.sh`: Runs code statistics, checks for outdated dependencies, then runs various linters
 - `dev.sh`: Watches the project directories, and runs the main application, restarting when changes are detected

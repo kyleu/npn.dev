@@ -4,7 +4,7 @@
       <router-link tag="div" class="nav-header" :to="{name: 'CollectionIndex'}">Collections</router-link>
       <CollectionList />
     </div>
-    <div class="nav-section">
+    <div class="nav-section mt">
       <div class="nav-header">System</div>
       <div class="nav-list">
         <div><a :class="'collection-link ' + profile.linkColor + '-fg'" href="" onclick="npn.debug();return false">Debug</a></div>

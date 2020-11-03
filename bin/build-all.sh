@@ -6,8 +6,7 @@ set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 
-bin/build-client.sh
-bin/build-css.sh
+bin/build-ui.sh
 
 bin/build-desktop.sh
 

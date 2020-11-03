@@ -5,6 +5,7 @@ import {ref} from "@vue/composition-api";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
+import {VueRouter} from "vue-router/types/router";
 
 interface CollectionData<T> {
   readonly key: string;
@@ -22,6 +23,15 @@ export function getCollection(key: string): Collection | undefined {
       return c;
     }
   }
+}
+
+export function onCollectionAdded(active: string, colls: Collection[]): void {
+  collectionsRef.value = colls;
+
+  // @ts-ignore
+  // eslint-disable-next-line
+  const router = (window as any).npn.router as VueRouter;
+  router.push({name: "CollectionDetail", params: {coll: active}});
 }
 
 export function getCollectionRequestSummaries(key: string): Summary[] | undefined {

@@ -104,8 +104,6 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 
 	if shouldSaveHistory {
 		hp := historyPath(userID, coll, req.Key)
-		println("##########")
-		println(hp)
 		now := time.Now()
 		hfn := path.Join(hp, npncore.ToDateString(&now)+".json")
 		hd := filepath.Dir(hfn)

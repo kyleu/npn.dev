@@ -1,10 +1,10 @@
 #!/bin/bash
 
-## Uses `./ui/bin/copy.sh` to build the project and copy files to the main app
+## Attempts to build the UI application
 
 set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-cd $dir/../ui
+cd $dir/..
 
-echo "Building UI..."
+cd ui
 bin/copy.sh

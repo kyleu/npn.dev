@@ -18,7 +18,7 @@ export default class CollectionListItem extends Vue {
   }
 
   get label(): string {
-    return this.coll.title.length === 0 ? this.coll.key : this.coll.title;
+    return ((!this.coll.title) || this.coll.title.length === 0) ? this.coll.key : this.coll.title;
   }
 }
 </script>

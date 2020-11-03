@@ -13,17 +13,7 @@
         <li><a href="#timing">Timing</a></li>
       </ul>
       <ul class="uk-switcher uk-margin">
-        <li>
-          <div>{{ (result.response.timing.completed || 0) / 1000 }}ms</div>
-          <div>
-            {{ result.response.proto }}
-            <em>{{ result.response.status }}</em>
-            <div>
-              {{ result.response.contentType || 'unknown' }}
-              {{ (result.response.contentLength && result.response.contentLength > -1) ? '(' + result.response.contentLength + 'bytes)' : ((result.response.body && result.response.body.length > -1) ? '(' + result.response.body.length + ' bytes)' : "") }}
-            </div>
-          </div>
-        </li>
+        <li><ResultSummary :result="result" /></li>
         <li><ResultHeaders title="Final Request Headers" :headers="result.response.requestHeaders" /></li>
         <li><ResultHeaders title="Response Headers" :headers="result.response.headers" /></li>
         <li><ResultBody :url="result.response.url" :body="result.response.body" /></li>
@@ -36,8 +26,9 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {setBCReq} from "@/util/vutils";
-import ResultHeaders from "@/call/ResultHeaders.vue";
 import ResultBody from "@/call/ResultBody.vue";
+import ResultHeaders from "@/call/ResultHeaders.vue";
+import ResultSummary from "@/call/ResultSummary.vue";
 import ResultTiming from "@/call/ResultTiming.vue";
 import {CallResult} from "@/call/model";
 import {getCallResult} from "@/request/state";
@@ -50,7 +41,7 @@ interface CallParam {
   proto: Prototype;
 }
 
-@Component({ components: {ResultTiming, ResultBody, ResultHeaders } })
+@Component({ components: {ResultTiming, ResultBody, ResultSummary, ResultHeaders } })
 export default class CallResultPanel extends Vue {
   private pending: CallParam | undefined;
 

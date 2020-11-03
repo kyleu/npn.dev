@@ -4,10 +4,13 @@
       <div class="uk-card uk-card-body uk-card-default">
         <div class="right"><router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" to="/c"></router-link></div>
         <h3 class="uk-card-title">
-          <span v-if="coll">Collection [{{ coll.title }}]</span>
-          <span v-else>Collection [{{ $route.params.coll }}]</span>
+          <span class="nav-icon-h3 uk-icon" data-uk-icon="icon: album"></span>
+          {{ coll ? coll.title : $route.params.coll }}
         </h3>
         <p v-if="coll">{{ coll.description }}</p>
+
+        <button class="uk-button uk-button-default uk-margin-small-right mt" @click="doCall()">Edit</button>
+        <button class="uk-button uk-button-default mt" @click="doCall()">Delete</button>
       </div>
       <RequestSummaryList :coll="$route.params.coll" :requests="requests" />
     </div>

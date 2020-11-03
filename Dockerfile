@@ -18,7 +18,6 @@ ADD ./go.mod          /npn/go.mod
 ADD ./go.sum          /npn/go.sum
 ADD ./app             /npn/app
 ADD ./bin             /npn/bin
-ADD ./client          /npn/client
 ADD ./cmd             /npn/cmd
 ADD ./Makefile        /npn/Makefile
 ADD ./npnasset        /npn/npnasset

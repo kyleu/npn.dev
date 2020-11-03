@@ -8,4 +8,4 @@ build
 
 /ui/node_modules
 /ui/dist
-/web/assets/vendor/ui/*.map
+/web/assets/vendor/*.map

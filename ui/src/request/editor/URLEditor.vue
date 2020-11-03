@@ -35,6 +35,7 @@ export default class URLEditor extends Vue {
     return this.e
   }
   set editing(e: boolean) {
+    this.e = e;
     if (e) {
       setTimeout(() => {
         const el = document.getElementById("url-input-el");
@@ -43,7 +44,6 @@ export default class URLEditor extends Vue {
         }
       }, 0)
     }
-    this.e = e;
   }
 
   get req(): NPNRequest | undefined {

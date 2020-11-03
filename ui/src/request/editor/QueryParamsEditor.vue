@@ -6,7 +6,7 @@
         <div class="uk-width-1-4">Value</div>
         <div class="uk-width-1-2">
           <div class="right">
-            <a :class="profile.linkColor + '-fg'" href="" onclick="return false" title="new param">
+            <a :class="profile.linkColor + '-fg'" href="" title="new param" @click.prevent="addParam()">
               <span data-uk-icon="icon: plus" />
             </a>
           </div>
@@ -14,7 +14,7 @@
         </div>
       </div>
     </li>
-    <li v-for="p of qp" :key="p.k">
+    <li v-for="(p, idx) of qp" :key="p.k">
       <div data-uk-grid="">
         <div class="uk-width-1-4">
           <input v-model="p.k" class="uk-input" type="text" />
@@ -24,7 +24,7 @@
         </div>
         <div class="uk-width-1-2">
           <div class="right" style="margin-top: 6px;">
-            <a :class="profile.linkColor + '-fg'" href="" onclick="return false;" title="remove param">
+            <a :class="profile.linkColor + '-fg'" href="" title="remove param" @click.prevent="removeParam(idx)">
               <span data-uk-icon="icon: close" />
             </a>
           </div>
@@ -46,6 +46,24 @@ export default class QueryParamsEditor extends Vue {
 
   get profile(): Profile | undefined {
     return profileRef.value;
+  }
+
+  addParam(): void {
+    if(!this.qp) {
+      this.qp = [];
+    }
+    if(this.qp) {
+      this.qp.push({k: "", v: ""});
+    }
+  }
+
+  removeParam(idx: number): void {
+    if (this.qp) {
+      this.qp = this.qp.splice(idx, 1);
+    }
+    if (this.qp?.length === 0) {
+      this.qp = undefined;
+    }
   }
 }
 </script>
