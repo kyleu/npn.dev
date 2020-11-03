@@ -33,11 +33,11 @@ func GraphQLVoyager(root string, ctx *npnweb.RequestContext, w io.Writer) (int, 
   <div id="`)
 	hero.EscapeHTML(npncore.KeyVoyager, _buffer)
 	_buffer.WriteString(`" style="height: calc(100vh - 54px);"></div>
-  <script src="/vendor/react/react.production.min.js"></script>
-  <script src="/vendor/react/react-dom.production.min.js"></script>
+  <script src="/assets/vendor/react/react.production.min.js"></script>
+  <script src="/assets/vendor/react/react-dom.production.min.js"></script>
 
-  <link rel="stylesheet" media="screen" href="/vendor/graphql-voyager/voyager.css")>
-  <script src="/vendor/graphql-voyager/voyager.min.js"></script>
+  <link rel="stylesheet" media="screen" href="/assets/vendor/graphql-voyager/voyager.css")>
+  <script src="/assets/vendor/graphql-voyager/voyager.min.js"></script>
 
   <script>
     function introspectionProvider(query) {

@@ -29,7 +29,6 @@ gt () {
 tagall () {
   git tag "v${TGT}"
 
-  gt "npnasset"
   gt "npnconnection"
   gt "npncontroller"
   gt "npncore"

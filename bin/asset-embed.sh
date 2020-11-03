@@ -7,5 +7,4 @@ dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 
 echo "Embedding assets..."
-go-embed -input npnasset/vendor -output npnasset/assets/assets.go
 go-embed -input web/assets -output app/assets/assets.go

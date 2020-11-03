@@ -34,10 +34,10 @@ func GraphiQL(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
   <div id="`)
 	hero.EscapeHTML(npncore.KeyGraphiQL, _buffer)
 	_buffer.WriteString(`" style="height: calc(100vh - 54px);"></div>
-  <link rel="stylesheet" media="screen" href="/vendor/graphiql/graphiql.min.css")>
-  <script src="/vendor/react/react.production.min.js"></script>
-  <script src="/vendor/react/react-dom.production.min.js"></script>
-  <script src="/vendor/graphiql/graphiql.min.js"></script>
+  <link rel="stylesheet" media="screen" href="/assets/vendor/graphiql/graphiql.min.css")>
+  <script src="/assets/vendor/react/react.production.min.js"></script>
+  <script src="/assets/vendor/react/react-dom.production.min.js"></script>
+  <script src="/assets/vendor/graphiql/graphiql.min.js"></script>
 
   <script>
     function graphQLFetcher(graphQLParams) {

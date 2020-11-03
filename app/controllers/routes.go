@@ -3,8 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/kyleu/npn/npnasset"
-
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncontroller/routes"
@@ -80,7 +78,6 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	_ = r.Path(routes.Path("assets")).Subrouter()
 	r.Path(routes.Path("favicon.ico")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Favicon))).Name(routes.Name("favicon"))
 	r.Path(routes.Path("robots.txt")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(RobotsTxt))).Name(routes.Name("robots"))
-	r.PathPrefix(routes.Path("vendor")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(npnasset.VendorAsset))).Name(routes.Name("vendor"))
 	r.PathPrefix(routes.Path("assets")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Static))).Name(routes.Name("assets"))
 
 	r.PathPrefix(routes.Path("client", "src/")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path("client", "src/"), http.HandlerFunc(Source)))).Name(npnweb.AdminLink("source"))

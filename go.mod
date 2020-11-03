@@ -2,8 +2,6 @@ module github.com/kyleu/npn
 
 go 1.15
 
-replace github.com/kyleu/npn/npnasset => ./npnasset
-
 replace github.com/kyleu/npn/npnconnection => ./npnconnection
 
 replace github.com/kyleu/npn/npncontroller => ./npncontroller
@@ -40,7 +38,6 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
-	github.com/kyleu/npn/npnasset v0.0.18 // npn
 	github.com/kyleu/npn/npnconnection v0.0.18 // npn
 	github.com/kyleu/npn/npncontroller v0.0.18 // npn
 	github.com/kyleu/npn/npncore v0.0.18 // npn
