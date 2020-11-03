@@ -2,7 +2,7 @@
   <div class="uk-overflow-auto">
     <div v-if="body">
       <em>{{ body.type }}</em>
-      <pre><code :class="'language-' + body.type">{{ content }}</code></pre>
+      <div class="prism-view mt"><pre style="margin: 0;"><code v-html="highlighted"></code></pre></div>
     </div>
     <div v-else>
       <div>no body</div>
@@ -12,11 +12,16 @@
 </template>
 
 <script lang="ts">
+// @ts-ignore
+// eslint-disable-next-line
+declare const Prism: any;
+
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {RBody} from "@/body/model";
 import {jsonStr} from "@/util/json";
+import {PrismEditor} from "vue-prism-editor";
 
-@Component
+@Component({ components: { PrismEditor } })
 export default class BodyResponse extends Vue {
   @Prop() url!: string
   @Prop() body!: RBody
@@ -32,6 +37,19 @@ export default class BodyResponse extends Vue {
       return jsonStr(this.body.config.msg);
     }
     return "unknown body [" + this.body.type + "]";
+  }
+
+  get highlighted(): string {
+    return Prism.highlight(this.content, this.getLang(this.body.type));
+  }
+
+  private getLang(t: string) {
+    switch (t) {
+      case "json":
+        return Prism.languages.js;
+      default:
+        return Prism.languages[t];
+    }
   }
 }
 </script>

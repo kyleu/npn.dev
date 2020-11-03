@@ -1,4 +1,6 @@
-.prism {
+.prism-view {
+  padding: 12px;
+  border: 1px solid #ddd;
 }
 
 pre[class*="language-"].line-numbers {
@@ -153,6 +155,7 @@ pre[class*="language-"].line-numbers > code {
   .token.bold {
     font-weight: bold;
   }
+
   .token.italic {
     font-style: italic;
   }
@@ -331,6 +334,7 @@ pre[class*="language-"].line-numbers > code {
   .token.bold {
     font-weight: bold;
   }
+
   .token.italic {
     font-style: italic;
   }

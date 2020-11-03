@@ -15,16 +15,13 @@
   <link href="/assets/vendor/<%= npncore.AppKey %>.js" rel="preload" as="script">
 
   <link href="/assets/vendor/<%= npncore.AppKey %>.css" rel="stylesheet">
-  <script>
-    window.initialData = {
-      profile: <%== npncore.ToJSON(ctx.Profile.ToProfile(), ctx.Logger) %>
-    };
-  </script>
+  <script>window.initialData = { profile: <%== npncore.ToJSONCompact(ctx.Profile.ToProfile(), ctx.Logger) %> };</script>
 </head>
 <body class="<%= ctx.Profile.Theme.CSS %>">
   <div id="npn">TODO</div>
   <script src="/assets/vendor/vendor.js"></script>
   <script src="/assets/vendor/<%= npncore.AppKey %>.js"></script>
+  <script src="/vendor/prism/prism.min.js"></script>
   <script>init();</script>
 </body>
 </html>
