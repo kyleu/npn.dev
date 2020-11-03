@@ -26,6 +26,8 @@ func init() {
 	npncore.AppName = npncore.AppKey
 	npncore.AppVersion = Version
 
+	npncore.IncludedScripts = []string{"/assets/vendor/vendor.js"}
+
 	auth.RequiredAuthProviders = []string{"google"}
 	auth.RequiredAuthDomains = []string{"kyleu.com"}
 	npncontroller.FileBrowseRoot = "./data"

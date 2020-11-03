@@ -26,11 +26,24 @@ func Head(ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 <meta property="og:type" content="website">
 <meta property="og:locale" content="en_US">
 
-<link rel="stylesheet" media="screen" href="/assets/vendor/`)
+`)
+	for _, ss := range npncore.IncludedStylesheets {
+		buffer.WriteString(`<link rel="stylesheet" media="screen" href="`)
+		hero.EscapeHTML(ss, buffer)
+		buffer.WriteString(`">
+`)
+	}
+	buffer.WriteString(`<link rel="stylesheet" media="screen" href="/assets/vendor/`)
 	hero.EscapeHTML(npncore.AppKey, buffer)
 	buffer.WriteString(`.css">
-<script src="/assets/vendor/vendor.js"></script>
-<script src="/assets/vendor/`)
+`)
+	for _, scr := range npncore.IncludedScripts {
+		buffer.WriteString(`<script src="`)
+		hero.EscapeHTML(scr, buffer)
+		buffer.WriteString(`"></script>
+`)
+	}
+	buffer.WriteString(`<script src="/assets/vendor/`)
 	hero.EscapeHTML(npncore.AppKey, buffer)
 	buffer.WriteString(`.js"></script>
 `)

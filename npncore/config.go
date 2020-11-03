@@ -6,6 +6,8 @@ var (
 	AppPlatform       = "SetAppPlatform"
 	AppVersion        = "0.0.0"
 	RequireLoginsFrom = "none"
+	IncludedScripts = []string{}
+	IncludedStylesheets = []string{}
 )
 
 type key int
