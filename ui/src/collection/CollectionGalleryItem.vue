@@ -1,7 +1,10 @@
 <template>
   <li>
     <em v-if="coll.description && coll.description.length > 0" class="right ml">{{ coll.description }}</em>
-    <router-link :class="'collection-link ' + profile.linkColor + '-fg'" :to="'/c/' + coll.key">{{ label }}</router-link>
+    <router-link :class="'collection-link ' + profile.linkColor + '-fg'" :to="'/c/' + coll.key">
+      <span class="uk-icon nav-icon" data-uk-icon="icon: album"></span>
+      {{ label }}
+    </router-link>
   </li>
 </template>
 

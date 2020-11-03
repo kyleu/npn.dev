@@ -1,6 +1,9 @@
 <template>
-  <div>
-    <router-link :class="'collection-link ' + profile.linkColor + '-fg'" :to="'/c/' + coll.key">{{ label }}</router-link>
+  <div class="nav-link">
+    <router-link :class="'collection-link ' + profile.linkColor + '-fg'" :to="'/c/' + coll.key">
+      <span class="uk-icon nav-icon" data-uk-icon="icon: album"></span>
+      {{ label }}
+    </router-link>
   </div>
 </template>
 
