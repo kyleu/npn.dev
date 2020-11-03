@@ -13,7 +13,6 @@ RUN go get -u github.com/pyros2097/go-embed
 RUN go get -u github.com/shiyanhui/hero/hero
 RUN go get -u golang.org/x/tools/cmd/goimports
 
-ADD ./.git            /npn/.git
 ADD ./go.mod          /npn/go.mod
 ADD ./go.sum          /npn/go.sum
 ADD ./app             /npn/app
@@ -24,13 +23,8 @@ ADD ./npnasset        /npn/npnasset
 ADD ./npnconnection   /npn/npnconnection
 ADD ./npncontroller   /npn/npncontroller
 ADD ./npncore         /npn/npncore
-# ADD ./npndatabase     /npn/npndatabase
-# ADD ./npnexport       /npn/npnexport
-# ADD ./npngraphql      /npn/npngraphql
-# ADD ./npnqueue        /npn/npnqueue
 ADD ./npnscript       /npn/npnscript
 ADD ./npnservice      /npn/npnservice
-# ADD ./npnservice-db   /npn/npnservice-db
 ADD ./npnservice-fs   /npn/npnservice-fs
 ADD ./npntemplate     /npn/npntemplate
 ADD ./npnuser         /npn/npnuser
@@ -43,7 +37,7 @@ COPY go.mod /npn/
 RUN go mod download
 
 RUN set -xe && make clean
-RUN set -xe && make build-release
+RUN set -xe && make build-release-ci
 
 RUN mv build/release /build
 
