@@ -19,6 +19,9 @@ declare global {
     setTheme: (s: string) => void;
     npn: NPNDebug;
     Prism: { manual: boolean };
+    // @ts-ignore
+    // eslint-disable-next-line
+    UIkit: any;
   }
 }
 
@@ -26,6 +29,7 @@ function init(): void {
   // @ts-ignore
   // eslint-disable-next-line
   UIkit.use(Icons);
+  window.UIkit = UIkit;
 
   window.Prism = window.Prism || {};
   window.Prism.manual = true;

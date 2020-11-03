@@ -12,7 +12,7 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {setBCReq} from "@/util/vutils";
-import {TransformResult} from "@/request/transformResult";
+import {TransformResult} from "@/request/transform/transformResult";
 import {getTransformResult} from "@/request/state";
 import {Profile, profileRef} from "@/user/profile";
 

@@ -3,34 +3,36 @@
     <form action="" method="post" onsubmit="console.log('XXXXXXX');return false;">
       <div>
         <ul data-uk-tab="">
-          <li><a href="#details">Details</a></li>
-          <li><a href="#query">Query</a></li>
-          <li><a href="#auth">Auth</a></li>
-          <li><a href="#headers">Headers</a></li>
-          <li><a href="#body">Body</a></li>
-          <li><a href="#options">Options</a></li>
+          <li><a href="#details" @click="setTab('details')">Details</a></li>
+          <li><a href="#query" @click="setTab('query')">Query</a></li>
+          <li><a href="#auth" @click="setTab('auth')">Auth</a></li>
+          <li><a href="#headers" @click="setTab('headers')">Headers</a></li>
+          <li><a href="#body" @click="setTab('body')">Body</a></li>
+          <li><a href="#options" @click="setTab('options')">Options</a></li>
         </ul>
         <ul class="uk-switcher uk-margin">
           <li class="request-details-panel">
-            <div class="mt">
-              <label class="uk-form-label">
-                Key
-                <input v-model="req.key" class="uk-input" name="key" type="text" data-lpignore="true" />
-              </label>
-            </div>
+            <div>
+              <div class="mt">
+                <label class="uk-form-label">
+                  Key
+                  <input v-model="req.key" class="uk-input" name="key" type="text" data-lpignore="true" />
+                </label>
+              </div>
 
-            <div class="mt">
-              <label class="uk-form-label">
-                Title
-                <input v-model="req.title" class="uk-input" name="title" type="text" data-lpignore="true" />
-              </label>
-            </div>
+              <div class="mt">
+                <label class="uk-form-label">
+                  Title
+                  <input v-model="req.title" class="uk-input" name="title" type="text" data-lpignore="true" />
+                </label>
+              </div>
 
-            <div class="mt">
-              <label class="uk-form-label">
-                Description
-                <textarea v-model="req.description" class="uk-textarea" name="description" data-lpignore="true"></textarea>
-              </label>
+              <div class="mt">
+                <label class="uk-form-label">
+                  Description
+                  <textarea v-model="req.description" class="uk-textarea" name="description" data-lpignore="true"></textarea>
+                </label>
+              </div>
             </div>
           </li>
 
@@ -68,6 +70,10 @@ export default class RequestEditor extends Vue {
 
   updated(): void {
     setBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
+  }
+
+  setTab(s: string): void {
+    console.log("setTab: " + s);
   }
 }
 </script>

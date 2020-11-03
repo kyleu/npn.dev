@@ -1,7 +1,7 @@
 import {cloneRequest, NPNRequest} from "@/request/model";
 import {CallResult} from "@/call/model";
 import {socketRef} from "@/socket/socket";
-import {TransformResult} from "@/request/transformResult";
+import {TransformResult} from "@/request/transform/transformResult";
 import {ref} from "@vue/composition-api";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";

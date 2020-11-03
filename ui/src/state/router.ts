@@ -6,7 +6,7 @@ import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
-import RequestTransform from "@/request/RequestTransform.vue";
+import RequestTransform from "@/request/transform/RequestTransform.vue";
 import CallResultView from "@/call/CallResultView.vue";
 import {callResultRef, transformResultRef} from "@/request/state";
 

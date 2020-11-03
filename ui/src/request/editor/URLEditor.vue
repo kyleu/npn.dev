@@ -23,8 +23,8 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {allMethods, Method, NPNRequest} from "@/request/model";
-import {Part, prototypeToURL, prototypeToURLParts} from "@/request/url";
-import {prototypeFromURL} from "@/request/prototype";
+import {Part, prototypeToURL, prototypeToURLParts} from "@/request/prototype/url";
+import {prototypeFromURL} from "@/request/prototype/prototype";
 import {callResultRef, requestEditingRef} from "@/request/state";
 
 @Component

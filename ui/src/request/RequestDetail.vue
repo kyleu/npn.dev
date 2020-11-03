@@ -28,7 +28,7 @@ import {Component, Vue} from "vue-property-decorator";
 import {cloneRequest, NPNRequest} from "@/request/model";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
-import {diff} from "@/request/diff";
+import {diff} from "@/request/prototype/diff";
 import ExportActions from "@/request/editor/ExportActions.vue";
 import {setActiveRequest, requestEditingRef, requestOriginalRef} from "@/request/state";
 import {Profile, profileRef} from "@/user/profile";

@@ -17,7 +17,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {Header} from "@/header/model";
 
 @Component
-export default class ResponseHeaders extends Vue {
+export default class HeadersResponse extends Vue {
   @Prop() title!: string
   @Prop() headers!: Header[]
 }

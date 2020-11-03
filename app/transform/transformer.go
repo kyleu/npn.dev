@@ -23,4 +23,4 @@ func (t Transformers) Get(s string) Transformer {
 	return nil
 }
 
-var AllTransformers = Transformers{&CURL{}, &HTTP{}}
+var AllTransformers = Transformers{&CURL{}, &HTTP{}, &JSON{}}
