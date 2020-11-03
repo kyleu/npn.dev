@@ -6,6 +6,7 @@ import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
 import {VueRouter} from "vue-router/types/router";
+import {setRequestDetail} from "@/request/state";
 
 interface CollectionData<T> {
   readonly key: string;
@@ -32,6 +33,17 @@ export function onCollectionAdded(active: string, colls: Collection[]): void {
   // eslint-disable-next-line
   const router = (window as any).npn.router as VueRouter;
   router.push({name: "CollectionDetail", params: {coll: active}});
+}
+
+export function onCollectionDeleted(param: string): void {
+  collectionsRef.value = collectionsRef.value.filter(x => x.key !== param);
+  collectionSummariesRef.value = collectionSummariesRef.value.filter(x => x.key !== param);
+  requestDetailsRef.value = requestDetailsRef.value.filter(x => x.key !== param);
+
+  // @ts-ignore
+  // eslint-disable-next-line
+  const router = (window as any).npn.router as VueRouter;
+  router.push({name: "CollectionIndex"});
 }
 
 export function getCollectionRequestSummaries(key: string): Summary[] | undefined {
@@ -76,3 +88,18 @@ export function setCollectionRequestDetails(key: string, requests: NPNRequest[])
   }
   requestDetailsRef.value.push({key, requests});
 }
+
+export interface RequestAdded {
+  key: string;
+  requests: Summary[];
+}
+
+export function onRequestAdded(coll: RequestAdded, req: NPNRequest): void {
+  setCollectionRequestSummaries(coll.key, coll.requests);
+  setRequestDetail(coll.key, req);
+  // @ts-ignore
+  // eslint-disable-next-line
+  const router = (window as any).npn.router as VueRouter;
+  router.push({name: "RequestDetail", params: {coll: coll.key, req: req.key}});
+}
+

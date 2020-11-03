@@ -9,8 +9,8 @@
         </h3>
         <p v-if="coll">{{ coll.description }}</p>
 
-        <button class="uk-button uk-button-default uk-margin-small-right mt" @click="doCall()">Edit</button>
-        <button class="uk-button uk-button-default mt" @click="doCall()">Delete</button>
+        <button class="uk-button uk-button-default uk-margin-small-right mt" @click="editCollection()">Edit</button>
+        <button class="uk-button uk-button-default mt" @click="deleteCollection()">Delete</button>
       </div>
       <RequestSummaryList :coll="$route.params.coll" :requests="requests" />
     </div>
@@ -25,6 +25,9 @@ import {Summary} from "@/request/model";
 import RequestSummaryList from "@/request/RequestSummaryList.vue";
 import {Profile, profileRef} from "@/user/profile";
 import {getCollection, getCollectionRequestSummaries} from "@/collection/state";
+import {socketRef} from "@/socket/socket";
+import {collectionService} from "@/util/services";
+import {clientCommands} from "@/util/command";
 
 @Component({ components: { RequestSummaryList } })
 export default class CollectionDetail extends Vue {
@@ -46,6 +49,18 @@ export default class CollectionDetail extends Vue {
 
   updated(): void {
     setBC(this, {path: "", title: this.$route.params.coll});
+  }
+
+  editCollection(): void {
+    console.log("TODO!");
+  }
+
+  deleteCollection(): void {
+    if (confirm('Are you sure you want to delete the collection named [' + this.$route.params.coll + ']?')) {
+      if (socketRef.value) {
+        socketRef.value.send({svc: collectionService.key, cmd: clientCommands.deleteCollection, param: this.$route.params.coll});
+      }
+    }
   }
 }
 </script>

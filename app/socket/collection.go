@@ -3,6 +3,7 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gofrs/uuid"
 	"strings"
 
 	"github.com/kyleu/npn/app/request"
@@ -28,6 +29,11 @@ type addCollResult struct {
 type addURLInput struct {
 	Coll string `json:"coll"`
 	URL  string `json:"url"`
+}
+
+type addURLOutput struct {
+	Coll *collDetails `json:"coll"`
+	Req  *request.Request `json:"req"`
 }
 
 func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {
@@ -132,26 +138,43 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 		return errors.Wrap(err, "unable to save request from URL ["+p.URL+"]")
 	}
 
-	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestAdded, &req)
+	coll, err := parseCollDetails(s, &c.Profile.UserID, p.Coll)
+	if err != nil {
+		return err
+	}
+
+	out := &addURLOutput{
+		Coll: coll,
+		Req:  req,
+	}
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestAdded, out)
 	return s.WriteMessage(c.ID, msg)
 }
 
-func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
+func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (*collDetails, error) {
 	svcs := ctx(s)
+	coll, err := svcs.Collection.Load(userID, key)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("error retrieving collection [%v]: %+v", key, err))
+	}
+	reqs, err := svcs.Collection.ListRequests(userID, key)
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("error retrieving requests for collection [%v]: %+v", key, err))
+	}
+	cd := &collDetails{Key: key, Collection: coll, Requests: reqs}
+	return cd, nil
+}
+
+func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
 	key := ""
 	err := npncore.FromJSON(param, &key)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error parsing collection [%v]: %+v", key, err))
 	}
-	coll, err := svcs.Collection.Load(&c.Profile.UserID, key)
+	cd, err := parseCollDetails(s, &c.Profile.UserID, key)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error retrieving collection [%v]: %+v", key, err))
 	}
-	reqs, err := svcs.Collection.ListRequests(&c.Profile.UserID, key)
-	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("error retrieving requests for collection [%v]: %+v", key, err))
-	}
-	cd := collDetails{Key: key, Collection: coll, Requests: reqs}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionDetail, &cd)
 	return s.WriteMessage(c.ID, msg)
 }

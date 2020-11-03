@@ -25,7 +25,6 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import RequestSummaryList from "@/request/RequestSummaryList.vue";
 import {cloneRequest, NPNRequest} from "@/request/model";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
@@ -38,7 +37,7 @@ import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 
-@Component({ components: {ExportActions, RequestEditor, RequestSummaryList, URLEditor } })
+@Component({ components: {ExportActions, RequestEditor, URLEditor } })
 export default class RequestDetail extends Vue {
   get profile(): Profile | undefined {
     return profileRef.value;
@@ -75,8 +74,11 @@ export default class RequestDetail extends Vue {
     if (!s) {
       return;
     }
-    const param = {coll: this.$route.params.coll, orig: requestOriginalRef.value?.key || requestEditingRef.value.key, req: requestEditingRef.value}
-    s.send({svc: requestService.key, cmd: clientCommands.saveRequest, param})
+    const e = requestEditingRef.value;
+    if (e) {
+      const param = {coll: this.$route.params.coll, orig: requestOriginalRef.value?.key || e.key, req: e}
+      s.send({svc: requestService.key, cmd: clientCommands.saveRequest, param})
+    }
   }
 }
 </script>

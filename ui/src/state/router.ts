@@ -7,7 +7,7 @@ import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import RequestTransform from "@/request/RequestTransform.vue";
-import CallResultPanel from "@/call/CallResultPanel.vue";
+import CallResultView from "@/call/CallResultView.vue";
 import {callResultRef, transformResultRef} from "@/request/state";
 
 const routes: Array<RouteConfig> = [
@@ -38,7 +38,7 @@ const routes: Array<RouteConfig> = [
       {
         path: "call",
         name: "CallResult",
-        component: CallResultPanel,
+        component: CallResultView,
         beforeEnter: (to, from, next): void => {
           callResultRef.value = undefined;
           next();

@@ -2,7 +2,7 @@ import {Header} from "@/header/model";
 import {RBody} from "@/body/model";
 import {Timing} from "@/call/timing";
 
-export interface Response {
+export interface NPNResponse {
   readonly method: string;
   readonly url: string;
   readonly requestHeaders: Header[];
@@ -19,7 +19,7 @@ export interface Response {
   readonly close?: boolean;
   readonly uncompressed?: boolean;
   readonly body?: RBody;
-  readonly prior?: Response;
+  readonly prior?: NPNResponse;
   readonly timing?: Timing;
   readonly error?: string;
 }
@@ -29,6 +29,6 @@ export interface CallResult {
   readonly collection: string;
   readonly request: string;
   readonly status: string;
-  readonly response?: Response;
+  readonly response?: NPNResponse;
   readonly error?: string;
 }
