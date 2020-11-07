@@ -6,7 +6,7 @@
       </select>
     </div>
     <div v-if="!editing" class="url-view uk-inline right" style="width:calc(100% - 120px);">
-      <button class="uk-form-icon uk-form-icon-flip" title="send request" data-uk-icon="icon: play" @click="doCall()"></button>
+      <button class="uk-form-icon uk-form-icon-flip" title="send request" data-uk-icon="icon: play" style="padding-top: 4px;" @click="doCall()"></button>
       <div @click="editing = true">
         <span class="url-link"><span v-for="part in protoParts" :key="part.idx" :class="part.color" :title="part.t">{{ part.v }}</span> </span>
       </div>

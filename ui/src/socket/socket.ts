@@ -92,6 +92,9 @@ export class Socket {
     const elapsed = Date.now() - (this.connectTime || 0);
 
     if (elapsed < 2000) {
+      if (this.pauseSeconds < 1) {
+        this.pauseSeconds = 1;
+      }
       this.pauseSeconds = this.pauseSeconds * 2;
       logDebug(`socket closed immediately, reconnecting in ${this.pauseSeconds} seconds`);
       setTimeout(() => {

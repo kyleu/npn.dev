@@ -34,7 +34,7 @@ export default class ResponsePanel extends Vue {
   @Prop() response!: NPNResponse
 
   setTab(s: string): void {
-    console.log("setTab: " + s);
+    console.log("setResponseTab: " + s);
   }
 }
 </script>

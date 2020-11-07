@@ -1,4 +1,16 @@
-import {NPNRequest} from "@/request/model";
+import {NPNRequest, Options} from "@/request/model";
+import {jsonParse, jsonStr} from "@/util/json";
+
+const debugDiff = false;
+
+function debug(lpo: Options, rpo: Options, ret: Diff[]): void {
+  if (debugDiff) {
+    console.debug(jsonParse(jsonStr(lpo)), jsonParse(jsonStr(rpo)));
+    if (ret.length > 0) {
+      console.debug(ret);
+    }
+  }
+}
 
 export interface Diff {
   readonly k: string;
@@ -139,6 +151,8 @@ export function diff(l: NPNRequest | undefined, r: NPNRequest | undefined): Diff
   comp("writeCookieJar", lpo.writeCookieJar, rpo.writeCookieJar, p);
   comp("sslCert", lpo.sslCert, rpo.sslCert, p);
   comp("userAgentOverride", lpo.userAgentOverride, rpo.userAgentOverride, p);
+
+  debug(lpo, rpo, ret);
 
   return ret;
 }

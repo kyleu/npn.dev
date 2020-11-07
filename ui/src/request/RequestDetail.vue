@@ -58,10 +58,6 @@ export default class RequestDetail extends Vue {
 
   get different(): boolean {
     const diffs = diff(requestOriginalRef.value, requestEditingRef.value);
-    // console.debug(jsonParse(jsonStr(requestOriginalRef.value)), jsonParse(jsonStr(requestEditingRef.value)));
-    if (diffs.length > 0) {
-      console.debug(diffs);
-    }
     return diffs.length > 0;
   }
 

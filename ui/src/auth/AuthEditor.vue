@@ -10,6 +10,6 @@ import {Auth} from "@/auth/model";
 
 @Component
 export default class AuthEditor extends Vue {
-  @Prop() auth!: Auth | undefined;
+  @Prop() auth: Auth | undefined;
 }
 </script>

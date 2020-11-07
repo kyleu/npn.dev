@@ -42,7 +42,7 @@ import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class QueryParamsEditor extends Vue {
-  @Prop() qp!: QueryParam[] | undefined;
+  @Prop() qp: QueryParam[] | undefined;
 
   get profile(): Profile | undefined {
     return profileRef.value;

@@ -8,7 +8,7 @@ export function setTheme(theme: string): void {
       }
       setTheme(t);
       fetch("/profile/theme/" + t).then(r => r.text()).then(() => {
-        // console.log(`Set theme to [${t}]`);
+        // Set theme to [${t}]
       });
       break;
     case "light":
@@ -24,7 +24,7 @@ export function setTheme(theme: string): void {
       document.body.classList.remove("uk-dark");
       break;
     default:
-      console.warn("invalid theme");
+      console.warn("invalid theme: [" + theme + "]");
       break;
   }
 }

@@ -1,8 +1,15 @@
 <template>
   <div class="uk-overflow-auto">
     <div v-if="body">
-      <em>{{ body.type }}</em>
-      <div class="prism-view mt"><pre style="margin: 0;"><code v-html="highlighted"></code></pre></div>
+      <HTMLBody v-if="body.type === 'html'" :url="url" :config="body.config" />
+      <JSONBody v-else-if="body.type === 'json'" :config="body.config" />
+      <ImageBody v-else-if="body.type === 'image'" :config="body.config" />
+      <RawBody v-else-if="body.type === 'raw'" :config="body.config" />
+      <ErrorBody v-else-if="body.type === 'error'" :config="body.config" />
+      <div v-else>
+        <em>{{ body.type }}</em>
+        <h4>TODO</h4>
+      </div>
     </div>
     <div v-else>
       <div>no body</div>
@@ -12,44 +19,17 @@
 </template>
 
 <script lang="ts">
-// @ts-ignore
-// eslint-disable-next-line
-declare const Prism: any;
-
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {RBody} from "@/body/model";
-import {jsonStr} from "@/util/json";
-import {PrismEditor} from "vue-prism-editor";
+import HTMLBody from "@/body/HTMLBody.vue";
+import ImageBody from "@/body/ImageBody.vue";
+import JSONBody from "@/body/JSONBody.vue";
+import RawBody from "@/body/RawBody.vue";
+import ErrorBody from "@/body/ErrorBody.vue";
 
-@Component({ components: { PrismEditor } })
+@Component({ components: { HTMLBody, ImageBody, JSONBody, RawBody, ErrorBody } })
 export default class BodyResponse extends Vue {
   @Prop() url!: string
   @Prop() body!: RBody
-
-  get content(): string {
-    if (!this.body) {
-      return "no body";
-    }
-    if (this.body.type === "html") {
-      return this.body.config.content;
-    }
-    if (this.body.type === "json") {
-      return jsonStr(this.body.config.msg);
-    }
-    return "unknown body [" + this.body.type + "]";
-  }
-
-  get highlighted(): string {
-    return Prism.highlight(this.content, this.getLang(this.body.type));
-  }
-
-  private getLang(t: string) {
-    switch (t) {
-      case "json":
-        return Prism.languages.js;
-      default:
-        return Prism.languages[t];
-    }
-  }
 }
 </script>

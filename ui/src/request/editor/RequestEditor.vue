@@ -11,31 +11,7 @@
           <li><a href="#options" @click="setTab('options')">Options</a></li>
         </ul>
         <ul class="uk-switcher uk-margin">
-          <li class="request-details-panel">
-            <div>
-              <div class="mt">
-                <label class="uk-form-label">
-                  Key
-                  <input v-model="req.key" class="uk-input" name="key" type="text" data-lpignore="true" />
-                </label>
-              </div>
-
-              <div class="mt">
-                <label class="uk-form-label">
-                  Title
-                  <input v-model="req.title" class="uk-input" name="title" type="text" data-lpignore="true" />
-                </label>
-              </div>
-
-              <div class="mt">
-                <label class="uk-form-label">
-                  Description
-                  <textarea v-model="req.description" class="uk-textarea" name="description" data-lpignore="true"></textarea>
-                </label>
-              </div>
-            </div>
-          </li>
-
+          <li><RequestEditorDetails :req="req" /></li>
           <li><QueryParamsEditor :qp="req.prototype.query" /></li>
           <li><AuthEditor :auth="req.prototype.auth" /></li>
           <li><HeadersEditor :headers="req.prototype.headers" /></li>
@@ -57,9 +33,12 @@ import QueryParamsEditor from "@/request/editor/QueryParamsEditor.vue";
 import {setBC} from "@/util/vutils";
 import {requestEditingRef} from "@/request/state";
 import {NPNRequest} from "@/request/model";
+import RequestEditorDetails from "@/request/editor/RequestEditorDetails.vue";
 
-@Component({ components: { AuthEditor, BodyEditor, HeadersEditor, OptionsEditor, QueryParamsEditor } })
+@Component({ components: {RequestEditorDetails, AuthEditor, BodyEditor, HeadersEditor, OptionsEditor, QueryParamsEditor } })
 export default class RequestEditor extends Vue {
+  activeTab = ""
+
   get req(): NPNRequest | undefined {
     return requestEditingRef.value;
   }
@@ -73,7 +52,8 @@ export default class RequestEditor extends Vue {
   }
 
   setTab(s: string): void {
-    console.log("setTab: " + s);
+    this.activeTab = s;
+    console.log("setEditorTab: " + s);
   }
 }
 </script>

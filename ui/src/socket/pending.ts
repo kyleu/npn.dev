@@ -28,6 +28,6 @@ export function clearPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: s
   if (!hasPendingRequest(reqs, t, k)) {
     return false;
   }
-  reqs.value = reqs.value.filter(x => x.t !== t && x.k !== k);
+  reqs.value = (reqs.value || []).filter(x => x.t !== t && x.k !== k);
   return true
 }

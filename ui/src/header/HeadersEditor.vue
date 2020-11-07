@@ -42,7 +42,7 @@ import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class HeadersEditor extends Vue {
-  @Prop() headers!: Header[] | undefined;
+  @Prop() headers: Header[] | undefined;
 
   get profile(): Profile | undefined {
     return profileRef.value;

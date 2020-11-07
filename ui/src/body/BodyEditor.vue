@@ -24,7 +24,7 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {AllTypes, BodyType, RBody} from "@/body/model";
 @Component
 export default class RequestEditorBody extends Vue {
-  @Prop() body!: RBody | undefined;
+  @Prop() body: RBody | undefined;
 
   types(): BodyType[] {
     return AllTypes.filter(t => !t.hidden)
