@@ -20,7 +20,7 @@ jobs:
       - name: build
         run: |
           brew install md5sha1sum
-          bin/build.sh
+          bin/build-all-macos.sh
   build-ubuntu:
     runs-on: ubuntu-latest
     steps:
@@ -38,8 +38,7 @@ jobs:
           go get -u golang.org/x/tools/cmd/goimports
           go mod download
       - name: build
-        run: |
-          bin/build-desktop.sh
+        run: bin/build-all-linux.sh
   build-windows:
     runs-on: windows-latest
     steps:
@@ -57,4 +56,4 @@ jobs:
           go get -u golang.org/x/tools/cmd/goimports
           go mod download
       - name: build
-        run: bin/build.bat
+        run: bin/build-all-windows.bat
