@@ -26,4 +26,4 @@ For full stack development, you'll need some tools installed:
 - For SCSS changes, use `bin/build-css.sh`; you'll need `sass` installed
 - For a developer environment, run `bin/workspace.sh`, which will watch all files and hot-reload (iTerm2 required)
 
-For macOS, you can install all dependencies with `brew install md5sha1sum closure-compiler typescript sass/sass/sass`
+For macOS, you can install all dependencies with `brew install md5sha1sum sass/sass/sass`
