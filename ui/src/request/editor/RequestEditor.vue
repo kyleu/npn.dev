@@ -43,11 +43,7 @@ export default class RequestEditor extends Vue {
     return requestEditingRef.value;
   }
 
-  created(): void {
-    setBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
-  }
-
-  updated(): void {
+  mounted(): void {
     setBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
   }
 

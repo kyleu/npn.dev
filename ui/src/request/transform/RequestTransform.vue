@@ -26,11 +26,7 @@ export default class RequestTransform extends Vue {
     return getTransformResult(this.$route.params.coll, this.$route.params.req, this.$route.params.tx);
   }
 
-  created(): void {
-    setBCReq(this, this.$route.params.tx);
-  }
-
-  updated(): void {
+  mounted(): void {
     setBCReq(this, this.$route.params.tx);
   }
 }

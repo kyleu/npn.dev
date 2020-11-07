@@ -29,11 +29,7 @@ export default class Home extends Vue {
     return jsonStr(profileRef.value);
   }
 
-  created(): void {
-    setBC(this);
-  }
-
-  updated(): void {
+  mounted(): void {
     setBC(this);
   }
 }

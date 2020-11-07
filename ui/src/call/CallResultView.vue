@@ -48,11 +48,7 @@ export default class CallResultView extends Vue {
     return ret.reverse();
   }
 
-  created(): void {
-    setBCReq(this, "call");
-  }
-
-  updated(): void {
+  mounted(): void {
     setBCReq(this, "call");
   }
 }

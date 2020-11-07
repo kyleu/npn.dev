@@ -43,11 +43,7 @@ export default class CollectionDetail extends Vue {
     return getCollectionRequestSummaries(this.$route.params.coll);
   }
 
-  created(): void {
-    setBC(this, {path: "", title: this.$route.params.coll});
-  }
-
-  updated(): void {
+  mounted(): void {
     setBC(this, {path: "", title: this.$route.params.coll});
   }
 

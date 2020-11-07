@@ -23,11 +23,7 @@ export default class CollectionIndex extends Vue {
     return profileRef.value;
   }
 
-  created(): void {
-    setBC(this, {path: "", title: "collections"});
-  }
-
-  updated(): void {
+  mounted(): void {
     setBC(this, {path: "", title: "collections"});
   }
 }
