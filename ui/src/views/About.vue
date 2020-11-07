@@ -16,11 +16,7 @@ import {setBC} from "@/util/vutils";
 
 @Component({ components: { CollectionGallery } })
 export default class About extends Vue {
-  created(): void {
-    setBC(this, {path: "", title: "about"});
-  }
-
-  updated(): void {
+  mounted(): void {
     setBC(this, {path: "", title: "about"});
   }
 }
