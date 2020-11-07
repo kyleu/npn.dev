@@ -1,7 +1,25 @@
 name: npn
 on: [push]
 jobs:
-  build:
+  build-macos:
+    runs-on: macos-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: install-go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15.4
+      - name: install-dependencies
+        run: |
+          go version
+          go get -u github.com/pyros2097/go-embed
+          go get -u github.com/shiyanhui/hero/hero
+          go get -u golang.org/x/tools/cmd/goimports
+          go mod download
+      - name: build
+        run: bin/build.sh
+  build-ubuntu:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
@@ -18,4 +36,22 @@ jobs:
           go get -u golang.org/x/tools/cmd/goimports
           go mod download
       - name: build
-        run: bin/build-all.sh
+        run: bin/build.sh
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+      - name: install-go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.15.4
+      - name: install-dependencies
+        run: |
+          go version
+          go get -u github.com/pyros2097/go-embed
+          go get -u github.com/shiyanhui/hero/hero
+          go get -u golang.org/x/tools/cmd/goimports
+          go mod download
+      - name: build
+        run: bin/build.bat
