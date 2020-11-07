@@ -47,7 +47,7 @@ ifeq (${VERBOSE}, 1)
 endif
 
 	@mkdir -p ${BUILD_DIR}
-	go build ${GOARGS} -tags "${GOTAGS}" -o ${BUILD_DIR}/ ./cmd/...
+	go build ${GOARGS} -tags "${GOTAGS}" -o ${BUILD_DIR}/ .
 
 .PHONY: build-release
 build-release: goversion compile-templates ## Build all binaries without debug information

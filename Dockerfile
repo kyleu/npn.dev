@@ -17,7 +17,7 @@ ADD ./go.mod          /npn/go.mod
 ADD ./go.sum          /npn/go.sum
 ADD ./app             /npn/app
 ADD ./bin             /npn/bin
-ADD ./cmd             /npn/cmd
+ADD ./main.go         /npn/main.go
 ADD ./Makefile        /npn/Makefile
 ADD ./npnconnection   /npn/npnconnection
 ADD ./npncontroller   /npn/npncontroller
