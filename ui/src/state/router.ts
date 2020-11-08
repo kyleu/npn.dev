@@ -1,13 +1,14 @@
 import VueRouter, {RouteConfig} from "vue-router";
-import Home from "@/views/Home.vue";
 import About from "@/views/About.vue";
+import Home from "@/views/Home.vue";
 import NotFound from "@/views/NotFound.vue";
+import Settings from "@/views/Settings.vue";
+import CallResultView from "@/call/CallResultView.vue";
 import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import RequestTransform from "@/request/transform/RequestTransform.vue";
-import CallResultView from "@/call/CallResultView.vue";
 import {callResultRef, transformResultRef} from "@/request/state";
 
 const routes: Array<RouteConfig> = [
@@ -15,6 +16,11 @@ const routes: Array<RouteConfig> = [
     path: "/",
     name: "Home",
     component: Home
+  },
+  {
+    path: "/u",
+    name: "Settings",
+    component: Settings
   },
   {
     path: "/c",

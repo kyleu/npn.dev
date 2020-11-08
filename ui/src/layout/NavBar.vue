@@ -6,10 +6,8 @@
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
             <li class="uk-margin-small-right">
-              <a v-if="profile.picture.length === 0 || profile.picture === 'none'" href="/profile" data-uk-icon="icon:user" title="Profile"></a>
-              <a v-if="profile.picture.length !== 0 && profile.picture !== 'none'" href="/profile" title="Profile">
-                <img class="uk-border-circle" alt="user profile" :src="profile.picture" />
-              </a>
+              <router-link v-if="profile.picture.length === 0 || profile.picture === 'none'" to="/u" data-uk-icon="icon:user" title="Profile"></router-link>
+              <router-link v-else to="/u" title="Profile"><img class="uk-border-circle" alt="user profile" :src="profile.picture" /></router-link>
             </li>
           </ul>
           <a href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a>

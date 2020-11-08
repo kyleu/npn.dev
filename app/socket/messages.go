@@ -21,7 +21,7 @@ const (
 )
 
 const (
-	ServerMessagePong      = "pong"
+	ServerMessagePong = "pong"
 
 	// Collection
 	ServerMessageCollections       = "collections"

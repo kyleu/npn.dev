@@ -93,7 +93,7 @@ func (s *ServiceFilesystem) GetByCreated(d *time.Time, params *npncore.Params) u
 }
 
 func (s *ServiceFilesystem) SaveProfile(prof *npnuser.UserProfile) (*npnuser.UserProfile, error) {
-	err := s.files.WriteFile(s.filenameFor(prof.UserID), []byte(npncore.ToJSON(prof, s.logger)), true)
+	err := s.files.WriteFile(s.filenameFor(prof.UserID), []byte(npncore.ToJSON(prof.ToProfile(), s.logger)), true)
 	if err != nil {
 		return nil, err
 	}

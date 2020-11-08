@@ -10,6 +10,7 @@ import (
 )
 
 func Run(platform string, path string) int32 {
+	cli.InitKeys()
 	a := "0.0.0.0"
 	p := uint16(0)
 	info, r, err := cli.Start(platform, path)

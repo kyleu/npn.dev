@@ -1,10 +1,11 @@
 package authfs
 
 import (
-	"emperror.dev/errors"
 	"fmt"
-	"github.com/kyleu/npn/npnuser"
 	"path"
+
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npnuser"
 
 	"github.com/kyleu/npn/npnservice/auth"
 

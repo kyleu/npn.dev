@@ -1,14 +1,8 @@
 <template>
   <div>
-    <div>{{ (response.timing.completed || 0) / 1000 }}ms</div>
-    <div>
-      {{ response.proto }}
-      <em>{{ response.status }}</em>
-      <div>
-        {{ response.contentType || 'unknown' }}
-        {{ (response.contentLength && response.contentLength > -1) ? '(' + response.contentLength + 'bytes)' : ((response.body && response.body.length > -1) ? '(' + response.body.length + ' bytes)' : "") }}
-      </div>
-    </div>
+    <div class="right">{{ (response.timing.completed.toLocaleString() || 0) / 1000 }}ms</div>
+    <div>{{ response.contentType || 'unknown' }}</div>
+    <div>{{ ((response.contentLength && response.contentLength > -1) ? response.contentLength : ((response.body && response.body.length > -1) ? response.body.length : 0)).toLocaleString() }} bytes</div>
   </div>
 </template>
 

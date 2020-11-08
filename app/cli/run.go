@@ -1,11 +1,12 @@
 package cli
 
 import (
+	"os"
+	"strings"
+
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npnservice/auth"
-	"os"
-	"strings"
 
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
@@ -21,7 +22,7 @@ const Version = "0.0.1"
 
 var FileLoaderOverride npncore.FileLoader
 
-func init() {
+func InitKeys() {
 	npncore.AppKey = "npn"
 	npncore.AppName = npncore.AppKey
 	npncore.AppVersion = Version

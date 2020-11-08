@@ -1,12 +1,12 @@
 package npncore
 
 var (
-	AppKey            = "SetAppKey"
-	AppName           = "SetAppName"
-	AppPlatform       = "SetAppPlatform"
-	AppVersion        = "0.0.0"
-	RequireLoginsFrom = "none"
-	IncludedScripts = []string{}
+	AppKey              = "SetAppKey"
+	AppName             = "SetAppName"
+	AppPlatform         = "SetAppPlatform"
+	AppVersion          = "0.0.0"
+	RequireLoginsFrom   = "none"
+	IncludedScripts     = []string{}
 	IncludedStylesheets = []string{}
 )
 

@@ -3,8 +3,9 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gofrs/uuid"
 	"strings"
+
+	"github.com/gofrs/uuid"
 
 	"github.com/kyleu/npn/app/request"
 
@@ -32,7 +33,7 @@ type addURLInput struct {
 }
 
 type addURLOutput struct {
-	Coll *collDetails `json:"coll"`
+	Coll *collDetails     `json:"coll"`
 	Req  *request.Request `json:"req"`
 }
 

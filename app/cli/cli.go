@@ -13,6 +13,8 @@ var port uint16
 var dataDir string
 
 func Configure() cobra.Command {
+	InitKeys()
+
 	rootCmd := cobra.Command{
 		Use:   npncore.AppKey,
 		Short: "Command line interface for " + npncore.AppName,

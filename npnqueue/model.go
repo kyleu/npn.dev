@@ -1,12 +1,13 @@
 package npnqueue
 
 import (
-	"github.com/Shopify/sarama"
-	"github.com/kyleu/npn/npncore"
 	"log"
 	"os"
 	"strings"
 	"time"
+
+	"github.com/Shopify/sarama"
+	"github.com/kyleu/npn/npncore"
 )
 
 type Message struct {
@@ -57,4 +58,3 @@ func makeSaramaConfig(username string, password string, verbose bool) *sarama.Co
 	config.Producer.Return.Successes = true
 	return config
 }
-
