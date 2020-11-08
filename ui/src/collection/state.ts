@@ -82,7 +82,7 @@ export function setCollectionRequestDetails(key: string, requests: NPNRequest[])
   requestDetailsRef.value.push({key, requests});
 }
 
-export interface RequestAdded {
+interface RequestAdded {
   key: string;
   requests: Summary[];
 }
@@ -91,5 +91,16 @@ export function onRequestAdded(coll: RequestAdded, req: NPNRequest): void {
   setCollectionRequestSummaries(coll.key, coll.requests);
   setRequestDetail(coll.key, req);
   globalRouter().push({name: "RequestDetail", params: {coll: coll.key, req: req.key}});
+}
+
+interface RequestDeleted {
+  req: string;
+  coll: string;
+  requests: Summary[];
+}
+
+export function onRequestDeleted(rd: RequestDeleted): void {
+  setCollectionRequestSummaries(rd.coll, rd.requests);
+  globalRouter().push({name: "CollectionDetail", params: {coll: rd.coll}});
 }
 

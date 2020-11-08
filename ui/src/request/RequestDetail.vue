@@ -15,7 +15,7 @@
           </div>
           <button class="uk-button uk-button-default uk-margin-small-right mt" @click="doCall()">Call</button>
           <ExportActions />
-          <router-link class="uk-button uk-button-default uk-margin-small-right mt" :to="'/c/' + this.$route.params.coll + '/' + req.key + '/delete'">Delete</router-link>
+          <button class="uk-button uk-button-default uk-margin-small-right mt" @click="deleteRequest()">Delete</button>
         </div>
       </div>
       <router-view />
@@ -30,9 +30,8 @@ import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
 import {diff} from "@/request/prototype/diff";
 import ExportActions from "@/request/editor/ExportActions.vue";
-import {setActiveRequest, requestEditingRef, requestOriginalRef} from "@/request/state";
+import {callResultRef, requestEditingRef, requestOriginalRef, setActiveRequest} from "@/request/state";
 import {Profile, profileRef} from "@/user/profile";
-import { callResultRef } from '@/request/state'
 import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
@@ -46,14 +45,6 @@ export default class RequestDetail extends Vue {
   get req(): NPNRequest | undefined {
     setActiveRequest(this.$route.params.coll, this.$route.params.req);
     return requestEditingRef.value;
-  }
-
-  doCall(): void {
-    if (this.$route.name === 'CallResult') {
-      callResultRef.value = undefined;
-    } else {
-      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}})
-    }
   }
 
   get different(): boolean {
@@ -74,6 +65,23 @@ export default class RequestDetail extends Vue {
     if (e) {
       const param = {coll: this.$route.params.coll, orig: requestOriginalRef.value?.key || e.key, req: e}
       s.send({svc: requestService.key, cmd: clientCommands.saveRequest, param})
+    }
+  }
+
+  doCall(): void {
+    if (this.$route.name === 'CallResult') {
+      callResultRef.value = undefined;
+    } else {
+      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}})
+    }
+  }
+
+  deleteRequest(): void {
+    if (confirm('Are you sure you want to delete request [' + this.$route.params.req + ']?')) {
+      if (socketRef.value) {
+        const param = { coll: this.$route.params.coll, req: this.$route.params.req};
+        socketRef.value.send({svc: requestService.key, cmd: clientCommands.deleteRequest, param});
+      }
     }
   }
 }

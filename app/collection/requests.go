@@ -77,6 +77,9 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 	slug := npncore.Slugify(req.Key)
 	if slug != req.Key {
 		s.logger.Debug(fmt.Sprintf("renaming request key from [%v] to [%v]", req.Key, slug))
+		if len(req.Title) == 0 {
+			req.Title = req.Key
+		}
 		req.Key = slug
 	}
 

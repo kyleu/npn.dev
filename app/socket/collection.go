@@ -121,6 +121,9 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 	svcs := ctx(s)
 	curr, _ := svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
 	if curr != nil {
+		if len(req.Title) == 0 {
+			req.Title = req.Key
+		}
 		if req.Prototype != nil && len(req.Prototype.Path) > 0 {
 			add := req.Prototype.Path
 			if len(add) > 8 {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="right">{{ (response.timing.completed.toLocaleString() || 0) / 1000 }}ms</div>
+    <div class="right">{{ ((response.timing.completed || 0) / 1000).toLocaleString() }}ms</div>
     <div>{{ response.contentType || 'unknown' }}</div>
     <div>{{ ((response.contentLength && response.contentLength > -1) ? response.contentLength : ((response.body && response.body.length > -1) ? response.body.length : 0)).toLocaleString() }} bytes</div>
   </div>

@@ -2,7 +2,7 @@ import {setCallResult, setRequestDetail, setTransformResult} from "@/request/sta
 import {Message} from "@/socket/socket";
 import {logDebug, logWarn} from "@/util/log";
 import {serverCommands} from "@/util/command";
-import {collectionsRef, onCollectionAdded, onCollectionDeleted, onRequestAdded, setCollectionRequestSummaries} from "@/collection/state";
+import {collectionsRef, onCollectionAdded, onCollectionDeleted, onRequestAdded, onRequestDeleted, setCollectionRequestSummaries} from "@/collection/state";
 
 export const messageHandler = (msg: Message): void => {
   logDebug("IN", msg);
@@ -21,6 +21,9 @@ export const messageHandler = (msg: Message): void => {
       break;
     case serverCommands.requestAdded:
       onRequestAdded(msg.param.coll, msg.param.req);
+      break;
+    case serverCommands.requestDeleted:
+      onRequestDeleted(msg.param);
       break;
     case serverCommands.requestDetail:
       setRequestDetail(msg.param.coll, msg.param.req);
