@@ -1,10 +1,10 @@
 <template>
   <div class="uk-overflow-auto">
     <div v-if="mode === 'text'" class="right">
-      <a :class="profile.linkColor + '-fg'" href="" title="render preview" @click.prevent="mode = 'preview'">preview</a>
+      <a :class="profile.settings.linkColor + '-fg'" href="" title="render preview" @click.prevent="mode = 'preview'">preview</a>
     </div>
     <div v-else class="right">
-      <a :class="profile.linkColor + '-fg'" href="" title="render preview" @click.prevent="mode = 'text'">text</a>
+      <a :class="profile.settings.linkColor + '-fg'" href="" title="render preview" @click.prevent="mode = 'text'">text</a>
     </div>
     <em>HTML</em>
 

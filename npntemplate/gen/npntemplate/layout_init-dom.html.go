@@ -15,7 +15,7 @@ func InitDom(ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 <script>window.addEventListener("load", function() { initDom('`)
 	hero.EscapeHTML(ctx.Profile.Theme.String(), buffer)
 	buffer.WriteString(`', '`)
-	hero.EscapeHTML(ctx.Profile.LinkColor, buffer)
+	hero.EscapeHTML(ctx.Profile.Settings.LinkColor, buffer)
 	buffer.WriteString(`') }, false);</script>
 `)
 

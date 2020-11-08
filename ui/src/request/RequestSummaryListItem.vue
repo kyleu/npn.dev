@@ -1,6 +1,6 @@
 <template>
   <li>
-    <router-link :class="'req-link ' + profile.linkColor + '-fg'" :to="'/c/' + coll + '/' + req.key">
+    <router-link :class="'req-link ' + profile.settings.linkColor + '-fg'" :to="'/c/' + coll + '/' + req.key">
       <div class="right"><em>{{ req.url }}</em></div>
       {{ label }}
     </router-link>

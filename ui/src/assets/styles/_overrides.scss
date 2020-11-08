@@ -199,3 +199,20 @@ pre {
     }
   }
 }
+
+// Badges
+.uk-badge {
+  padding: 0 7px;
+}
+
+.uk-light {
+  .uk-badge {
+    // background: #1e87f0;
+  }
+}
+
+.uk-dark {
+  .uk-badge {
+    background: #aaa;
+  }
+}

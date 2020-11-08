@@ -104,8 +104,8 @@ func Profile(auths auth.Records, ref string, ctx *npnweb.RequestContext, w io.Wr
             </div>
 
             `)
-	ProfileColors("nav", "Nav", ctx.Profile.NavColor, _buffer)
-	ProfileColors("link", "Link", ctx.Profile.LinkColor, _buffer)
+	ProfileColors("nav", "Nav", ctx.Profile.Settings.NavColor, _buffer)
+	ProfileColors("link", "Link", ctx.Profile.Settings.LinkColor, _buffer)
 	_buffer.WriteString(`
 
             <div class="mt">

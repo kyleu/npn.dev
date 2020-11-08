@@ -10,15 +10,14 @@ import (
 )
 
 type SystemUser struct {
-	UserID    uuid.UUID `db:"id"`
-	Name      string    `db:"name"`
-	Role      string    `db:"role"`
-	Theme     string    `db:"theme"`
-	NavColor  string    `db:"nav_color"`
-	LinkColor string    `db:"link_color"`
-	Picture   string    `db:"picture"`
-	Locale    string    `db:"locale"`
-	Created   time.Time `db:"created"`
+	UserID    uuid.UUID             `db:"id"`
+	Name      string                `db:"name"`
+	Role      string                `db:"role"`
+	Theme     string                `db:"theme"`
+	Settings  *npnuser.UserSettings `db:"settings"`
+	Picture   string                `db:"picture"`
+	Locale    string                `db:"locale"`
+	Created   time.Time             `db:"created"`
 }
 
 type SystemUsers = []*SystemUser
@@ -34,8 +33,7 @@ func (su *SystemUser) ToProfile() *npnuser.UserProfile {
 		Name:      su.Name,
 		Role:      npnuser.RoleFromString(su.Role),
 		Theme:     npnuser.ThemeFromString(su.Theme),
-		NavColor:  su.NavColor,
-		LinkColor: su.LinkColor,
+		Settings:  su.Settings,
 		Picture:   su.Picture,
 		Locale:    locale,
 	}
@@ -47,8 +45,7 @@ func FromProfile(p *npnuser.UserProfile, created time.Time) *SystemUser {
 		Name:      p.Name,
 		Role:      p.Role.String(),
 		Theme:     p.Theme.String(),
-		NavColor:  p.NavColor,
-		LinkColor: p.LinkColor,
+		Settings:  p.Settings,
 		Picture:   p.Picture,
 		Locale:    p.Locale.String(),
 		Created:   created,

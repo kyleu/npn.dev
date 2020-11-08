@@ -1,4 +1,4 @@
-import {Collection} from "@/collection/collection";
+import {Collection, CollectionCount} from "@/collection/collection";
 import {NPNRequest, Summary} from "@/request/model";
 import {socketRef} from "@/socket/socket";
 import {ref} from "@vue/composition-api";
@@ -13,26 +13,26 @@ interface CollectionData<T> {
   requests: T[];
 }
 
-export const collectionsRef = ref<Collection[]>([]);
+export const collectionsRef = ref<CollectionCount[]>([]);
 
 export const collectionSummariesRef = ref<CollectionData<Summary>[]>([]);
 export const requestDetailsRef = ref<CollectionData<NPNRequest>[]>([]);
 
 export function getCollection(key: string): Collection | undefined {
   for (const c of collectionsRef.value) {
-    if (c.key === key) {
-      return c;
+    if (c.coll.key === key) {
+      return c.coll;
     }
   }
 }
 
-export function onCollectionAdded(active: string, colls: Collection[]): void {
+export function onCollectionAdded(active: string, colls: CollectionCount[]): void {
   collectionsRef.value = colls;
   globalRouter().push({name: "CollectionDetail", params: {coll: active}});
 }
 
 export function onCollectionDeleted(param: string): void {
-  collectionsRef.value = collectionsRef.value.filter(x => x.key !== param);
+  collectionsRef.value = collectionsRef.value.filter(x => x.coll.key !== param);
   collectionSummariesRef.value = collectionSummariesRef.value.filter(x => x.key !== param);
   requestDetailsRef.value = requestDetailsRef.value.filter(x => x.key !== param);
 

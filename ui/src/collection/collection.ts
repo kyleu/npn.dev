@@ -3,3 +3,8 @@ export interface Collection {
   title: string;
   description?: string;
 }
+
+export interface CollectionCount {
+  coll: Collection;
+  count: number;
+}

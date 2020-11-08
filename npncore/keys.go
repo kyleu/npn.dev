@@ -53,6 +53,7 @@ const (
 	KeySandbox    = "sandbox"
 	KeyService    = "service"
 	KeySession    = "session"
+	KeySettings   = "settings"
 	KeySlug       = "slug"
 	KeySocket     = "socket"
 	KeySQL        = "sql"

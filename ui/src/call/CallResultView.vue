@@ -1,7 +1,7 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
     <div class="right">
-      <router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link>
+      <router-link :class="'uk-icon ' + profile.settings.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link>
     </div>
     <div v-for="(r, idx) in responses" :key="idx">
       <hr v-if="idx > 0" />

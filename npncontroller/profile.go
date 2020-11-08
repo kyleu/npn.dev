@@ -17,8 +17,10 @@ import (
 type profileForm struct {
 	Username  string `mapstructure:"username"`
 	Theme     string `mapstructure:"theme"`
-	LinkColor string `mapstructure:"linkColor"`
+
 	NavColor  string `mapstructure:"navColor"`
+	LinkColor string `mapstructure:"linkColor"`
+
 	Ref       string `mapstructure:"ref"`
 }
 
@@ -55,8 +57,11 @@ func ProfileSave(w http.ResponseWriter, r *http.Request) {
 
 		ctx.Profile.Name = strings.TrimSpace(prof.Username)
 		ctx.Profile.Theme = npnuser.ThemeFromString(prof.Theme)
-		ctx.Profile.NavColor = prof.NavColor
-		ctx.Profile.LinkColor = prof.LinkColor
+		settings := &npnuser.UserSettings{
+			NavColor:  prof.NavColor,
+			LinkColor: prof.LinkColor,
+		}
+		ctx.Profile.Settings = settings
 
 		_ = ctx.App.User().GetByID(ctx.Profile.UserID, true)
 		_, err = ctx.App.User().SaveProfile(ctx.Profile)

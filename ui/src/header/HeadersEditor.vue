@@ -6,7 +6,7 @@
         <div class="uk-width-1-4">Value</div>
         <div class="uk-width-1-2">
           <div class="right">
-            <a :class="profile.linkColor + '-fg'" href="" title="new header" @click.prevent="addHeader()">
+            <a :class="profile.settings.linkColor + '-fg'" href="" title="new header" @click.prevent="addHeader()">
               <span data-uk-icon="icon: plus" />
             </a>
           </div>
@@ -24,7 +24,7 @@
         </div>
         <div class="uk-width-1-2">
           <div class="right" style="margin-top: 6px;">
-            <a :class="profile.linkColor + '-fg'" href="" title="remove param" @click.prevent="removeHeader(idx)">
+            <a :class="profile.settings.linkColor + '-fg'" href="" title="remove param" @click.prevent="removeHeader(idx)">
               <span data-uk-icon="icon: close" />
             </a>
           </div>

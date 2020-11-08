@@ -22,7 +22,7 @@ type collDetails struct {
 }
 
 type addCollResult struct {
-	Collections collection.Collections      `json:"collections"`
+	Collections collection.CollectionCounts `json:"collections"`
 	Active      string                      `json:"active"`
 	Requests    collection.RequestSummaries `json:"requests"`
 }
@@ -54,7 +54,7 @@ func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connecti
 
 func sendCollections(s *npnconnection.Service, c *npnconnection.Connection) {
 	svcs := ctx(s)
-	colls, err := svcs.Collection.List(&c.Profile.UserID)
+	colls, err := svcs.Collection.Counts(&c.Profile.UserID)
 	if err != nil {
 		s.Logger.Warn(fmt.Sprintf("error retrieving collections: %+v", err))
 	}
@@ -83,7 +83,7 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 		return errors.Wrap(err, "unable to save new collection with key ["+key+"]")
 	}
 
-	newColls, _ := svcs.Collection.List(&c.Profile.UserID)
+	newColls, _ := svcs.Collection.Counts(&c.Profile.UserID)
 
 	ret := &addCollResult{Collections: newColls, Active: key}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionAdded, ret)

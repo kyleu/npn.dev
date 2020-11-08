@@ -2,7 +2,7 @@
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <div class="right"><router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" to="/c"></router-link></div>
+        <div class="right"><router-link :class="'uk-icon ' + profile.settings.linkColor + '-fg'" data-uk-icon="close" to="/c"></router-link></div>
         <h3 class="uk-card-title">
           <span class="nav-icon-h3 uk-icon" data-uk-icon="icon: album"></span>
           {{ coll ? coll.title : $route.params.coll }}

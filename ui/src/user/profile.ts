@@ -7,13 +7,17 @@ import VueRouter from "vue-router";
 Vue.use(VueCompositionAPI);
 Vue.use(VueRouter);
 
+export interface UserSettings {
+  readonly navColor: string;
+  readonly linkColor: string;
+}
+
 export interface Profile {
   readonly userID: string;
   readonly name: string;
   readonly role: string;
   readonly theme: string;
-  readonly navColor: string;
-  readonly linkColor: string;
+  readonly settings: UserSettings;
   readonly picture: string;
   readonly locale: string;
 }

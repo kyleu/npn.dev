@@ -39,8 +39,8 @@
               <% } %>
             </div>
 
-            <% ProfileColors("nav", "Nav", ctx.Profile.NavColor, _buffer) %>
-            <% ProfileColors("link", "Link", ctx.Profile.LinkColor, _buffer) %>
+            <% ProfileColors("nav", "Nav", ctx.Profile.Settings.NavColor, _buffer) %>
+            <% ProfileColors("link", "Link", ctx.Profile.Settings.LinkColor, _buffer) %>
 
             <div class="mt">
               <button class="right uk-button uk-button-default mt" type="submit">Save Changes</button>

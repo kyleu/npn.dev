@@ -32,9 +32,9 @@ const userTable = "system_user"
 func (s *ServiceDatabase) new(id uuid.UUID) (*user.SystemUser, error) {
 	s.logger.Info("creating user [" + id.String() + "]")
 
-	q := npndatabase.SQLInsert(userTable, []string{npncore.KeyID, npncore.KeyName, npncore.KeyRole, npncore.KeyTheme, "nav_color", "link_color", "picture", "locale", npncore.KeyCreated}, 1)
+	q := npndatabase.SQLInsert(userTable, []string{npncore.KeyID, npncore.KeyName, npncore.KeyRole, npncore.KeyTheme, npncore.KeySettings, "picture", "locale", npncore.KeyCreated}, 1)
 	prof := npnuser.NewUserProfile(id, "")
-	err := s.db.Insert(q, nil, prof.UserID, prof.Name, npnuser.RoleGuest.Key, prof.Theme.String(), prof.NavColor, prof.LinkColor, prof.Picture, prof.Locale.String(), time.Now())
+	err := s.db.Insert(q, nil, prof.UserID, prof.Name, npnuser.RoleGuest.Key, prof.Theme.String(), prof.Settings.String(), prof.Picture, prof.Locale.String(), time.Now())
 
 	if err != nil {
 		return nil, err
@@ -94,9 +94,9 @@ func (s *ServiceDatabase) GetByCreated(d *time.Time, params *npncore.Params) use
 
 func (s *ServiceDatabase) SaveProfile(prof *npnuser.UserProfile) (*npnuser.UserProfile, error) {
 	s.logger.Debug("updating user [" + prof.UserID.String() + "] from profile")
-	cols := []string{"name", "role", "theme", "nav_color", "link_color", "picture", "locale"}
+	cols := []string{npncore.KeyName, npncore.KeyRole, npncore.KeyTheme, npncore.KeySettings, "picture", "locale"}
 	q := npndatabase.SQLUpdate(userTable, cols, fmt.Sprintf("%v = $%v", npncore.KeyID, len(cols)+1))
-	err := s.db.UpdateOne(q, nil, prof.Name, prof.Role.Key, prof.Theme.String(), prof.NavColor, prof.LinkColor, prof.Picture, prof.Locale.String(), prof.UserID)
+	err := s.db.UpdateOne(q, nil, prof.Name, prof.Role.Key, prof.Theme.String(), prof.Settings.String(), prof.Picture, prof.Locale.String(), prof.UserID)
 	if err != nil {
 		return nil, err
 	}

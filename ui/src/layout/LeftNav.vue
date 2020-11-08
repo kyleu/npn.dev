@@ -8,12 +8,12 @@
       <div class="nav-header">System</div>
       <div class="nav-list">
         <div class="nav-link">
-          <a :class="profile.linkColor + '-fg'" href="" onclick="npn.debug();return false">
+          <a :class="profile.settings.linkColor + '-fg'" href="" onclick="npn.debug();return false">
             <span class="uk-icon nav-icon" data-uk-icon="icon: code"></span> Debug
           </a>
         </div>
         <div class="nav-link">
-          <router-link :class="profile.linkColor + '-fg'" to="/about">
+          <router-link :class="profile.settings.linkColor + '-fg'" to="/about">
             <span class="uk-icon nav-icon" data-uk-icon="icon: question"></span> About
           </router-link>
         </div>

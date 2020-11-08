@@ -1,6 +1,6 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
-    <div class="right"><router-link :class="'uk-icon ' + profile.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link></div>
+    <div class="right"><router-link :class="'uk-icon ' + profile.settings.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link></div>
     <h3 v-if="result" class="uk-card-title">{{ result.req }}: {{ result.fmt }}</h3>
     <h3 v-else class="uk-card-title">Loading...</h3>
     <div v-if="result" class="mt">

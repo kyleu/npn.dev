@@ -10,13 +10,13 @@
         <div class="mt">
           <label class="uk-form-label">
             Nav Color
-            <input v-model="profile.navColor" type="text" class="uk-input" />
+            <input v-model="profile.settings.navColor" type="text" class="uk-input" />
           </label>
         </div>
         <div class="mt">
           <label class="uk-form-label">
             Link Color
-            <input v-model="profile.linkColor" type="text" class="uk-input" />
+            <input v-model="profile.settings.linkColor" type="text" class="uk-input" />
           </label>
         </div>
       </div>

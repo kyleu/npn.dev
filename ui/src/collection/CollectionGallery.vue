@@ -10,16 +10,16 @@
     </div>
 
     <ul class="uk-list uk-list-divider mt">
-      <CollectionGalleryItem v-for="coll in collections" :key="coll.key" :coll="coll" />
+      <CollectionGalleryItem v-for="cc in collections" :key="cc.coll.key" :cc="cc" />
       <li v-if="(!collections) || collections.length === 0"><em>no collections</em></li>
     </ul>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import CollectionGalleryItem from "@/collection/CollectionGalleryItem.vue";
-import {Collection} from "@/collection/collection";
+import {CollectionCount} from "@/collection/collection";
 import {collectionsRef} from "@/collection/state";
 import {socketRef} from "@/socket/socket";
 import {collectionService} from "@/util/services";
@@ -27,7 +27,7 @@ import {clientCommands} from "@/util/command";
 
 @Component({ components: { CollectionGalleryItem } })
 export default class CollectionGallery extends Vue {
-  get collections(): Collection[] {
+  get collections(): CollectionCount[] {
     return collectionsRef.value
   }
 
