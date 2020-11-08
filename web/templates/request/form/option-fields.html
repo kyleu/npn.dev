@@ -1,5 +1,0 @@
-<%: func OptionFields(key string, opts *request.Options, ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<div class="mt">
-  <label class="uk-form-label" for="<%= key %>-options">Options</label>
-  <textarea class="uk-textarea" id="<%= key %>-options" name="options"><%= npncore.ToJSON(opts, ctx.Logger) %></textarea>
-</div>
