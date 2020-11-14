@@ -6,7 +6,7 @@
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-card-default">
       <% if len(extraContent) > 0 { %><div class="right"><%== extraContent %></div><% } %>
-      <h3 class="uk-card-title"><a class="theme" href="<%= ctx.Route(npncore.KeyFile) %>">/</a><%= strings.Join(path, "/") %></h3>
+      <h3 class="uk-card-title"><a href="<%= ctx.Route(npncore.KeyFile) %>">/</a><%= strings.Join(path, "/") %></h3>
       <pre><code><%= content %></code></pre>
     </div>
   </div>

@@ -19,11 +19,8 @@ func FileContent(extraContent string, path []string, content string, ctx *npnweb
 <html lang="en">
 <head>`)
 	Head(ctx, _buffer)
-	InitDom(ctx, _buffer)
 	_buffer.WriteString(`</head>
-<body class="`)
-	hero.EscapeHTML(ctx.Profile.Theme.CSS, _buffer)
-	_buffer.WriteString(`">
+<body>
 `)
 	Navbar(ctx, _buffer)
 
@@ -41,7 +38,7 @@ func FileContent(extraContent string, path []string, content string, ctx *npnweb
 		_buffer.WriteString(`</div>`)
 	}
 	_buffer.WriteString(`
-      <h3 class="uk-card-title"><a class="theme" href="`)
+      <h3 class="uk-card-title"><a href="`)
 	hero.EscapeHTML(ctx.Route(npncore.KeyFile), _buffer)
 	_buffer.WriteString(`">/</a>`)
 	hero.EscapeHTML(strings.Join(path, "/"), _buffer)

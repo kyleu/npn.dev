@@ -30,7 +30,7 @@
 
     function voyagerLink(t, icon, route) {
       return React.createElement("a", {
-        className: "theme profile-link uk-icon-link",
+        className: "profile-link uk-icon-link",
         "data-uk-icon": "icon: " + icon,
         href: route,
         title: "explore the " + t + " schema"
@@ -56,7 +56,7 @@
       margin-left: 16px;
     }
   </style>
-  <% if ctx.Profile.Theme == npnuser.ThemeDark { %>
+  <% if ctx.Profile.Settings.Mode == "dark" { %>
   <style>
     .cm-s-darcula  { font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif;}
     .cm-s-darcula.CodeMirror { background: #2B2B2B; color: #A9B7C6; }

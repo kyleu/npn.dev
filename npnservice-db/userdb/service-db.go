@@ -32,9 +32,10 @@ const userTable = "system_user"
 func (s *ServiceDatabase) new(id uuid.UUID) (*user.SystemUser, error) {
 	s.logger.Info("creating user [" + id.String() + "]")
 
-	q := npndatabase.SQLInsert(userTable, []string{npncore.KeyID, npncore.KeyName, npncore.KeyRole, npncore.KeyTheme, npncore.KeySettings, "picture", "locale", npncore.KeyCreated}, 1)
+	q := npndatabase.SQLInsert(userTable, []string{npncore.KeyID, npncore.KeyName, npncore.KeyRole, npncore.KeySettings, "picture", "locale", npncore.KeyCreated}, 1)
 	prof := npnuser.NewUserProfile(id, "")
-	err := s.db.Insert(q, nil, prof.UserID, prof.Name, npnuser.RoleGuest.Key, prof.Theme.String(), prof.Settings.String(), prof.Picture, prof.Locale.String(), time.Now())
+	json := npncore.ToJSON(prof.Settings, s.logger)
+	err := s.db.Insert(q, nil, prof.UserID, prof.Name, npnuser.RoleGuest.Key, json, prof.Picture, prof.Locale.String(), time.Now())
 
 	if err != nil {
 		return nil, err
@@ -94,9 +95,10 @@ func (s *ServiceDatabase) GetByCreated(d *time.Time, params *npncore.Params) use
 
 func (s *ServiceDatabase) SaveProfile(prof *npnuser.UserProfile) (*npnuser.UserProfile, error) {
 	s.logger.Debug("updating user [" + prof.UserID.String() + "] from profile")
-	cols := []string{npncore.KeyName, npncore.KeyRole, npncore.KeyTheme, npncore.KeySettings, "picture", "locale"}
+	cols := []string{npncore.KeyName, npncore.KeyRole, npncore.KeySettings, "picture", "locale"}
 	q := npndatabase.SQLUpdate(userTable, cols, fmt.Sprintf("%v = $%v", npncore.KeyID, len(cols)+1))
-	err := s.db.UpdateOne(q, nil, prof.Name, prof.Role.Key, prof.Theme.String(), prof.Settings.String(), prof.Picture, prof.Locale.String(), prof.UserID)
+	json := npncore.ToJSON(prof.Settings, s.logger)
+	err := s.db.UpdateOne(q, nil, prof.Name, prof.Role.Key, json, prof.Picture, prof.Locale.String(), prof.UserID)
 	if err != nil {
 		return nil, err
 	}

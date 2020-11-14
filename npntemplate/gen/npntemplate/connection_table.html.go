@@ -31,12 +31,12 @@ func ConnectionTable(connections npnconnection.Statuses, params *npncore.Params,
 	for _, model := range connections {
 		buffer.WriteString(`
     <tr>
-      <td><a class="theme" href="`)
+      <td><a href="`)
 		hero.EscapeHTML(ctx.Route(npnweb.AdminLink(npncore.KeyConnection, npncore.KeyDetail), `id`, model.ID.String()), buffer)
 		buffer.WriteString(`">`)
 		UUID(&model.ID, buffer)
 		buffer.WriteString(`</a></td>
-      <td><a class="theme" href="`)
+      <td><a href="`)
 		hero.EscapeHTML(ctx.Route(npnweb.AdminLink(npncore.KeyUser, npncore.KeyDetail), `id`, model.UserID.String()), buffer)
 		buffer.WriteString(`">`)
 		UUID(&model.UserID, buffer)

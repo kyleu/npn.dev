@@ -1,4 +1,4 @@
-<%: func WorkspaceUI(ctx *npnweb.RequestContext, w io.Writer) (int, error) %><!DOCTYPE html>
+<%: func Marketing(ctx *npnweb.RequestContext, w io.Writer) (int, error) %><!DOCTYPE html>
 <html lang="en">
 <head>
   <title><%= ctx.Title %></title>
@@ -16,7 +16,6 @@
   <link href="/assets/vendor/prism/prism.min.js" rel="preload" as="script">
 
   <link href="/assets/vendor/<%= npncore.AppKey %>.css" rel="stylesheet">
-  <script>window.initialData = { profile: <%== npncore.ToJSONCompact(ctx.Profile.ToProfile(), ctx.Logger) %> };</script>
 </head>
 <body class="<%= ctx.Profile.Settings.ModeCSS() %>" data-uk-height-viewport="expand: true">
   <div id="npn">
@@ -25,7 +24,6 @@
   <script src="/assets/vendor/vendor.js"></script>
   <script src="/assets/vendor/<%= npncore.AppKey %>.js"></script>
   <script src="/assets/vendor/prism/prism.min.js" defer="defer"></script>
-  <script>init();</script>
 </body>
 </html>
 

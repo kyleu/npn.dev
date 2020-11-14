@@ -5,9 +5,7 @@ create table if not exists "system_user" (
   "id" uuid not null primary key,
   "name" varchar(2048) not null,
   "role" system_role not null,
-  "theme" varchar(32) not null,
-  "nav_color" varchar(32) not null,
-  "link_color" varchar(32) not null,
+  "settings" json not null,
   "picture" text not null,
   "locale" varchar(32) not null,
   "created" timestamp not null default now()

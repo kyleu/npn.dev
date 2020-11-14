@@ -18,11 +18,8 @@ func ModulesList(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
 <html lang="en">
 <head>`)
 	Head(ctx, _buffer)
-	InitDom(ctx, _buffer)
 	_buffer.WriteString(`</head>
-<body class="`)
-	hero.EscapeHTML(ctx.Profile.Theme.CSS, _buffer)
-	_buffer.WriteString(`">
+<body>
 `)
 	Navbar(ctx, _buffer)
 
@@ -51,7 +48,7 @@ func ModulesList(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
 	for _, m := range bi.Deps {
 		_buffer.WriteString(`
           <tr>
-            <td><a target="_blank" class="theme" rel="noopener noreferrer" href="https://`)
+            <td><a target="_blank" rel="noopener noreferrer" href="https://`)
 		hero.EscapeHTML(m.Path, _buffer)
 		_buffer.WriteString(`">`)
 		hero.EscapeHTML(m.Path, _buffer)

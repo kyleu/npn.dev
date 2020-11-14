@@ -11,10 +11,9 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import CollectionGallery from "@/collection/CollectionGallery.vue";
 import {setBC} from "@/util/vutils";
 
-@Component({ components: { CollectionGallery } })
+@Component
 export default class About extends Vue {
   mounted(): void {
     setBC(this, {path: "", title: "about"});

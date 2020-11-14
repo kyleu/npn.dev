@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><% Head(ctx, _buffer) %><% InitDom(ctx, _buffer) %><%@ head { %><% } %></head>
-<body class="<%= ctx.Profile.Theme.CSS %>">
+<head><% Head(ctx, _buffer) %></head>
+<body>
 <%@ nav { %><% } %>
 <div id="content" data-uk-height-viewport="expand: true"><% Flash(ctx, _buffer) %><%@ body { %><% } %></div></body>
 </html>

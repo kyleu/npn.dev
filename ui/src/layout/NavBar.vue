@@ -1,7 +1,7 @@
 <template>
   <header>
     <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky; media: 960">
-      <nav id="navbar" :class="'uk-navbar-container ' + profile.settings.navColor + '-bg'" data-uk-navbar>
+      <nav id="navbar" v-style-nav class="uk-navbar-container" data-uk-navbar>
         <Breadcrumbs />
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
@@ -10,7 +10,7 @@
               <router-link v-else to="/u" title="Profile"><img class="uk-border-circle" alt="user profile" :src="profile.picture" /></router-link>
             </li>
           </ul>
-          <a href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a>
+          <a v-style-nav-link href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a>
         </div>
       </nav>
     </div>

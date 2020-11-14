@@ -19,11 +19,8 @@ func InternalServerError(ed *npncore.ErrorDetail, r *http.Request, ctx *npnweb.R
 <html lang="en">
 <head>`)
 	Head(ctx, _buffer)
-	InitDom(ctx, _buffer)
 	_buffer.WriteString(`</head>
-<body class="`)
-	hero.EscapeHTML(ctx.Profile.Theme.CSS, _buffer)
-	_buffer.WriteString(`">
+<body>
 `)
 	Navbar(ctx, _buffer)
 

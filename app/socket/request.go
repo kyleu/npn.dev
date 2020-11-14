@@ -54,7 +54,8 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 	}
 	req, err := svc.Collection.LoadRequest(&c.Profile.UserID, frm.Coll, frm.Req)
 	if err != nil {
-		return errors.Wrap(err, "can't load request")
+		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestNotFound, frm)
+		return s.WriteMessage(c.ID, msg)
 	}
 	ret := &reqDetail{Coll: frm.Coll, Req: req}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)

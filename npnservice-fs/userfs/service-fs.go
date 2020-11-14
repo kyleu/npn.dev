@@ -19,7 +19,6 @@ var systemUser = &user.SystemUser{
 	UserID:    uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000"),
 	Name:      "Guest",
 	Role:      "admin",
-	Theme:     "auto",
 	Settings:  npnuser.DefaultSettings,
 	Picture:   "",
 	Locale:    language.AmericanEnglish.String(),

@@ -5,7 +5,7 @@
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-card-default">
-      <h3 class="uk-card-title"><a class="theme" href="<%= ctx.Route(npncore.KeyFile) %>">/</a><%= strings.Join(dir, "/") %></h3>
+      <h3 class="uk-card-title"><a href="<%= ctx.Route(npncore.KeyFile) %>">/</a><%= strings.Join(dir, "/") %></h3>
       <table class="uk-table uk-table-divider">
         <caption class="hidden">file listing</caption>
         <thead>
@@ -18,7 +18,7 @@
           <% for _, file := range files { %>
             <tr>
               <td>
-                <a class="theme" href="<%= ctx.Route(npncore.KeyFile) %><%= strings.Join(append(dir, file.Name()), `/`) %>">
+                <a href="<%= ctx.Route(npncore.KeyFile) %><%= strings.Join(append(dir, file.Name()), `/`) %>">
                   <%
                   icon := "file-text"
                   if file.IsDir() {

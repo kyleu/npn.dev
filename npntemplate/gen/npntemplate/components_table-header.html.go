@@ -16,7 +16,7 @@ func TableHeader(section string, key string, title string, params *npncore.Param
 		params = &npncore.Params{Key: section}
 		buffer.WriteString(`
   <th scope="col" class="uk-transition-toggle uk-text-nowrap">
-    <a class="theme" href="?`)
+    <a href="?`)
 		hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(req), buffer)
 		buffer.WriteString(`">
       `)
@@ -30,7 +30,7 @@ func TableHeader(section string, key string, title string, params *npncore.Param
 		if o == nil {
 			buffer.WriteString(`
     <th scope="col" class="uk-transition-toggle uk-text-nowrap">
-      <a class="theme" href="?`)
+      <a href="?`)
 			hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(req), buffer)
 			buffer.WriteString(`">
         `)
@@ -42,7 +42,7 @@ func TableHeader(section string, key string, title string, params *npncore.Param
 		} else if o.Asc {
 			buffer.WriteString(`
     <th scope="col" class=" uk-text-nowrap">
-      <a class="theme" href="?`)
+      <a href="?`)
 			hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: false}).ToQueryString(req), buffer)
 			buffer.WriteString(`">
         `)
@@ -54,7 +54,7 @@ func TableHeader(section string, key string, title string, params *npncore.Param
 		} else {
 			buffer.WriteString(`
     <th scope="col" class=" uk-text-nowrap">
-      <a class="theme" href="?`)
+      <a href="?`)
 			hero.EscapeHTML(params.CloneOrdering(&npncore.Ordering{Column: key, Asc: true}).ToQueryString(req), buffer)
 			buffer.WriteString(`">
         `)

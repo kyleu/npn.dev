@@ -18,10 +18,15 @@
       profile: {
         userID: '00000000-0000-0000-0000-000000000000',
         name: 'Kyle',
-        theme: 'light',
         settings: {
-          navColor: 'bluegrey',
-          linkColor: 'bluegrey'
+          mode: "light",
+          bodyB:   "#fcfff5",
+          bodyL:   "#193441",
+          navB:    "#193441",
+          navF:    "#fff",
+          menuB:   "#3e606f",
+          menuF:   "#ccc",
+          menuL:   "#fff"
         },
         picture: 'https://avatars1.githubusercontent.com/u/323644?v=4',
         locale: 'en-US',
@@ -29,7 +34,7 @@
     }
   </script>
 </head>
-<body class="uk-dark">
+<body class="uk-dark" data-uk-height-viewport="expand: true">
   <noscript>
     <strong><%= htmlWebpackPlugin.options.title %> requires JavaScript, please enable it to continue</strong>
   </noscript>

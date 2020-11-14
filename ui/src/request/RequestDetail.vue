@@ -2,7 +2,7 @@
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <div class="right"><router-link :class="'uk-icon ' + profile.settings.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll"></router-link></div>
+        <div class="right"><router-link class="uk-icon" data-uk-icon="close" :to="'/c/' + this.$route.params.coll"></router-link></div>
         <h3 class="uk-card-title">
           <span class="nav-icon-h3 uk-icon" data-uk-icon="icon: link"></span>
           <span>{{ req ? (req.title || req.key) : $route.params.req }}</span>
@@ -10,12 +10,12 @@
         <div v-if="req">
           <URLEditor :req="req" />
           <div v-if="different" class="right">
-            <button class="uk-button uk-button-default uk-margin-small-right mt" @click="reset();">Reset</button>
-            <button class="uk-button uk-button-default mt" @click="save();">Save Changes</button>
+            <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="reset();">Reset</button>
+            <button v-style-button class="uk-button uk-button-default mt" @click="save();">Save Changes</button>
           </div>
-          <button class="uk-button uk-button-default uk-margin-small-right mt" @click="doCall()">Call</button>
+          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="doCall()">Call</button>
           <ExportActions />
-          <button class="uk-button uk-button-default uk-margin-small-right mt" @click="deleteRequest()">Delete</button>
+          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="deleteRequest()">Delete</button>
         </div>
       </div>
       <router-view />
@@ -31,17 +31,12 @@ import URLEditor from "@/request/editor/URLEditor.vue";
 import {diff} from "@/request/prototype/diff";
 import ExportActions from "@/request/editor/ExportActions.vue";
 import {callResultRef, requestEditingRef, requestOriginalRef, setActiveRequest} from "@/request/state";
-import {Profile, profileRef} from "@/user/profile";
 import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 
 @Component({ components: {ExportActions, RequestEditor, URLEditor } })
 export default class RequestDetail extends Vue {
-  get profile(): Profile | undefined {
-    return profileRef.value;
-  }
-
   get req(): NPNRequest | undefined {
     setActiveRequest(this.$route.params.coll, this.$route.params.req);
     return requestEditingRef.value;

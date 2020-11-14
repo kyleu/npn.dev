@@ -22,7 +22,7 @@ type ganttSection struct {
 func Gantt(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		rowHeight := 24
-		sections, completed, theme := parseGanttRequest(r)
+		sections, completed, mode := parseGanttRequest(r)
 		var pc = func(n int) float64 { return math.Floor((float64(n)/float64(completed))*10000) / 100 }
 
 		ret := make([]string, 0, len(sections)+2)
@@ -51,7 +51,7 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 			startTitle := npncore.MicrosToMillis(language.AmericanEnglish, section.Start)
 			width := pc(section.End - section.Start)
 			endTitle := npncore.MicrosToMillis(language.AmericanEnglish, section.End)
-			color := colorForSection(section.Key, theme)
+			color := colorForSection(section.Key, mode)
 
 			rectTitle := fmt.Sprintf(title, section.Key, per, startTitle, endTitle)
 			ap(fmt.Sprintf(bg, cy, rowHeight, rectTitle))
@@ -66,7 +66,7 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 func parseGanttRequest(r *http.Request) ([]*ganttSection, int, string) {
 	qps := QueryParamsFromRaw(r.URL.RawQuery)
 	width := -1
-	theme := "light"
+	mode := "light"
 	ret := make([]*ganttSection, 0)
 	var get = func(k string) *ganttSection {
 		for _, s := range ret {
@@ -83,7 +83,7 @@ func parseGanttRequest(r *http.Request) ([]*ganttSection, int, string) {
 			width, _ = strconv.Atoi(qp.Value)
 		}
 		if qp.Key == "t" {
-			theme = qp.Value
+			mode = qp.Value
 		}
 		if strings.Contains(qp.Key, ".") {
 			k, t := npncore.SplitStringLast(qp.Key, '.', true)
@@ -105,53 +105,53 @@ func parseGanttRequest(r *http.Request) ([]*ganttSection, int, string) {
 			}
 		}
 	}
-	return ret, width, theme
+	return ret, width, mode
 }
 
-func colorForSection(key string, theme string) string {
+func colorForSection(key string, mode string) string {
 	switch key {
 	case "dns":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#30444e"
 		}
 		return "#89b6cc"
 	case "connect":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#30444e"
 		}
 		return "#89b6cc"
 	case "tls":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#462206"
 		}
 		return "#c96112"
 	case "reqheaders":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#072918"
 		}
 		return "#177245"
 	case "reqbody":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#072918"
 		}
 		return "#177245"
 	case "rspwait":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#101e33"
 		}
 		return "#397adb"
 	case "rspheaders":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#101e33"
 		}
 		return "#397adb"
 	case "rspbody":
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#101e33"
 		}
 		return "#397adb"
 	default:
-		if theme == "dark" {
+		if mode == "dark" {
 			return "#101e33"
 		}
 		return "#397adb"

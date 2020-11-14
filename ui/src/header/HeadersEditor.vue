@@ -6,7 +6,7 @@
         <div class="uk-width-1-4">Value</div>
         <div class="uk-width-1-2">
           <div class="right">
-            <a :class="profile.settings.linkColor + '-fg'" href="" title="new header" @click.prevent="addHeader()">
+            <a href="" title="new header" @click.prevent="addHeader()">
               <span data-uk-icon="icon: plus" />
             </a>
           </div>
@@ -24,7 +24,7 @@
         </div>
         <div class="uk-width-1-2">
           <div class="right" style="margin-top: 6px;">
-            <a :class="profile.settings.linkColor + '-fg'" href="" title="remove param" @click.prevent="removeHeader(idx)">
+            <a href="" title="remove param" @click.prevent="removeHeader(idx)">
               <span data-uk-icon="icon: close" />
             </a>
           </div>
@@ -38,15 +38,10 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Header} from "@/header/model";
-import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class HeadersEditor extends Vue {
   @Prop() headers: Header[] | undefined;
-
-  get profile(): Profile | undefined {
-    return profileRef.value;
-  }
 
   addHeader(): void {
     if(!this.headers) {

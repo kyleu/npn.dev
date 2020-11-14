@@ -12,8 +12,8 @@
   <tbody>
   <% for _, model := range connections { %>
     <tr>
-      <td><a class="theme" href="<%= ctx.Route(npnweb.AdminLink(npncore.KeyConnection, npncore.KeyDetail), `id`, model.ID.String()) %>"><% UUID(&model.ID, buffer) %></a></td>
-      <td><a class="theme" href="<%= ctx.Route(npnweb.AdminLink(npncore.KeyUser, npncore.KeyDetail), `id`, model.UserID.String()) %>"><% UUID(&model.UserID, buffer) %></a></td>
+      <td><a href="<%= ctx.Route(npnweb.AdminLink(npncore.KeyConnection, npncore.KeyDetail), `id`, model.ID.String()) %>"><% UUID(&model.ID, buffer) %></a></td>
+      <td><a href="<%= ctx.Route(npnweb.AdminLink(npncore.KeyUser, npncore.KeyDetail), `id`, model.UserID.String()) %>"><% UUID(&model.UserID, buffer) %></a></td>
       <td><%= model.Username %></td>
       <td><% Channel(model.ChannelSvc, model.ChannelID, ctx, buffer) %></td>
     </tr>

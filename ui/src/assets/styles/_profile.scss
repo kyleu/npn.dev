@@ -1,28 +1,4 @@
-.swatch {
-  width: 32px;
-  height: 32px;
-  margin: 0 6px;
-  cursor: pointer;
-  border: 1px solid #666;
-  color: #fff;
-
-  &.light {
-    border: 1px solid #ddd;
-    color: #000;
-  }
-
-  &.active {
-    .icon {
-      color: inherit;
-    }
-  }
-
-  .icon {
-    margin-top: 6px;
-    color: transparent;
-  }
-}
-
+// Profile
 .signin-icon {
   display: block;
   float: left;
@@ -64,3 +40,77 @@
   margin-top: 8px;
 }
 
+// Swatch
+.vue-swatches__trigger {
+  border: 1px solid #999;
+}
+
+.vue-swatches__fallback__button {
+  color: #000;
+  background-color: #fff;
+}
+
+.theme-section {
+  margin: 12px;
+}
+
+.mockup-container {
+  float: left;
+}
+
+.mockup {
+  position: relative;
+  width: 192px;
+  height: 108px;
+  font-size: 40%;
+  cursor: pointer;
+
+  .bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 192px;
+    height: 108px;
+  }
+
+  .nav {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 192px;
+    height: 16px;
+    .txt {
+      padding: 3px;
+    }
+  }
+
+  .menu {
+    position: absolute;
+    top: 16px;
+    left: 0;
+    width: 40px;
+    height: 84px;
+    padding: 4px;
+    a {
+      display: block;
+    }
+  }
+
+  .card {
+    position: absolute;
+    top: 24px;
+    left: 56px;
+    width: 128px;
+    height: 44px;
+    padding: 4px !important;
+  }
+
+  .button {
+    position: absolute;
+    top: 28px;
+    left: 102px;
+    padding: 2px 4px;
+    line-height: normal;
+    font-size: 50%;
+  }
+}

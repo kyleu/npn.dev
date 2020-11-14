@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-<head><% npntemplate.Head(ctx, _buffer) %><% npntemplate.InitDom(ctx, _buffer) %><%@ head { %><% } %></head>
-<body class="<%= ctx.Profile.Theme.CSS %>">
+<head><% npntemplate.Head(ctx, _buffer) %><%@ head { %><% } %></head>
+<body class="<%= ctx.Profile.Settings.ModeCSS() %>">
 <%@ nav { %><% } %>
 <div id="content" data-uk-height-viewport="expand: true"><% npntemplate.Flash(ctx, _buffer) %><%@ body { %><% } %></div>
 </body>

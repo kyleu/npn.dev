@@ -19,7 +19,7 @@ func Channel(svc string, id *uuid.UUID, ctx *npnweb.RequestContext, buffer *byte
 `)
 	} else {
 		buffer.WriteString(`
-  <a class="theme" href="`)
+  <a href="`)
 		hero.EscapeHTML(ctx.Route(npnweb.AdminLink(svc, npncore.KeyDetail), npncore.KeyID, id.String()), buffer)
 		buffer.WriteString(`">`)
 		hero.EscapeHTML(svc, buffer)

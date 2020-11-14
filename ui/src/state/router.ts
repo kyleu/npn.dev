@@ -2,7 +2,7 @@ import VueRouter, {RouteConfig} from "vue-router";
 import About from "@/views/About.vue";
 import Home from "@/views/Home.vue";
 import NotFound from "@/views/NotFound.vue";
-import Settings from "@/views/Settings.vue";
+import Settings from "@/user/Settings.vue";
 import CallResultView from "@/call/CallResultView.vue";
 import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";

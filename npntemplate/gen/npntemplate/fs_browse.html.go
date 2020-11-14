@@ -21,11 +21,8 @@ func FileBrowse(dir []string, files []os.FileInfo, ctx *npnweb.RequestContext, w
 <html lang="en">
 <head>`)
 	Head(ctx, _buffer)
-	InitDom(ctx, _buffer)
 	_buffer.WriteString(`</head>
-<body class="`)
-	hero.EscapeHTML(ctx.Profile.Theme.CSS, _buffer)
-	_buffer.WriteString(`">
+<body>
 `)
 	Navbar(ctx, _buffer)
 
@@ -36,7 +33,7 @@ func FileBrowse(dir []string, files []os.FileInfo, ctx *npnweb.RequestContext, w
 <div class="uk-section uk-section-small">
   <div class="uk-container">
     <div class="uk-card uk-card-body uk-card-default">
-      <h3 class="uk-card-title"><a class="theme" href="`)
+      <h3 class="uk-card-title"><a href="`)
 	hero.EscapeHTML(ctx.Route(npncore.KeyFile), _buffer)
 	_buffer.WriteString(`">/</a>`)
 	hero.EscapeHTML(strings.Join(dir, "/"), _buffer)
@@ -55,7 +52,7 @@ func FileBrowse(dir []string, files []os.FileInfo, ctx *npnweb.RequestContext, w
 		_buffer.WriteString(`
             <tr>
               <td>
-                <a class="theme" href="`)
+                <a href="`)
 		hero.EscapeHTML(ctx.Route(npncore.KeyFile), _buffer)
 		hero.EscapeHTML(strings.Join(append(dir, file.Name()), `/`), _buffer)
 		_buffer.WriteString(`">

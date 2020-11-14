@@ -15,9 +15,11 @@ func NavbarCommon(section string, showToggle bool, ctx *npnweb.RequestContext, b
 	buffer.WriteString(`
 <header>
   <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky; media: 960">
-    <nav id="navbar" class="uk-navbar-container `)
-	hero.EscapeHTML(ctx.Profile.Settings.NavColor, buffer)
-	buffer.WriteString(`-bg" data-uk-navbar>
+    <nav id="navbar" class="uk-navbar-container" style="background-color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.NavB, buffer)
+	buffer.WriteString(`;color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.NavF, buffer)
+	buffer.WriteString(`" data-uk-navbar>
       <div id="breadcrumbs" class="uk-navbar-left">
         `)
 	if len(npnweb.IconContent) > 0 {

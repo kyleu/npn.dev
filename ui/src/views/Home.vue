@@ -15,20 +15,10 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CollectionGallery from "@/collection/CollectionGallery.vue";
-import {jsonStr} from "@/util/json";
 import {setBC} from "@/util/vutils";
-import {Profile, profileRef} from "@/user/profile";
 
 @Component({ components: { CollectionGallery } })
 export default class Home extends Vue {
-  get dbg (): string {
-    return jsonStr(profileRef.value);
-  }
-
-  get profile(): Profile | undefined {
-    return profileRef.value;
-  }
-
   mounted(): void {
     setBC(this);
   }

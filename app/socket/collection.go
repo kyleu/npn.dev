@@ -43,6 +43,8 @@ func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connecti
 		return getCollDetails(s, c, param)
 	case ClientMessageAddCollection:
 		return addCollection(s, c, param)
+	case ClientMessageSaveCollection:
+		return saveCollection(s, c, param)
 	case ClientMessageDeleteCollection:
 		return deleteCollection(s, c, param)
 	case ClientMessageAddRequestURL:
@@ -69,7 +71,7 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 	name := ""
 	err := npncore.FromJSONStrict(param, &name)
 	if err != nil {
-		return errors.Wrap(err, "unable to parse input from URL")
+		return errors.Wrap(err, "unable to parse input")
 	}
 	key := npncore.Slugify(name)
 	svcs := ctx(s)
@@ -90,6 +92,28 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 	return s.WriteMessage(c.ID, msg)
 }
 
+type saveCollParams struct {
+	OriginalKey string `json:"originalKey"`
+	Coll *collection.Collection `json:"coll"`
+}
+
+func saveCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
+	p := &saveCollParams{}
+	err := npncore.FromJSONStrict(param, p)
+	if err != nil {
+		return errors.Wrap(err, "unable to parse input")
+	}
+	key := npncore.Slugify(p.Coll.Key)
+	svcs := ctx(s)
+	err = svcs.Collection.Save(&c.Profile.UserID, p.OriginalKey, key, p.Coll.Title, p.Coll.Description)
+	if err != nil {
+		return errors.Wrap(err, "unable to save new collection with key ["+key+"]")
+	}
+
+	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionUpdated, p.Coll)
+	return s.WriteMessage(c.ID, msg)
+}
+
 func deleteCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
 	key := ""
 	err := npncore.FromJSONStrict(param, &key)
@@ -106,60 +130,14 @@ func deleteCollection(s *npnconnection.Service, c *npnconnection.Connection, par
 	return s.WriteMessage(c.ID, msg)
 }
 
-func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
-	p := &addURLInput{}
-	err := npncore.FromJSONStrict(param, p)
-	if err != nil {
-		return errors.Wrap(err, "unable to parse input from URL")
-	}
-	req, err := request.FromString("new", p.URL)
-	if err != nil {
-		return errors.Wrap(err, "unable to parse request from URL ["+p.URL+"]")
-	}
-	req.Key = npncore.Slugify(req.Prototype.Domain)
-
-	svcs := ctx(s)
-	curr, _ := svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
-	if curr != nil {
-		if len(req.Title) == 0 {
-			req.Title = req.Key
-		}
-		if req.Prototype != nil && len(req.Prototype.Path) > 0 {
-			add := req.Prototype.Path
-			if len(add) > 8 {
-				add = add[0:8]
-			}
-			req.Key += "-" + npncore.Slugify(add)
-		}
-		curr, _ = svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
-		if curr != nil {
-			req.Key += "-" + strings.ToLower(npncore.RandomString(4))
-		}
-	}
-
-	err = svcs.Collection.SaveRequest(&c.Profile.UserID, p.Coll, "", req)
-	if err != nil {
-		return errors.Wrap(err, "unable to save request from URL ["+p.URL+"]")
-	}
-
-	coll, err := parseCollDetails(s, &c.Profile.UserID, p.Coll)
-	if err != nil {
-		return err
-	}
-
-	out := &addURLOutput{
-		Coll: coll,
-		Req:  req,
-	}
-	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestAdded, out)
-	return s.WriteMessage(c.ID, msg)
-}
-
 func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (*collDetails, error) {
 	svcs := ctx(s)
 	coll, err := svcs.Collection.Load(userID, key)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("error retrieving collection [%v]: %+v", key, err))
+	}
+	if coll == nil {
+		return nil, nil
 	}
 	reqs, err := svcs.Collection.ListRequests(userID, key)
 	if err != nil {
@@ -179,6 +157,10 @@ func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error retrieving collection [%v]: %+v", key, err))
 	}
-	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionDetail, &cd)
+	if cd == nil {
+		msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionNotFound, &cd)
+		return s.WriteMessage(c.ID, msg)
+	}
+	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionDetail, cd)
 	return s.WriteMessage(c.ID, msg)
 }

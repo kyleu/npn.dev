@@ -2,15 +2,41 @@
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <div class="right"><router-link :class="'uk-icon ' + profile.settings.linkColor + '-fg'" data-uk-icon="close" to="/c"></router-link></div>
+        <div class="right"><router-link class="uk-icon" data-uk-icon="close" to="/c"></router-link></div>
         <h3 class="uk-card-title">
           <span class="nav-icon-h3 uk-icon" data-uk-icon="icon: album"></span>
           {{ coll ? coll.title : $route.params.coll }}
         </h3>
-        <p v-if="coll">{{ coll.description }}</p>
+        <p v-if="coll && coll.description && showEditor.length === 0">{{ coll.description }}</p>
+        <div v-if="showEditor.length !== 0" class="mt">
+          <div>
+            <label class="uk-form-label">
+              Key
+              <input v-model="collEdit.key" class="uk-input" name="key" type="text" data-lpignore="true" />
+            </label>
+          </div>
 
-        <button class="uk-button uk-button-default uk-margin-small-right mt" @click="editCollection()">Edit</button>
-        <button class="uk-button uk-button-default mt" @click="deleteCollection()">Delete</button>
+          <div class="mt">
+            <label class="uk-form-label">
+              Title
+              <input v-model="collEdit.title" class="uk-input" name="title" type="text" data-lpignore="true" />
+            </label>
+          </div>
+
+          <div class="mt">
+            <label class="uk-form-label">
+              Description
+              <textarea v-model="collEdit.description" class="uk-textarea" name="description" data-lpignore="true"></textarea>
+            </label>
+          </div>
+
+          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="showEditor = ''">Cancel</button>
+          <button v-style-button class="uk-button uk-button-default mt" @click="saveCollection()">Save Changes</button>
+        </div>
+        <div v-else>
+          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="editCollection()">Edit</button>
+          <button v-style-button class="uk-button uk-button-default mt" @click="deleteCollection()">Delete</button>
+        </div>
       </div>
       <RequestSummaryList :coll="$route.params.coll" :requests="requests" />
     </div>
@@ -23,20 +49,22 @@ import {Collection} from "@/collection/collection";
 import {setBC} from "@/util/vutils";
 import {Summary} from "@/request/model";
 import RequestSummaryList from "@/request/RequestSummaryList.vue";
-import {Profile, profileRef} from "@/user/profile";
 import {getCollection, getCollectionRequestSummaries} from "@/collection/state";
 import {socketRef} from "@/socket/socket";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
+import {jsonParse, jsonStr} from "@/util/json";
 
 @Component({ components: { RequestSummaryList } })
 export default class CollectionDetail extends Vue {
-  get profile(): Profile | undefined {
-    return profileRef.value;
-  }
+  showEditor = "";
 
   get coll(): Collection | undefined {
     return getCollection(this.$route.params.coll);
+  }
+
+  get collEdit(): Collection | undefined {
+    return jsonParse(jsonStr(getCollection(this.$route.params.coll)));
   }
 
   get requests(): Summary[] | undefined {
@@ -48,7 +76,7 @@ export default class CollectionDetail extends Vue {
   }
 
   editCollection(): void {
-    console.log("TODO!");
+    this.showEditor = this.$route.params.coll;
   }
 
   deleteCollection(): void {
@@ -56,6 +84,23 @@ export default class CollectionDetail extends Vue {
       if (socketRef.value) {
         socketRef.value.send({svc: collectionService.key, cmd: clientCommands.deleteCollection, param: this.$route.params.coll});
       }
+    }
+  }
+
+  saveCollection(): void {
+    if (socketRef.value) {
+      socketRef.value.send({
+        svc: collectionService.key,
+        cmd: clientCommands.saveCollection,
+        param: { originalKey: this.$route.params.coll, coll: this.collEdit }
+      });
+      this.showEditor = "";
+    }
+  }
+
+  updated(): void {
+    if ((this.showEditor.length > 0) && (this.showEditor !== this.$route.params.coll)) {
+      this.showEditor = "";
     }
   }
 }

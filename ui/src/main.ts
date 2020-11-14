@@ -10,13 +10,10 @@ import Icons from "uikit/dist/js/uikit-icons";
 import {messageHandler} from "@/state/handler";
 
 import Vue from "vue";
-import {initDom, setTheme} from "@/npn";
 
 declare global {
   interface Window {
     init: () => void;
-    initDom: (t: string, color: string) => void;
-    setTheme: (s: string) => void;
     npn: NPNDebug;
     Prism: { manual: boolean };
     // @ts-ignore
@@ -46,6 +43,3 @@ function init(): void {
 }
 
 window.init = init;
-// Legacy
-window.initDom = initDom;
-window.setTheme = setTheme;

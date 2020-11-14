@@ -20,11 +20,8 @@ func ConnectionDetail(model *npnconnection.Status, msg *npnconnection.Message, c
 <html lang="en">
 <head>`)
 	Head(ctx, _buffer)
-	InitDom(ctx, _buffer)
 	_buffer.WriteString(`</head>
-<body class="`)
-	hero.EscapeHTML(ctx.Profile.Theme.CSS, _buffer)
-	_buffer.WriteString(`">
+<body>
 `)
 	Navbar(ctx, _buffer)
 
@@ -49,7 +46,7 @@ func ConnectionDetail(model *npnconnection.Status, msg *npnconnection.Message, c
         </tr>
         <tr>
           <th scope="row">User ID</th>
-          <td><a class="theme" href="`)
+          <td><a href="`)
 	hero.EscapeHTML(ctx.Route(npnweb.AdminLink(npncore.KeyUser, npncore.KeyDetail), `id`, model.UserID.String()), _buffer)
 	_buffer.WriteString(`">`)
 	hero.EscapeHTML(model.UserID.String(), _buffer)

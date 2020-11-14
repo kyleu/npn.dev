@@ -5,10 +5,12 @@ import "github.com/kyleu/npn/app/request"
 const (
 	ClientMessagePing    = "ping"
 	ClientMessageConnect = "connect"
+	ClientMessageTestbed = "testbed"
 
 	// Collection
 	ClientMessageGetCollection    = "getCollection"
 	ClientMessageAddCollection    = "addCollection"
+	ClientMessageSaveCollection   = "saveCollection"
 	ClientMessageDeleteCollection = "deleteCollection"
 	ClientMessageAddRequestURL    = "addRequestURL"
 
@@ -24,13 +26,16 @@ const (
 	ServerMessagePong = "pong"
 
 	// Collection
-	ServerMessageCollections       = "collections"
-	ServerMessageCollectionDetail  = "collectionDetail"
-	ServerMessageCollectionAdded   = "collectionAdded"
-	ServerMessageCollectionDeleted = "collectionDeleted"
+	ServerMessageCollections        = "collections"
+	ServerMessageCollectionDetail   = "collectionDetail"
+	ServerMessageCollectionNotFound = "collectionNotFound"
+	ServerMessageCollectionAdded    = "collectionAdded"
+	ServerMessageCollectionUpdated  = "collectionUpdated"
+	ServerMessageCollectionDeleted  = "collectionDeleted"
 
 	// Request
 	ServerMessageRequestDetail   = "requestDetail"
+	ServerMessageRequestNotFound = "requestNotFound"
 	ServerMessageRequestAdded    = "requestAdded"
 	ServerMessageRequestDeleted  = "requestDeleted"
 	ServerMessageCallResult      = "callResult"

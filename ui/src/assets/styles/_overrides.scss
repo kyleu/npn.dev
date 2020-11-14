@@ -1,5 +1,3 @@
-@import "colors.scss";
-
 // Alerts
 .uk-light {
   .uk-alert, .uk-alert-primary, .uk-alert-success, .uk-alert-warning, .uk-alert-danger {
@@ -31,7 +29,7 @@ h4 {
 
 .uk-light {
   .uk-modal-dialog, .uk-modal-header, .uk-modal-body, .uk-modal-footer {
-    background: $dark-bg-color;
+    background: #121212;
   }
 
   .uk-modal-header {
@@ -126,7 +124,7 @@ h4 {
 // Off-canvas
 .uk-light {
   .uk-offcanvas-bar {
-    background: $dark-bg-color;
+    background: #121212;
     color: #fff;
 
     .uk-nav-default > li > a, .uk-nav-default .uk-nav-sub a, .uk-nav-default .uk-nav-header, h3, .uk-close {
@@ -141,7 +139,7 @@ h4 {
 
 .uk-dark {
   .uk-offcanvas-bar {
-    background: $light-bg-color;
+    background: #fff;
     color: #000;
 
     .uk-nav-default > li > a, .uk-nav-header, h3, .uk-close {
@@ -198,6 +196,18 @@ pre {
       color: #fff;
     }
   }
+}
+
+.uk-light.uk-card-default {
+  background: #222;
+  color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.uk-dark.uk-card-default {
+  background: #fff;
+  color: #666;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 // Badges

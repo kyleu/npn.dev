@@ -2,21 +2,8 @@
 @import "~uikit/src/scss/mixins-theme.scss";
 @import "~uikit/src/scss/uikit-theme.scss";
 
-@import "colors";
 @import "overrides";
 @import "common";
-
-.uk-light {
-  #logo-symbol {
-    stroke: #ddd !important;
-  }
-}
-
-.uk-dark {
-  #logo-symbol {
-    stroke: #333 !important;
-  }
-}
 
 // URL
 .url-view {

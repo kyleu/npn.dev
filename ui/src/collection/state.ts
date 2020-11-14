@@ -26,9 +26,23 @@ export function getCollection(key: string): Collection | undefined {
   }
 }
 
+export function onCollectionNotFound(key: string): void {
+  collectionsRef.value = collectionsRef.value.filter(x => x.coll.key !== key);
+  globalRouter().push({name: "CollectionIndex"});
+}
+
 export function onCollectionAdded(active: string, colls: CollectionCount[]): void {
   collectionsRef.value = colls;
   globalRouter().push({name: "CollectionDetail", params: {coll: active}});
+}
+
+export function onCollectionUpdated(coll: Collection): void {
+  collectionsRef.value = collectionsRef.value.map(x => {
+    if (x.coll.key === coll.key) {
+      x.coll = coll;
+    }
+    return x;
+  })
 }
 
 export function onCollectionDeleted(param: string): void {
@@ -103,4 +117,9 @@ export function onRequestDeleted(rd: RequestDeleted): void {
   setCollectionRequestSummaries(rd.coll, rd.requests);
   globalRouter().push({name: "CollectionDetail", params: {coll: rd.coll}});
 }
+
+export function onRequestNotFound(): void {
+  globalRouter().push({name: "CollectionIndex"});
+}
+
 

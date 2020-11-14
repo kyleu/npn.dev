@@ -1,7 +1,7 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
     <div class="right">
-      <router-link :class="'uk-icon ' + profile.settings.linkColor + '-fg'" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link>
+      <router-link class="uk-icon" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link>
     </div>
     <div v-for="(r, idx) in responses" :key="idx">
       <hr v-if="idx > 0" />
@@ -17,7 +17,6 @@ import {setBCReq} from "@/util/vutils";
 import {CallResult, NPNResponse} from "@/call/model";
 import {getCallResult} from "@/request/state";
 import {Prototype} from "@/request/model";
-import {Profile, profileRef} from "@/user/profile";
 import ResponsePanel from "@/call/ResponsePanel.vue";
 
 interface CallParam {
@@ -29,10 +28,6 @@ interface CallParam {
 @Component({ components: { ResponsePanel } })
 export default class CallResultView extends Vue {
   private pending: CallParam | undefined;
-
-  get profile(): Profile | undefined {
-    return profileRef.value;
-  }
 
   get result(): CallResult | undefined {
     return getCallResult(this.$route.params.coll, this.$route.params.req);

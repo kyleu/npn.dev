@@ -1,7 +1,7 @@
 <template>
   <div id="npn">
     <NavBar />
-    <div id="nav-left" class="uk-visible@m"><LeftNav /></div>
+    <div id="nav-left" v-style-menu class="uk-visible@m"><LeftNav /></div>
     <div id="workspace-content">
       <router-view />
     </div>
@@ -11,7 +11,7 @@
       </div>
     </div>
     <div id="nav-offcanvas" data-uk-offcanvas="mode: push; overlay: true">
-      <div class="uk-offcanvas-bar"><LeftNav /></div>
+      <div v-style-menu class="uk-offcanvas-bar"><LeftNav /></div>
     </div>
   </div>
 </template>

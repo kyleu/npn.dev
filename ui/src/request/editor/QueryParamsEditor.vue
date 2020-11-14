@@ -6,7 +6,7 @@
         <div class="uk-width-1-4">Value</div>
         <div class="uk-width-1-2">
           <div class="right">
-            <a :class="profile.settings.linkColor + '-fg'" href="" title="new param" @click.prevent="addParam()">
+            <a href="" title="new param" @click.prevent="addParam()">
               <span data-uk-icon="icon: plus" />
             </a>
           </div>
@@ -24,7 +24,7 @@
         </div>
         <div class="uk-width-1-2">
           <div class="right" style="margin-top: 6px;">
-            <a :class="profile.settings.linkColor + '-fg'" href="" title="remove param" @click.prevent="removeParam(idx)">
+            <a href="" title="remove param" @click.prevent="removeParam(idx)">
               <span data-uk-icon="icon: close" />
             </a>
           </div>
@@ -38,15 +38,10 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {QueryParam} from "@/request/model";
-import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class QueryParamsEditor extends Vue {
   @Prop() qp: QueryParam[] | undefined;
-
-  get profile(): Profile | undefined {
-    return profileRef.value;
-  }
 
   addParam(): void {
     if(!this.qp) {

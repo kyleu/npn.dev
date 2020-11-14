@@ -86,18 +86,3 @@ func (p *Prototype) URLParts() []*URLPart {
 	}
 	return ret
 }
-
-func URLColor(key string) string {
-	switch key {
-	case "protocol", "auth", "username", "password":
-		return "green-fg"
-	case "domain", "port":
-		return "blue-fg"
-	case "path":
-		return "bluegrey-fg"
-	case "query":
-		return "purple-fg"
-	default:
-		return ""
-	}
-}

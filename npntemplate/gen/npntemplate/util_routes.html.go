@@ -19,11 +19,8 @@ func RoutesList(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
 <html lang="en">
 <head>`)
 	Head(ctx, _buffer)
-	InitDom(ctx, _buffer)
 	_buffer.WriteString(`</head>
-<body class="`)
-	hero.EscapeHTML(ctx.Profile.Theme.CSS, _buffer)
-	_buffer.WriteString(`">
+<body>
 `)
 	Navbar(ctx, _buffer)
 
@@ -69,7 +66,7 @@ func RoutesList(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
               `)
 			if strings.Contains(r.Methods, "GET") && len(npncore.PathParams(r.Path)) == 0 {
 				_buffer.WriteString(`
-                <a class="theme" href="`)
+                <a href="`)
 				hero.EscapeHTML(r.Path, _buffer)
 				_buffer.WriteString(`">`)
 				hero.EscapeHTML(r.Path, _buffer)

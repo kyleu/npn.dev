@@ -1,5 +1,6 @@
 import {Prototype} from "@/request/model";
 import {Basic} from "@/auth/basic";
+import {profileRef} from "@/user/profile";
 
 export interface Part {
   readonly t: string;
@@ -9,21 +10,23 @@ export interface Part {
 }
 
 function urlColor(key: string): string {
+  const dark = profileRef.value?.settings.mode === "dark"
   switch (key) {
+    case "protocol":
+      return dark ? "#ce494a" : "#5a0000";
+    case "auth":
     case "username":
     case "password":
-    case "protocol":
-    case "auth":
-      return "green-fg";
+      return dark ? "#e9af41" : "#7d5d14";
     case "domain":
     case "port":
-      return "blue-fg";
+      return dark ? "#47a569" : "#034400";
     case "path":
-      return "bluegrey-fg";
+      return dark ? "#b35da6" : "#001149";
     case "query":
-      return "purple-fg";
+      return dark ? "#6689c3" : "#001149";
     case "fragment":
-      return "orange-fg";
+      return dark ? "#b35da6" : "#001149";
     default:
       return "";
   }

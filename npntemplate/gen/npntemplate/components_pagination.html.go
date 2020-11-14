@@ -16,7 +16,7 @@ func Pagination(section string, count int, params *npncore.Params, req *url.URL,
 		if params.HasNextPage(count) {
 			buffer.WriteString(`
     <div class="right">
-      <a class="theme" href="?`)
+      <a href="?`)
 			hero.EscapeHTML(params.NextPage().ToQueryString(req), buffer)
 			buffer.WriteString(`">Next page</a>
     </div>
@@ -25,7 +25,7 @@ func Pagination(section string, count int, params *npncore.Params, req *url.URL,
 		if params.HasPreviousPage() {
 			buffer.WriteString(`
     <div class="left">
-      <a class="theme" href="?`)
+      <a href="?`)
 			hero.EscapeHTML(params.PreviousPage().ToQueryString(req), buffer)
 			buffer.WriteString(`">Previous page</a>
     </div>

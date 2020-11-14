@@ -7,7 +7,6 @@ import (
 	"io"
 
 	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnuser"
 	"github.com/kyleu/npn/npnweb"
 	"github.com/shiyanhui/hero"
 )
@@ -19,11 +18,8 @@ func GraphiQL(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
 <html lang="en">
 <head>`)
 	Head(ctx, _buffer)
-	InitDom(ctx, _buffer)
 	_buffer.WriteString(`</head>
-<body class="`)
-	hero.EscapeHTML(ctx.Profile.Theme.CSS, _buffer)
-	_buffer.WriteString(`">
+<body>
 `)
 	Navbar(ctx, _buffer)
 
@@ -63,7 +59,7 @@ func GraphiQL(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
 
     function voyagerLink(t, icon, route) {
       return React.createElement("a", {
-        className: "theme profile-link uk-icon-link",
+        className: "profile-link uk-icon-link",
         "data-uk-icon": "icon: " + icon,
         href: route,
         title: "explore the " + t + " schema"
@@ -96,7 +92,7 @@ func GraphiQL(ctx *npnweb.RequestContext, w io.Writer) (int, error) {
     }
   </style>
   `)
-	if ctx.Profile.Theme == npnuser.ThemeDark {
+	if ctx.Profile.Settings.Mode == "dark" {
 		_buffer.WriteString(`
   <style>
     .cm-s-darcula  { font-family: Consolas, Menlo, Monaco, 'Lucida Console', 'Liberation Mono', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', 'Courier New', monospace, serif;}

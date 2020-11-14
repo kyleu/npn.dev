@@ -1,25 +1,44 @@
 package npnuser
 
-var (
-	DefaultNavColor  = "bluegrey"
-	DefaultLinkColor = "bluegrey"
-)
-
 type UserSettings struct {
-	NavColor  string `json:"navColor"`
-	LinkColor string `json:"linkColor"`
+	Mode    string `json:"mode"`
+	BodyB   string `json:"bodyB"`
+	BodyL   string `json:"bodyL"`
+	NavB    string `json:"navB"`
+	NavF    string `json:"navF"`
+	MenuB   string `json:"menuB"`
+	MenuF   string `json:"menuF"`
+	MenuL   string `json:"menuL"`
 }
 
 func (u *UserSettings) Clone() *UserSettings {
-	return &UserSettings{NavColor: u.NavColor, LinkColor: u.LinkColor}
+	return &UserSettings{
+		Mode:    u.Mode,
+		BodyB:   u.BodyB,
+		BodyL:   u.BodyL,
+		NavB:    u.NavB,
+		NavF:    u.NavF,
+		MenuB:   u.MenuB,
+		MenuF:   u.MenuF,
+		MenuL:   u.MenuL,
+	}
 }
 
-func (u *UserSettings) String() string {
-	ret := "navColor => " + u.NavColor + ", linkColor => " + u.LinkColor
-	return ret
+func (u *UserSettings) ModeCSS() string {
+	if u.Mode == "dark" {
+		return "uk-light"
+	}
+	return "uk-dark"
 }
+
 
 var DefaultSettings = &UserSettings{
-	NavColor:  DefaultNavColor,
-	LinkColor: DefaultLinkColor,
+	Mode:    "light",
+	BodyB:   "#fcfff5",
+	BodyL:   "#444",
+	NavB:    "#193441",
+	NavF:    "#fff",
+	MenuB:   "#3e606f",
+	MenuF:   "#fff",
+	MenuL:   "#ccc",
 }

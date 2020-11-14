@@ -1,7 +1,7 @@
 <template>
   <li>
     <div class="left">
-      <router-link :class="'collection-link ' + profile.settings.linkColor + '-fg'" :to="'/c/' + cc.coll.key" :title="cc.count + ' requests'">
+      <router-link class="collection-link" :to="'/c/' + cc.coll.key" :title="cc.count + ' requests'">
         {{ label }}
       </router-link>
     </div>
@@ -16,15 +16,10 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {CollectionCount} from "@/collection/collection";
-import {Profile, profileRef} from "@/user/profile";
 
 @Component
 export default class CollectionGalleryItem extends Vue {
   @Prop() cc!: CollectionCount;
-
-  get profile(): Profile | undefined {
-    return profileRef.value;
-  }
 
   get label(): string {
     return this.cc.coll.title.length === 0 ? this.cc.coll.key : this.cc.coll.title;

@@ -15,7 +15,7 @@
         </tr>
         <tr>
           <th scope="row">User ID</th>
-          <td><a class="theme" href="<%= ctx.Route(npnweb.AdminLink(npncore.KeyUser, npncore.KeyDetail), `id`, model.UserID.String()) %>"><%= model.UserID.String() %></a></td>
+          <td><a href="<%= ctx.Route(npnweb.AdminLink(npncore.KeyUser, npncore.KeyDetail), `id`, model.UserID.String()) %>"><%= model.UserID.String() %></a></td>
         </tr>
         </tbody>
       </table>

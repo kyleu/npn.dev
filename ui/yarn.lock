@@ -1350,6 +1350,7 @@
     "@types/webpack-dev-server" "^3.11.0"
     "@vue/cli-overlay" "^4.5.8"
     "@vue/cli-plugin-router" "^4.5.8"
+    "@vue/cli-plugin-vuex" "^4.5.8"
     "@vue/cli-shared-utils" "^4.5.8"
     "@vue/component-compiler-utils" "^3.1.2"
     "@vue/preload-webpack-plugin" "^1.1.0"
@@ -8910,6 +8911,11 @@ vue-style-loader@^4.1.0, vue-style-loader@^4.1.2:
   dependencies:
     hash-sum "^1.0.2"
     loader-utils "^1.0.2"
+
+vue-swatches@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/vue-swatches/-/vue-swatches-2.1.0.tgz#65221b4589ebb1ecd04a93bf82bfc569220e2724"
+  integrity sha512-JbSomg1penZvgHL24blA3PDgji7LPVGGSFlMo7F+jYVcxooemadI3gkMwFJVIPMikG5g160Mq+Lbph/lqFjzzw==
 
 vue-template-compiler@^2.6.11:
   version "2.6.12"

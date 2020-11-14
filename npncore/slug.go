@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-var regexpNonAuthorizedChars = regexp.MustCompile("[^a-zA-Z0-9-_]")
+var regexpNonAuthorizedChars = regexp.MustCompile("[^a-zA-Z0-9-._]")
 var regexpMultipleDashes = regexp.MustCompile("-+")
 
 func Slugify(s string) (slug string) {

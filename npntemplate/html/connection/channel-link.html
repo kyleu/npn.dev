@@ -2,5 +2,5 @@
 <% if id == nil { %>
   &lt;nil&gt;
 <% } else { %>
-  <a class="theme" href="<%= ctx.Route(npnweb.AdminLink(svc, npncore.KeyDetail), npncore.KeyID, id.String()) %>"><%= svc %>:<% UUID(id, buffer) %></a>
+  <a href="<%= ctx.Route(npnweb.AdminLink(svc, npncore.KeyDetail), npncore.KeyID, id.String()) %>"><%= svc %>:<% UUID(id, buffer) %></a>
 <% } %>

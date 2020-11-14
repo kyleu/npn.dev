@@ -31,7 +31,7 @@ func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, 
 	case npncore.KeyCollection:
 		err = handleCollectionMessage(s, c, cmd, param)
 	case npncore.KeySystem:
-		err = handleSystemMessage(cmd)
+		err = handleSystemMessage(cmd, param)
 	case npncore.KeyRequest:
 		err = handleRequestMessage(s, c, cmd, param)
 	default:
