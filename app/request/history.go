@@ -7,6 +7,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -43,5 +44,5 @@ func (s *Service) saveHistory(userID *uuid.UUID, coll string, req *Request, p st
 }
 
 func historyPath(userID *uuid.UUID, coll string, key string) string {
-	return path.Join("users", userID.String(), "collections", coll, "history", "requests", key)
+	return path.Join(strings.TrimSuffix(dirFor(userID, coll), "requests"), "history", "requests", key)
 }

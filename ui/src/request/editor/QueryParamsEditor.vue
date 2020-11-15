@@ -14,7 +14,7 @@
         </div>
       </div>
     </li>
-    <li v-for="(p, idx) of qp" :key="p.k">
+    <li v-for="(p, idx) of qp" :key="idx">
       <div data-uk-grid="">
         <div class="uk-width-1-4">
           <input v-model="p.k" class="uk-input" type="text" />

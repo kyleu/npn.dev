@@ -12,6 +12,8 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 	var err error
 
 	switch cmd {
+	case ClientMessageRunURL:
+		err = onRunURL(c, param, s)
 	case ClientMessageGetRequest:
 		err = onGetRequest(c, param, s)
 	case ClientMessageSaveRequest:
@@ -27,6 +29,11 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 	}
 
 	return err
+}
+
+func onRunURL(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
+	// TODO
+	return nil
 }
 
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {

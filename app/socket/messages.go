@@ -12,6 +12,7 @@ const (
 	ClientMessageAddRequestURL    = "addRequestURL"
 
 	// Request
+	ClientMessageRunURL        = "runURL"
 	ClientMessageGetRequest    = "getRequest"
 	ClientMessageSaveRequest   = "saveRequest"
 	ClientMessageDeleteRequest = "deleteRequest"

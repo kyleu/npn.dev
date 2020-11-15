@@ -89,7 +89,7 @@ func (s *Service) ReadLoop(connID uuid.UUID) error {
 		err = OnMessage(s, connID, m)
 		if err != nil {
 			_ = s.WriteMessage(c.ID, NewMessage(npncore.KeySystem, npncore.KeyError, err.Error()))
-			return errors.Wrap(err, "error handling websocket message")
+			// return errors.Wrap(err, "error handling websocket message")
 		}
 	}
 	return nil

@@ -61,6 +61,9 @@ func (s *Service) LoadRequest(userID *uuid.UUID, c string, f string) (*Request, 
 
 func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string, req *Request) error {
 	originalKey = npncore.Slugify(originalKey)
+	if len(req.Key) == 0 {
+		req.Key = "new"
+	}
 	slug := npncore.Slugify(req.Key)
 	if slug != req.Key {
 		s.logger.Debug(fmt.Sprintf("renaming request key from [%v] to [%v]", req.Key, slug))
@@ -116,7 +119,7 @@ func requestPath(userID *uuid.UUID, coll string, key string) string {
 
 func dirFor(userID *uuid.UUID, coll string) string {
 	if userID == nil || *userID == npnuser.SystemUserID {
-		return "collections"
+		return path.Join("collections", coll, "requests")
 	}
 	return path.Join("users", userID.String(), "collections", coll, "requests")
 }

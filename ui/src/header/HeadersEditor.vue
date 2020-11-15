@@ -14,7 +14,7 @@
         </div>
       </div>
     </li>
-    <li v-for="h of headers" :key="h.k">
+    <li v-for="(h, idx) of headers" :key="idx">
       <div data-uk-grid="">
         <div class="uk-width-1-4">
           <input v-model="h.k" class="uk-input" type="text" />

@@ -12,6 +12,9 @@ import (
 
 func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, title string, description string) error {
 	originalKey = npncore.Slugify(originalKey)
+	if len(newKey) == 0 {
+		newKey = "new"
+	}
 	newKey = npncore.Slugify(newKey)
 
 	var orig *Collection

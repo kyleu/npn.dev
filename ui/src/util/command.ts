@@ -1,8 +1,7 @@
 export const clientCommands = {
-  ping: "ping",
-  connect: "connect",
   testbed: "testbed",
   saveProfile: "saveProfile",
+  runURL: "runURL",
 
   // Collection
   getCollection: "getCollection",
@@ -21,9 +20,6 @@ export const clientCommands = {
 
 export const serverCommands = {
   error: "error",
-
-  pong: "pong",
-  connected: "connected",
 
   collections: "collections",
   collectionDetail: "collectionDetail",

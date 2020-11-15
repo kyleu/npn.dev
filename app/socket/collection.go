@@ -47,6 +47,9 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input")
 	}
+	if len(name) == 0 {
+		name = "new"
+	}
 	key := npncore.Slugify(name)
 	svcs := ctx(s)
 	curr, _ := svcs.Collection.Load(&c.Profile.UserID, key)
@@ -72,6 +75,7 @@ func saveCollection(s *npnconnection.Service, c *npnconnection.Connection, param
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input")
 	}
+
 	svcs := ctx(s)
 	err = svcs.Collection.Save(&c.Profile.UserID, p.OriginalKey, p.Coll.Key, p.Coll.Title, p.Coll.Description)
 	if err != nil {
