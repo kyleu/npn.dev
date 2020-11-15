@@ -5,6 +5,8 @@ import (
 	"golang.org/x/text/language"
 )
 
+var SystemUserID = uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000")
+
 type UserProfile struct {
 	UserID   uuid.UUID
 	Name     string

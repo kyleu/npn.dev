@@ -10,10 +10,6 @@ import (
 	"emperror.dev/errors"
 )
 
-type ConnectedResponse struct {
-	Profile *npnuser.Profile `json:"profile"`
-}
-
 func handleSystemMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {
 	switch cmd {
 	case ClientMessageTestbed:

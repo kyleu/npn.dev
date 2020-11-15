@@ -7,35 +7,10 @@ import (
 
 	"github.com/gofrs/uuid"
 
-	"github.com/kyleu/npn/app/request"
-
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
 )
-
-type collDetails struct {
-	Key        string                 `json:"key"`
-	Collection *collection.Collection `json:"collection,omitempty"`
-	Requests   request.Summaries      `json:"requests,omitempty"`
-}
-
-type addCollResult struct {
-	Collections collection.Summaries `json:"collections"`
-	Active      string               `json:"active"`
-	Requests    request.Summaries    `json:"requests"`
-}
-
-type addURLInput struct {
-	Coll string `json:"coll"`
-	URL  string `json:"url"`
-}
-
-type addURLOutput struct {
-	Coll *collDetails     `json:"coll"`
-	Req  *request.Request `json:"req"`
-}
 
 func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {
 	switch cmd {
@@ -68,8 +43,7 @@ func sendCollections(s *npnconnection.Service, c *npnconnection.Connection) {
 }
 
 func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
-	name := ""
-	err := npncore.FromJSONStrict(param, &name)
+	name, err := npncore.FromJSONString(param)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input")
 	}
@@ -87,27 +61,21 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 
 	newColls, _ := svcs.Collection.Counts(&c.Profile.UserID)
 
-	ret := &addCollResult{Collections: newColls, Active: key}
+	ret := &addCollIn{Collections: newColls, Active: key}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionAdded, ret)
 	return s.WriteMessage(c.ID, msg)
 }
 
-type saveCollParams struct {
-	OriginalKey string                 `json:"originalKey"`
-	Coll        *collection.Collection `json:"coll"`
-}
-
 func saveCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
-	p := &saveCollParams{}
+	p := &saveCollOut{}
 	err := npncore.FromJSONStrict(param, p)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input")
 	}
-	key := npncore.Slugify(p.Coll.Key)
 	svcs := ctx(s)
-	err = svcs.Collection.Save(&c.Profile.UserID, p.OriginalKey, key, p.Coll.Title, p.Coll.Description)
+	err = svcs.Collection.Save(&c.Profile.UserID, p.OriginalKey, p.Coll.Key, p.Coll.Title, p.Coll.Description)
 	if err != nil {
-		return errors.Wrap(err, "unable to save new collection with key ["+key+"]")
+		return errors.Wrap(err, "unable to save new collection with key ["+p.Coll.Key+"]")
 	}
 
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionUpdated, p.Coll)
@@ -115,8 +83,7 @@ func saveCollection(s *npnconnection.Service, c *npnconnection.Connection, param
 }
 
 func deleteCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
-	key := ""
-	err := npncore.FromJSONStrict(param, &key)
+	key, err := npncore.FromJSONString(param)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input")
 	}
@@ -130,7 +97,7 @@ func deleteCollection(s *npnconnection.Service, c *npnconnection.Connection, par
 	return s.WriteMessage(c.ID, msg)
 }
 
-func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (*collDetails, error) {
+func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (*collDetailsIn, error) {
 	svcs := ctx(s)
 	coll, err := svcs.Collection.Load(userID, key)
 	if err != nil {
@@ -139,17 +106,16 @@ func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (
 	if coll == nil {
 		return nil, nil
 	}
-	reqs, err := svcs.Collection.ListRequests(userID, key)
+	reqs, err := svcs.Request.ListRequests(userID, key)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("error retrieving requests for collection [%v]: %+v", key, err))
 	}
-	cd := &collDetails{Key: key, Collection: coll, Requests: reqs}
+	cd := &collDetailsIn{Key: key, Collection: coll, Requests: reqs}
 	return cd, nil
 }
 
 func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
-	key := ""
-	err := npncore.FromJSON(param, &key)
+	key, err := npncore.FromJSONString(param)
 	if err != nil {
 		return errors.Wrap(err, fmt.Sprintf("error parsing collection [%v]: %+v", key, err))
 	}

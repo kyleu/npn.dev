@@ -12,7 +12,7 @@ import (
 )
 
 func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
-	p := &addURLInput{}
+	p := &addURLOut{}
 	err := npncore.FromJSONStrict(param, p)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input from URL")
@@ -24,16 +24,16 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 	req.Key = npncore.Slugify(req.Prototype.Domain)
 
 	svcs := ctx(s)
-	curr, _ := svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
+	curr, _ := svcs.Request.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
 	if curr != nil {
 		clean(req)
-		curr, _ = svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
+		curr, _ = svcs.Request.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
 		if curr != nil {
 			req.Key += "-" + strings.ToLower(npncore.RandomString(4))
 		}
 	}
 
-	err = svcs.Collection.SaveRequest(&c.Profile.UserID, p.Coll, "", req)
+	err = svcs.Request.SaveRequest(&c.Profile.UserID, p.Coll, "", req)
 	if err != nil {
 		return errors.Wrap(err, "unable to save request from URL ["+p.URL+"]")
 	}
@@ -43,7 +43,7 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 		return err
 	}
 
-	out := &addURLOutput{
+	out := &addURLIn{
 		Coll: coll,
 		Req:  req,
 	}

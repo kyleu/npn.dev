@@ -44,3 +44,13 @@ func FromJSONStrict(msg json.RawMessage, tgt interface{}) error {
 	dec.DisallowUnknownFields()
 	return dec.Decode(tgt)
 }
+
+func FromJSONString(msg json.RawMessage) (string, error) {
+	tgt := ""
+	err := json.Unmarshal(msg, &tgt)
+	if err != nil {
+		return "", err
+	}
+	return tgt, nil
+}
+

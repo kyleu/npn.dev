@@ -63,15 +63,14 @@ func parseJSON(content []byte) *phase {
 	var arr []json.RawMessage
 	err = npncore.FromJSON(content, &arr)
 	if err == nil {
-		ret := []*phase{}
+		ret := make([]*phase, 0)
 		for _, e := range arr {
 			ret = append(ret, parseJSON(e))
 		}
 		return &phase{Key: "set", Value: ret, Final: true}
 	}
 
-	str := ""
-	err = npncore.FromJSON(content, &str)
+	str, err := npncore.FromJSONString(content)
 	if err == nil {
 		return &phase{Key: "string", Value: str}
 	}

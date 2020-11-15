@@ -55,7 +55,7 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 	hr, err := client.Do(httpReq)
 
 	status := "ok"
-	var errStr string = ""
+	var errStr = ""
 	if err != nil {
 		status = "error"
 		errStr = err.Error()

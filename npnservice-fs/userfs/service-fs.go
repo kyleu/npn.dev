@@ -16,7 +16,7 @@ import (
 )
 
 var systemUser = &user.SystemUser{
-	UserID:   uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000"),
+	UserID:   npnuser.SystemUserID,
 	Name:     "Guest",
 	Role:     "admin",
 	Settings: npnuser.DefaultSettings,
@@ -84,7 +84,7 @@ func (s *ServiceFilesystem) GetByID(userID uuid.UUID, addIfMissing bool) *user.S
 	return user.FromProfile(tgt, time.Now())
 }
 
-func (s *ServiceFilesystem) GetByCreated(d *time.Time, params *npncore.Params) user.SystemUsers {
+func (s *ServiceFilesystem) GetByCreated(*time.Time, *npncore.Params) user.SystemUsers {
 	var ret user.SystemUsers
 	// TODO maybe
 	return ret

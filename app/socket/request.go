@@ -3,10 +3,6 @@ package socket
 import (
 	"encoding/json"
 
-	"github.com/kyleu/npn/app/request"
-
-	"github.com/kyleu/npn/app/transform"
-
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
@@ -33,63 +29,52 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 	return err
 }
 
-type reqDetail struct {
-	Coll string           `json:"coll"`
-	Req  *request.Request `json:"req"`
-}
-
-type reqDeleted struct {
-	Req      string            `json:"req"`
-	Coll     string            `json:"coll"`
-	Requests request.Summaries `json:"requests"`
-}
-
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &paramGetRequest{}
+	frm := &getRequestOut{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load getRequest param")
 	}
-	req, err := svc.Collection.LoadRequest(&c.Profile.UserID, frm.Coll, frm.Req)
+	req, err := svc.Request.LoadRequest(&c.Profile.UserID, frm.Coll, frm.Req)
 	if err != nil {
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestNotFound, frm)
 		return s.WriteMessage(c.ID, msg)
 	}
-	ret := &reqDetail{Coll: frm.Coll, Req: req}
+	ret := &reqDetailIn{Coll: frm.Coll, Req: req}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }
 
 func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &paramSaveRequest{}
+	frm := &saveRequestOut{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
-	err = svc.Collection.SaveRequest(&c.Profile.UserID, frm.Coll, frm.Orig, frm.Req)
+	err = svc.Request.SaveRequest(&c.Profile.UserID, frm.Coll, frm.Orig, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't save request")
 	}
-	ret := &reqDetail{Coll: frm.Coll, Req: frm.Req}
+	ret := &reqDetailIn{Coll: frm.Coll, Req: frm.Req}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }
 
 func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &paramDeleteRequest{}
+	frm := &deleteRequestOut{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
-	err = svc.Collection.DeleteRequest(&c.Profile.UserID, frm.Coll, frm.Req)
+	err = svc.Request.DeleteRequest(&c.Profile.UserID, frm.Coll, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't remove request")
 	}
 
-	summaries, err := svc.Collection.ListRequests(&c.Profile.UserID, frm.Coll)
+	summaries, err := svc.Request.ListRequests(&c.Profile.UserID, frm.Coll)
 	if err != nil {
 		return errors.Wrap(err, "can't list requests")
 	}
@@ -101,7 +86,7 @@ func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnc
 
 func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &paramCall{}
+	frm := &callOut{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load request call param")
@@ -114,28 +99,6 @@ func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection
 	}()
 
 	return nil
-}
-
-func onTransform(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	frm := &paramTransform{}
-	err := npncore.FromJSONStrict(param, frm)
-	if err != nil {
-		return errors.Wrap(err, "can't load request transform param")
-	}
-
-	tx := transform.AllTransformers.Get(frm.Fmt)
-	if tx == nil {
-		return errors.New("can't load transformer [" + frm.Fmt + "]")
-	}
-
-	rsp, err := tx.Transform(frm.Proto)
-	if err != nil {
-		return errors.Wrap(err, "can't load transform request")
-	}
-
-	txr := transformResponse{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
-	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageTransformResult, txr)
-	return s.WriteMessage(c.ID, msg)
 }
 
 func getContext(s *npnconnection.Service) *services {

@@ -4,6 +4,7 @@ import (
 	"github.com/kyleu/npn/app/call"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/imprt"
+	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/socket"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
@@ -34,6 +35,7 @@ var _ npnweb.AppInfo = (*Service)(nil)
 func NewService(debug bool, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
 	collSvc := collection.NewService(files, logger)
+	reqSvc := request.NewService(files, logger)
 	callSvc := call.NewService(logger)
 
 	return &Service{
@@ -45,7 +47,7 @@ func NewService(debug bool, files npncore.FileLoader, redir string, logger logur
 		Collection: collSvc,
 		Import:     imprt.NewService(files, logger),
 		Caller:     callSvc,
-		Socket:     socket.NewService(us, collSvc, callSvc, logger),
+		Socket:     socket.NewService(us, collSvc, reqSvc, callSvc, logger),
 	}
 }
 

@@ -1,7 +1,7 @@
 package collection
 
 import (
-	"os"
+	"github.com/kyleu/npn/npnuser"
 	"path"
 
 	"github.com/gofrs/uuid"
@@ -74,61 +74,13 @@ func (s *Service) Load(userID *uuid.UUID, key string) (*Collection, error) {
 	return ret.Normalize(key, p), nil
 }
 
-func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, title string, description string) error {
-	originalKey = npncore.Slugify(originalKey)
-	newKey = npncore.Slugify(newKey)
-
-	var orig *Collection
-	var err error
-
-	if len(originalKey) > 0 {
-		orig, err = s.Load(userID, originalKey)
-		if err != nil {
-			return errors.Wrap(err, "unable to load original collection ["+originalKey+"]")
-		}
-		if orig != nil && originalKey != newKey {
-			o := path.Join(s.files.Root(), dirFor(userID), originalKey)
-			n := path.Join(s.files.Root(), dirFor(userID), newKey)
-			err := os.Rename(o, n)
-			if err != nil {
-				return errors.Wrap(err, "unable to rename original collection ["+originalKey+"] in path ["+o+"]")
-			}
-		}
-	}
-
-	n := &Collection{
-		Key:         newKey,
-		Title:       title,
-		Description: description,
-	}
-
-	if orig == nil {
-		n.Owner = "system"
-	} else {
-		n.Owner = orig.Owner
-		n.RequestOrder = orig.RequestOrder
-	}
-	n.Path = newKey
-
-	p := path.Join(dirFor(userID), newKey, "collection.json")
-	content := npncore.ToJSON(n, s.logger)
-	err = s.files.WriteFile(p, []byte(content), true)
-	if err != nil {
-		return errors.Wrap(err, "unable to save collection ["+newKey+"]")
-	}
-
-	return nil
-}
-
 func (s *Service) Delete(userID *uuid.UUID, key string) error {
 	p := path.Join(dirFor(userID), key)
 	return s.files.RemoveRecursive(p)
 }
 
-var systemUserID = uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000")
-
 func dirFor(userID *uuid.UUID) string {
-	if userID == nil || *userID == systemUserID {
+	if userID == nil || *userID == npnuser.SystemUserID {
 		return "collections"
 	}
 	return path.Join("users", userID.String(), "collections")
