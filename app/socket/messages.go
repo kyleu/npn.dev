@@ -3,9 +3,9 @@ package socket
 import "github.com/kyleu/npn/app/request"
 
 const (
-	ClientMessagePing    = "ping"
-	ClientMessageConnect = "connect"
-	ClientMessageTestbed = "testbed"
+	ClientMessagePing        = "ping"
+	ClientMessageConnect     = "connect"
+	ClientMessageTestbed     = "testbed"
 	ClientMessageSaveProfile = "saveProfile"
 
 	// Collection

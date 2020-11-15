@@ -1,14 +1,14 @@
 <template>
   <li>
-    <div class="left">
-      <router-link class="collection-link" :to="'/c/' + cc.coll.key" :title="cc.count + ' requests'">
+    <router-link class="collection-link" :to="'/c/' + cc.coll.key" :title="cc.count + ' ' + (cc.count === 1 ? 'request' : 'requests')">
+      <div class="left">
         {{ label }}
-      </router-link>
-    </div>
-    <div class="right">
-      <em v-if="cc.coll.description && cc.coll.description.length > 0" class="ml mr">{{ cc.coll.description }}</em>
-      <span class="uk-badge" :title="cc.count + ' requests'">{{ cc.count }}</span>
-    </div>
+      </div>
+      <div class="right">
+        <em v-if="cc.coll.description && cc.coll.description.length > 0" class="ml mr">{{ cc.coll.description }}</em>
+        <span class="uk-badge" :title="cc.count + ' ' + (cc.count === 1 ? 'request' : 'requests')">{{ cc.count }}</span>
+      </div>
+    </router-link>
     <div class="clear"></div>
   </li>
 </template>

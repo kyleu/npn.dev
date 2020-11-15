@@ -2,7 +2,6 @@ package socket
 
 import (
 	"encoding/json"
-	"github.com/kyleu/npn/app/collection"
 
 	"github.com/kyleu/npn/app/request"
 
@@ -40,9 +39,9 @@ type reqDetail struct {
 }
 
 type reqDeleted struct {
-	Req      string                      `json:"req"`
-	Coll     string                      `json:"coll"`
-	Requests collection.RequestSummaries `json:"requests"`
+	Req      string            `json:"req"`
+	Coll     string            `json:"coll"`
+	Requests request.Summaries `json:"requests"`
 }
 
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
@@ -91,6 +90,9 @@ func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnc
 	}
 
 	summaries, err := svc.Collection.ListRequests(&c.Profile.UserID, frm.Coll)
+	if err != nil {
+		return errors.Wrap(err, "can't list requests")
+	}
 
 	ret := &reqDeleted{Coll: frm.Coll, Req: frm.Req, Requests: summaries}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDeleted, ret)

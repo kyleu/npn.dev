@@ -24,9 +24,9 @@ func (c *Collection) Normalize(key string, p string) *Collection {
 
 type Collections []*Collection
 
-type CollectionCount struct {
-	Coll *Collection  `json:"coll"`
-	Count int   `json:"count"`
+type Summary struct {
+	Coll  *Collection `json:"coll"`
+	Count int         `json:"count"`
 }
 
-type CollectionCounts []*CollectionCount
+type Summaries []*Summary

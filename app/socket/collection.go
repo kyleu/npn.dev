@@ -16,15 +16,15 @@ import (
 )
 
 type collDetails struct {
-	Key        string                      `json:"key"`
-	Collection *collection.Collection      `json:"collection,omitempty"`
-	Requests   collection.RequestSummaries `json:"requests,omitempty"`
+	Key        string                 `json:"key"`
+	Collection *collection.Collection `json:"collection,omitempty"`
+	Requests   request.Summaries      `json:"requests,omitempty"`
 }
 
 type addCollResult struct {
-	Collections collection.CollectionCounts `json:"collections"`
-	Active      string                      `json:"active"`
-	Requests    collection.RequestSummaries `json:"requests"`
+	Collections collection.Summaries `json:"collections"`
+	Active      string               `json:"active"`
+	Requests    request.Summaries    `json:"requests"`
 }
 
 type addURLInput struct {
@@ -93,8 +93,8 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 }
 
 type saveCollParams struct {
-	OriginalKey string `json:"originalKey"`
-	Coll *collection.Collection `json:"coll"`
+	OriginalKey string                 `json:"originalKey"`
+	Coll        *collection.Collection `json:"coll"`
 }
 
 func saveCollection(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {

@@ -17,27 +17,10 @@ import (
 
 const shouldSaveHistory = true
 
-type RequestSummary struct {
-	Key         string `json:"key,omitempty"`
-	Title       string `json:"title,omitempty"`
-	Description string `json:"description,omitempty"`
-	URL         string `json:"url,omitempty"`
-	Order       int    `json:"order,omitempty"`
-}
-
-func (r *RequestSummary) TitleWithFallback() string {
-	if len(r.Title) == 0 {
-		return r.Key
-	}
-	return r.Title
-}
-
-type RequestSummaries []*RequestSummary
-
-func (s *Service) ListRequests(userID *uuid.UUID, c string) (RequestSummaries, error) {
+func (s *Service) ListRequests(userID *uuid.UUID, c string) (request.Summaries, error) {
 	p := path.Join(dirFor(userID), c, "requests")
 	files := s.files.ListJSON(p)
-	ret := make(RequestSummaries, 0, len(files))
+	ret := make(request.Summaries, 0, len(files))
 	for idx, rk := range files {
 		r, err := s.LoadRequest(userID, c, rk)
 		if err != nil {
@@ -47,7 +30,7 @@ func (s *Service) ListRequests(userID *uuid.UUID, c string) (RequestSummaries, e
 		if r.Prototype != nil {
 			url = r.Prototype.URLString()
 		}
-		ret = append(ret, &RequestSummary{
+		ret = append(ret, &request.Summary{
 			Key:         r.Key,
 			Title:       r.Title,
 			Description: r.Description,

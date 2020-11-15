@@ -1,6 +1,6 @@
 <template>
   <div class="nav-link">
-    <router-link v-style-menu-link class="collection-link" :to="'/c/' + cc.coll.key" :title="cc.count + ' requests'">
+    <router-link v-style-menu-link class="collection-link" :to="'/c/' + cc.coll.key" :title="cc.count + ' ' + (cc.count === 1 ? 'request' : 'requests')">
       <span class="uk-icon nav-icon" :data-uk-icon="icon"></span>
       {{ label }}
     </router-link>

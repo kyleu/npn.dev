@@ -37,16 +37,16 @@ func (s *Service) List(userID *uuid.UUID) (Collections, error) {
 	return ret, nil
 }
 
-func (s *Service) Counts(userID *uuid.UUID) (CollectionCounts, error) {
+func (s *Service) Counts(userID *uuid.UUID) (Summaries, error) {
 	l, err := s.List(userID)
 	if err != nil {
 		return nil, err
 	}
 
-	ret := make(CollectionCounts, 0, len(l))
+	ret := make(Summaries, 0, len(l))
 	for _, coll := range l {
 		count := len(s.files.ListJSON(path.Join(dirFor(userID), coll.Key, "requests")))
-		ret = append(ret, &CollectionCount{Coll:  coll, Count: count})
+		ret = append(ret, &Summary{Coll: coll, Count: count})
 	}
 	return ret, nil
 }

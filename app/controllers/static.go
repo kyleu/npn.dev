@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"github.com/kyleu/npn/gen/templates"
-	"github.com/kyleu/npn/npnweb"
 	"net/http"
 	"path/filepath"
 	"strings"
+
+	"github.com/kyleu/npn/gen/templates"
+	"github.com/kyleu/npn/npnweb"
 
 	"emperror.dev/emperror"
 	"emperror.dev/errors"

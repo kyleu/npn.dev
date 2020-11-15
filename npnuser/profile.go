@@ -6,12 +6,12 @@ import (
 )
 
 type UserProfile struct {
-	UserID    uuid.UUID
-	Name      string
-	Role      Role
-	Settings  *UserSettings
-	Picture   string
-	Locale    language.Tag
+	UserID   uuid.UUID
+	Name     string
+	Role     Role
+	Settings *UserSettings
+	Picture  string
+	Locale   language.Tag
 }
 
 func NewUserProfile(userID uuid.UUID, name string) *UserProfile {

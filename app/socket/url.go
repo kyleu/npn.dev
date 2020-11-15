@@ -26,16 +26,7 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 	svcs := ctx(s)
 	curr, _ := svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
 	if curr != nil {
-		if len(req.Title) == 0 {
-			req.Title = req.Key
-		}
-		if req.Prototype != nil && len(req.Prototype.Path) > 0 {
-			add := req.Prototype.Path
-			if len(add) > 8 {
-				add = add[0:8]
-			}
-			req.Key += "-" + npncore.Slugify(add)
-		}
+		clean(req)
 		curr, _ = svcs.Collection.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
 		if curr != nil {
 			req.Key += "-" + strings.ToLower(npncore.RandomString(4))
@@ -58,4 +49,17 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 	}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestAdded, out)
 	return s.WriteMessage(c.ID, msg)
+}
+
+func clean(req *request.Request) {
+	if len(req.Title) == 0 {
+		req.Title = req.Key
+	}
+	if req.Prototype != nil && len(req.Prototype.Path) > 0 {
+		add := req.Prototype.Path
+		if len(add) > 8 {
+			add = add[0:8]
+		}
+		req.Key += "-" + npncore.Slugify(add)
+	}
 }

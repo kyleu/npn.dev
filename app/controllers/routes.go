@@ -12,8 +12,7 @@ import (
 )
 
 const (
-	keyParam        = "{key}"
-	collectionParam = "{c}"
+	keyParam = "{key}"
 )
 
 func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {

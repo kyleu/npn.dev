@@ -1,12 +1,13 @@
 package socket
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
 	"fmt"
-	"github.com/kyleu/npn/npncore"
 	"io/ioutil"
 	"strings"
+
+	"emperror.dev/errors"
+	"github.com/kyleu/npn/npncore"
 )
 
 type tkv struct {
@@ -43,7 +44,7 @@ func onTheme(k string, v json.RawMessage) error {
 	fn := "./ui/src/user/themes.ts"
 	b, err := ioutil.ReadFile(fn)
 	if err != nil {
-		return errors.Wrap(err, "unable to read [" + fn + "]")
+		return errors.Wrap(err, "unable to read ["+fn+"]")
 	}
 
 	content := string(b)
@@ -58,8 +59,8 @@ func onTheme(k string, v json.RawMessage) error {
 		post = post[0:pi] + ", " + k + post[pi:]
 		newContent = content[0:(startIdx)] + s + ";\n\n" + post
 	} else {
-		endIdx := strings.Index(content[startIdx + 1:], ";") + startIdx
-		newContent = content[0:(startIdx - 6)] + s + content[endIdx + 1:]
+		endIdx := strings.Index(content[startIdx+1:], ";") + startIdx
+		newContent = content[0:(startIdx-6)] + s + content[endIdx+1:]
 	}
 
 	println(fmt.Sprintf("saving themes with [%v] bytes", len(newContent)))

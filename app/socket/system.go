@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
