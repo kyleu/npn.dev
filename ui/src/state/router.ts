@@ -2,7 +2,7 @@ import VueRouter, {RouteConfig} from "vue-router";
 import About from "@/views/About.vue";
 import Home from "@/views/Home.vue";
 import NotFound from "@/views/NotFound.vue";
-import Settings from "@/user/Settings.vue";
+import ProfileView from "@/user/ProfileView.vue";
 import CallResultView from "@/call/CallResultView.vue";
 import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";
@@ -19,8 +19,8 @@ const routes: Array<RouteConfig> = [
   },
   {
     path: "/u",
-    name: "Settings",
-    component: Settings
+    name: "Profile",
+    component: ProfileView
   },
   {
     path: "/c",

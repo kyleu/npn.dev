@@ -2,25 +2,25 @@ package npnuser
 
 type UserSettings struct {
 	Mode    string `json:"mode"`
-	BodyB   string `json:"bodyB"`
-	BodyL   string `json:"bodyL"`
 	NavB    string `json:"navB"`
 	NavF    string `json:"navF"`
 	MenuB   string `json:"menuB"`
 	MenuF   string `json:"menuF"`
 	MenuL   string `json:"menuL"`
+	BodyB   string `json:"bodyB"`
+	BodyL   string `json:"bodyL"`
 }
 
 func (u *UserSettings) Clone() *UserSettings {
 	return &UserSettings{
 		Mode:    u.Mode,
-		BodyB:   u.BodyB,
-		BodyL:   u.BodyL,
 		NavB:    u.NavB,
 		NavF:    u.NavF,
 		MenuB:   u.MenuB,
 		MenuF:   u.MenuF,
 		MenuL:   u.MenuL,
+		BodyB:   u.BodyB,
+		BodyL:   u.BodyL,
 	}
 }
 
@@ -34,11 +34,11 @@ func (u *UserSettings) ModeCSS() string {
 
 var DefaultSettings = &UserSettings{
 	Mode:    "light",
-	BodyB:   "#fcfff5",
-	BodyL:   "#444",
 	NavB:    "#193441",
 	NavF:    "#fff",
 	MenuB:   "#3e606f",
 	MenuF:   "#fff",
 	MenuL:   "#ccc",
+	BodyB:   "#fcfff5",
+	BodyL:   "#444",
 }

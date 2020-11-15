@@ -1,6 +1,17 @@
 .prism-view {
   padding: 12px;
-  border: 1px solid #ddd;
+}
+
+.uk-light {
+  .preview-content {
+    border: 1px solid #666;
+  }
+}
+
+.uk-dark {
+  .preview-content {
+    border: 1px solid #ddd;
+  }
 }
 
 pre[class*="language-"].line-numbers {

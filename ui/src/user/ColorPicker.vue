@@ -1,18 +1,18 @@
 <template>
   <div>
-    <div class="theme-section left mt uk-text-center">
-      <div>Body</div>
+    <div class="theme-section left uk-text-center">
+      <div>Mode</div>
       <div class="left">
-        <v-swatches v-model="settings.bodyB" swatches="text-advanced" show-fallback></v-swatches>
-        <div @click="swap('bodyB')">BG</div>
+        <div class="mode-swatch" style="background-color: #fff;" @click="setTheme('light')"></div>
+        <div @click="setTheme('light')">Light</div>
       </div>
       <div class="left">
-        <v-swatches v-model="settings.bodyL" swatches="text-advanced" show-fallback></v-swatches>
-        <div @click="swap('bodyL')">Link</div>
+        <div class="mode-swatch" style="background-color: #222;" @click="setTheme('dark')"></div>
+        <div @click="setTheme('dark')">Dark</div>
       </div>
     </div>
 
-    <div class="theme-section left mt uk-text-center">
+    <div class="theme-section left uk-text-center">
       <div>Nav</div>
       <div class="left">
         <v-swatches v-model="settings.navB" swatches="text-advanced" show-fallback></v-swatches>
@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <div class="theme-section left mt uk-text-center">
+    <div class="theme-section left uk-text-center">
       <div>Menu</div>
       <div class="left">
         <v-swatches v-model="settings.menuB" swatches="text-advanced" show-fallback></v-swatches>
@@ -40,10 +40,21 @@
       </div>
     </div>
 
+    <div class="theme-section left uk-text-center">
+      <div>Body</div>
+      <div class="left">
+        <v-swatches v-model="settings.bodyB" swatches="text-advanced" show-fallback></v-swatches>
+        <div @click="swap('bodyB')">BG</div>
+      </div>
+      <div class="left">
+        <v-swatches v-model="settings.bodyL" swatches="text-advanced" show-fallback></v-swatches>
+        <div @click="swap('bodyL')">Link</div>
+      </div>
+    </div>
+
     <div class="clear"></div>
-    <div class="mt">
-      <button v-style-button class="uk-button uk-button-default" @click="testbed()">Testbed</button>
-      <button v-if="tempTheme.length > 0" v-style-button class="uk-button uk-button-default ml" @click="saveTheme()">Save Theme</button>
+    <div v-if="tempTheme.length > 0" class="mt">
+      <button v-style-button class="uk-button uk-button-default" @click="saveTheme()">DEBUG / Save Theme</button>
     </div>
   </div>
 </template>
@@ -55,7 +66,6 @@ import {profileRef, tempThemeRef, UserSettings} from "@/user/profile";
 // @ts-ignore
 // eslint-disable-next-line
 import VSwatches from 'vue-swatches'
-import 'vue-swatches/dist/vue-swatches.css'
 import {socketRef} from "@/socket/socket";
 import {systemService} from "@/util/services";
 import {clientCommands} from "@/util/command";
@@ -70,6 +80,12 @@ export default class ColorPicker extends Vue {
 
   get settings(): UserSettings | undefined {
     return profileRef.value?.settings;
+  }
+
+  setTheme(m: string): void {
+    if (profileRef.value) {
+      profileRef.value.settings.mode = m;
+    }
   }
 
   getColor(t: string): string {
@@ -136,26 +152,6 @@ export default class ColorPicker extends Vue {
     const tgt = this.getColor(t);
     this.setColor(s, tgt);
     this.setColor(t, src);
-  }
-
-  testbed(): void {
-    if (!profileRef.value) {
-      return;
-    }
-    const rc = (): string => {
-      return `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-    }
-
-    profileRef.value.settings = {
-      mode: Math.random() < 0.5 ? "light" : "dark",
-      bodyB: rc(),
-      bodyL: rc(),
-      navF: rc(),
-      navB: rc(),
-      menuF: rc(),
-      menuB: rc(),
-      menuL: rc()
-    };
   }
 
   saveTheme(): void {

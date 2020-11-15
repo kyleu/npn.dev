@@ -1,5 +1,5 @@
 <template>
-  <div id="preview-container"></div>
+  <div class="preview-content"></div>
 </template>
 
 <script lang="ts">

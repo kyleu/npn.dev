@@ -1,7 +1,7 @@
 <template>
   <div class="uk-overflow-auto">
     <em>JSON</em>
-    <pre class="prism-view mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
+    <pre class="prism-view preview-content mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
   </div>
 </template>
 

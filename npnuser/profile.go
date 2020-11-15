@@ -24,6 +24,17 @@ func NewUserProfile(userID uuid.UUID, name string) *UserProfile {
 	}
 }
 
+func (p *UserProfile) ToProfile() *Profile {
+	return &Profile{
+		UserID:   p.UserID,
+		Name:     p.Name,
+		Role:     p.Role.String(),
+		Settings: p.Settings,
+		Picture:  p.Picture,
+		Locale:   p.Locale.String(),
+	}
+}
+
 type Profile struct {
 	UserID   uuid.UUID     `json:"userID"`
 	Name     string        `json:"name"`
@@ -33,13 +44,17 @@ type Profile struct {
 	Locale   string        `json:"locale,omitempty"`
 }
 
-func (p *UserProfile) ToProfile() *Profile {
-	return &Profile{
+func (p *Profile) ToUserProfile() *UserProfile {
+	loc, err := language.Parse(p.Locale)
+	if err != nil {
+		loc = language.AmericanEnglish
+	}
+	return &UserProfile{
 		UserID:   p.UserID,
 		Name:     p.Name,
-		Role:     p.Role.String(),
+		Role:     RoleFromString(p.Role),
 		Settings: p.Settings,
 		Picture:  p.Picture,
-		Locale:   p.Locale.String(),
+		Locale:   loc,
 	}
 }

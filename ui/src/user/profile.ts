@@ -10,13 +10,13 @@ Vue.use(VueRouter);
 
 export interface UserSettings {
   mode: string;
-  bodyB: Color;
-  bodyL: Color;
   navB: Color;
   navF: Color;
   menuB: Color;
   menuF: Color;
   menuL: Color;
+  bodyB: Color;
+  bodyL: Color;
 }
 
 export interface Profile {

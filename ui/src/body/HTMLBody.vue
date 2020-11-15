@@ -9,7 +9,7 @@
     <em>HTML</em>
 
     <div v-if="mode === 'text'">
-      <pre class="prism-view mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
+      <pre class="prism-view preview-content mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
     </div>
     <div v-else>
       <div class="mt"><HTMLPreview :url="url" :html="config.content" /></div>

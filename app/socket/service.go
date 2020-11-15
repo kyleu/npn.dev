@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"github.com/kyleu/npn/npnservice/user"
 
 	"github.com/kyleu/npn/app/call"
 
@@ -13,12 +14,14 @@ import (
 )
 
 type services struct {
+	User       user.Service
 	Collection *collection.Service
 	Caller     *call.Service
 }
 
-func NewService(collectionSvc *collection.Service, callSvc *call.Service, logger logur.Logger) *npnconnection.Service {
+func NewService(userSvc user.Service, collectionSvc *collection.Service, callSvc *call.Service, logger logur.Logger) *npnconnection.Service {
 	ctx := &services{
+		User:       userSvc,
 		Collection: collectionSvc,
 		Caller:     callSvc,
 	}
@@ -31,7 +34,7 @@ func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, 
 	case npncore.KeyCollection:
 		err = handleCollectionMessage(s, c, cmd, param)
 	case npncore.KeySystem:
-		err = handleSystemMessage(cmd, param)
+		err = handleSystemMessage(s, c, cmd, param)
 	case npncore.KeyRequest:
 		err = handleRequestMessage(s, c, cmd, param)
 	default:

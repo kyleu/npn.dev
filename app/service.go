@@ -45,7 +45,7 @@ func NewService(debug bool, files npncore.FileLoader, redir string, logger logur
 		Collection: collSvc,
 		Import:     imprt.NewService(files, logger),
 		Caller:     callSvc,
-		Socket:     socket.NewService(collSvc, callSvc, logger),
+		Socket:     socket.NewService(us, collSvc, callSvc, logger),
 	}
 }
 

@@ -6,6 +6,7 @@ const (
 	ClientMessagePing    = "ping"
 	ClientMessageConnect = "connect"
 	ClientMessageTestbed = "testbed"
+	ClientMessageSaveProfile = "saveProfile"
 
 	// Collection
 	ClientMessageGetCollection    = "getCollection"

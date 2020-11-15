@@ -38,13 +38,13 @@ export default class Mockup extends Vue {
     if(profileRef.value) {
       profileRef.value.settings = {
         mode: this.theme.mode,
-        bodyB: this.theme.bodyB,
-        bodyL: this.theme.bodyL,
         navB: this.theme.navB,
         navF: this.theme.navF,
         menuB: this.theme.menuB,
         menuF: this.theme.menuF,
-        menuL: this.theme.menuL
+        menuL: this.theme.menuL,
+        bodyB: this.theme.bodyB,
+        bodyL: this.theme.bodyL
       };
     }
   }

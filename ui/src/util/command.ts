@@ -2,6 +2,7 @@ export const clientCommands = {
   ping: "ping",
   connect: "connect",
   testbed: "testbed",
+  saveProfile: "saveProfile",
 
   // Collection
   getCollection: "getCollection",
