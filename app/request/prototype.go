@@ -27,8 +27,7 @@ type Prototype struct {
 
 func NewPrototype() *Prototype {
 	ret := &Prototype{}
-	ret = ret.Normalize()
-	return ret
+	return ret.Normalize()
 }
 
 func (p *Prototype) Normalize() *Prototype {

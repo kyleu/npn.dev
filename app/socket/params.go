@@ -6,25 +6,25 @@ import (
 )
 
 // Collection
-type collDetailsIn struct {
+type collDetailsOut struct {
 	Key        string                 `json:"key"`
 	Collection *collection.Collection `json:"collection,omitempty"`
 	Requests   request.Summaries      `json:"requests,omitempty"`
 }
 
-type addCollIn struct {
+type addCollOut struct {
 	Collections collection.Summaries `json:"collections"`
 	Active      string               `json:"active"`
 	Requests    request.Summaries    `json:"requests"`
 }
 
-type addURLOut struct {
+type addURLIn struct {
 	Coll string `json:"coll"`
 	URL  string `json:"url"`
 }
 
-type addURLIn struct {
-	Coll *collDetailsIn   `json:"coll"`
+type addURLOut struct {
+	Coll *collDetailsOut  `json:"coll"`
 	Req  *request.Request `json:"req"`
 }
 
@@ -39,29 +39,29 @@ type reqDetailIn struct {
 	Req  *request.Request `json:"req"`
 }
 
-type reqDeleted struct {
+type reqDeletedOut struct {
 	Req      string            `json:"req"`
 	Coll     string            `json:"coll"`
 	Requests request.Summaries `json:"requests"`
 }
 
-type getRequestOut struct {
+type getRequestIn struct {
 	Coll string `json:"coll"`
 	Req  string `json:"req"`
 }
 
-type saveRequestOut struct {
+type saveRequestIn struct {
 	Coll string           `json:"coll"`
 	Orig string           `json:"orig"`
 	Req  *request.Request `json:"req"`
 }
 
-type deleteRequestOut struct {
+type deleteRequestIn struct {
 	Coll string `json:"coll"`
 	Req  string `json:"req"`
 }
 
-type callOut struct {
+type callIn struct {
 	Coll  string             `json:"coll"`
 	Req   string             `json:"req"`
 	Sess  string             `json:"sess"`
@@ -69,14 +69,14 @@ type callOut struct {
 }
 
 // Transform
-type transformOut struct {
+type transformIn struct {
 	Coll  string             `json:"coll"`
 	Req   string             `json:"req"`
 	Fmt   string             `json:"fmt"`
 	Proto *request.Prototype `json:"proto"`
 }
 
-type transformIn struct {
+type transformOut struct {
 	Coll string `json:"coll"`
 	Req  string `json:"req"`
 	Fmt  string `json:"fmt"`

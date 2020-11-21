@@ -64,7 +64,7 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 
 	newColls, _ := svcs.Collection.Counts(&c.Profile.UserID)
 
-	ret := &addCollIn{Collections: newColls, Active: key}
+	ret := &addCollOut{Collections: newColls, Active: key}
 	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionAdded, ret)
 	return s.WriteMessage(c.ID, msg)
 }
@@ -101,7 +101,7 @@ func deleteCollection(s *npnconnection.Service, c *npnconnection.Connection, par
 	return s.WriteMessage(c.ID, msg)
 }
 
-func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (*collDetailsIn, error) {
+func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (*collDetailsOut, error) {
 	svcs := ctx(s)
 	coll, err := svcs.Collection.Load(userID, key)
 	if err != nil {
@@ -114,7 +114,7 @@ func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("error retrieving requests for collection [%v]: %+v", key, err))
 	}
-	cd := &collDetailsIn{Key: key, Collection: coll, Requests: reqs}
+	cd := &collDetailsOut{Key: key, Collection: coll, Requests: reqs}
 	return cd, nil
 }
 

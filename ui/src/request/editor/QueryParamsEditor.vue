@@ -1,5 +1,8 @@
 <template>
-  <ul class="uk-list uk-list-divider">
+  <div v-if="(!qp) || qp.length === 0">
+    No query parameters defined, why not <a href="" @click.prevent="addParam()">add one</a>?
+  </div>
+  <ul v-else class="uk-list uk-list-divider">
     <li>
       <div data-uk-grid="">
         <div class="uk-width-1-4">Name</div>
@@ -32,28 +35,35 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {QueryParam} from "@/request/model";
 import Icon from "@/util/Icon.vue";
+import {requestEditingRef} from "@/request/state";
 
 @Component({ components: {Icon} })
 export default class QueryParamsEditor extends Vue {
-  @Prop() qp: QueryParam[] | undefined;
+  get qp(): QueryParam[] | undefined {
+    return requestEditingRef.value?.prototype.query;
+  }
+
+  set qp(x: QueryParam[] | undefined) {
+    if(requestEditingRef.value) {
+      requestEditingRef.value.prototype.query = x;
+    }
+  }
 
   addParam(): void {
     if(!this.qp) {
       this.qp = [];
     }
-    if(this.qp) {
-      this.qp.push({k: "", v: ""});
-    }
+    this.qp.push({k: "", v: ""});
   }
 
   removeParam(idx: number): void {
     if (this.qp) {
-      this.qp = this.qp.splice(idx, 1);
+      this.qp = this.qp.filter((v, i) => i !== idx);
     }
-    if (this.qp?.length === 0) {
+    if ((!this.qp) || this.qp.length === 0) {
       this.qp = undefined;
     }
   }

@@ -12,7 +12,7 @@ import (
 )
 
 func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
-	p := &addURLOut{}
+	p := &addURLIn{}
 	err := npncore.FromJSONStrict(param, p)
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input from URL")
@@ -43,7 +43,7 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 		return err
 	}
 
-	out := &addURLIn{
+	out := &addURLOut{
 		Coll: coll,
 		Req:  req,
 	}

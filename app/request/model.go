@@ -73,4 +73,24 @@ func (r *Request) Normalize(key string) *Request {
 	return r
 }
 
+func (r *Request) Minify() *Request {
+	if r.Prototype == nil {
+		r.Prototype = NewPrototype()
+	}
+	if len(r.Prototype.Headers) == 0 {
+		r.Prototype.Headers = nil
+	}
+	if len(r.Prototype.Query) == 0 {
+		r.Prototype.Query = nil
+	}
+	if r.Prototype.Body != nil && len(r.Prototype.Body.Type) == 0 {
+		r.Prototype.Body = nil
+	}
+	if r.Prototype.Options != nil && r.Prototype.Options.Empty() {
+		r.Prototype.Options = nil
+	}
+	return r
+}
+
+
 type Requests []*Request

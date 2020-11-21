@@ -56,7 +56,7 @@ export interface NPNRequest {
   readonly key: string;
   readonly title: string;
   readonly description: string;
-  readonly prototype: Prototype;
+  prototype: Prototype;
 }
 
 export function cloneRequest(r: NPNRequest | undefined): NPNRequest | undefined {

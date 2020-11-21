@@ -17,7 +17,7 @@
         </div>
         <div class="mt">
           <label class="uk-form-label">Theme</label>
-          <ColorPicker />
+          <Theme />
         </div>
 
         <div v-if="different" class="mt">
@@ -41,12 +41,12 @@ import {Profile, profileRef, tempThemeRef, UserSettings} from "@/user/profile";
 import Mockup from "@/user/Mockup.vue";
 import {jsonParse, jsonStr} from "@/util/json";
 import {allThemes, ThemeColors} from "@/user/themes";
-import ColorPicker from "@/user/ColorPicker.vue";
+import Theme from "@/user/Theme.vue";
 import {socketRef} from "@/socket/socket";
 import {systemService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 
-@Component({ components: {ColorPicker, Mockup } })
+@Component({ components: {Theme, Mockup } })
 export default class ProfileView extends Vue {
   original: Profile | undefined = jsonParse(jsonStr(profileRef.value))
 

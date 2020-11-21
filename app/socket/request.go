@@ -1,9 +1,8 @@
 package socket
 
 import (
-	"encoding/json"
-
 	"emperror.dev/errors"
+	"encoding/json"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
 )
@@ -38,7 +37,7 @@ func onRunURL(c *npnconnection.Connection, param json.RawMessage, s *npnconnecti
 
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &getRequestOut{}
+	frm := &getRequestIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load getRequest param")
@@ -55,11 +54,12 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 
 func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &saveRequestOut{}
+	frm := &saveRequestIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
+	frm.Req = frm.Req.Minify()
 	err = svc.Request.SaveRequest(&c.Profile.UserID, frm.Coll, frm.Orig, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't save request")
@@ -71,7 +71,7 @@ func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npncon
 
 func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &deleteRequestOut{}
+	frm := &deleteRequestIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
@@ -86,14 +86,14 @@ func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnc
 		return errors.Wrap(err, "can't list requests")
 	}
 
-	ret := &reqDeleted{Coll: frm.Coll, Req: frm.Req, Requests: summaries}
+	ret := &reqDeletedOut{Coll: frm.Coll, Req: frm.Req, Requests: summaries}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDeleted, ret)
 	return s.WriteMessage(c.ID, msg)
 }
 
 func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
-	frm := &callOut{}
+	frm := &callIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load request call param")

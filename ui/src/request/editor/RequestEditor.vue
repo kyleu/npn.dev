@@ -12,9 +12,9 @@
         </ul>
         <ul class="uk-switcher uk-margin">
           <li><RequestEditorDetails :req="req" /></li>
-          <li><QueryParamsEditor :qp="req.prototype.query" /></li>
+          <li><QueryParamsEditor /></li>
           <li><AuthEditor :auth="req.prototype.auth" /></li>
-          <li><HeadersEditor :headers="req.prototype.headers" /></li>
+          <li><HeadersEditor /></li>
           <li><BodyEditor :body="req.prototype.body" /></li>
           <li><OptionsEditor :opts="req.prototype.options" /></li>
         </ul>

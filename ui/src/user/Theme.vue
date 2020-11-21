@@ -15,11 +15,11 @@
     <div class="theme-section left uk-text-center">
       <div>Nav</div>
       <div class="left">
-        <v-swatches v-model="settings.navB" swatches="text-advanced" show-fallback></v-swatches>
+        <input v-model="settings.navB" class="color-input" type="color" />
         <div @click="swap('navB')">BG</div>
       </div>
       <div class="left">
-        <v-swatches v-model="settings.navF" swatches="text-advanced" show-fallback></v-swatches>
+        <input v-model="settings.navF" class="color-input" type="color" />
         <div @click="swap('navF')">FG</div>
       </div>
     </div>
@@ -27,15 +27,15 @@
     <div class="theme-section left uk-text-center">
       <div>Menu</div>
       <div class="left">
-        <v-swatches v-model="settings.menuB" swatches="text-advanced" show-fallback></v-swatches>
+        <input v-model="settings.menuB" class="color-input" type="color" />
         <div @click="swap('menuB')">BG</div>
       </div>
       <div class="left">
-        <v-swatches v-model="settings.menuF" swatches="text-advanced" show-fallback></v-swatches>
+        <input v-model="settings.menuF" class="color-input" type="color" />
         <div @click="swap('menuF')">FG</div>
       </div>
       <div class="left">
-        <v-swatches v-model="settings.menuL" swatches="text-advanced" show-fallback></v-swatches>
+        <input v-model="settings.menuL" class="color-input" type="color" />
         <div @click="swap('menuL')">Link</div>
       </div>
     </div>
@@ -43,11 +43,11 @@
     <div class="theme-section left uk-text-center">
       <div>Body</div>
       <div class="left">
-        <v-swatches v-model="settings.bodyB" swatches="text-advanced" show-fallback></v-swatches>
+        <input v-model="settings.bodyB" class="color-input" type="color" />
         <div @click="swap('bodyB')">BG</div>
       </div>
       <div class="left">
-        <v-swatches v-model="settings.bodyL" swatches="text-advanced" show-fallback></v-swatches>
+        <input v-model="settings.bodyL" class="color-input" type="color" />
         <div @click="swap('bodyL')">Link</div>
       </div>
     </div>
@@ -65,13 +65,12 @@ import {profileRef, tempThemeRef, UserSettings} from "@/user/profile";
 
 // @ts-ignore
 // eslint-disable-next-line
-import VSwatches from 'vue-swatches'
 import {socketRef} from "@/socket/socket";
 import {systemService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 
-@Component({ components: { VSwatches } })
-export default class ColorPicker extends Vue {
+@Component
+export default class Theme extends Vue {
   src = ""
 
   get tempTheme(): string {

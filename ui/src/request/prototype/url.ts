@@ -61,10 +61,18 @@ export function prototypeToURLParts(p: Prototype): Part[] {
     push("", "/");
     push("path", p.path);
   }
-  if (p.query && p.query.length > 0) {
-    push("", "?");
-    const query = p.query.map(k => encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v)).join('&');
-    push("query", query);
+  if (p.query) {
+    const qp = p.query.filter(x => x.k.trim().length > 0);
+    if (qp.length > 0) {
+      push("", "?");
+      const query = qp.map(k => {
+        if (k.v.length > 0) {
+          return encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v)
+        }
+        return encodeURIComponent(k.k)
+      }).join('&');
+      push("query", query);
+    }
   }
   if (p.fragment && p.fragment.length > 0) {
     push("", "#");

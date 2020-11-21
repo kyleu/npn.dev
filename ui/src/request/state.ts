@@ -41,7 +41,24 @@ export function setActiveRequest(coll: string, req: string): void {
   }
 }
 
+function filterRequest(r: NPNRequest): NPNRequest {
+  if (!r.prototype) {
+    r.prototype = {domain: "", method: "", protocol: ""}
+  }
+  if(!r.prototype.query) {
+    r.prototype.query = [];
+  }
+  if(!r.prototype.headers) {
+    r.prototype.headers = [];
+  }
+  if(!r.prototype.body) {
+    r.prototype.body = {type: "", config: {}};
+  }
+  return r
+}
+
 export function setRequestDetail(coll: string, req: NPNRequest): void {
+  req = filterRequest(req);
   clearPendingRequest(pendingRequestsRef, "request", coll + "::" + req)
   const rs = getCollectionRequestDetails(coll) || []
   let matched = false;
@@ -54,7 +71,8 @@ export function setRequestDetail(coll: string, req: NPNRequest): void {
   if (!matched) {
     rs.push(req);
   }
-  setCollectionRequestDetails(coll, rs);
+
+  setCollectionRequestDetails(coll, rs.map(filterRequest));
 
   if (activeRequestRef.value && req.key === activeRequestRef.value.req && coll === activeRequestRef.value.coll) {
     requestOriginalRef.value = req;

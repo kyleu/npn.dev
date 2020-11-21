@@ -11,7 +11,7 @@ import (
 )
 
 func onTransform(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	frm := &transformOut{}
+	frm := &transformIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load request transform param")
@@ -27,7 +27,7 @@ func onTransform(c *npnconnection.Connection, param json.RawMessage, s *npnconne
 		return errors.Wrap(err, "can't load transform request")
 	}
 
-	txr := transformIn{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
+	txr := transformOut{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageTransformResult, txr)
 	return s.WriteMessage(c.ID, msg)
 }

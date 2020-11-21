@@ -1,5 +1,8 @@
 <template>
-  <ul class="uk-list uk-list-divider">
+  <div v-if="(!headers) || headers.length === 0">
+    No headers defined, why not <a href="" @click.prevent="addHeader()">add one</a>?
+  </div>
+  <ul v-else class="uk-list uk-list-divider">
     <li>
       <div data-uk-grid="">
         <div class="uk-width-1-4">Name</div>
@@ -12,7 +15,7 @@
         </div>
       </div>
     </li>
-    <li v-for="(h, idx) of headers" :key="idx">
+    <li v-for="(h, idx) of headers" :key="h.k + h.v + idx">
       <div data-uk-grid="">
         <div class="uk-width-1-4">
           <input v-model="h.k" class="uk-input" type="text" />
@@ -32,13 +35,22 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {Header} from "@/header/model";
 import Icon from "@/util/Icon.vue";
+import {requestEditingRef} from "@/request/state";
 
 @Component({ components: {Icon} })
 export default class HeadersEditor extends Vue {
-  @Prop() headers: Header[] | undefined;
+  get headers(): Header[] | undefined {
+    return requestEditingRef.value?.prototype.headers;
+  }
+
+  set headers(x: Header[] | undefined) {
+    if(requestEditingRef.value) {
+      requestEditingRef.value.prototype.headers = x;
+    }
+  }
 
   addHeader(): void {
     if(!this.headers) {
@@ -49,9 +61,9 @@ export default class HeadersEditor extends Vue {
 
   removeHeader(idx: number): void {
     if (this.headers) {
-      this.headers = this.headers.splice(idx, 1);
+      this.headers = this.headers.filter((v, i) => i !== idx);
     }
-    if (this.headers?.length === 0) {
+    if ((!this.headers) || this.headers.length === 0) {
       this.headers = undefined;
     }
   }
