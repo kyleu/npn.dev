@@ -3,6 +3,7 @@ package socket
 import (
 	"encoding/json"
 	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/session"
 
 	"github.com/kyleu/npn/npnservice/user"
 
@@ -17,14 +18,16 @@ import (
 
 type services struct {
 	User       user.Service
+	Session    *session.Service
 	Collection *collection.Service
 	Request    *request.Service
 	Caller     *call.Service
 }
 
-func NewService(userSvc user.Service, collectionSvc *collection.Service, requestSvc *request.Service, callSvc *call.Service, logger logur.Logger) *npnconnection.Service {
+func NewService(userSvc user.Service, sessSvc *session.Service, collectionSvc *collection.Service, requestSvc *request.Service, callSvc *call.Service, logger logur.Logger) *npnconnection.Service {
 	ctx := &services{
 		User:       userSvc,
+		Session:    sessSvc,
 		Collection: collectionSvc,
 		Request:    requestSvc,
 		Caller:     callSvc,

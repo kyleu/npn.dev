@@ -27,10 +27,10 @@ func Decode(r *http.Request, tgt interface{}, logger logur.Logger) error {
 		msg := fmt.Sprintf("parsed [%T] form with unused keys [%v]", tgt, strings.Join(md.Unused, ", "))
 		logger.Warn(msg)
 		bytes, _ := json.Marshal(tgt)
-		if logger != nil {
-			logger.Warn(string(bytes))
-		} else {
+		if logger == nil {
 			fmt.Println(string(bytes))
+		} else {
+			logger.Warn(string(bytes))
 		}
 	}
 	return nil

@@ -5,6 +5,7 @@ import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/imprt"
 	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/session"
 	"github.com/kyleu/npn/app/socket"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
@@ -24,6 +25,7 @@ type Service struct {
 	user       user.Service
 	auth       auth.Service
 	logger     logur.Logger
+	Session    *session.Service
 	Collection *collection.Service
 	Import     *imprt.Service
 	Caller     *call.Service
@@ -34,6 +36,7 @@ var _ npnweb.AppInfo = (*Service)(nil)
 
 func NewService(debug bool, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
+	sessSvc := session.NewService(files, logger)
 	collSvc := collection.NewService(files, logger)
 	reqSvc := request.NewService(files, logger)
 	callSvc := call.NewService(logger)
@@ -44,10 +47,11 @@ func NewService(debug bool, files npncore.FileLoader, redir string, logger logur
 		user:       us,
 		auth:       authfs.NewServiceFS(multiuser, redir, files, logger, us),
 		logger:     logger,
+		Session:    sessSvc,
 		Collection: collSvc,
 		Import:     imprt.NewService(files, logger),
 		Caller:     callSvc,
-		Socket:     socket.NewService(us, collSvc, reqSvc, callSvc, logger),
+		Socket:     socket.NewService(us, sessSvc, collSvc, reqSvc, callSvc, logger),
 	}
 }
 

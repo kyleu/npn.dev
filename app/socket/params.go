@@ -64,6 +64,7 @@ type deleteRequestOut struct {
 type callOut struct {
 	Coll  string             `json:"coll"`
 	Req   string             `json:"req"`
+	Sess  string             `json:"sess"`
 	Proto *request.Prototype `json:"proto"`
 }
 

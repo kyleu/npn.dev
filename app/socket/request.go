@@ -99,8 +99,10 @@ func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection
 		return errors.Wrap(err, "can't load request call param")
 	}
 
+	sess, err := getContext(s).Session.Get(c.Profile.UserID, frm.Sess)
+
 	go func() {
-		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto)
+		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto, sess)
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
 		_ = s.WriteMessage(c.ID, msg)
 	}()

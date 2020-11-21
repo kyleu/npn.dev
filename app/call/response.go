@@ -21,6 +21,7 @@ type Response struct {
 	ProtoMajor       int            `json:"protoMajor,omitempty"`
 	ProtoMinor       int            `json:"protoMinor,omitempty"`
 	Headers          header.Headers `json:"headers,omitempty"`
+	Cookies          header.Cookies `json:"cookies,omitempty"`
 	ContentLength    int64          `json:"contentLength,omitempty"`
 	ContentType      string         `json:"contentType,omitempty"`
 	Charset          string         `json:"charset,omitempty"`
@@ -41,6 +42,9 @@ func ResponseFromHTTP(p *request.Prototype, r *http.Response, timing *Timing) *R
 		}
 	}
 	headers.Sort()
+
+	cookies := header.ParseCookies(r.Cookies())
+
 	ct, charset := parseCT(headers.GetValue("Content-Type"))
 	ce := headers.GetValue("Content-Encoding")
 	bod, err := body.Parse(ce, ct, charset, r.ContentLength, r.Body)
@@ -62,6 +66,7 @@ func ResponseFromHTTP(p *request.Prototype, r *http.Response, timing *Timing) *R
 		ProtoMajor:       r.ProtoMajor,
 		ProtoMinor:       r.ProtoMinor,
 		Headers:          headers,
+		Cookies:          cookies,
 		ContentLength:    r.ContentLength,
 		ContentType:      ct,
 		Charset:          charset,
