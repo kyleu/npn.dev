@@ -6,7 +6,6 @@ import UIkit from "uikit";
 import "@/assets/styles/styles.scss";
 
 // @ts-ignore
-import Icons from "uikit/dist/js/uikit-icons";
 import {messageHandler} from "@/state/handler";
 
 import Vue from "vue";
@@ -23,9 +22,6 @@ declare global {
 }
 
 function init(): void {
-  // @ts-ignore
-  // eslint-disable-next-line
-  UIkit.use(Icons);
   window.UIkit = UIkit;
 
   window.Prism = window.Prism || {};

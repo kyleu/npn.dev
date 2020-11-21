@@ -10,12 +10,12 @@ function nch(key: string, description: string, req: boolean, rsp: boolean, link:
   return {"key": key, "description": description, "req": req, "rsp": rsp, "link": link};
 }
 
-function snch(key: string, description: string, req: boolean, rsp: boolean): CommonHeader {
-  return nch(key, description, req, rsp, mdnLink(key))
+function mdnLink(s: string): string {
+  return "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/" + s;
 }
 
-function mdnLink(s: string) {
-  return "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/" + s;
+function snch(key: string, description: string, req: boolean, rsp: boolean): CommonHeader {
+  return nch(key, description, req, rsp, mdnLink(key))
 }
 
 export const commonHeaders: CommonHeader[] = [
@@ -44,7 +44,7 @@ export const commonHeaders: CommonHeader[] = [
 
 let commonHeadersByName: Map<string, CommonHeader>
 
-export function getCommonHeaderByName(key: string) {
+export function getCommonHeaderByName(key: string): CommonHeader | undefined {
   if(!commonHeadersByName) {
     commonHeadersByName = new Map<string, CommonHeader>();
     for (const ch of commonHeaders) {
@@ -54,8 +54,8 @@ export function getCommonHeaderByName(key: string) {
   return commonHeadersByName.get(key);
 }
 
-export function dumpCommonHeaders() {
-  const dump = (title: string, req: boolean, rsp: boolean) => {
+export function dumpCommonHeaders(): void {
+  const dump = (title: string, req: boolean, rsp: boolean): void => {
     let matched = false;
     console.debug("\n::: " + title + " Headers");
     commonHeaders.forEach(ch => {

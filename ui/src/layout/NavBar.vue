@@ -6,11 +6,11 @@
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
             <li class="uk-margin-small-right">
-              <router-link v-if="profile.picture.length === 0 || profile.picture === 'none'" to="/u" data-uk-icon="icon:user" title="Profile"></router-link>
+              <router-link v-if="(!profile.picture) || profile.picture.length === 0 || profile.picture === 'none'" v-style-nav-link to="/u" title="Profile"><Icon icon="user" /></router-link>
               <router-link v-else to="/u" title="Profile"><img class="uk-border-circle" alt="user profile" :src="profile.picture" /></router-link>
             </li>
           </ul>
-          <a v-style-nav-link href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a>
+          <a v-style-nav-link href="" data-uk-toggle="target: #nav-offcanvas;" class="uk-hidden@m uk-margin-right"><Icon icon="toggle" /></a>
         </div>
       </nav>
     </div>
@@ -21,8 +21,9 @@
 import { Component, Vue } from "vue-property-decorator";
 import Breadcrumbs from "@/layout/Breadcrumbs.vue";
 import {Profile, profileRef} from "@/user/profile";
+import Icon from "@/util/Icon.vue";
 
-@Component({ components: { Breadcrumbs } })
+@Component({ components: {Icon, Breadcrumbs } })
 export default class NavBar extends Vue {
   get profile(): Profile | undefined {
     return profileRef.value;

@@ -230,6 +230,11 @@ fieldset[disabled] .vue-swatches {
   display: table
 }
 
+.vue-swatches__swatch {
+  margin-right: 0 !important;
+  margin-bottom: 0 !important;
+}
+
 .vue-swatches__fallback__input--wrapper {
   display: table-cell;
   padding-right: 10px;

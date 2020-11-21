@@ -5,6 +5,8 @@ declare global {
     interface Element extends VNode {}
     interface ElementClass extends Vue {}
     interface IntrinsicElements {
+      // @ts-ignore
+      // eslint-disable-next-line
       [elem: string]: any;
     }
   }

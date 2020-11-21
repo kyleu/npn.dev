@@ -2,9 +2,9 @@
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <div class="right"><router-link class="uk-icon" data-uk-icon="close" :to="'/c/' + this.$route.params.coll"></router-link></div>
+        <div class="right"><router-link :to="'/c/' + this.$route.params.coll"><Icon icon="close" /></router-link></div>
         <h3 class="uk-card-title">
-          <span class="nav-icon-h3 uk-icon" data-uk-icon="icon: link"></span>
+          <Icon class="nav-icon-h3" icon="link" />
           <span>{{ req ? (req.title || req.key) : $route.params.req }}</span>
         </h3>
         <div v-if="req">
@@ -34,8 +34,9 @@ import {callResultRef, requestEditingRef, requestOriginalRef, setActiveRequest} 
 import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
+import Icon from "@/util/Icon.vue";
 
-@Component({ components: {ExportActions, RequestEditor, URLEditor } })
+@Component({ components: {Icon, ExportActions, RequestEditor, URLEditor } })
 export default class RequestDetail extends Vue {
   get req(): NPNRequest | undefined {
     setActiveRequest(this.$route.params.coll, this.$route.params.req);

@@ -6,7 +6,7 @@
 
         <div class="mt">
           <div class="uk-inline" style="width: 100%;">
-            <a class="uk-form-icon uk-form-icon-flip" title="Test a URL" data-uk-icon="icon: plus" href="" @click.prevent="runRequest()" />
+            <a class="uk-form-icon uk-form-icon-flip" title="Test a URL" href="" @click.prevent="runRequest()"><Icon icon="play" /></a>
             <form @submit.prevent="runRequest()">
               <input id="home-add-input" class="uk-input" type="text" placeholder="Test a URL" data-lpignore="true" />
             </form>
@@ -28,8 +28,9 @@ import {setBC} from "@/util/vutils";
 import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
+import Icon from "@/util/Icon.vue";
 
-@Component({ components: { CollectionGallery } })
+@Component({ components: {Icon, CollectionGallery } })
 export default class Home extends Vue {
   runRequest(): void {
     const el = document.getElementById("home-add-input") as HTMLInputElement;

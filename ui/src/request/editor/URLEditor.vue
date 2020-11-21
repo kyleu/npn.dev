@@ -6,13 +6,13 @@
       </select>
     </div>
     <div v-if="!editing" class="url-view uk-inline right" style="width:calc(100% - 120px);">
-      <button class="uk-form-icon uk-form-icon-flip" title="send request" data-uk-icon="icon: play" style="padding-top: 4px;" @click="doCall()"></button>
+      <a class="uk-form-icon uk-form-icon-flip" title="send request" style="padding-top: 4px;" @click.prevent="doCall()"><Icon icon="play" /></a>
       <div @click="editing = true">
         <span class="url-link"><span v-for="part in protoParts" :key="part.idx" :style="{color: part.color}" :title="part.t">{{ part.v }}</span> </span>
       </div>
     </div>
     <div v-if="editing" class="url-input uk-inline right" style="width:calc(100% - 120px);">
-      <a class="uk-form-icon uk-form-icon-flip" title="cancel edit" data-uk-icon="icon: close" href="" @click.prevent="editing = false" />
+      <a class="uk-form-icon uk-form-icon-flip" title="cancel edit" href="" @click.prevent="editing = false"><Icon icon="close" /></a>
       <form @submit.prevent="doCall()">
         <input id="url-input-el" v-model="protoString" class="uk-input" name="url" type="text" data-lpignore="true" @blur="editing = false" />
       </form>
@@ -26,8 +26,9 @@ import {allMethods, Method, NPNRequest} from "@/request/model";
 import {Part, prototypeToURL, prototypeToURLParts} from "@/request/prototype/url";
 import {prototypeFromURL} from "@/request/prototype/prototype";
 import {callResultRef, requestEditingRef} from "@/request/state";
+import Icon from "@/util/Icon.vue";
 
-@Component
+@Component({ components: {Icon} })
 export default class URLEditor extends Vue {
   private e = false
 

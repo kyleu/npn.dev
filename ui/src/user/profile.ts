@@ -45,21 +45,21 @@ watchEffect(() => {
     }
 
     if (!stylesheet) {
+      console.log(document.styleSheets);
       stylesheet = document.styleSheets[0];
       stylesheet.addRule("a[href]", "");
       stylesheet.addRule("body", "");
       stylesheet.addRule(".uk-tab > .uk-active > a", "")
     }
 
-    const ss = stylesheet;
 
-    const rules = ss.cssRules || ss.rules;
-    ss.removeRule(rules.length - 1);
-    ss.removeRule(rules.length - 1);
-    ss.removeRule(rules.length - 1);
+    const rules = stylesheet.cssRules || stylesheet.rules;
+    stylesheet.removeRule(rules.length - 1);
+    stylesheet.removeRule(rules.length - 1);
+    stylesheet.removeRule(rules.length - 1);
 
-    ss.addRule("a[href]", `color: ${s.bodyL}`, rules.length);
-    ss.addRule("body", `background-color: ${s.bodyB} !important;`, rules.length);
-    ss.addRule(".uk-tab > .uk-active > a", `border-color: ${s.bodyL} !important; border-width: 2px;`, rules.length)
+    stylesheet.addRule("a[href]", `color: ${s.bodyL}`, rules.length);
+    stylesheet.addRule("body", `background-color: ${s.bodyB} !important;`, rules.length);
+    stylesheet.addRule(".uk-tab > .uk-active > a", `border-color: ${s.bodyL} !important; border-width: 2px;`, rules.length)
   }
 })

@@ -6,9 +6,7 @@
         <div class="uk-width-1-4">Value</div>
         <div class="uk-width-1-2">
           <div class="right">
-            <a href="" title="new header" @click.prevent="addHeader()">
-              <span data-uk-icon="icon: plus" />
-            </a>
+            <a href="" title="new header" @click.prevent="addHeader()"><Icon icon="plus" /></a>
           </div>
           Description
         </div>
@@ -24,9 +22,7 @@
         </div>
         <div class="uk-width-1-2">
           <div class="right" style="margin-top: 6px;">
-            <a href="" title="remove param" @click.prevent="removeHeader(idx)">
-              <span data-uk-icon="icon: close" />
-            </a>
+            <a href="" title="remove param" @click.prevent="removeHeader(idx)"><Icon icon="close" /></a>
           </div>
           <input v-model="h.desc" style="width: calc(100% - 36px);" class="uk-input" type="text" />
         </div>
@@ -38,8 +34,9 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {Header} from "@/header/model";
+import Icon from "@/util/Icon.vue";
 
-@Component
+@Component({ components: {Icon} })
 export default class HeadersEditor extends Vue {
   @Prop() headers: Header[] | undefined;
 

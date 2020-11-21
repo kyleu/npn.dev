@@ -1,7 +1,7 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
     <div class="right">
-      <router-link class="uk-icon" data-uk-icon="close" :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"></router-link>
+      <router-link :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"><Icon icon="close" /></router-link>
     </div>
     <div v-for="(r, idx) in responses" :key="idx">
       <hr v-if="idx > 0" />
@@ -18,6 +18,7 @@ import {CallResult, NPNResponse} from "@/call/model";
 import {getCallResult} from "@/request/state";
 import {Prototype} from "@/request/model";
 import ResponsePanel from "@/call/ResponsePanel.vue";
+import Icon from "@/util/Icon.vue";
 
 interface CallParam {
   coll: string;
@@ -25,7 +26,7 @@ interface CallParam {
   proto: Prototype;
 }
 
-@Component({ components: { ResponsePanel } })
+@Component({ components: {Icon, ResponsePanel } })
 export default class CallResultView extends Vue {
   private pending: CallParam | undefined;
 

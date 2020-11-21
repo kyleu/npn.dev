@@ -6,9 +6,7 @@
         <div class="uk-width-1-4">Value</div>
         <div class="uk-width-1-2">
           <div class="right">
-            <a href="" title="new param" @click.prevent="addParam()">
-              <span data-uk-icon="icon: plus" />
-            </a>
+            <a href="" title="new param" @click.prevent="addParam()"><Icon icon="plus" /></a>
           </div>
           Description
         </div>
@@ -24,9 +22,7 @@
         </div>
         <div class="uk-width-1-2">
           <div class="right" style="margin-top: 6px;">
-            <a href="" title="remove param" @click.prevent="removeParam(idx)">
-              <span data-uk-icon="icon: close" />
-            </a>
+            <a href="" title="remove param" @click.prevent="removeParam(idx)"><Icon icon="close" /></a>
           </div>
           <input v-model="p.desc" style="width: calc(100% - 36px);" class="uk-input" type="text" />
         </div>
@@ -38,8 +34,9 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {QueryParam} from "@/request/model";
+import Icon from "@/util/Icon.vue";
 
-@Component
+@Component({ components: {Icon} })
 export default class QueryParamsEditor extends Vue {
   @Prop() qp: QueryParam[] | undefined;
 

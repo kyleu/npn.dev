@@ -1,5 +1,7 @@
 export interface Auth {
   readonly type: string;
+  // @ts-ignore
+  // eslint-disable-next-line
   readonly config: any;
 }
 

@@ -29,10 +29,10 @@ export function req<T extends HTMLElement>(selector: string, context?: HTMLEleme
   if (!res) {
     console.warn(`no element found for selector [${selector}]`);
   }
-  return res!;
+  return res as T;
 }
 
-export function setHTML(el: string | HTMLElement, html: string) {
+export function setHTML(el: string | HTMLElement, html: string): string | HTMLElement {
   if (typeof el === "string") {
     el = req(el);
   }
@@ -40,7 +40,7 @@ export function setHTML(el: string | HTMLElement, html: string) {
   return el;
 }
 
-export function setDisplay(el: string | HTMLElement, condition: boolean, v: string = "block") {
+export function setDisplay(el: string | HTMLElement, condition: boolean, v = "block"): string | HTMLElement {
   if (typeof el === "string") {
     el = req(el);
   }
@@ -57,6 +57,6 @@ export function setText(el: string | HTMLElement, text: string): HTMLElement {
   return el;
 }
 
-export function clear(el: string | HTMLElement) {
+export function clear(el: string | HTMLElement): string | HTMLElement {
   return setHTML(el, "");
 }

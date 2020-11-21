@@ -9,12 +9,12 @@
       <div class="nav-list">
         <div class="nav-link">
           <a v-style-menu-link href="" onclick="npn.debug();return false">
-            <span class="uk-icon nav-icon" data-uk-icon="icon: code"></span> Debug
+            <Icon icon="code" /> Debug
           </a>
         </div>
         <div class="nav-link">
           <router-link v-style-menu-link to="/about">
-            <span class="uk-icon nav-icon" data-uk-icon="icon: question"></span> About
+            <Icon icon="question" /> About
           </router-link>
         </div>
       </div>
@@ -25,7 +25,8 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import CollectionList from "@/collection/CollectionList.vue";
+import Icon from "@/util/Icon.vue";
 
-@Component({ components: { CollectionList } })
+@Component({ components: {Icon, CollectionList } })
 export default class LeftNav extends Vue {}
 </script>

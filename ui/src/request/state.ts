@@ -6,7 +6,7 @@ import {ref} from "@vue/composition-api";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
-import {getCollectionRequestDetails, setCollectionRequestDetails} from "@/collection/state";
+import {getCollectionRequestDetails, getCollectionRequestSummaries, setCollectionRequestDetails} from "@/collection/state";
 
 export interface ActiveRequest {
   readonly coll: string;
@@ -32,8 +32,12 @@ export function setActiveRequest(coll: string, req: string): void {
     }
   }
 
-  if (req && socketRef.value && setPendingRequest(pendingRequestsRef, "request", coll + "::" + req)) {
-    socketRef.value.send({svc: requestService.key, cmd: clientCommands.getRequest, param: activeRequestRef.value});
+  getCollectionRequestSummaries(coll);
+
+  if (req && socketRef.value) {
+    if (setPendingRequest(pendingRequestsRef, "request", coll + "::" + req)) {
+      socketRef.value.send({svc: requestService.key, cmd: clientCommands.getRequest, param: activeRequestRef.value});
+    }
   }
 }
 

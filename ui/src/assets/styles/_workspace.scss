@@ -89,6 +89,13 @@
   margin-bottom: 0;
 }
 
+.nav-request-link {
+  margin-left: 12px;
+  a.router-link-active {
+    font-weight: bold;
+  }
+}
+
 .left-nav {
   margin-top: 24px;
 }

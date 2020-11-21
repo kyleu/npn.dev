@@ -4,7 +4,7 @@
 
     <div class="mt">
       <div class="uk-inline" style="width: 100%;">
-        <a class="uk-form-icon uk-form-icon-flip" title="add request" data-uk-icon="icon: plus" href="" @click.prevent="addRequest()" />
+        <a class="uk-form-icon uk-form-icon-flip" title="add request" href="" @click.prevent="addRequest()"><Icon icon="plus" /></a>
         <form @submit.prevent="addRequest()">
           <input id="req-add-input" class="uk-input" type="text" placeholder="Add URL" data-lpignore="true" />
         </form>
@@ -29,10 +29,9 @@ import RequestSummaryListItem from "@/request/RequestSummaryListItem.vue";
 import {socketRef} from "@/socket/socket";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
+import Icon from "@/util/Icon.vue";
 
-@Component({
-  components: {RequestSummaryListItem}
-})
+@Component({ components: {Icon, RequestSummaryListItem} })
 export default class RequestSummaryList extends Vue {
   @Prop() coll!: string;
   @Prop() requests!: Summary[];

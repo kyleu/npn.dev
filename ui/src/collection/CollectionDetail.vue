@@ -2,9 +2,9 @@
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <div class="right"><router-link class="uk-icon" data-uk-icon="close" to="/c"></router-link></div>
+        <div class="right"><router-link to="/c"><Icon icon="close" /></router-link></div>
         <h3 class="uk-card-title">
-          <span class="nav-icon-h3 uk-icon" data-uk-icon="icon: album"></span>
+          <Icon class="nav-icon-h3" icon="album" />
           {{ coll ? coll.title : $route.params.coll }}
         </h3>
         <p v-if="coll && coll.description && showEditor.length === 0">{{ coll.description }}</p>
@@ -54,8 +54,9 @@ import {socketRef} from "@/socket/socket";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {jsonParse, jsonStr} from "@/util/json";
+import Icon from "@/util/Icon.vue";
 
-@Component({ components: { RequestSummaryList } })
+@Component({ components: {Icon, RequestSummaryList } })
 export default class CollectionDetail extends Vue {
   showEditor = "";
 

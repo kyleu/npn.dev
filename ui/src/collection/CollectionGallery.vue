@@ -2,7 +2,7 @@
   <div>
     <div class="mt">
       <div class="uk-inline" style="width: 100%;">
-        <a class="uk-form-icon uk-form-icon-flip" title="add collection" data-uk-icon="icon: plus" href="" @click.prevent="addCollection()" />
+        <a class="uk-form-icon uk-form-icon-flip" title="add collection" href="" @click.prevent="addCollection()"><Icon icon="plus" /></a>
         <form @submit.prevent="addCollection()">
           <input id="coll-add-input" class="uk-input" type="text" placeholder="Add collection" data-lpignore="true" />
         </form>
@@ -24,8 +24,9 @@ import {collectionsRef} from "@/collection/state";
 import {socketRef} from "@/socket/socket";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
+import Icon from "@/util/Icon.vue";
 
-@Component({ components: { CollectionGalleryItem } })
+@Component({ components: {Icon, CollectionGalleryItem } })
 export default class CollectionGallery extends Vue {
   get collections(): CollectionCount[] {
     return collectionsRef.value
