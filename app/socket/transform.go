@@ -2,7 +2,6 @@ package socket
 
 import (
 	"encoding/json"
-
 	"github.com/kyleu/npn/app/transform"
 
 	"emperror.dev/errors"
@@ -22,7 +21,12 @@ func onTransform(c *npnconnection.Connection, param json.RawMessage, s *npnconne
 		return errors.New("can't load transformer [" + frm.Fmt + "]")
 	}
 
-	rsp, err := tx.Transform(frm.Proto)
+	sess, err := getContext(s).Session.Load(&c.Profile.UserID, frm.Sess)
+	if err != nil {
+		return errors.Wrap(err, "can't load request transform session")
+	}
+
+	rsp, err := tx.Transform(frm.Proto, sess)
 	if err != nil {
 		return errors.Wrap(err, "can't load transform request")
 	}

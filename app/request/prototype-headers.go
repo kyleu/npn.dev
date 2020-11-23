@@ -2,6 +2,7 @@ package request
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/session"
 	"strconv"
 	"strings"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/kyleu/npn/app/header"
 )
 
-func (p *Prototype) FinalHeaders() header.Headers {
+func (p *Prototype) FinalHeaders(sess *session.Session) header.Headers {
 	ret := p.Headers.Clone()
 
 	var check = func(k string, f func() string) {

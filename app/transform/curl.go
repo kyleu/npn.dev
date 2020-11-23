@@ -2,6 +2,7 @@ package transform
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/session"
 	"strings"
 
 	"github.com/kyleu/npn/app/request"
@@ -18,7 +19,7 @@ func (c *CURL) Key() string {
 	return "curl"
 }
 
-func (c *CURL) Transform(p *request.Prototype) (*Result, error) {
+func (c *CURL) Transform(p *request.Prototype, sess *session.Session) (*Result, error) {
 	out := []string{"curl"}
 
 	var app = func(s string) {

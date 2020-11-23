@@ -34,10 +34,10 @@ func (u *UserSettings) ModeCSS() string {
 var DefaultSettings = &UserSettings{
 	Mode:  "light",
 	NavB:  "#193441",
-	NavF:  "#fff",
+	NavF:  "#dddddd",
 	MenuB: "#3e606f",
-	MenuF: "#fff",
-	MenuL: "#ccc",
+	MenuF: "#ffffff",
+	MenuL: "#cccccc",
 	BodyB: "#fcfff5",
 	BodyL: "#444",
 }

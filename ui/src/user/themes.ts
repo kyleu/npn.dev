@@ -14,8 +14,18 @@ export interface ThemeColors {
   readonly bodyL: Color;
 }
 
-const Default = { key: "Default", mode: "light", navB: "#193441", navF: "#fff", menuB: "#3e606f", menuF: "#ccc", menuL: "#91aa9d", bodyB: "#fcfff5", bodyL: "#193441"  };
-const Darkfault = { key: "Darkfault", mode: "dark", navB: "#193441", navF: "#fff", menuB: "#3e606f", menuF: "#ccc", menuL: "#91aa9d", bodyB: "#000", bodyL: "#193441" };
+const Default = { key: "Default", mode: "light", navB: "#193441", navF: "#dddddd", menuB: "#3e606f", menuF: "#cccccc", menuL: "#91aa9d", bodyB: "#fcfff5", bodyL: "#193441"  };
+const Darkfault = {
+  key: "Darkfault",
+  mode: "dark",
+  bodyB: "#000",
+  bodyL: "#749eb1",
+  navB: "#193441",
+  navF: "#dddddd",
+  menuB: "#3e606f",
+  menuF: "#cccccc",
+  menuL: "#91aa9d"
+};
 
 const AfternoonChai = { key: "AfternoonChai", mode: "light", navB: "#fff6c5", navF: "#695d46", menuB: "#a1e8d9", menuF: "#ff712c", menuL: "#695d46", bodyB: "#cfc291", bodyL: "#695d46" };
 const AspirinC = { key: "AspirinC", mode: "light", navB: "#1695a3", navF: "#eb7f00", menuB: "#acf0f2", menuF: "#f3ffe2", menuL: "#eb7f00", bodyB: "#225378", bodyL: "#eb7f00" };

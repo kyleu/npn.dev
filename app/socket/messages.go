@@ -21,6 +21,9 @@ const (
 )
 
 const (
+	// Session
+	ServerMessageSessions = "sessions"
+
 	// Collection
 	ServerMessageCollections        = "collections"
 	ServerMessageCollectionDetail   = "collectionDetail"

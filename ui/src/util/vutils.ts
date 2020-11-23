@@ -14,6 +14,7 @@ Vue.directive("style-menu-link", function (el) {
 });
 
 Vue.directive("style-menu-section", function (el) {
+  el.classList.add("nav-header");
   el.style.color = profileRef.value?.settings.menuF || "";
   el.style.borderBottom = "1px solid " + profileRef.value?.settings.menuF || "";
 });

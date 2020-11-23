@@ -10,6 +10,8 @@ import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import RequestTransform from "@/request/transform/RequestTransform.vue";
 import {callResultRef, transformResultRef} from "@/request/state";
+import SessionIndex from "@/session/SessionIndex.vue";
+import SessionDetail from "@/session/SessionDetail.vue";
 
 const routes: Array<RouteConfig> = [
   {
@@ -21,6 +23,16 @@ const routes: Array<RouteConfig> = [
     path: "/u",
     name: "Profile",
     component: ProfileView
+  },
+  {
+    path: "/s",
+    name: "SessionIndex",
+    component: SessionIndex,
+  },
+  {
+    path: "/s/:sess",
+    name: "SessionDetail",
+    component: SessionDetail
   },
   {
     path: "/c",

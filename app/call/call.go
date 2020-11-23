@@ -12,7 +12,7 @@ import (
 )
 
 func call(coll string, req string, client *http.Client, p *request.Prototype, prior *Response, sess *session.Session, logger logur.Logger) *Result {
-	httpReq := p.ToHTTP()
+	httpReq := p.ToHTTP(sess)
 	timing := &Timing{}
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
 	url := httpReq.URL.String()
@@ -32,7 +32,7 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 
 	var rsp *Response
 	if hr != nil {
-		rsp = ResponseFromHTTP(p, hr, timing)
+		rsp = ResponseFromHTTP(p, hr, sess, timing)
 		rsp.Prior = prior
 	}
 	if rsp == nil {

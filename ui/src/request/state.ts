@@ -7,6 +7,7 @@ import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
 import {getCollectionRequestDetails, getCollectionRequestSummaries, setCollectionRequestDetails} from "@/collection/state";
+import {sessionsRef} from "@/session/session";
 
 export interface ActiveRequest {
   readonly coll: string;
@@ -103,8 +104,9 @@ export function getTransformResult(coll: string, req: string, fmt: string): Tran
   if (v && v.coll === coll && v.req === req && v.fmt === fmt) {
     return v;
   }
+  const sess = sessionsRef
   if (requestEditingRef.value && socketRef.value && fmt.length > 0 && setPendingRequest(pendingRequestsRef, "transform", `${coll}::${req}::${fmt}`)) {
-    const param = {coll, req, fmt, proto: requestEditingRef.value.prototype};
+    const param = {coll, req, sess, fmt, proto: requestEditingRef.value.prototype};
     socketRef.value.send({svc: requestService.key, cmd: clientCommands.transform, param});
   }
 

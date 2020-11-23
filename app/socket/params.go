@@ -72,6 +72,7 @@ type callIn struct {
 type transformIn struct {
 	Coll  string             `json:"coll"`
 	Req   string             `json:"req"`
+	Sess  string             `json:"sess"`
 	Fmt   string             `json:"fmt"`
 	Proto *request.Prototype `json:"proto"`
 }

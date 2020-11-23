@@ -45,7 +45,6 @@ watchEffect(() => {
     }
 
     if (!stylesheet) {
-      console.log(document.styleSheets);
       stylesheet = document.styleSheets[0];
       stylesheet.addRule("a[href]", "");
       stylesheet.addRule("body", "");

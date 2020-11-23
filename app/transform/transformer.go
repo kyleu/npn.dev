@@ -1,6 +1,9 @@
 package transform
 
-import "github.com/kyleu/npn/app/request"
+import (
+	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/session"
+)
 
 type Result struct {
 	Key string `json:"key"`
@@ -9,7 +12,7 @@ type Result struct {
 
 type Transformer interface {
 	Key() string
-	Transform(p *request.Prototype) (*Result, error)
+	Transform(p *request.Prototype, sess *session.Session) (*Result, error)
 }
 
 type Transformers []Transformer

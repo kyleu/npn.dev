@@ -21,6 +21,8 @@ export const clientCommands = {
 export const serverCommands = {
   error: "error",
 
+  sessions: "sessions",
+
   collections: "collections",
   collectionDetail: "collectionDetail",
   collectionNotFound: "collectionNotFound",

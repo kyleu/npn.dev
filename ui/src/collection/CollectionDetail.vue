@@ -5,7 +5,7 @@
         <div class="right"><router-link to="/c"><Icon icon="close" /></router-link></div>
         <h3 class="uk-card-title">
           <Icon class="nav-icon-h3" icon="album" />
-          {{ coll ? coll.title : $route.params.coll }}
+          {{ (coll && coll.title.length > 0) ? coll.title : $route.params.coll }}
         </h3>
         <p v-if="coll && coll.description && showEditor.length === 0">{{ coll.description }}</p>
         <div v-if="showEditor.length !== 0" class="mt">

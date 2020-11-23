@@ -2,6 +2,7 @@ package request
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/app/session"
 	"net/http"
 
 	"github.com/kyleu/npn/npncontroller"
@@ -50,11 +51,11 @@ func (p *Prototype) Host() string {
 	return fmt.Sprintf("%v:%v", p.Domain, p.Port)
 }
 
-func (p *Prototype) ToHTTP() *http.Request {
+func (p *Prototype) ToHTTP(sess *session.Session) *http.Request {
 	ret := &http.Request{
 		Method: p.Method.Key,
 		URL:    p.URL(),
-		Header: p.FinalHeaders().ToHTTP(),
+		Header: p.FinalHeaders(sess).ToHTTP(),
 		Body:   p.Body.ToHTTP(),
 		Close:  false,
 		Host:   p.Host(),

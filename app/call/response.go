@@ -1,6 +1,7 @@
 package call
 
 import (
+	"github.com/kyleu/npn/app/session"
 	"net/http"
 	"strings"
 
@@ -34,7 +35,7 @@ type Response struct {
 	Error            *string        `json:"error,omitempty"`
 }
 
-func ResponseFromHTTP(p *request.Prototype, r *http.Response, timing *Timing) *Response {
+func ResponseFromHTTP(p *request.Prototype, r *http.Response, sess *session.Session, timing *Timing) *Response {
 	headers := make(header.Headers, 0, len(r.Header))
 	for k, vs := range r.Header {
 		for _, v := range vs {
@@ -59,7 +60,7 @@ func ResponseFromHTTP(p *request.Prototype, r *http.Response, timing *Timing) *R
 	return &Response{
 		Method:           r.Request.Method,
 		URL:              r.Request.URL.String(),
-		RequestHeaders:   p.FinalHeaders(),
+		RequestHeaders:   p.FinalHeaders(sess),
 		Status:           r.Status,
 		StatusCode:       r.StatusCode,
 		Proto:            r.Proto,

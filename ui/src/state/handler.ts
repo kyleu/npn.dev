@@ -11,10 +11,14 @@ import {
   onRequestDeleted, onRequestNotFound,
   setCollectionRequestSummaries
 } from "@/collection/state";
+import {sessionsRef} from "@/session/session";
 
 export const messageHandler = (msg: Message): void => {
   logDebug("IN", msg);
   switch (msg.cmd) {
+    case serverCommands.sessions:
+      sessionsRef.value = msg.param;
+      break;
     case serverCommands.collections:
       collectionsRef.value = msg.param;
       break;
