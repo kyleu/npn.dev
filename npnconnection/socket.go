@@ -71,7 +71,7 @@ func (s *Service) ReadLoop(connID uuid.UUID) error {
 	defer func() {
 		_ = c.socket.Close()
 		_, _ = s.Disconnect(connID)
-		s.Logger.Debug(fmt.Sprintf("closed websocket [%v]", connID.String()))
+		// s.Logger.Debug(fmt.Sprintf("closed websocket [%v]", connID.String()))
 	}()
 
 	for {
@@ -89,6 +89,7 @@ func (s *Service) ReadLoop(connID uuid.UUID) error {
 		err = OnMessage(s, connID, m)
 		if err != nil {
 			_ = s.WriteMessage(c.ID, NewMessage(npncore.KeySystem, npncore.KeyError, err.Error()))
+			s.Logger.Debug(fmt.Sprintf("error handling websocket message: %+v", err))
 			// return errors.Wrap(err, "error handling websocket message")
 		}
 	}

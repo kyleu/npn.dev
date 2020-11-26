@@ -53,4 +53,3 @@ func FromJSONString(msg json.RawMessage) (string, error) {
 	}
 	return tgt, nil
 }
-

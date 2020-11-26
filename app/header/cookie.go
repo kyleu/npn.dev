@@ -14,7 +14,7 @@ type Cookie struct {
 	Expires  time.Time `json:"expires,omitempty"`
 	MaxAge   int       `json:"maxAge,omitempty"`
 	Secure   bool      `json:"secure,omitempty"`
-	HttpOnly bool      `json:"httpOnly,omitempty"`
+	HTTPOnly bool      `json:"httpOnly,omitempty"`
 	SameSite string    `json:"sameSite,omitempty"`
 }
 
@@ -36,7 +36,7 @@ func NewCookie(c *http.Cookie) *Cookie {
 		Expires:  c.Expires,
 		MaxAge:   c.MaxAge,
 		Secure:   c.Secure,
-		HttpOnly: c.HttpOnly,
+		HTTPOnly: c.HttpOnly,
 		SameSite: ss,
 	}
 }
@@ -72,10 +72,21 @@ func (c *Cookie) Native() *http.Cookie {
 		RawExpires: c.Expires.Format(time.RFC1123),
 		MaxAge:     c.MaxAge,
 		Secure:     c.Secure,
-		HttpOnly:   c.HttpOnly,
+		HttpOnly:   c.HTTPOnly,
 		SameSite:   ss,
 		Raw:        c.String(),
 	}
+}
+
+func (c *Cookie) Matches(x *Cookie) bool {
+	return c.Name == x.Name
+}
+
+func (c *Cookie) Equals(x *Cookie) bool {
+	if c == nil || x == nil {
+		return false
+	}
+	return *c == *x
 }
 
 type Cookies []*Cookie

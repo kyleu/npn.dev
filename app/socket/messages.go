@@ -18,6 +18,11 @@ const (
 	ClientMessageDeleteRequest = "deleteRequest"
 	ClientMessageCall          = "call"
 	ClientMessageTransform     = "transform"
+
+	// Session
+	ClientMessageGetSession = "getSession"
+	ClientMessageSaveSession = "saveSession"
+	ClientMessageDeleteSession = "deleteSession"
 )
 
 const (
@@ -39,4 +44,8 @@ const (
 	ServerMessageRequestDeleted  = "requestDeleted"
 	ServerMessageCallResult      = "callResult"
 	ServerMessageTransformResult = "transformResult"
+
+	// Session
+	ServerMessageSessionDetail   = "sessionDetail"
+	ServerMessageSessionNotFound = "sessionNotFound"
 )

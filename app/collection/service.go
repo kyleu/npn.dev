@@ -1,8 +1,9 @@
 package collection
 
 import (
-	"github.com/kyleu/npn/npnuser"
 	"path"
+
+	"github.com/kyleu/npn/npnuser"
 
 	"github.com/gofrs/uuid"
 
@@ -12,16 +13,23 @@ import (
 )
 
 type Service struct {
-	files  npncore.FileLoader
-	logger logur.Logger
+	multiuser bool
+	files     npncore.FileLoader
+	logger    logur.Logger
 }
 
-func NewService(f npncore.FileLoader, logger logur.Logger) *Service {
-	return &Service{files: f, logger: logger}
+func NewService(multiuser bool, f npncore.FileLoader, logger logur.Logger) *Service {
+	return &Service{multiuser: multiuser, files: f, logger: logger}
 }
 
 func (s *Service) List(userID *uuid.UUID) (Collections, error) {
-	dirs := s.files.ListDirectories(dirFor(userID))
+	d := s.dirFor(userID)
+	dExists, isDir := s.files.Exists(d)
+	if (!dExists) || (!isDir) {
+		return make(Collections, 0), nil
+	}
+
+	dirs := s.files.ListDirectories(d)
 
 	ret := make(Collections, 0, len(dirs))
 	for _, dir := range dirs {
@@ -45,14 +53,14 @@ func (s *Service) Counts(userID *uuid.UUID) (Summaries, error) {
 
 	ret := make(Summaries, 0, len(l))
 	for _, coll := range l {
-		count := len(s.files.ListJSON(path.Join(dirFor(userID), coll.Key, "requests")))
+		count := len(s.files.ListJSON(path.Join(s.dirFor(userID), coll.Key, "requests")))
 		ret = append(ret, &Summary{Coll: coll, Count: count})
 	}
 	return ret, nil
 }
 
 func (s *Service) Load(userID *uuid.UUID, key string) (*Collection, error) {
-	p := path.Join(dirFor(userID), key)
+	p := path.Join(s.dirFor(userID), key)
 	_, isDir := s.files.Exists(p)
 	if !isDir {
 		return nil, nil
@@ -75,12 +83,12 @@ func (s *Service) Load(userID *uuid.UUID, key string) (*Collection, error) {
 }
 
 func (s *Service) Delete(userID *uuid.UUID, key string) error {
-	p := path.Join(dirFor(userID), key)
+	p := path.Join(s.dirFor(userID), key)
 	return s.files.RemoveRecursive(p)
 }
 
-func dirFor(userID *uuid.UUID) string {
-	if userID == nil || *userID == npnuser.SystemUserID {
+func (s *Service) dirFor(userID *uuid.UUID) string {
+	if (!s.multiuser) || userID == nil || *userID == npnuser.SystemUserID {
 		return "collections"
 	}
 	return path.Join("users", userID.String(), "collections")

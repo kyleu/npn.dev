@@ -1,8 +1,9 @@
 package socket
 
 import (
-	"emperror.dev/errors"
 	"encoding/json"
+
+	"emperror.dev/errors"
 	"github.com/kyleu/npn/npnconnection"
 	"github.com/kyleu/npn/npncore"
 )
@@ -22,7 +23,7 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 	case ClientMessageCall:
 		err = onCall(c, param, s)
 	case ClientMessageTransform:
-		err = onTransform(c, param, s)
+		err = onTransformRequest(c, param, s)
 	default:
 		err = errors.New("invalid request command [" + cmd + "]")
 	}
@@ -31,7 +32,12 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 }
 
 func onRunURL(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	// TODO
+	var url string
+	err := npncore.FromJSON(param, &url)
+	if err != nil {
+		return errors.Wrap(err, "unable to read URL")
+	}
+	println("TODO: onRunURL(" + url + ")")
 	return nil
 }
 
@@ -100,6 +106,9 @@ func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection
 	}
 
 	sess, err := getContext(s).Session.Load(&c.Profile.UserID, frm.Sess)
+	if err != nil {
+		return errors.Wrap(err, "can't load session ["+frm.Sess+"]")
+	}
 
 	go func() {
 		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto, sess)

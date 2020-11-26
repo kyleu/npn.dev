@@ -35,11 +35,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {setBC} from "@/util/vutils";
 import {Profile, profileRef, tempThemeRef, UserSettings} from "@/user/profile";
 import Mockup from "@/user/Mockup.vue";
-import {jsonParse, jsonStr} from "@/util/json";
+import {jsonClone} from "@/util/json";
 import {allThemes, ThemeColors} from "@/user/themes";
 import Theme from "@/user/Theme.vue";
 import {socketRef} from "@/socket/socket";
@@ -48,7 +48,7 @@ import {clientCommands} from "@/util/command";
 
 @Component({ components: {Theme, Mockup } })
 export default class ProfileView extends Vue {
-  original: Profile | undefined = jsonParse(jsonStr(profileRef.value))
+  original: Profile | undefined = jsonClone(profileRef.value)
 
   get themes(): ThemeColors[] {
     return allThemes;
@@ -68,13 +68,13 @@ export default class ProfileView extends Vue {
 
   resetSettings(): void {
     if (profileRef.value) {
-      profileRef.value = jsonParse(jsonStr(this.original));
+      profileRef.value = jsonClone(this.original);
     }
   }
 
   saveSettings(): void {
     if (profileRef.value) {
-      this.original = jsonParse(jsonStr(profileRef.value));
+      this.original = jsonClone(profileRef.value);
       if (socketRef.value) {
         socketRef.value.send({svc: systemService.key, cmd: clientCommands.saveProfile, param: this.profile});
       }
@@ -83,7 +83,7 @@ export default class ProfileView extends Vue {
 
   get different(): boolean {
     if (!this.original) {
-      this.original = jsonParse(jsonStr(profileRef.value));
+      this.original = jsonClone(profileRef.value);
     }
 
     if (profileRef.value?.name !== this.original?.name) {

@@ -15,14 +15,18 @@ export const clientCommands = {
   saveRequest: "saveRequest",
   deleteRequest: "deleteRequest",
   call: "call",
-  transform: "transform"
+  transform: "transform",
+
+  // Session
+  getSession: "getSession",
+  saveSession: "saveSession",
+  deleteSession: "deleteSession"
 };
 
 export const serverCommands = {
   error: "error",
 
-  sessions: "sessions",
-
+  // Collection
   collections: "collections",
   collectionDetail: "collectionDetail",
   collectionNotFound: "collectionNotFound",
@@ -30,10 +34,16 @@ export const serverCommands = {
   collectionUpdated: "collectionUpdated",
   collectionDeleted: "collectionDeleted",
 
+  // Request
   requestDetail: "requestDetail",
   requestNotFound: "requestNotFound",
   requestAdded: "requestAdded",
   requestDeleted: "requestDeleted",
   callResult: "callResult",
-  transformResult: "transformResult"
+  transformResult: "transformResult",
+
+  // Session
+  sessions: "sessions",
+  sessionDetail: "sessionDetail",
+  sessionNotFound: "sessionNotFound"
 };

@@ -1,9 +1,10 @@
 package call
 
 import (
-	"github.com/kyleu/npn/app/request"
 	"path/filepath"
 	"strings"
+
+	"github.com/kyleu/npn/app/request"
 )
 
 func getRedir(rsp *Response, p *request.Prototype) *request.Prototype {

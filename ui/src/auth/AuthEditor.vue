@@ -5,11 +5,14 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {Auth} from "@/auth/model";
+import {requestEditingRef} from "@/request/state";
 
 @Component
 export default class AuthEditor extends Vue {
-  @Prop() auth: Auth | undefined;
+  get auth(): Auth | undefined {
+    return requestEditingRef.value?.prototype?.auth
+  }
 }
 </script>

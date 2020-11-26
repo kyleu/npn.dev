@@ -118,8 +118,6 @@ export function onRequestDeleted(rd: RequestDeleted): void {
   globalRouter().push({name: "CollectionDetail", params: {coll: rd.coll}});
 }
 
-export function onRequestNotFound(): void {
-  globalRouter().push({name: "CollectionIndex"});
+export function onRequestNotFound(coll: string): void {
+  globalRouter().push({name: "CollectionDetail", params: {coll}});
 }
-
-

@@ -2,8 +2,10 @@ package transform
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/session"
 	"strings"
+
+	"github.com/kyleu/npn/app/session"
+	"logur.dev/logur"
 
 	"github.com/kyleu/npn/app/request"
 )
@@ -11,13 +13,21 @@ import (
 type HTTP struct {
 }
 
-var _ Transformer = (*HTTP)(nil)
+var _ RequestTransformer = (*HTTP)(nil)
 
-func (c *HTTP) Key() string {
+func (x *HTTP) Key() string {
 	return "http"
 }
 
-func (c *HTTP) Transform(p *request.Prototype, sess *session.Session) (*Result, error) {
+func (x *HTTP) Description() string {
+	return "TODO: http"
+}
+
+func (x *HTTP) ApplyToMultiple() bool {
+	return false
+}
+
+func (x *HTTP) TransformRequest(p *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error) {
 	out := []string{}
 
 	var app = func(s string) {
@@ -30,3 +40,5 @@ func (c *HTTP) Transform(p *request.Prototype, sess *session.Session) (*Result, 
 	}
 	return &Result{Out: strings.Join(out, "\n")}, nil
 }
+
+var txHTTP = &HTTP{}

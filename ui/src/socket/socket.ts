@@ -1,5 +1,5 @@
-import {jsonParse, jsonStr} from "@/util/json";
-import {logDebug} from "@/util/log";
+import {jsonClone, jsonParse, jsonStr} from "@/util/json";
+import {isDebug, logDebug} from "@/util/log";
 import {ref} from "@vue/composition-api";
 
 export interface Message {
@@ -16,7 +16,7 @@ function socketUrl(): string {
   if (l.protocol === "https:") {
     protocol = "wss";
   }
-  return protocol + `://${l.host}/s`;
+  return protocol + `://${l.host}/ws`;
 }
 
 export class Socket {
@@ -79,7 +79,9 @@ export class Socket {
 
   send(msg: Message): void {
     if (this.connected) {
-      logDebug("OUT", msg);
+      if (isDebug()) {
+        logDebug("OUT: " + msg.cmd, jsonClone(msg.param));
+      }
       const m = jsonStr(msg);
       this.sock.send(m);
     } else {

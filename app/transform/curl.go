@@ -2,8 +2,10 @@ package transform
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/session"
 	"strings"
+
+	"github.com/kyleu/npn/app/session"
+	"logur.dev/logur"
 
 	"github.com/kyleu/npn/app/request"
 )
@@ -13,13 +15,21 @@ type CURL struct {
 	Multiline bool
 }
 
-var _ Transformer = (*CURL)(nil)
+var _ RequestTransformer = (*CURL)(nil)
 
-func (c *CURL) Key() string {
+func (x *CURL) Key() string {
 	return "curl"
 }
 
-func (c *CURL) Transform(p *request.Prototype, sess *session.Session) (*Result, error) {
+func (x *CURL) Description() string {
+	return "TODO: curl"
+}
+
+func (x *CURL) ApplyToMultiple() bool {
+	return false
+}
+
+func (x *CURL) TransformRequest(p *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error) {
 	out := []string{"curl"}
 
 	var app = func(s string) {
@@ -29,7 +39,7 @@ func (c *CURL) Transform(p *request.Prototype, sess *session.Session) (*Result, 
 		return strings.ReplaceAll(s, "'", "'\\''")
 	}
 
-	if c.Silent {
+	if x.Silent {
 		app("--silent")
 	}
 	if p.Options != nil && p.Options.Timeout > 0 {
@@ -51,8 +61,10 @@ func (c *CURL) Transform(p *request.Prototype, sess *session.Session) (*Result, 
 	app("'" + esc(p.URLString()) + "'")
 
 	sep := " "
-	if !c.Multiline {
+	if !x.Multiline {
 		sep = " \\\n  "
 	}
 	return &Result{Out: strings.Join(out, sep)}, nil
 }
+
+var txCURL = &CURL{}

@@ -10,3 +10,7 @@ export function jsonStr(x: any | undefined): string {
 export function jsonParse<T>(s: string): T {
   return JSON.parse(s);
 }
+
+export function jsonClone<T>(x: T): T {
+  return jsonParse(jsonStr(x));
+}

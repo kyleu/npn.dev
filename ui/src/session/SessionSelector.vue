@@ -9,12 +9,13 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Icon from "@/util/Icon.vue";
-import {activeSessionRef, sessionsRef, SessionSummary} from "@/session/session";
+import {SessionSummary} from "@/session/model";
+import {activeSessionRef, sessionSummariesRef} from "@/session/state";
 
 @Component({ components: {Icon } })
 export default class SessionSelector extends Vue {
   get sessions(): SessionSummary[] {
-    return sessionsRef.value;
+    return sessionSummariesRef.value;
   }
 
   get sessTitle(): string {
@@ -22,7 +23,7 @@ export default class SessionSelector extends Vue {
     if (t.length === 0) {
       t = "_";
     }
-    const x = sessionsRef.value.find(x => x.key === t);
+    const x = sessionSummariesRef.value.find(x => x.key === t);
     if (!x) {
       if (t === "_") {
         return "Default Session"

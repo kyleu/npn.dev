@@ -1,8 +1,10 @@
 package transform
 
 import (
+	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
+	"logur.dev/logur"
 )
 
 type Result struct {
@@ -10,14 +12,15 @@ type Result struct {
 	Out string `json:"out,omitempty"`
 }
 
-type Transformer interface {
+type RequestTransformer interface {
 	Key() string
-	Transform(p *request.Prototype, sess *session.Session) (*Result, error)
+	Description() string
+	TransformRequest(proto *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error)
 }
 
-type Transformers []Transformer
+type RequestTransformers []RequestTransformer
 
-func (t Transformers) Get(s string) Transformer {
+func (t RequestTransformers) Get(s string) RequestTransformer {
 	for _, x := range t {
 		if x.Key() == s {
 			return x
@@ -26,4 +29,23 @@ func (t Transformers) Get(s string) Transformer {
 	return nil
 }
 
-var AllTransformers = Transformers{&CURL{}, &HTTP{}, &JSON{}}
+var AllRequestTransformers = RequestTransformers{txCURL, txHTTP, txJSON, txPostman}
+
+type CollectionTransformer interface {
+	Key() string
+	Description() string
+	TransformCollection(coll *collection.Collection, requests request.Requests, sess *session.Session, logger logur.Logger) (*Result, error)
+}
+
+type CollectionTransformers []CollectionTransformer
+
+func (t CollectionTransformers) Get(s string) CollectionTransformer {
+	for _, x := range t {
+		if x.Key() == s {
+			return x
+		}
+	}
+	return nil
+}
+
+var AllCollectionTransformers = CollectionTransformers{txJSON, txPostman}

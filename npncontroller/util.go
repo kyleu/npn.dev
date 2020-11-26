@@ -73,7 +73,7 @@ func routeMatches(rt *npnweb.RouteDescription) bool {
 	if !pathCheck("admin", "assets", "sitemap", "robots", "{") {
 		return false
 	}
-	if rt.Path == "/s" {
+	if rt.Path == "/ws" {
 		return false
 	}
 	if !strings.Contains(rt.Methods, http.MethodGet) {

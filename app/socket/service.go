@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
 
@@ -38,12 +39,14 @@ func NewService(userSvc user.Service, sessSvc *session.Service, collectionSvc *c
 func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, cmd string, param json.RawMessage) error {
 	var err error
 	switch svc {
-	case npncore.KeyCollection:
-		err = handleCollectionMessage(s, c, cmd, param)
 	case npncore.KeySystem:
 		err = handleSystemMessage(s, c, cmd, param)
+	case npncore.KeyCollection:
+		err = handleCollectionMessage(s, c, cmd, param)
 	case npncore.KeyRequest:
 		err = handleRequestMessage(s, c, cmd, param)
+	case npncore.KeySession:
+		err = handleSessionMessage(s, c, cmd, param)
 	default:
 		err = errors.New(npncore.IDErrorString(npncore.KeyService, svc))
 	}

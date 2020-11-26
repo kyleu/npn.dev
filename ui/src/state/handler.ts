@@ -1,24 +1,27 @@
 import {setCallResult, setRequestDetail, setTransformResult} from "@/request/state";
 import {Message} from "@/socket/socket";
-import {logDebug, logWarn} from "@/util/log";
+import {isDebug, logDebug, logWarn} from "@/util/log";
 import {serverCommands} from "@/util/command";
+import {onSessionNotFound, sessionSummariesRef, setSessionDetail} from "@/session/state";
 import {
   collectionsRef,
   onCollectionAdded,
   onCollectionDeleted,
-  onCollectionNotFound, onCollectionUpdated,
+  onCollectionNotFound,
+  onCollectionUpdated,
   onRequestAdded,
-  onRequestDeleted, onRequestNotFound,
+  onRequestDeleted,
+  onRequestNotFound,
   setCollectionRequestSummaries
 } from "@/collection/state";
-import {sessionsRef} from "@/session/session";
+import {jsonClone} from "@/util/json";
 
 export const messageHandler = (msg: Message): void => {
-  logDebug("IN", msg);
+  if (isDebug()) {
+    logDebug("IN: " + msg.cmd, jsonClone(msg.param));
+  }
   switch (msg.cmd) {
-    case serverCommands.sessions:
-      sessionsRef.value = msg.param;
-      break;
+    // Collections
     case serverCommands.collections:
       collectionsRef.value = msg.param;
       break;
@@ -37,6 +40,8 @@ export const messageHandler = (msg: Message): void => {
     case serverCommands.collectionNotFound:
       onCollectionNotFound(msg.param);
       break;
+
+    // Requests
     case serverCommands.requestAdded:
       onRequestAdded(msg.param.coll, msg.param.req);
       break;
@@ -47,7 +52,7 @@ export const messageHandler = (msg: Message): void => {
       setRequestDetail(msg.param.coll, msg.param.req);
       break;
     case serverCommands.requestNotFound:
-      onRequestNotFound();
+      onRequestNotFound(msg.param.coll);
       break;
     case serverCommands.callResult:
       setCallResult(msg.param);
@@ -55,6 +60,18 @@ export const messageHandler = (msg: Message): void => {
     case serverCommands.transformResult:
       setTransformResult(msg.param);
       break;
+
+    // Sessions
+    case serverCommands.sessions:
+      sessionSummariesRef.value = msg.param;
+      break;
+    case serverCommands.sessionDetail:
+      setSessionDetail(msg.param);
+      break;
+    case serverCommands.sessionNotFound:
+      onSessionNotFound();
+      break;
+
     default:
       logWarn("unhandled message [" + msg.cmd + "]", msg);
   }

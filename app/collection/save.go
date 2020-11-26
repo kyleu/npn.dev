@@ -26,8 +26,8 @@ func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, tit
 			return errors.Wrap(err, "unable to load original collection ["+originalKey+"]")
 		}
 		if orig != nil && originalKey != newKey {
-			o := path.Join(s.files.Root(), dirFor(userID), originalKey)
-			n := path.Join(s.files.Root(), dirFor(userID), newKey)
+			o := path.Join(s.files.Root(), s.dirFor(userID), originalKey)
+			n := path.Join(s.files.Root(), s.dirFor(userID), newKey)
 			err := os.Rename(o, n)
 			if err != nil {
 				return errors.Wrap(err, "unable to rename original collection ["+originalKey+"] in path ["+o+"]")
@@ -49,7 +49,7 @@ func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, tit
 	}
 	n.Path = newKey
 
-	p := path.Join(dirFor(userID), newKey, "collection.json")
+	p := path.Join(s.dirFor(userID), newKey, "collection.json")
 	content := npncore.ToJSON(n, s.logger)
 	err = s.files.WriteFile(p, []byte(content), true)
 	if err != nil {

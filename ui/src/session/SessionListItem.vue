@@ -1,6 +1,6 @@
 <template>
   <li>
-    <router-link v-style-menu-link class="session-link mt" :to="'/s/' + sess.key">
+    <router-link class="session-link mt" :to="'/s/' + sess.key">
       {{ label }}
     </router-link>
   </li>
@@ -9,7 +9,7 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import Icon from "@/util/Icon.vue";
-import {SessionSummary} from "@/session/session";
+import {SessionSummary} from "@/session/model";
 
 @Component({ components: {Icon} })
 export default class SessionListItem extends Vue {

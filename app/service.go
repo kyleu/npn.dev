@@ -36,9 +36,9 @@ var _ npnweb.AppInfo = (*Service)(nil)
 
 func NewService(debug bool, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
-	sessSvc := session.NewService(files, logger)
-	collSvc := collection.NewService(files, logger)
-	reqSvc := request.NewService(files, logger)
+	sessSvc := session.NewService(multiuser, files, logger)
+	collSvc := collection.NewService(multiuser, files, logger)
+	reqSvc := request.NewService(multiuser, files, logger)
 	callSvc := call.NewService(logger)
 
 	return &Service{

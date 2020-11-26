@@ -4,7 +4,7 @@
     <div id="export-dropdown" data-uk-dropdown="mode: click">
       <ul class="uk-list uk-list-divider" style="margin-bottom: 0;">
         <li v-for="(v, n) in transforms" :key="n">
-          <router-link :to="'/c/' + $route.params.coll + '/' + $route.params.req + '/transform/' + n" onclick="UIkit.dropdown(this.parentElement.parentElement.parentElement).hide(false);">{{ v }}</router-link>
+          <router-link :to="'/c/' + $route.params.coll + '/TODO'" onclick="UIkit.dropdown(this.parentElement.parentElement.parentElement).hide(false);">{{ v }}</router-link>
         </li>
       </ul>
     </div>
@@ -15,12 +15,10 @@
 import {Component, Vue} from "vue-property-decorator";
 
 @Component
-export default class ExportActions extends Vue {
+export default class TransformActions extends Vue {
   get transforms(): Record<string, string> {
     return {
-      "http": "HTTP",
       "json": "JSON",
-      "curl": "curl",
       "postman": "Postman"
     };
   }

@@ -2,9 +2,10 @@ package request
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/app/session"
 	"strconv"
 	"strings"
+
+	"github.com/kyleu/npn/app/session"
 
 	"github.com/kyleu/npn/npncore"
 

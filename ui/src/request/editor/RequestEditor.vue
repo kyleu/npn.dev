@@ -11,12 +11,12 @@
           <li><a href="#options" @click="setTab('options')">Options</a></li>
         </ul>
         <ul class="uk-switcher uk-margin">
-          <li><RequestEditorDetails :req="req" /></li>
+          <li><RequestEditorDetails /></li>
           <li><QueryParamsEditor /></li>
-          <li><AuthEditor :auth="req.prototype.auth" /></li>
+          <li><AuthEditor /></li>
           <li><HeadersEditor /></li>
-          <li><BodyEditor :body="req.prototype.body" /></li>
-          <li><OptionsEditor :opts="req.prototype.options" /></li>
+          <li><BodyEditor /></li>
+          <li><OptionsEditor /></li>
         </ul>
       </div>
     </form>

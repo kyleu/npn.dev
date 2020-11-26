@@ -1,35 +1,49 @@
 package request
 
 import (
-	"emperror.dev/errors"
 	"fmt"
+	"os"
+	"path"
+	"strings"
+
+	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnuser"
 	"logur.dev/logur"
-	"os"
-	"path"
-	"strings"
 )
 
 type Service struct {
+	multiuser bool
 	files  npncore.FileLoader
 	logger logur.Logger
 }
 
-func NewService(f npncore.FileLoader, logger logur.Logger) *Service {
-	return &Service{files: f, logger: logger}
+func NewService(multiuser bool, f npncore.FileLoader, logger logur.Logger) *Service {
+	return &Service{multiuser: multiuser, files: f, logger: logger}
 }
 
-func (s *Service) ListRequests(userID *uuid.UUID, c string) (Summaries, error) {
-	p := dirFor(userID, c)
+func (s *Service) LoadRequests(userID *uuid.UUID, c string) (Requests, error) {
+	p := s.dirFor(userID, c)
 	files := s.files.ListJSON(p)
-	ret := make(Summaries, 0, len(files))
-	for idx, rk := range files {
+	ret := make(Requests, 0, len(files))
+	for _, rk := range files {
 		r, err := s.LoadRequest(userID, c, rk)
 		if err != nil {
 			return nil, errors.Wrap(err, "error loading request ["+rk+"]")
 		}
+		ret = append(ret, r)
+	}
+	return ret, nil
+}
+
+func (s *Service) ListRequests(userID *uuid.UUID, c string) (Summaries, error) {
+	requests, err := s.LoadRequests(userID, c)
+	if err != nil {
+		return nil, err
+	}
+	ret := make(Summaries, 0, len(requests))
+	for idx, r := range requests {
 		url := ""
 		if r.Prototype != nil {
 			url = r.Prototype.URLString()
@@ -47,7 +61,7 @@ func (s *Service) ListRequests(userID *uuid.UUID, c string) (Summaries, error) {
 
 func (s *Service) LoadRequest(userID *uuid.UUID, c string, f string) (*Request, error) {
 	f = strings.TrimSuffix(f, ".json")
-	p := path.Join(dirFor(userID, c), f+".json")
+	p := path.Join(s.dirFor(userID, c), f+".json")
 	content, err := s.files.ReadFile(p)
 	if err != nil {
 		return nil, err
@@ -82,10 +96,10 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 		}
 	}
 
-	p := requestPath(userID, coll, req.Key)
+	p := s.requestPath(userID, coll, req.Key)
 
 	if shouldDelete {
-		o := path.Join(s.files.Root(), requestPath(userID, coll, originalKey))
+		o := path.Join(s.files.Root(), s.requestPath(userID, coll, originalKey))
 		n := path.Join(s.files.Root(), p)
 		err := os.Rename(o, n)
 		if err != nil {
@@ -109,16 +123,16 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 }
 
 func (s *Service) DeleteRequest(userID *uuid.UUID, coll string, key string) error {
-	p := path.Join(dirFor(userID, coll), key+".json")
+	p := path.Join(s.dirFor(userID, coll), key+".json")
 	return s.files.RemoveRecursive(p)
 }
 
-func requestPath(userID *uuid.UUID, coll string, key string) string {
-	return path.Join(dirFor(userID, coll), key+".json")
+func (s *Service) requestPath(userID *uuid.UUID, coll string, key string) string {
+	return path.Join(s.dirFor(userID, coll), key+".json")
 }
 
-func dirFor(userID *uuid.UUID, coll string) string {
-	if userID == nil || *userID == npnuser.SystemUserID {
+func (s *Service) dirFor(userID *uuid.UUID, coll string) string {
+	if (s.multiuser) || userID == nil || *userID == npnuser.SystemUserID {
 		return path.Join("collections", coll, "requests")
 	}
 	return path.Join("users", userID.String(), "collections", coll, "requests")

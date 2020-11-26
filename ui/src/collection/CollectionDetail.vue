@@ -30,12 +30,13 @@
             </label>
           </div>
 
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="showEditor = ''">Cancel</button>
-          <button v-style-button class="uk-button uk-button-default mt" @click="saveCollection()">Save Changes</button>
+          <button v-style-button class="right uk-button uk-button-default mt" @click="saveCollection()">Save Changes</button>
+          <button v-style-button class="right uk-button uk-button-default uk-margin-small-right mt" @click="showEditor = ''">Cancel</button>
+          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="deleteCollection()">Delete</button>
         </div>
         <div v-else>
           <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="editCollection()">Edit</button>
-          <button v-style-button class="uk-button uk-button-default mt" @click="deleteCollection()">Delete</button>
+          <TransformActions />
         </div>
       </div>
       <RequestSummaryList :coll="$route.params.coll" :requests="requests" />
@@ -53,10 +54,11 @@ import {getCollection, getCollectionRequestSummaries} from "@/collection/state";
 import {socketRef} from "@/socket/socket";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
-import {jsonParse, jsonStr} from "@/util/json";
+import {jsonClone} from "@/util/json";
 import Icon from "@/util/Icon.vue";
+import TransformActions from "@/collection/TransformActions.vue";
 
-@Component({ components: {Icon, RequestSummaryList } })
+@Component({ components: {TransformActions, Icon, RequestSummaryList } })
 export default class CollectionDetail extends Vue {
   showEditor = "";
 
@@ -65,7 +67,7 @@ export default class CollectionDetail extends Vue {
   }
 
   get collEdit(): Collection | undefined {
-    return jsonParse(jsonStr(getCollection(this.$route.params.coll)));
+    return jsonClone(getCollection(this.$route.params.coll));
   }
 
   get requests(): Summary[] | undefined {

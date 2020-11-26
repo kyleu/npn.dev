@@ -26,11 +26,14 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {NPNRequest} from "@/request/model";
+import {requestEditingRef} from "@/request/state";
 
 @Component
 export default class RequestEditorDetails extends Vue {
-  @Prop() req: NPNRequest | undefined
+  get req(): NPNRequest | undefined {
+    return requestEditingRef.value;
+  }
 }
 </script>

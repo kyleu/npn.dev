@@ -10,6 +10,10 @@ export function setDebug(d: boolean): void {
   debug = d
 }
 
+export function isDebug(): boolean {
+  return debug;
+}
+
 // @ts-ignore
 // eslint-disable-next-line
 export function logDebug(...msg: any[]): void {

@@ -3,7 +3,7 @@ import {breadcrumbsRef} from "@/layout/breadcrumb";
 import {collectionsRef, collectionSummariesRef, requestDetailsRef} from "@/collection/state";
 import {pendingRequestsRef} from "@/socket/pending";
 import {profileRef} from "@/user/profile";
-import {jsonParse, jsonStr} from "@/util/json";
+import {jsonClone} from "@/util/json";
 import Vue from "vue";
 import {VueRouter} from "vue-router/types/router";
 
@@ -28,5 +28,5 @@ export function debug(): void {
     transformResult: transformResultRef.value
   };
   console.log(`debug output at [${new Date().toString()}]`)
-  console.log(jsonParse(jsonStr(ret)));
+  console.log(jsonClone(ret));
 }

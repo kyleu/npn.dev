@@ -21,12 +21,15 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
+import {Component, Vue} from "vue-property-decorator";
 import {AllTypes, BodyType, RBody} from "@/body/model";
+import {requestEditingRef} from "@/request/state";
 
 @Component
 export default class BodyEditor extends Vue {
-  @Prop() body: RBody | undefined;
+  get body(): RBody | undefined {
+    return requestEditingRef.value?.prototype?.body
+  }
 
   types(): BodyType[] {
     return AllTypes.filter(t => !t.hidden)

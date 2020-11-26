@@ -1,5 +1,5 @@
 <template>
-  <span class="uk-icon nav-icon" v-html="svg" />
+  <span class="uk-icon" v-html="svg" />
 </template>
 
 <script lang="ts">

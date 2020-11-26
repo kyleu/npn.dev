@@ -1,21 +1,22 @@
 package request
 
 import (
-	"emperror.dev/errors"
-	"github.com/gofrs/uuid"
-	"github.com/kyleu/npn/npncore"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"time"
+
+	"emperror.dev/errors"
+	"github.com/gofrs/uuid"
+	"github.com/kyleu/npn/npncore"
 )
 
 const shouldSaveHistory = true
 
 func (s *Service) saveHistory(userID *uuid.UUID, coll string, req *Request, p string, msg string) error {
 	if shouldSaveHistory {
-		hp := historyPath(userID, coll, req.Key)
+		hp := s.historyPath(userID, coll, req.Key)
 		now := time.Now()
 		hfn := path.Join(hp, npncore.ToDateString(&now)+".json")
 		hd := filepath.Dir(hfn)
@@ -43,6 +44,6 @@ func (s *Service) saveHistory(userID *uuid.UUID, coll string, req *Request, p st
 	return nil
 }
 
-func historyPath(userID *uuid.UUID, coll string, key string) string {
-	return path.Join(strings.TrimSuffix(dirFor(userID, coll), "requests"), "history", "requests", key)
+func (s *Service) historyPath(userID *uuid.UUID, coll string, key string) string {
+	return path.Join(strings.TrimSuffix(s.dirFor(userID, coll), "requests"), "history", "requests", key)
 }

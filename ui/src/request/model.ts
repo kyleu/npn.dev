@@ -59,10 +59,6 @@ export interface NPNRequest {
   prototype: Prototype;
 }
 
-export function cloneRequest(r: NPNRequest | undefined): NPNRequest | undefined {
-  return JSON.parse(JSON.stringify(r));
-}
-
 export interface Summary {
   readonly key: string;
   readonly title: string;

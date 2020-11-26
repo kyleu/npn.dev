@@ -1,4 +1,4 @@
-import {cloneRequest, NPNRequest} from "@/request/model";
+import {NPNRequest} from "@/request/model";
 import {CallResult} from "@/call/model";
 import {socketRef} from "@/socket/socket";
 import {TransformResult} from "@/request/transform/transformResult";
@@ -7,7 +7,8 @@ import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
 import {getCollectionRequestDetails, getCollectionRequestSummaries, setCollectionRequestDetails} from "@/collection/state";
-import {sessionsRef} from "@/session/session";
+import {jsonClone} from "@/util/json";
+import {activeSessionRef} from "@/session/state";
 
 export interface ActiveRequest {
   readonly coll: string;
@@ -27,7 +28,7 @@ export function setActiveRequest(coll: string, req: string): void {
     if (r.key == req) {
       if(!requestOriginalRef.value || (requestOriginalRef.value.key !== req)) {
         requestOriginalRef.value = r;
-        requestEditingRef.value = cloneRequest(r);
+        requestEditingRef.value = jsonClone(r);
       }
       return;
     }
@@ -60,7 +61,7 @@ function filterRequest(r: NPNRequest): NPNRequest {
 
 export function setRequestDetail(coll: string, req: NPNRequest): void {
   req = filterRequest(req);
-  clearPendingRequest(pendingRequestsRef, "request", coll + "::" + req)
+  clearPendingRequest(pendingRequestsRef, "request", coll + "::" + req.key)
   const rs = getCollectionRequestDetails(coll) || []
   let matched = false;
   for (const r in rs) {
@@ -77,7 +78,7 @@ export function setRequestDetail(coll: string, req: NPNRequest): void {
 
   if (activeRequestRef.value && req.key === activeRequestRef.value.req && coll === activeRequestRef.value.coll) {
     requestOriginalRef.value = req;
-    requestEditingRef.value = cloneRequest(req);
+    requestEditingRef.value = jsonClone(req);
   }
 }
 
@@ -87,7 +88,7 @@ export function getCallResult(coll: string, req: string): CallResult | undefined
     return v;
   }
   if (requestEditingRef.value && socketRef.value && req.length > 0 && setPendingRequest(pendingRequestsRef, "call", `${coll}::${req}`)) {
-    const param = {coll, req, proto: requestEditingRef.value.prototype};
+    const param = {coll, req, sess: activeSessionRef.value, proto: requestEditingRef.value.prototype};
     socketRef.value.send({svc: requestService.key, cmd: clientCommands.call, param});
   }
 
@@ -104,9 +105,8 @@ export function getTransformResult(coll: string, req: string, fmt: string): Tran
   if (v && v.coll === coll && v.req === req && v.fmt === fmt) {
     return v;
   }
-  const sess = sessionsRef
   if (requestEditingRef.value && socketRef.value && fmt.length > 0 && setPendingRequest(pendingRequestsRef, "transform", `${coll}::${req}::${fmt}`)) {
-    const param = {coll, req, sess, fmt, proto: requestEditingRef.value.prototype};
+    const param = {coll, req, sess: activeSessionRef.value, fmt, proto: requestEditingRef.value.prototype};
     socketRef.value.send({svc: requestService.key, cmd: clientCommands.transform, param});
   }
 

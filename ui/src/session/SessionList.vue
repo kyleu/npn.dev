@@ -6,13 +6,14 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {sessionsRef, SessionSummary} from "@/session/session";
+import {SessionSummary} from "@/session/model";
 import SessionListItem from "@/session/SessionListItem.vue";
+import {sessionSummariesRef} from "@/session/state";
 
 @Component({ components: { SessionListItem  } })
 export default class SessionList extends Vue {
   get sessions(): SessionSummary[] {
-    return sessionsRef.value
+    return sessionSummariesRef.value
   }
 }
 </script>

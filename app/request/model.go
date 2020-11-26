@@ -92,5 +92,4 @@ func (r *Request) Minify() *Request {
 	return r
 }
 
-
 type Requests []*Request

@@ -1,10 +1,11 @@
 package call
 
 import (
-	"github.com/kyleu/npn/app/session"
-	"golang.org/x/text/language"
 	"net/http"
 	"net/http/httptrace"
+
+	"github.com/kyleu/npn/app/session"
+	"golang.org/x/text/language"
 
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"
@@ -33,6 +34,12 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 	var rsp *Response
 	if hr != nil {
 		rsp = ResponseFromHTTP(p, hr, sess, timing)
+		parseCookies := p.Options == nil || (!p.Options.IgnoreCookies)
+		if parseCookies && sess != nil && len(rsp.Cookies) > 0 {
+			if sess.AddCookies(rsp.Cookies...) {
+				// TODO save session
+			}
+		}
 		rsp.Prior = prior
 	}
 	if rsp == nil {
@@ -44,8 +51,6 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 	ret := NewResult(coll, req, status)
 	ret.Response = rsp
 	ret.Error = errStr
-
-	sess.AddCookies(rsp.Cookies)
 
 	logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
 

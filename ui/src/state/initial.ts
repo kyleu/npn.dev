@@ -39,7 +39,7 @@ export function initState(onMessage: (m: Message) => void): void {
   }
   let url = "";
   if(hostRef.value.length > 0) {
-    url = `ws://${hostRef.value}/s`
+    url = `ws://${hostRef.value}/ws`
   }
   socketRef.value = new Socket(openF, recvF, errF, url);
 }

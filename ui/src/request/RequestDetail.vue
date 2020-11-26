@@ -25,16 +25,17 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {cloneRequest, NPNRequest} from "@/request/model";
+import {NPNRequest} from "@/request/model";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
-import {diff} from "@/request/prototype/diff";
+import {diffRequests} from "@/request/prototype/diff";
 import ExportActions from "@/request/editor/ExportActions.vue";
 import {callResultRef, requestEditingRef, requestOriginalRef, setActiveRequest} from "@/request/state";
 import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import Icon from "@/util/Icon.vue";
+import {jsonClone} from "@/util/json";
 
 @Component({ components: {Icon, ExportActions, RequestEditor, URLEditor } })
 export default class RequestDetail extends Vue {
@@ -44,12 +45,12 @@ export default class RequestDetail extends Vue {
   }
 
   get different(): boolean {
-    const diffs = diff(requestOriginalRef.value, requestEditingRef.value);
+    const diffs = diffRequests(requestOriginalRef.value, requestEditingRef.value);
     return diffs.length > 0;
   }
 
   reset(): void {
-    requestEditingRef.value = cloneRequest(requestOriginalRef.value)
+    requestEditingRef.value = jsonClone(requestOriginalRef.value)
   }
 
   save(): void {
