@@ -26,15 +26,15 @@ export interface Method {
   readonly description?: string;
 }
 
-export const MethodGet = {"key": "GET", "description": ""}
-export const MethodHead = {"key": "HEAD", "description": ""}
-export const MethodPost = {"key": "POST", "description": ""}
-export const MethodPut = {"key": "PUT", "description": ""}
-export const MethodPatch = {"key": "PATCH", "description": ""}
-export const MethodDelete = {"key": "DELETE", "description": ""}
-export const MethodConnect = {"key": "CONNECT", "description": ""}
-export const MethodOptions = {"key": "OPTIONS", "description": ""}
-export const MethodTrace = {"key": "TRACE", "description": ""}
+export const MethodGet = {"key": "GET", "description": ""};
+export const MethodHead = {"key": "HEAD", "description": ""};
+export const MethodPost = {"key": "POST", "description": ""};
+export const MethodPut = {"key": "PUT", "description": ""};
+export const MethodPatch = {"key": "PATCH", "description": ""};
+export const MethodDelete = {"key": "DELETE", "description": ""};
+export const MethodConnect = {"key": "CONNECT", "description": ""};
+export const MethodOptions = {"key": "OPTIONS", "description": ""};
+export const MethodTrace = {"key": "TRACE", "description": ""};
 
 export const allMethods: Method[] = [MethodGet, MethodHead, MethodPost, MethodPut, MethodPatch, MethodDelete, MethodConnect, MethodOptions, MethodTrace];
 

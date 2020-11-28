@@ -9,10 +9,10 @@
     <div class="mt">
       <label class="uk-form-label">Ignore</label>
       <div>
-        <label class="uk-margin-right"><input v-model="opts.ignoreRedirects" type="checkbox" name="opt-ignoreRedirects" /> Redirects</label>
-        <label class="uk-margin-right"><input v-model="opts.ignoreReferrer" type="checkbox" name="opt-ignoreReferrer" /> Referrer</label>
-        <label class="uk-margin-right"><input v-model="opts.ignoreCerts" type="checkbox" name="opt-ignoreCerts" /> Certs</label>
-        <label class="uk-margin-right"><input v-model="opts.ignoreCookies" type="checkbox" name="opt-ignoreCookies" /> Cookies</label>
+        <label class="mr"><input v-model="opts.ignoreRedirects" type="checkbox" name="opt-ignoreRedirects" /> Redirects</label>
+        <label class="mr"><input v-model="opts.ignoreReferrer" type="checkbox" name="opt-ignoreReferrer" /> Referrer</label>
+        <label class="mr"><input v-model="opts.ignoreCerts" type="checkbox" name="opt-ignoreCerts" /> Certs</label>
+        <label class="mr"><input v-model="opts.ignoreCookies" type="checkbox" name="opt-ignoreCookies" /> Cookies</label>
       </div>
     </div>
     <div class="mt">
@@ -55,8 +55,8 @@ import {requestEditingRef} from "@/request/state";
 
 @Component
 export default class OptionsEditor extends Vue {
-  get opts(): Options | undefined {
-    return requestEditingRef.value?.prototype?.options
+  get opts(): Options {
+    return requestEditingRef.value?.prototype?.options || {};
   }
 }
 </script>

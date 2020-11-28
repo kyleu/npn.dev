@@ -3,17 +3,18 @@
 </template>
 
 <script lang="ts">
-import {Component, Prop, Vue} from "vue-property-decorator";
-import {icons} from "@/util/icons";
+import { Component, Prop, Vue } from "vue-property-decorator";
+import { icons } from "@/util/icons";
+import {logWarn} from "@/util/log";
 
 @Component
 export default class Icon extends Vue {
-  @Prop() icon!: string
+  @Prop() icon!: string;
 
   get svg(): string {
     const x: string = icons[this.icon];
     if (!x) {
-      console.warn("missing icon [" + this.icon + "]")
+      logWarn("missing icon [" + this.icon + "]");
       return icons["unknown"];
     }
     return x;

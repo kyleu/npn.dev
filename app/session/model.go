@@ -2,7 +2,6 @@ package session
 
 import (
 	"github.com/kyleu/npn/app/header"
-	"github.com/kyleu/npn/npncore"
 )
 
 type Summary struct {
@@ -83,33 +82,4 @@ func (s *Session) ToSummary() *Summary {
 		CookieCount:   len(s.Cookies),
 		VariableCount: len(s.Variables),
 	}
-}
-
-func (s *Session) Normalize(key string) *Session {
-	if s == nil {
-		return nil
-	}
-	if len(key) > 0 {
-		s.Key = key
-	}
-	if len(s.Key) == 0 {
-		s.Key = "untitled-" + npncore.RandomString(6)
-	}
-	if s.Cookies == nil {
-		s.Cookies = header.Cookies{}
-	}
-	if s.Variables == nil {
-		s.Variables = Variables{}
-	}
-	return s
-}
-
-func (s *Session) Minify() *Session {
-	if len(s.Cookies) == 0 {
-		s.Cookies = nil
-	}
-	if len(s.Variables) == 0 {
-		s.Variables = nil
-	}
-	return s
 }

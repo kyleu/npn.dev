@@ -27,7 +27,7 @@ export default class Breadcrumbs extends Vue {
     if (!breadcrumbsRef.value) {
       return [];
     }
-    return breadcrumbsRef.value
+    return breadcrumbsRef.value;
   }
 
   get profile(): Profile | undefined {

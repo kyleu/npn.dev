@@ -3,6 +3,7 @@ package socket
 import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/session"
 )
 
 // Collection
@@ -34,7 +35,7 @@ type saveCollOut struct {
 }
 
 // Request
-type reqDetailIn struct {
+type reqDetailOut struct {
 	Coll string           `json:"coll"`
 	Req  *request.Request `json:"req"`
 }
@@ -68,7 +69,6 @@ type callIn struct {
 	Proto *request.Prototype `json:"proto"`
 }
 
-// TransformRequest
 type transformIn struct {
 	Coll  string             `json:"coll"`
 	Req   string             `json:"req,omitempty"`
@@ -82,4 +82,15 @@ type transformOut struct {
 	Req  string `json:"req"`
 	Fmt  string `json:"fmt"`
 	Out  string `json:"out"`
+}
+
+// Session
+type saveSessionIn struct {
+	Orig string           `json:"orig"`
+	Sess *session.Session `json:"sess"`
+}
+
+type addSessionOut struct {
+	Sessions session.Summaries `json:"sessions"`
+	Active   *session.Session  `json:"active"`
 }

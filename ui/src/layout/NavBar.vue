@@ -5,12 +5,12 @@
         <Breadcrumbs />
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
-            <li class="uk-margin-small-right">
+            <li class="mrs">
               <router-link v-if="(!profile.picture) || profile.picture.length === 0 || profile.picture === 'none'" v-style-nav-link to="/u" title="Profile"><Icon icon="user" /></router-link>
               <router-link v-else to="/u" title="Profile"><img class="uk-border-circle" alt="user profile" :src="profile.picture" /></router-link>
             </li>
           </ul>
-          <a v-style-nav-link href="" data-uk-toggle="target: #nav-offcanvas;" class="uk-hidden@m uk-margin-right"><Icon icon="toggle" /></a>
+          <a v-style-nav-link href="" data-uk-toggle="target: #nav-offcanvas;" class="uk-hidden@m mr"><Icon icon="toggle" /></a>
         </div>
       </nav>
     </div>

@@ -12,7 +12,7 @@ import {setBC} from "@/util/vutils";
 
 @Component({ components: { CollectionGallery } })
 export default class NotFound extends Vue {
-  mounted(): void {
+  updated(): void {
     setBC(this, {path: "", title: "not found"});
   }
 }

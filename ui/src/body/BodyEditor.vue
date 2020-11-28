@@ -5,14 +5,14 @@
       <option v-for="t in types()" :key="t.key" :value="t.key">{{ t.title }}</option>;
     </select>
 
-    <div v-if="(!body) || body.type === ''" class="mt">
+    <div v-if="body.type === ''" class="mt">
       No body!
     </div>
     <div v-else-if="body.type === 'html'" class="mt">
-      <textarea v-model="body.config.content" class="uk-textarea"></textarea>
+      <textarea v-model="body.htmlContent" rows="8" class="uk-textarea"></textarea>
     </div>
     <div v-else-if="body.type === 'json'" class="mt">
-      <textarea :value="JSON.stringify(body.config.msg, null, 2)" class="uk-textarea" @input="body.config.msg = JSON.parse($event.target.value)"></textarea>
+      <textarea v-model="body.jsonContent" rows="8" class="uk-textarea"></textarea>
     </div>
     <div v-else class="mt">
       Unhandled {{ body.type }} editor
@@ -22,17 +22,17 @@
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
-import {AllTypes, BodyType, RBody} from "@/body/model";
-import {requestEditingRef} from "@/request/state";
+import {AllTypes, BodyType} from "@/body/model";
+import {BodyConfig, bodyConfigRef} from "@/body/state";
 
 @Component
 export default class BodyEditor extends Vue {
-  get body(): RBody | undefined {
-    return requestEditingRef.value?.prototype?.body
+  get body(): BodyConfig | undefined {
+    return bodyConfigRef.value;
   }
 
   types(): BodyType[] {
-    return AllTypes.filter(t => !t.hidden)
+    return AllTypes.filter(t => !t.hidden);
   }
 }
 </script>

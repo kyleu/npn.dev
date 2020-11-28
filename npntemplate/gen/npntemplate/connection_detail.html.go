@@ -18,10 +18,26 @@ func ConnectionDetail(model *npnconnection.Status, msg *npnconnection.Message, c
 	defer hero.PutBuffer(_buffer)
 	_buffer.WriteString(`<!DOCTYPE html>
 <html lang="en">
-<head>`)
+<head>
+`)
 	Head(ctx, _buffer)
-	_buffer.WriteString(`</head>
-<body>
+	_buffer.WriteString(`
+<style>
+  .nav-b { background-color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.NavB, _buffer)
+	_buffer.WriteString(` !important; }
+  .nav-f { color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.NavF, _buffer)
+	_buffer.WriteString(` !important; }
+  .body-b { background-color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.BodyB, _buffer)
+	_buffer.WriteString(` !important; }
+  .body-l { color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.BodyL, _buffer)
+	_buffer.WriteString(` !important; }
+</style>
+</head>
+<body class="body-b">
 `)
 	Navbar(ctx, _buffer)
 

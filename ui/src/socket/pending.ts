@@ -21,7 +21,7 @@ export function setPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: str
     return false;
   }
   reqs.value.push({t, k});
-  return true
+  return true;
 }
 
 export function clearPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: string): boolean {
@@ -29,5 +29,5 @@ export function clearPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: s
     return false;
   }
   reqs.value = (reqs.value || []).filter(x => x.t !== t && x.k !== k);
-  return true
+  return true;
 }

@@ -1,8 +1,8 @@
-import {setCallResult, setRequestDetail, setTransformResult} from "@/request/state";
+import {setRequestDetail} from "@/request/state";
 import {Message} from "@/socket/socket";
-import {isDebug, logDebug, logWarn} from "@/util/log";
+import {isDebug, logDebug, logWarn, onLog} from "@/util/log";
 import {serverCommands} from "@/util/command";
-import {onSessionNotFound, sessionSummariesRef, setSessionDetail} from "@/session/state";
+import {onSessionAdded, onSessionDeleted, onSessionNotFound, sessionSummariesRef, setSessionDetail} from "@/session/state";
 import {
   collectionsRef,
   onCollectionAdded,
@@ -15,12 +15,19 @@ import {
   setCollectionRequestSummaries
 } from "@/collection/state";
 import {jsonClone} from "@/util/json";
+import {setCallResult} from "@/call/state";
+import {setTransformResult} from "@/request/transform/state";
 
 export const messageHandler = (msg: Message): void => {
   if (isDebug()) {
     logDebug("IN: " + msg.cmd, jsonClone(msg.param));
   }
+
   switch (msg.cmd) {
+    case serverCommands.log:
+      onLog(msg.param);
+      break;
+
     // Collections
     case serverCommands.collections:
       collectionsRef.value = msg.param;
@@ -65,6 +72,12 @@ export const messageHandler = (msg: Message): void => {
     case serverCommands.sessions:
       sessionSummariesRef.value = msg.param;
       break;
+    case serverCommands.sessionAdded:
+      onSessionAdded(msg.param);
+      break;
+    case serverCommands.sessionDeleted:
+      onSessionDeleted(msg.param);
+      break;
     case serverCommands.sessionDetail:
       setSessionDetail(msg.param);
       break;
@@ -75,4 +88,4 @@ export const messageHandler = (msg: Message): void => {
     default:
       logWarn("unhandled message [" + msg.cmd + "]", msg);
   }
-}
+};

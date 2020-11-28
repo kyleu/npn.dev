@@ -27,7 +27,7 @@ export function timingSections(t: Timing): TimingSection[] {
     if (s && e) {
       ret.push({key: k, group: g, start: s, end: e});
     }
-  }
+  };
 
   add("dns", "connect", t.dnsStart, t.dnsEnd);
   add("connect", "connect", t.connectStart, t.connectEnd);

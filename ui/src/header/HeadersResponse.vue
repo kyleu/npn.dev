@@ -18,7 +18,7 @@ import {Header} from "@/header/model";
 
 @Component
 export default class HeadersResponse extends Vue {
-  @Prop() title!: string
-  @Prop() headers!: Header[]
+  @Prop() title!: string;
+  @Prop() headers!: Header[];
 }
 </script>

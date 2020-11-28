@@ -15,10 +15,10 @@
 import {Component, Vue} from "vue-property-decorator";
 import {setBCReq} from "@/util/vutils";
 import {CallResult, NPNResponse} from "@/call/model";
-import {getCallResult} from "@/request/state";
 import {Prototype} from "@/request/model";
 import ResponsePanel from "@/call/ResponsePanel.vue";
 import Icon from "@/util/Icon.vue";
+import {getCallResult} from "@/call/state";
 
 interface CallParam {
   coll: string;
@@ -39,12 +39,12 @@ export default class CallResultView extends Vue {
     let r = this.result?.response;
     while(r) {
       ret.push(r);
-      r = r.prior
+      r = r.prior;
     }
     return ret.reverse();
   }
 
-  mounted(): void {
+  updated(): void {
     setBCReq(this, "call");
   }
 }

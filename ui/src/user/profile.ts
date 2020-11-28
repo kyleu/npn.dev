@@ -48,7 +48,7 @@ watchEffect(() => {
       stylesheet = document.styleSheets[0];
       stylesheet.addRule("a[href]", "");
       stylesheet.addRule("body", "");
-      stylesheet.addRule(".uk-tab > .uk-active > a", "")
+      stylesheet.addRule(".uk-tab > .uk-active > a", "");
     }
 
 
@@ -59,6 +59,6 @@ watchEffect(() => {
 
     stylesheet.addRule("a[href]", `color: ${s.bodyL}`, rules.length);
     stylesheet.addRule("body", `background-color: ${s.bodyB} !important;`, rules.length);
-    stylesheet.addRule(".uk-tab > .uk-active > a", `border-color: ${s.bodyL} !important; border-width: 2px;`, rules.length)
+    stylesheet.addRule(".uk-tab > .uk-active > a", `border-color: ${s.bodyL} !important; border-width: 2px;`, rules.length);
   }
-})
+});

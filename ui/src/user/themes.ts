@@ -1,4 +1,4 @@
-import {Color, debugTheme} from "@/user/colors";
+import { Color, debugTheme } from "@/user/colors";
 
 debugTheme();
 
@@ -14,7 +14,17 @@ export interface ThemeColors {
   readonly bodyL: Color;
 }
 
-const Default = { key: "Default", mode: "light", navB: "#193441", navF: "#dddddd", menuB: "#3e606f", menuF: "#cccccc", menuL: "#91aa9d", bodyB: "#fcfff5", bodyL: "#193441"  };
+const Default = {
+  key: "Default",
+  mode: "light",
+  navB: "#193441",
+  navF: "#dddddd",
+  menuB: "#3e606f",
+  menuF: "#cccccc",
+  menuL: "#91aa9d",
+  bodyB: "#fcfff5",
+  bodyL: "#193441"
+};
 const Darkfault = {
   key: "Darkfault",
   mode: "dark",
@@ -50,17 +60,7 @@ const Harbor = { key: "Harbor", mode: "light", navB: "#9fbcbf", navF: "#59d8e6",
 const HerbsAndSpice = { key: "HerbsAndSpice", mode: "light", navB: "#d1570d", navF: "#a9cc66", menuB: "#fde792", menuF: "#477725", menuL: "#a9cc66", bodyB: "#5a1f00", bodyL: "#a9cc66" };
 const HoneyPot = { key: "HoneyPot", mode: "light", navB: "#fffad5", navF: "#bd4932", menuB: "#ffd34e", menuF: "#db9e36", menuL: "#bd4932", bodyB: "#105b63", bodyL: "#bd4932" };
 const JapaneseGarden = { key: "JapaneseGarden", mode: "light", navB: "#5c832f", navF: "#363942", menuB: "#284907", menuF: "#382513", menuL: "#363942", bodyB: "#d8caa8", bodyL: "#363942" };
-const Kayak = {
-  key: "Kayak",
-  mode: "dark",
-  bodyB: "#36362c",
-  bodyL: "#825534",
-  navB: "#5d917d",
-  navF: "#825534",
-  menuB: "#a8ad80",
-  menuF: "#e6d4a7",
-  menuL: "#825534"
-};
+const Kayak = {key: "Kayak", mode: "dark", bodyB: "#36362c", bodyL: "#825534", navB: "#5d917d", navF: "#825534", menuB: "#a8ad80", menuF: "#e6d4a7", menuL: "#825534"};
 const KeepTheChange = { key: "KeepTheChange", mode: "light", navB: "#d9042b", navF: "#011c26", menuB: "#f4cb89", menuF: "#588c8c", menuL: "#011c26", bodyB: "#6b0c22", bodyL: "#011c26" };
 const KnotJustNautical = { key: "KnotJustNautical", mode: "light", navB: "#fc4349", navF: "#ffffff", menuB: "#d7dadb", menuF: "#6dbcdb", menuL: "#ffffff", bodyB: "#2c3e50", bodyL: "#ffffff" };
 const LifeIsBeautiful = { key: "LifeIsBeautiful", mode: "light", navB: "#047878", navF: "#c22121", menuB: "#ffb733", menuF: "#f57336", menuL: "#c22121", bodyB: "#801637", bodyL: "#c22121" };

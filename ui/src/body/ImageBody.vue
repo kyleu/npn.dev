@@ -13,7 +13,7 @@ import {ImageConfig} from "@/body/model";
 
 @Component
 export default class ImageBody extends Vue {
-  @Prop() config!: ImageConfig
+  @Prop() config!: ImageConfig;
 
   get dataURL(): string {
     return `data:${this.config.type};base64,${this.config.content}`;

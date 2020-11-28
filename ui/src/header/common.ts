@@ -1,3 +1,5 @@
+import {logDebug} from "@/util/log";
+
 export interface CommonHeader {
   readonly key: string;
   readonly description: string;
@@ -42,7 +44,7 @@ export const commonHeaders: CommonHeader[] = [
   snch("User-Agent", "Contains a characteristic string that allows the network protocol peers to identify the application", true, false)
 ];
 
-let commonHeadersByName: Map<string, CommonHeader>
+let commonHeadersByName: Map<string, CommonHeader>;
 
 export function getCommonHeaderByName(key: string): CommonHeader | undefined {
   if(!commonHeadersByName) {
@@ -52,25 +54,4 @@ export function getCommonHeaderByName(key: string): CommonHeader | undefined {
     }
   }
   return commonHeadersByName.get(key);
-}
-
-export function dumpCommonHeaders(): void {
-  const dump = (title: string, req: boolean, rsp: boolean): void => {
-    let matched = false;
-    console.debug("\n::: " + title + " Headers");
-    commonHeaders.forEach(ch => {
-      if (ch.req == req && ch.rsp == rsp) {
-        matched = true;
-        console.debug(`${ch.key}: ${ch.link}`);
-        console.debug(`  - ${ch.description}`);
-      }
-    })
-    if (!matched) {
-      console.debug("none");
-    }
-  }
-  dump("Common", true, true);
-  dump("Request", true, false);
-  dump("Response", false, true);
-  dump("Invalid", false, false);
 }

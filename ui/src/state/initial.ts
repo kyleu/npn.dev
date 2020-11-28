@@ -1,8 +1,6 @@
-import {} from "@/util/vutils"
-
 import {Profile, profileRef} from "@/user/profile";
 import {hostRef, Message, Socket, socketRef} from "@/socket/socket";
-import {logDebug, logWarn} from "@/util/log";
+import {logDebug} from "@/util/log";
 
 interface InitialData {
   readonly host: string;
@@ -35,11 +33,11 @@ export function initState(onMessage: (m: Message) => void): void {
     onMessage(m);
   }
   function errF(err: string): void {
-    logWarn("websocket err: " + err);
+    logDebug("websocket err: " + err);
   }
   let url = "";
   if(hostRef.value.length > 0) {
-    url = `ws://${hostRef.value}/ws`
+    url = `ws://${hostRef.value}/ws`;
   }
   socketRef.value = new Socket(openF, recvF, errF, url);
 }

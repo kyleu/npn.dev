@@ -1,6 +1,6 @@
 import {initState} from "@/state/initial";
 import Workspace from "./layout/Workspace.vue";
-import {debug, NPNDebug} from "./util/debug";
+import {onDebug, NPNDebug} from "./util/debug";
 import {router} from "./state/router";
 import UIkit from "uikit";
 import "@/assets/styles/styles.scss";
@@ -9,15 +9,14 @@ import "@/assets/styles/styles.scss";
 import {messageHandler} from "@/state/handler";
 
 import Vue from "vue";
+import {logInfo} from "@/util/log";
 
 declare global {
   interface Window {
     init: () => void;
     npn: NPNDebug;
     Prism: { manual: boolean };
-    // @ts-ignore
-    // eslint-disable-next-line
-    UIkit: any;
+    UIkit: object;
   }
 }
 
@@ -35,7 +34,9 @@ function init(): void {
 
   const root = new Vue({router, el: "#npn", render});
 
-  window.npn = {root, router, debug};
+  logInfo("npn has started");
+
+  window.npn = {root, router, onDebug};
 }
 
 window.init = init;

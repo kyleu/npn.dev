@@ -18,6 +18,7 @@ module.exports = {
     "vue/max-attributes-per-line": "off",
     "vue/html-self-closing": "off",
     "vue/no-v-html": "off",
+    "semi": "error",
     "no-debugger": process.env.NODE_ENV === 'development' ? "warn" : "error"
   }
 }

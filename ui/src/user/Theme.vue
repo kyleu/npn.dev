@@ -61,17 +61,16 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import {profileRef, tempThemeRef, UserSettings} from "@/user/profile";
+import { profileRef, tempThemeRef, UserSettings } from "@/user/profile";
 
-// @ts-ignore
-// eslint-disable-next-line
-import {socketRef} from "@/socket/socket";
-import {systemService} from "@/util/services";
-import {clientCommands} from "@/util/command";
+import { socketRef } from "@/socket/socket";
+import { systemService } from "@/util/services";
+import { clientCommands } from "@/util/command";
+import {logDebug} from "@/util/log";
 
 @Component
 export default class Theme extends Vue {
-  src = ""
+  src = "";
 
   get tempTheme(): string {
     return tempThemeRef.value;
@@ -146,7 +145,7 @@ export default class Theme extends Vue {
     }
     const s = this.src;
     this.src = "";
-    console.log(`SWAP: ${s} <-> ${t}`);
+    console.debug(`SWAP: ${s} <-> ${t}`);
     const src = this.getColor(s);
     const tgt = this.getColor(t);
     this.setColor(s, tgt);
@@ -167,12 +166,12 @@ export default class Theme extends Vue {
   menuB: "${this.settings.menuB}",
   menuF: "${this.settings.menuF}",
   menuL: "${this.settings.menuL}"
-}`
+}`;
     if (socketRef.value) {
       socketRef.value.send({svc: systemService.key, cmd: clientCommands.testbed, param: {t: "theme", k: this.tempTheme, v: theme}});
     }
 
-    console.log(theme);
+    logDebug(theme);
   }
 }
 </script>

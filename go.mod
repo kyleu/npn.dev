@@ -52,5 +52,6 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/spf13/cobra v1.0.0
 	golang.org/x/text v0.3.3
+	golang.org/x/tools v0.0.0-20200825202427-b303f430e36d
 	logur.dev/logur v0.17.0
 )

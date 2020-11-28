@@ -31,7 +31,12 @@ func (s *Service) List(userID *uuid.UUID) (Collections, error) {
 
 	dirs := s.files.ListDirectories(d)
 
+	if len(dirs) == 0 {
+		return Collections{defaultCollection}, nil
+	}
+
 	ret := make(Collections, 0, len(dirs))
+	hasDefault := false
 	for _, dir := range dirs {
 		c, err := s.Load(userID, dir)
 		if err != nil {
@@ -40,7 +45,13 @@ func (s *Service) List(userID *uuid.UUID) (Collections, error) {
 		if c == nil {
 			c = &Collection{Key: dir}
 		}
+		if dir == "_" {
+			hasDefault = true
+		}
 		ret = append(ret, c)
+	}
+	if !hasDefault {
+		ret = append(Collections{defaultCollection}, ret...)
 	}
 	return ret, nil
 }
@@ -63,6 +74,9 @@ func (s *Service) Load(userID *uuid.UUID, key string) (*Collection, error) {
 	p := path.Join(s.dirFor(userID), key)
 	_, isDir := s.files.Exists(p)
 	if !isDir {
+		if key == "_" {
+			return defaultCollection.Normalize(key, p), nil
+		}
 		return nil, nil
 	}
 	ret := &Collection{}
@@ -77,6 +91,8 @@ func (s *Service) Load(userID *uuid.UUID, key string) (*Collection, error) {
 		if err != nil {
 			return nil, errors.Wrap(err, "unable to read collection from ["+filePath+"]")
 		}
+	} else if key == "_" {
+		return defaultCollection.Normalize(key, p), nil
 	}
 
 	return ret.Normalize(key, p), nil

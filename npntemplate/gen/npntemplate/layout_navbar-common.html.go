@@ -15,17 +15,13 @@ func NavbarCommon(section string, showToggle bool, ctx *npnweb.RequestContext, b
 	buffer.WriteString(`
 <header>
   <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky; media: 960">
-    <nav id="navbar" class="uk-navbar-container" style="background-color: `)
-	hero.EscapeHTML(ctx.Profile.Settings.NavB, buffer)
-	buffer.WriteString(`;color: `)
-	hero.EscapeHTML(ctx.Profile.Settings.NavF, buffer)
-	buffer.WriteString(`" data-uk-navbar>
+    <nav id="navbar" class="uk-navbar-container nav-b nav-f" data-uk-navbar>
       <div id="breadcrumbs" class="uk-navbar-left">
         `)
 	if len(npnweb.IconContent) > 0 {
 		buffer.WriteString(`<a title="`)
 		hero.EscapeHTML(npncore.AppName, buffer)
-		buffer.WriteString(`" class="uk-navbar-item uk-logo" href="`)
+		buffer.WriteString(`" class="nav-f uk-navbar-item uk-logo" href="`)
 		hero.EscapeHTML(ctx.Route(`home`), buffer)
 		buffer.WriteString(`">
           `)
@@ -40,12 +36,12 @@ func NavbarCommon(section string, showToggle bool, ctx *npnweb.RequestContext, b
         <ul class="uk-navbar-nav">
           `)
 	buffer.WriteString(npnweb.NavbarContent)
-	buffer.WriteString(`<li class="uk-margin-small-right">
+	buffer.WriteString(`<li class="mrs">
             `)
 	if len(ctx.Profile.Picture) == 0 || ctx.Profile.Picture == "none" {
 		buffer.WriteString(`<a href="`)
-		hero.EscapeHTML(ctx.Route(npncore.KeyProfile), buffer)
-		buffer.WriteString(`" data-uk-icon="icon:user" title="Profile"></a>`)
+		hero.EscapeHTML(ctx.Route(`u`), buffer)
+		buffer.WriteString(`" data-uk-icon="icon:user" title="Profile" class="nav-f"></a>`)
 	} else {
 		buffer.WriteString(`<a href="`)
 		hero.EscapeHTML(ctx.Route(npncore.KeyProfile), buffer)
@@ -60,7 +56,7 @@ func NavbarCommon(section string, showToggle bool, ctx *npnweb.RequestContext, b
         </ul>
         `)
 	if showToggle {
-		buffer.WriteString(`<a href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a>`)
+		buffer.WriteString(`<a href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon mr"></a>`)
 	}
 	buffer.WriteString(`
       </div>

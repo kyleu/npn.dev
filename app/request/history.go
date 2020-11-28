@@ -14,7 +14,7 @@ import (
 
 const shouldSaveHistory = true
 
-func (s *Service) saveHistory(userID *uuid.UUID, coll string, req *Request, p string, msg string) error {
+func (s *Service) saveHistory(userID *uuid.UUID, coll string, req *Request, p string, msg []byte) error {
 	if shouldSaveHistory {
 		hp := s.historyPath(userID, coll, req.Key)
 		now := time.Now()
@@ -27,7 +27,7 @@ func (s *Service) saveHistory(userID *uuid.UUID, coll string, req *Request, p st
 
 		x, _ := os.Stat(p)
 		if x == nil {
-			err = s.files.WriteFile(hfn, []byte(msg), true)
+			err = s.files.WriteFile(hfn, msg, true)
 		} else {
 			err = s.files.CopyFile(p, hfn)
 		}
@@ -36,7 +36,7 @@ func (s *Service) saveHistory(userID *uuid.UUID, coll string, req *Request, p st
 		}
 	}
 
-	err := s.files.WriteFile(p, []byte(msg), true)
+	err := s.files.WriteFile(p, msg, true)
 	if err != nil {
 		return errors.Wrap(err, "unable to write file")
 	}

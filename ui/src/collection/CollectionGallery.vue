@@ -29,7 +29,7 @@ import Icon from "@/util/Icon.vue";
 @Component({ components: {Icon, CollectionGalleryItem } })
 export default class CollectionGallery extends Vue {
   get collections(): CollectionCount[] {
-    return collectionsRef.value
+    return collectionsRef.value;
   }
 
   addCollection(): void {

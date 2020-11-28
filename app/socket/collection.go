@@ -24,6 +24,8 @@ func handleCollectionMessage(s *npnconnection.Service, c *npnconnection.Connecti
 		return deleteCollection(s, c, param)
 	case ClientMessageAddRequestURL:
 		return addRequestURL(s, c, param)
+	case ClientMessageTransform:
+		return onTransformCollection(c, param, s)
 	default:
 		return errors.New("unhandled collection command [" + cmd + "]")
 	}

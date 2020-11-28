@@ -1,6 +1,6 @@
 <template>
   <div class="uk-inline">
-    <button v-style-button type="button" class="uk-button uk-button-default uk-margin-small-right mt">Export</button>
+    <button v-style-button type="button" class="uk-button uk-button-default mrs mt">Export</button>
     <div id="export-dropdown" data-uk-dropdown="mode: click">
       <ul class="uk-list uk-list-divider" style="margin-bottom: 0;">
         <li v-for="(v, n) in transforms" :key="n">

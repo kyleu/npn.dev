@@ -49,7 +49,7 @@ export default class HTMLPreview extends Vue {
   }
 
   get baseURL(): string {
-    return new URL(this.url).origin
+    return new URL(this.url).origin;
   }
 }
 </script>

@@ -20,8 +20,8 @@ export function diffRequests(l: NPNRequest | undefined, r: NPNRequest | undefine
   const p = (k: string, lv: any, rv: any): void => ret.push({k: k, l: lv, r: rv});
 
   if ((!l || !r)) {
-    checkNull("request", l, r, p)
-    return ret
+    checkNull("request", l, r, p);
+    return ret;
   }
 
   comp("key", l.key, r.key, p);

@@ -20,23 +20,22 @@ function socketUrl(): string {
 }
 
 export class Socket {
-  private readonly url: string
-  private sock!: WebSocket
+  private readonly url: string;
+  private sock!: WebSocket;
 
-  connected = false
-  appUnloading = false
+  connected = false;
+  appUnloading = false;
   private connectTime: number | undefined;
 
-  private onOpen: (id: string) => void
-  private onMessage: (m: Message) => void
-  private onError: (svc: string, err: string) => void
+  private onOpen: (id: string) => void;
+  private onMessage: (m: Message) => void;
+  private onError: (svc: string, err: string) => void;
 
   private pauseSeconds = 0;
   private pendingMessages: Message[] = [];
 
   constructor(openF: (id: string) => void, recvF: (m: Message) => void, errF: (svc: string, err: string) => void, url?: string) {
     this.url = (url && url.length > 0) ? url : socketUrl();
-    logDebug(this.url);
     this.onOpen = openF;
     this.onMessage = recvF;
     this.onError = errF;
@@ -45,7 +44,7 @@ export class Socket {
       this.setAppUnloading();
     };
 
-    this.init()
+    this.init();
   }
 
   setAppUnloading(): void {

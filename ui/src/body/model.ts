@@ -11,24 +11,22 @@ export const AllTypes: BodyType[] = [
   {key: "json", title: "JSON", hidden: false},
   {key: "large", title: "Large File", hidden: false},
   {key: "raw", title: "Raw", hidden: true}
-]
+];
 
 export interface RBody {
   type: string;
   length?: number;
-  // @ts-ignore
-  // eslint-disable-next-line
-  config: any;
+  config: object;
 }
 
 export interface JSONConfig {
   // @ts-ignore
   // eslint-disable-next-line
-  readonly msg: any;
+  msg: any;
 }
 
 export interface HTMLConfig {
-  readonly content: string;
+  content: string;
 }
 
 export interface ImageConfig {

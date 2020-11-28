@@ -29,7 +29,7 @@ import ErrorBody from "@/body/ErrorBody.vue";
 
 @Component({ components: { HTMLBody, ImageBody, JSONBody, RawBody, ErrorBody } })
 export default class BodyResponse extends Vue {
-  @Prop() url!: string
-  @Prop() body!: RBody
+  @Prop() url!: string;
+  @Prop() body!: RBody;
 }
 </script>

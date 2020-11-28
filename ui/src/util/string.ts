@@ -1,10 +1,10 @@
 export function startsWith(str: string, search: string, pos?: number): boolean {
-  pos = (pos && pos > 0) ? pos | 0 : 0;
+  pos = pos && pos > 0 ? pos | 0 : 0;
   return str.substring(pos, pos + search.length) === search;
 }
 
 export function endsWith(str: string, search: string, pos?: number): boolean {
-  pos = (pos && pos < str.length) ? pos : str.length;
+  pos = pos && pos < str.length ? pos : str.length;
   return str.substring(pos - search.length, pos) === search;
 }
 

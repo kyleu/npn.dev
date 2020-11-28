@@ -3,7 +3,7 @@
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
         <div class="right"><router-link to="/"><Icon icon="close" /></router-link></div>
-        <h3 class="uk-card-title">Collections</h3>
+        <h3 class="uk-card-title"><Icon icon="folder" class="nav-icon-h3" /> Collections</h3>
         <CollectionGallery />
       </div>
     </div>
@@ -18,7 +18,7 @@ import Icon from "@/util/Icon.vue";
 
 @Component({components: {Icon, CollectionGallery}})
 export default class CollectionIndex extends Vue {
-  mounted(): void {
+  updated(): void {
     setBC(this, {path: "", title: "collections"});
   }
 }

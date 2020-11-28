@@ -1,6 +1,6 @@
 <template>
   <div v-if="req" class="request-editor uk-card uk-card-body uk-card-default mt">
-    <form action="" method="post" onsubmit="console.log('XXXXXXX');return false;">
+    <form action="" method="post" onsubmit="return false;">
       <div>
         <ul data-uk-tab="">
           <li><a href="#details" @click="setTab('details')">Details</a></li>
@@ -37,19 +37,18 @@ import RequestEditorDetails from "@/request/editor/RequestEditorDetails.vue";
 
 @Component({ components: {RequestEditorDetails, AuthEditor, BodyEditor, HeadersEditor, OptionsEditor, QueryParamsEditor } })
 export default class RequestEditor extends Vue {
-  activeTab = ""
+  activeTab = "";
 
   get req(): NPNRequest | undefined {
     return requestEditingRef.value;
   }
 
-  mounted(): void {
+  updated(): void {
     setBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
   }
 
   setTab(s: string): void {
     this.activeTab = s;
-    console.log("setEditorTab: " + s);
   }
 }
 </script>

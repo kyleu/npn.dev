@@ -1,5 +1,3 @@
-import {ref} from "@vue/composition-api";
-
 export interface SessionSummary {
   readonly key: string;
   readonly title: string | undefined;
@@ -10,13 +8,13 @@ export interface SessionSummary {
 export interface Cookie {
   name: string;
   value: string;
-  domain: string;
-  path: string;
-  expires: string;
-  size: string;
-  httpOnly: string;
-  secure: string;
-  sameSite: string;
+  domain?: string;
+  path?: string;
+  expires?: string;
+  size?: number;
+  httpOnly?: boolean;
+  secure?: boolean;
+  sameSite?: boolean;
 }
 
 export interface Variable {
@@ -30,4 +28,9 @@ export interface Session {
   title: string | undefined;
   cookies: Cookie[];
   variables: Variable[];
+}
+
+export interface SessAdded {
+  sessions: SessionSummary[];
+  active: Session;
 }

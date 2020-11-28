@@ -89,6 +89,17 @@
   margin-bottom: 0;
 }
 
+.log-level {
+  float: left;
+  margin-right: 8px;
+}
+
+.log-timestamp {
+  float: right;
+  margin-left: 8px;
+}
+
+// Nav
 .nav-request-link {
   margin-left: 12px;
   a.router-link-active {

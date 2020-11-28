@@ -12,6 +12,6 @@ import {NPNResponse} from "@/call/model";
 
 @Component
 export default class ResponseSummary extends Vue {
-  @Prop() response!: NPNResponse
+  @Prop() response!: NPNResponse;
 }
 </script>

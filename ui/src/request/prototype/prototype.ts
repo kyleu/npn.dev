@@ -16,7 +16,7 @@ function newPrototype(protocol: string, hostname: string, port: number | undefin
   export function prototypeFromURL(u: string): Prototype {
     const url = new URL(u);
 
-    const qp: QueryParam[] = []
+    const qp: QueryParam[] = [];
     url.searchParams.forEach((v, k) => qp.push({k: k, v: v}));
 
     let auth: Auth | undefined;

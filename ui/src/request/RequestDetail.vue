@@ -10,12 +10,12 @@
         <div v-if="req">
           <URLEditor :req="req" />
           <div v-if="different" class="right">
-            <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="reset();">Reset</button>
+            <button v-style-button class="uk-button uk-button-default mrs mt" @click="reset();">Reset</button>
             <button v-style-button class="uk-button uk-button-default mt" @click="save();">Save Changes</button>
           </div>
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="doCall()">Call</button>
+          <button v-style-button class="uk-button uk-button-default mrs mt" @click="doCall()">Call</button>
           <ExportActions />
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="deleteRequest()">Delete</button>
+          <button v-style-button class="uk-button uk-button-default mrs mt" @click="deleteRequest()">Delete</button>
         </div>
       </div>
       <router-view />
@@ -30,12 +30,15 @@ import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
 import {diffRequests} from "@/request/prototype/diff";
 import ExportActions from "@/request/editor/ExportActions.vue";
-import {callResultRef, requestEditingRef, requestOriginalRef, setActiveRequest} from "@/request/state";
+import {requestEditingRef, requestOriginalRef, setActiveRequest} from "@/request/state";
 import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import Icon from "@/util/Icon.vue";
 import {jsonClone} from "@/util/json";
+import {callResultRef} from "@/call/state";
+import {authConfigRef, toAuthConfig} from "@/auth/state";
+import {bodyConfigRef, toBodyConfig} from "@/body/state";
 
 @Component({ components: {Icon, ExportActions, RequestEditor, URLEditor } })
 export default class RequestDetail extends Vue {
@@ -50,7 +53,9 @@ export default class RequestDetail extends Vue {
   }
 
   reset(): void {
-    requestEditingRef.value = jsonClone(requestOriginalRef.value)
+    requestEditingRef.value = jsonClone(requestOriginalRef.value);
+    authConfigRef.value = toAuthConfig(requestEditingRef.value?.prototype.auth);
+    bodyConfigRef.value = toBodyConfig(requestEditingRef.value?.prototype.body);
   }
 
   save(): void {
@@ -60,8 +65,8 @@ export default class RequestDetail extends Vue {
     }
     const e = requestEditingRef.value;
     if (e) {
-      const param = {coll: this.$route.params.coll, orig: requestOriginalRef.value?.key || e.key, req: e}
-      s.send({svc: requestService.key, cmd: clientCommands.saveRequest, param})
+      const param = {coll: this.$route.params.coll, orig: requestOriginalRef.value?.key || e.key, req: e};
+      s.send({svc: requestService.key, cmd: clientCommands.saveRequest, param});
     }
   }
 
@@ -69,7 +74,7 @@ export default class RequestDetail extends Vue {
     if (this.$route.name === 'CallResult') {
       callResultRef.value = undefined;
     } else {
-      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}})
+      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}});
     }
   }
 

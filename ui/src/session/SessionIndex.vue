@@ -3,7 +3,7 @@
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
         <div class="right"><router-link to="/"><Icon icon="close" /></router-link></div>
-        <h3 class="uk-card-title">Sessions</h3>
+        <h3 class="uk-card-title"><Icon icon="bookmark" class="nav-icon-h3" /> Sessions</h3>
         <SessionList />
       </div>
     </div>
@@ -18,7 +18,7 @@ import SessionList from "@/session/SessionList.vue";
 
 @Component({components: {SessionList, Icon}})
 export default class SessionIndex extends Vue {
-  mounted(): void {
+  updated(): void {
     setBC(this, {path: "", title: "sessions"});
   }
 }

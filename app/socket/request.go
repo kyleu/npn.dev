@@ -53,7 +53,7 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestNotFound, frm)
 		return s.WriteMessage(c.ID, msg)
 	}
-	ret := &reqDetailIn{Coll: frm.Coll, Req: req}
+	ret := &reqDetailOut{Coll: frm.Coll, Req: req}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }
@@ -61,16 +61,16 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
 	svc := getContext(s)
 	frm := &saveRequestIn{}
-	err := npncore.FromJSONStrict(param, frm)
+	err := npncore.FromJSON(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
 	frm.Req = frm.Req.Minify()
 	err = svc.Request.SaveRequest(&c.Profile.UserID, frm.Coll, frm.Orig, frm.Req)
 	if err != nil {
-		return errors.Wrap(err, "can't save request")
+		return errors.Wrap(err, "can't save request ["+frm.Req.Key+"]")
 	}
-	ret := &reqDetailIn{Coll: frm.Coll, Req: frm.Req}
+	ret := &reqDetailOut{Coll: frm.Coll, Req: frm.Req}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }

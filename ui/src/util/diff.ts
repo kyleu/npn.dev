@@ -22,7 +22,7 @@ export function comp(k: string, lv: any, rv: any, p: (k: string, lv: any, rv: an
       // @ts-ignore
       // eslint-disable-next-line
       if (lv.hasOwnProperty(f)) {
-        if(comp(k + "." + f, lv[f], rv[f], p)) {
+        if (comp(k + "." + f, lv[f], rv[f], p)) {
           return true;
         }
       }
@@ -71,12 +71,12 @@ export function compArray(k: string, lv: any[] | undefined, rv: any[] | undefine
 export function checkNull(k: string, lv: any, rv: any, p: (k: string, lv: any, rv: any) => void): boolean {
   if (!lv) {
     if (rv) {
-      p(k, null, "(defined)")
+      p(k, null, "(defined)");
     }
     return true;
   }
   if (!rv) {
-    p(k, "(defined)", null)
+    p(k, "(defined)", null);
     return true;
   }
   return false;

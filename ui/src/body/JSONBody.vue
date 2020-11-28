@@ -10,9 +10,10 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {JSONConfig} from "@/body/model";
 import {jsonStr} from "@/util/json";
 
-// @ts-ignore
-// eslint-disable-next-line
-declare const Prism: any;
+declare const Prism: {
+  highlight: (c: string, l: object) => string;
+  languages: { js: object };
+};
 
 @Component
 export default class JSONBody extends Vue {

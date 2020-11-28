@@ -13,7 +13,7 @@ import (
 
 func BreadcrumbDisplay(ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 	buffer.WriteString(`
-        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" href="`)
+        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic nav-f" href="`)
 	hero.EscapeHTML(ctx.Route(`workspace`), buffer)
 	buffer.WriteString(`">`)
 	hero.EscapeHTML(npncore.AppName, buffer)
@@ -21,8 +21,8 @@ func BreadcrumbDisplay(ctx *npnweb.RequestContext, buffer *bytes.Buffer) {
 `)
 	for _, b := range ctx.Breadcrumbs {
 		buffer.WriteString(`
-        <span class="uk-navbar-item" style="padding: 0 8px;"> / </span>
-        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" href="`)
+        <span class="uk-navbar-item nav-f" style="padding: 0 8px;"> / </span>
+        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic nav-f" href="`)
 		hero.EscapeHTML(b.Path, buffer)
 		buffer.WriteString(`">`)
 		hero.EscapeHTML(b.Title, buffer)

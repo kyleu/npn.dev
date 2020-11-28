@@ -21,9 +21,9 @@ func NewService(files npncore.FileLoader, logger logur.Logger) *Service {
 
 func (s *Service) Create(key string, files []File) error {
 	cfg := Config{Files: files, Status: "created"}
-	json := npncore.ToJSON(cfg, s.logger)
+	json := npncore.ToJSONBytes(cfg, s.logger, true)
 	p := path.Join("import", key, "_import.json")
-	err := s.files.WriteFile(p, []byte(json), false)
+	err := s.files.WriteFile(p, json, false)
 	if err != nil {
 		return errors.Wrap(err, "cannot write import summary")
 	}

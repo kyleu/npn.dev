@@ -1,37 +1,27 @@
 <template>
-  <div v-if="(!headers) || headers.length === 0">
+  <div v-if="(!headers) || headers.length === 0" class="mt">
     No headers defined, why not <a href="" @click.prevent="addHeader()">add one</a>?
   </div>
-  <ul v-else class="uk-list uk-list-divider">
-    <li>
-      <div data-uk-grid="">
-        <div class="uk-width-1-4">Name</div>
-        <div class="uk-width-1-4">Value</div>
-        <div class="uk-width-1-2">
-          <div class="right">
-            <a href="" title="new header" @click.prevent="addHeader()"><Icon icon="plus" /></a>
-          </div>
-          Description
-        </div>
-      </div>
-    </li>
-    <li v-for="(h, idx) of headers" :key="h.k + h.v + idx">
-      <div data-uk-grid="">
-        <div class="uk-width-1-4">
-          <input v-model="h.k" class="uk-input" type="text" />
-        </div>
-        <div class="uk-width-1-4">
-          <input v-model="h.v" class="uk-input" type="text" />
-        </div>
-        <div class="uk-width-1-2">
-          <div class="right" style="margin-top: 6px;">
-            <a href="" title="remove param" @click.prevent="removeHeader(idx)"><Icon icon="close" /></a>
-          </div>
-          <input v-model="h.desc" style="width: calc(100% - 36px);" class="uk-input" type="text" />
-        </div>
-      </div>
-    </li>
-  </ul>
+  <div v-else class="uk-overflow-auto">
+    <table class="uk-table uk-table-divider uk-table-justify">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Value</th>
+          <th>Description</th>
+          <th style="width: 20px;"><a href="" title="new header" @click.prevent="addHeader()"><Icon icon="plus" /></a></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(p, idx) of headers" :key="idx">
+          <td><input v-model="p.k" class="uk-input" type="text" data-lpignore="true" /></td>
+          <td><input v-model="p.v" class="uk-input" type="text" data-lpignore="true" /></td>
+          <td><input v-model="p.desc" class="uk-input" type="text" data-lpignore="true" /></td>
+          <td><a href="" title="remove param" @click.prevent="removeHeader(idx)"><Icon class="remove-link" icon="close" /></a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script lang="ts">

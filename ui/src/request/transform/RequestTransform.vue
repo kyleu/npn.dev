@@ -13,8 +13,8 @@
 import {Component, Vue} from "vue-property-decorator";
 import {setBCReq} from "@/util/vutils";
 import {TransformResult} from "@/request/transform/transformResult";
-import {getTransformResult} from "@/request/state";
 import Icon from "@/util/Icon.vue";
+import {getTransformResult} from "@/request/transform/state";
 
 @Component({ components: {Icon} })
 export default class RequestTransform extends Vue {
@@ -22,7 +22,7 @@ export default class RequestTransform extends Vue {
     return getTransformResult(this.$route.params.coll, this.$route.params.req, this.$route.params.tx);
   }
 
-  mounted(): void {
+  updated(): void {
     setBCReq(this, this.$route.params.tx);
   }
 }

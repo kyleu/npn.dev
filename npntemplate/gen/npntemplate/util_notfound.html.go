@@ -16,10 +16,26 @@ func NotFound(r *http.Request, ctx *npnweb.RequestContext, w io.Writer) (int, er
 	defer hero.PutBuffer(_buffer)
 	_buffer.WriteString(`<!DOCTYPE html>
 <html lang="en">
-<head>`)
+<head>
+`)
 	Head(ctx, _buffer)
-	_buffer.WriteString(`</head>
-<body>
+	_buffer.WriteString(`
+<style>
+  .nav-b { background-color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.NavB, _buffer)
+	_buffer.WriteString(` !important; }
+  .nav-f { color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.NavF, _buffer)
+	_buffer.WriteString(` !important; }
+  .body-b { background-color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.BodyB, _buffer)
+	_buffer.WriteString(` !important; }
+  .body-l { color: `)
+	hero.EscapeHTML(ctx.Profile.Settings.BodyL, _buffer)
+	_buffer.WriteString(` !important; }
+</style>
+</head>
+<body class="body-b">
 `)
 	Navbar(ctx, _buffer)
 
@@ -29,8 +45,10 @@ func NotFound(r *http.Request, ctx *npnweb.RequestContext, w io.Writer) (int, er
 	_buffer.WriteString(`
 <div class="uk-section uk-section-small">
   <div class="uk-container">
-    <div>
-      <h1 class="uk-heading-hero">404 Not Found</h1>
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">404 Not Found</h3>
+      <p>We can't find a page at this location.</p>
+      <p>Sorry.</p>
     </div>
   </div>
 </div>

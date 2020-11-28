@@ -50,8 +50,8 @@ func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, tit
 	n.Path = newKey
 
 	p := path.Join(s.dirFor(userID), newKey, "collection.json")
-	content := npncore.ToJSON(n, s.logger)
-	err = s.files.WriteFile(p, []byte(content), true)
+	content := npncore.ToJSONBytes(n, s.logger, true)
+	err = s.files.WriteFile(p, content, true)
 	if err != nil {
 		return errors.Wrap(err, "unable to save collection ["+newKey+"]")
 	}

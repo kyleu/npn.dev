@@ -9,9 +9,10 @@ import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import RequestTransform from "@/request/transform/RequestTransform.vue";
-import {callResultRef, transformResultRef} from "@/request/state";
 import SessionIndex from "@/session/SessionIndex.vue";
 import SessionDetail from "@/session/SessionDetail.vue";
+import {callResultRef} from "@/call/state";
+import {transformResultRef} from "@/request/transform/state";
 
 const routes: Array<RouteConfig> = [
   {

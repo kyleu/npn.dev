@@ -42,7 +42,7 @@ export function onCollectionUpdated(coll: Collection): void {
       x.coll = coll;
     }
     return x;
-  })
+  });
 }
 
 export function onCollectionDeleted(param: string): void {

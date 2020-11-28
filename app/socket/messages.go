@@ -20,14 +20,14 @@ const (
 	ClientMessageTransform     = "transform"
 
 	// Session
-	ClientMessageGetSession = "getSession"
-	ClientMessageSaveSession = "saveSession"
+	ClientMessageGetSession    = "getSession"
+	ClientMessageAddSession    = "addSession"
+	ClientMessageSaveSession   = "saveSession"
 	ClientMessageDeleteSession = "deleteSession"
 )
 
 const (
-	// Session
-	ServerMessageSessions = "sessions"
+	ServerMessageLog = "log"
 
 	// Collection
 	ServerMessageCollections        = "collections"
@@ -46,6 +46,9 @@ const (
 	ServerMessageTransformResult = "transformResult"
 
 	// Session
+	ServerMessageSessions        = "sessions"
+	ServerMessageSessionAdded    = "sessionAdded"
 	ServerMessageSessionDetail   = "sessionDetail"
+	ServerMessageSessionDeleted  = "sessionDeleted"
 	ServerMessageSessionNotFound = "sessionNotFound"
 )

@@ -42,7 +42,7 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 		bg := `<rect x="0" y="%v" width="100" height="%v" fill="transparent">%v</rect>`
 		// bgLine := `<line x1="0" y1="%v" x2="100" y2="%v" stroke="#666" stroke-width="0.1" />`
 		rect := `<rect x="%v" y="%v" width="%v" height="%v" style="fill: %v">%v</rect>`
-		title := "<title>%v: %v%%\n%v - %v</title>"
+		title := "<title>%v: %v (%v%%)\n%v - %v</title>"
 
 		for idx, section := range sections {
 			cy := rowHeight * idx
@@ -51,9 +51,10 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 			startTitle := npncore.MicrosToMillis(language.AmericanEnglish, section.Start)
 			width := pc(section.End - section.Start)
 			endTitle := npncore.MicrosToMillis(language.AmericanEnglish, section.End)
+			elapsedTitle := npncore.MicrosToMillis(language.AmericanEnglish, section.End-section.Start)
 			color := colorForSection(section.Key, mode)
 
-			rectTitle := fmt.Sprintf(title, section.Key, per, startTitle, endTitle)
+			rectTitle := fmt.Sprintf(title, section.Key, elapsedTitle, per, startTitle, endTitle)
 			ap(fmt.Sprintf(bg, cy, rowHeight, rectTitle))
 			ap(fmt.Sprintf(rect, start, cy, width, rowHeight, color, rectTitle))
 		}

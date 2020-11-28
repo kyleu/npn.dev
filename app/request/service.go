@@ -15,8 +15,8 @@ import (
 
 type Service struct {
 	multiuser bool
-	files  npncore.FileLoader
-	logger logur.Logger
+	files     npncore.FileLoader
+	logger    logur.Logger
 }
 
 func NewService(multiuser bool, f npncore.FileLoader, logger logur.Logger) *Service {
@@ -92,7 +92,7 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 	if shouldDelete {
 		orig, err := s.LoadRequest(userID, coll, req.Key)
 		if err == nil && orig != nil {
-			return errors.New("file already exists in collection [" + coll + "] with key [" + req.Key + "]")
+			return errors.New("request file already exists in collection [" + coll + "] with key [" + req.Key + "]")
 		}
 	}
 
@@ -107,14 +107,14 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 		}
 	}
 
-	msg := npncore.ToJSON(req, s.logger)
+	msg := npncore.ToJSONBytes(req, s.logger, true)
 
 	err := s.saveHistory(userID, coll, req, p, msg)
 	if err != nil {
 		return errors.Wrap(err, "unable to save history")
 	}
 
-	err = s.files.WriteFile(p, []byte(msg), true)
+	err = s.files.WriteFile(p, msg, true)
 	if err != nil {
 		return errors.Wrap(err, "unable to write file")
 	}

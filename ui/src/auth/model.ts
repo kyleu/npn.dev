@@ -1,8 +1,6 @@
 export interface Auth {
   readonly type: string;
-  // @ts-ignore
-  // eslint-disable-next-line
-  readonly config: any;
+  readonly config: object;
 }
 
 export interface AuthType {
@@ -19,4 +17,4 @@ export const AllTypes: AuthType[] = [
   {key: "bearertoken", title: "Bearer Token", desc: "uses an OAuth bearer token", hidden: false},
   {key: "digest", title: "Digest", desc: "", hidden: true},
   {key: "oauth", title: "OAuth", desc: "", hidden: true},
-]
+];

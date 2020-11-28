@@ -43,6 +43,10 @@ func (s *Service) WriteMessage(connID uuid.UUID, message *Message) error {
 	return s.Write(connID, npncore.ToJSON(message, s.Logger))
 }
 
+func (s *Service) WriteLog(connID uuid.UUID, level string, msg string, ctx ...string) error {
+	return s.WriteMessage(connID, NewMessage(npncore.KeySystem, npncore.KeyLog, NewLogMessage(level, msg, ctx...)))
+}
+
 func (s *Service) WriteChannel(channel Channel, message *Message, except ...uuid.UUID) error {
 	conns, ok := s.channels[channel]
 	if !ok {
@@ -88,7 +92,7 @@ func (s *Service) ReadLoop(connID uuid.UUID) error {
 
 		err = OnMessage(s, connID, m)
 		if err != nil {
-			_ = s.WriteMessage(c.ID, NewMessage(npncore.KeySystem, npncore.KeyError, err.Error()))
+			_ = s.WriteLog(c.ID, "error", err.Error())
 			s.Logger.Debug(fmt.Sprintf("error handling websocket message: %+v", err))
 			// return errors.Wrap(err, "error handling websocket message")
 		}

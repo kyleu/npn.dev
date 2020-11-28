@@ -31,10 +31,12 @@ import HeadersResponse from "@/header/HeadersResponse.vue";
 
 @Component({ components: {BodyResponse, HeadersResponse, SummaryResponse, TimingResponse } })
 export default class ResponsePanel extends Vue {
-  @Prop() response!: NPNResponse
+  activeTab = "";
+
+  @Prop() response!: NPNResponse;
 
   setTab(s: string): void {
-    console.log("setResponseTab: " + s);
+    this.activeTab = s;
   }
 }
 </script>

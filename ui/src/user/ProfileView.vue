@@ -129,7 +129,7 @@ export default class ProfileView extends Vue {
     return false;
   }
 
-  mounted(): void {
+  updated(): void {
     setBC(this, {path: "/u", title: "settings"});
   }
 }

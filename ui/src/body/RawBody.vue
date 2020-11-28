@@ -11,6 +11,6 @@ import {RawConfig} from "@/body/model";
 
 @Component
 export default class RawBody extends Vue {
-  @Prop() config!: RawConfig
+  @Prop() config!: RawConfig;
 }
 </script>

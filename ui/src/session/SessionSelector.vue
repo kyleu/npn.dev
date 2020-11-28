@@ -1,8 +1,7 @@
 <template>
   <div class="nav-section">
-    <router-link v-style-menu-link :to="{name: 'SessionIndex'}" onclick="return false;">
-      <Icon icon="database" /> {{ sessTitle }}
-    </router-link>
+    <router-link v-style-menu-link :to="{name: 'SessionIndex'}" onclick="return false;"><Icon icon="bookmark" class="nav-icon" /></router-link>
+    <router-link v-style-menu-link :to="{name: 'SessionDetail', params: { sess: sessKey } }" onclick="return false;">{{ sessTitle }}</router-link>
   </div>
 </template>
 
@@ -18,15 +17,20 @@ export default class SessionSelector extends Vue {
     return sessionSummariesRef.value;
   }
 
-  get sessTitle(): string {
+  get sessKey(): string {
     let t = activeSessionRef.value;
     if (t.length === 0) {
       t = "_";
     }
+    return t;
+  }
+
+  get sessTitle(): string {
+    const t = this.sessKey;
     const x = sessionSummariesRef.value.find(x => x.key === t);
     if (!x) {
       if (t === "_") {
-        return "Default Session"
+        return "Default Session";
       }
       return t;
     }

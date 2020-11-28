@@ -9,6 +9,8 @@ type Collection struct {
 	RequestOrder []string `json:"requestOrder,omitempty"`
 }
 
+var defaultCollection = &Collection{Key: "_", Title: "Default"}
+
 func (c *Collection) TitleWithFallback() string {
 	if len(c.Title) == 0 {
 		return c.Key

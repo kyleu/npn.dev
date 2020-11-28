@@ -101,14 +101,14 @@ func (b *Body) UnmarshalJSON(data []byte) error {
 }
 
 func (b *Body) ToHTTP() io.ReadCloser {
-	if b == nil {
+	if b == nil || b.Config == nil {
 		return nil
 	}
 	return ioutil.NopCloser(bytes.NewReader(b.Config.Bytes()))
 }
 
 func (b *Body) ContentLength() int64 {
-	if b == nil {
+	if b == nil || b.Config == nil {
 		return 0
 	}
 	return b.Config.ContentLength()

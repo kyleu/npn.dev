@@ -1,7 +1,7 @@
 <template>
   <div class="nav-link">
     <router-link v-style-menu-link class="collection-link" :to="'/c/' + cc.coll.key" :title="cc.count + ' ' + (cc.count === 1 ? 'request' : 'requests')">
-      <Icon :icon="icon" />
+      <Icon :icon="icon" class="nav-icon" />
       {{ label }}
     </router-link>
     <div v-if="this.$route.params.coll === cc.coll.key && requests.length > 0">

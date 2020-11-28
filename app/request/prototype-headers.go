@@ -71,7 +71,7 @@ func (p *Prototype) ContentType() string {
 	if len(curr) > 0 {
 		return curr
 	}
-	if p.Body == nil {
+	if p.Body == nil || p.Body.Type == "" {
 		return ""
 	}
 	return p.Body.Config.MimeType()

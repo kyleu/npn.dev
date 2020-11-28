@@ -18,14 +18,14 @@ import {hostRef} from "@/socket/socket";
 
 @Component
 export default class TimingResponse extends Vue {
-  @Prop() timing: Timing | undefined
+  @Prop() timing: Timing | undefined;
 
   get sections(): TimingSection[] {
     return this.timing ? timingSections(this.timing) : [];
   }
 
   get graphMarkup(): string {
-    let url = ""
+    let url = "";
     if (hostRef.value.length > 0) {
       url = `http://${hostRef.value}`;
     }

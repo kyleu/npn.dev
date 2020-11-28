@@ -32,19 +32,6 @@ func NewPrototype() *Prototype {
 	return ret.Normalize()
 }
 
-func (p *Prototype) Normalize() *Prototype {
-	if len(p.Method.Key) == 0 {
-		p.Method = MethodGet
-	}
-	if len(p.Protocol.Key) == 0 {
-		p.Protocol = ProtocolHTTPS
-	}
-	if p.Options == nil {
-		p.Options = &Options{}
-	}
-	return p
-}
-
 func (p *Prototype) Host() string {
 	if p.Port == 0 {
 		return p.Domain

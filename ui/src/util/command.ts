@@ -19,12 +19,13 @@ export const clientCommands = {
 
   // Session
   getSession: "getSession",
+  addSession: "addSession",
   saveSession: "saveSession",
   deleteSession: "deleteSession"
 };
 
 export const serverCommands = {
-  error: "error",
+  log: "log",
 
   // Collection
   collections: "collections",
@@ -44,6 +45,8 @@ export const serverCommands = {
 
   // Session
   sessions: "sessions",
+  sessionAdded: "sessionAdded",
   sessionDetail: "sessionDetail",
+  sessionDeleted: "sessionDeleted",
   sessionNotFound: "sessionNotFound"
 };

@@ -9,12 +9,13 @@
         </h3>
         <p v-if="coll && coll.description && showEditor.length === 0">{{ coll.description }}</p>
         <div v-if="showEditor.length !== 0" class="mt">
-          <div>
+          <div v-if="$route.params.coll !== '_'">
             <label class="uk-form-label">
               Key
               <input v-model="collEdit.key" class="uk-input" name="key" type="text" data-lpignore="true" />
             </label>
           </div>
+          <input v-else v-model="collEdit.key" name="key" type="hidden" data-lpignore="true" />
 
           <div class="mt">
             <label class="uk-form-label">
@@ -31,11 +32,11 @@
           </div>
 
           <button v-style-button class="right uk-button uk-button-default mt" @click="saveCollection()">Save Changes</button>
-          <button v-style-button class="right uk-button uk-button-default uk-margin-small-right mt" @click="showEditor = ''">Cancel</button>
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="deleteCollection()">Delete</button>
+          <button v-style-button class="right uk-button uk-button-default mrs mt" @click="showEditor = ''">Cancel</button>
+          <button v-if="$route.params.coll !== '_'" v-style-button class="uk-button uk-button-default mrs mt" @click="deleteCollection()">Delete</button>
         </div>
         <div v-else>
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="editCollection()">Edit</button>
+          <button v-style-button class="uk-button uk-button-default mrs mt" @click="editCollection()">Edit</button>
           <TransformActions />
         </div>
       </div>
@@ -74,10 +75,6 @@ export default class CollectionDetail extends Vue {
     return getCollectionRequestSummaries(this.$route.params.coll);
   }
 
-  mounted(): void {
-    setBC(this, {path: "", title: this.$route.params.coll});
-  }
-
   editCollection(): void {
     this.showEditor = this.$route.params.coll;
   }
@@ -102,6 +99,11 @@ export default class CollectionDetail extends Vue {
   }
 
   updated(): void {
+    let title = this.$route.params.coll;
+    if (title === "_") {
+      title = "default";
+    }
+    setBC(this, {path: "", title});
     if ((this.showEditor.length > 0) && (this.showEditor !== this.$route.params.coll)) {
       this.showEditor = "";
     }

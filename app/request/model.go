@@ -22,10 +22,11 @@ func FromString(key string, content string) (*Request, error) {
 	ret := &Request{}
 	content = strings.TrimSpace(content)
 	if strings.HasPrefix(content, "{") {
-		errRequest := npncore.FromJSONStrict([]byte(content), ret)
+		b := []byte(content)
+		errRequest := npncore.FromJSONStrict(b, ret)
 		if errRequest != nil {
 			proto := &Prototype{}
-			errProto := npncore.FromJSONStrict([]byte(content), proto)
+			errProto := npncore.FromJSONStrict(b, proto)
 			if errProto != nil {
 				return nil, errors.Wrap(errRequest, "unable to parse request from ["+content+"]")
 			}
@@ -54,42 +55,6 @@ func (r *Request) Options() *Options {
 		return &Options{}
 	}
 	return r.Prototype.Options
-}
-
-func (r *Request) Normalize(key string) *Request {
-	if r == nil {
-		return nil
-	}
-	if len(key) > 0 {
-		r.Key = key
-	}
-	if len(r.Key) == 0 {
-		r.Key = "untitled-" + npncore.RandomString(6)
-	}
-	if r.Prototype == nil {
-		r.Prototype = NewPrototype()
-	}
-	r.Prototype = r.Prototype.Normalize()
-	return r
-}
-
-func (r *Request) Minify() *Request {
-	if r.Prototype == nil {
-		r.Prototype = NewPrototype()
-	}
-	if len(r.Prototype.Headers) == 0 {
-		r.Prototype.Headers = nil
-	}
-	if len(r.Prototype.Query) == 0 {
-		r.Prototype.Query = nil
-	}
-	if r.Prototype.Body != nil && len(r.Prototype.Body.Type) == 0 {
-		r.Prototype.Body = nil
-	}
-	if r.Prototype.Options != nil && r.Prototype.Options.Empty() {
-		r.Prototype.Options = nil
-	}
-	return r
 }
 
 type Requests []*Request

@@ -4,16 +4,17 @@
       <div class="uk-card uk-card-body uk-card-default">
         <div class="right"><router-link to="/s"><Icon icon="close" /></router-link></div>
         <h3 class="uk-card-title">
-          <Icon class="nav-icon-h3" icon="database" />
+          <Icon class="nav-icon-h3" icon="bookmark" />
           {{ (sess && sess.title && sess.title.length > 0) ? sess.title : $route.params.sess }}
         </h3>
         <div v-if="showEditor.length !== 0" class="mt">
-          <div>
+          <div v-if="$route.params.sess !== '_'">
             <label class="uk-form-label">
               Key
               <input v-model="sess.key" class="uk-input" name="key" type="text" data-lpignore="true" />
             </label>
           </div>
+          <input v-else v-model="sess.key" name="key" type="hidden" data-lpignore="true" />
 
           <div class="mt">
             <label class="uk-form-label">
@@ -24,26 +25,26 @@
         </div>
 
         <div v-if="different" class="right">
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="reset();">Reset</button>
+          <button v-style-button class="uk-button uk-button-default mrs mt" @click="reset();">Reset</button>
           <button v-style-button class="uk-button uk-button-default mt" @click="save();">Save Changes</button>
         </div>
 
         <div v-if="showEditor.length === 0">
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="editSession()">Edit</button>
+          <button v-style-button class="uk-button uk-button-default mrs mt" @click="editSession()">Edit</button>
           <button v-style-button class="uk-button uk-button-default mt" @click="exportSession()">Export</button>
         </div>
         <div v-else>
-          <button v-style-button class="uk-button uk-button-default uk-margin-small-right mt" @click="cancelEdit()">Cancel</button>
-          <button v-style-button class="uk-button uk-button-default mt" @click="deleteSession()">Delete</button>
+          <button v-style-button class="uk-button uk-button-default mrs mt" @click="cancelEdit()">Cancel</button>
+          <button v-if="$route.params.sess !== '_'" v-style-button class="uk-button uk-button-default mt" @click="deleteSession()">Delete</button>
         </div>
       </div>
       <div class="uk-card uk-card-body uk-card-default mt">
         <h3 class="uk-card-title">Cookies</h3>
-        <CookieEditor class="mt" />
+        <CookieEditor />
       </div>
       <div class="uk-card uk-card-body uk-card-default mt">
         <h3 class="uk-card-title">Variables</h3>
-        <VariablesEditor class="mt" />
+        <VariablesEditor />
       </div>
     </div>
   </div>
@@ -106,13 +107,17 @@ export default class SessionDetail extends Vue {
     }
     const sess = sessionEditingRef.value;
     if (sess) {
-      const param = {orig: sessionOriginalRef.value?.key || sess.key, sess: sess}
-      s.send({svc: sessionService.key, cmd: clientCommands.saveSession, param})
+      const param = {orig: sessionOriginalRef.value?.key || sess.key, sess: sess};
+      s.send({svc: sessionService.key, cmd: clientCommands.saveSession, param});
     }
   }
 
-  mounted(): void {
-    setBC(this, {path: "", title: this.$route.params.sess});
+  updated(): void {
+    let title = this.$route.params.sess;
+    if (title === "_") {
+      title = "default";
+    }
+    setBC(this, {path: "/s", title: "sessions"}, {path: "", title});
   }
 }
 </script>

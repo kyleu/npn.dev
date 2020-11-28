@@ -25,15 +25,16 @@ import {Component, Vue} from "vue-property-decorator";
 import {allMethods, Method, NPNRequest} from "@/request/model";
 import {Part, prototypeToURL, prototypeToURLParts} from "@/request/prototype/url";
 import {prototypeFromURL} from "@/request/prototype/prototype";
-import {callResultRef, requestEditingRef} from "@/request/state";
+import {requestEditingRef} from "@/request/state";
 import Icon from "@/util/Icon.vue";
+import {callResultRef} from "@/call/state";
 
 @Component({ components: {Icon} })
 export default class URLEditor extends Vue {
   private e = false
 
   get editing(): boolean {
-    return this.e
+    return this.e;
   }
   set editing(e: boolean) {
     this.e = e;
@@ -43,12 +44,12 @@ export default class URLEditor extends Vue {
         if (el) {
           el.focus();
         }
-      }, 0)
+      }, 0);
     }
   }
 
   get req(): NPNRequest | undefined {
-    return requestEditingRef.value
+    return requestEditingRef.value;
   }
 
   get methods(): Method[] {
@@ -86,7 +87,7 @@ export default class URLEditor extends Vue {
     if (this.$route.name === 'CallResult') {
       callResultRef.value = undefined;
     } else {
-      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}})
+      this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}});
     }
   }
 }

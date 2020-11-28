@@ -33,6 +33,7 @@ const (
 	KeyIdx        = "idx"
 	KeyJSON       = "json"
 	KeyKey        = "key"
+	KeyLog        = "log"
 	KeyMember     = "member"
 	KeyMigration  = "migration"
 	KeyModel      = "model"

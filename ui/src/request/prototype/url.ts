@@ -10,7 +10,7 @@ export interface Part {
 }
 
 function urlColor(key: string): string {
-  const dark = profileRef.value?.settings.mode === "dark"
+  const dark = profileRef.value?.settings.mode === "dark";
   switch (key) {
     case "protocol":
       return dark ? "#ce494a" : "#5a0000";
@@ -33,15 +33,15 @@ function urlColor(key: string): string {
 }
 
 export function prototypeToURLParts(p: Prototype): Part[] {
-  const ret: Part[] = []
+  const ret: Part[] = [];
   const push = (t: string, v: string): void => {
     ret.push({t: t, v: v, idx: ret.length, color: urlColor(t)});
-  }
+  };
 
   push("protocol", p.protocol);
   push("", "://");
   if(p.auth && p.auth.type === "basic") {
-    const cfg: Basic = p.auth.config
+    const cfg = p.auth.config as Basic;
     push("username", cfg.username);
     push("", ":");
 
@@ -62,14 +62,14 @@ export function prototypeToURLParts(p: Prototype): Part[] {
     push("path", p.path);
   }
   if (p.query) {
-    const qp = p.query.filter(x => x.k.trim().length > 0);
+    const qp = p.query.filter(x => x.k && x.k.trim().length > 0);
     if (qp.length > 0) {
       push("", "?");
       const query = qp.map(k => {
         if (k.v.length > 0) {
-          return encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v)
+          return encodeURIComponent(k.k) + '=' + encodeURIComponent(k.v);
         }
-        return encodeURIComponent(k.k)
+        return encodeURIComponent(k.k);
       }).join('&');
       push("query", query);
     }
@@ -79,12 +79,12 @@ export function prototypeToURLParts(p: Prototype): Part[] {
     push("fragment", encodeURIComponent(p.fragment));
   }
 
-  return ret
+  return ret;
 }
 
 export function prototypeToURL(p: Prototype | undefined): string {
   if (!p) {
-    return "..."
+    return "...";
   }
   return prototypeToURLParts(p).map(x => x.v).join("");
 }

@@ -23,16 +23,17 @@ import {HTMLConfig} from "@/body/model";
 import {PrismEditor} from "vue-prism-editor";
 import HTMLPreview from "@/body/HTMLPreview.vue";
 
-// @ts-ignore
-// eslint-disable-next-line
-declare const Prism: any;
+declare const Prism: {
+  highlight: (c: string, l: object) => string;
+  languages: { html: object };
+};
 
 @Component({ components: { HTMLPreview, PrismEditor } })
 export default class HTMLBody extends Vue {
-  @Prop() url!: string
-  @Prop() config!: HTMLConfig
+  @Prop() url!: string;
+  @Prop() config!: HTMLConfig;
 
-  mode = "text"
+  mode = "text";
 
   get highlighted(): string {
     return Prism.highlight(this.config.content, Prism.languages.html);
