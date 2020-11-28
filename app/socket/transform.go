@@ -22,7 +22,7 @@ func onTransformRequest(c *npnconnection.Connection, param json.RawMessage, s *n
 		return errors.New("can't load request transformer [" + frm.Fmt + "]")
 	}
 
-	sess, err := getContext(s).Session.Load(&c.Profile.UserID, frm.Sess)
+	sess, err := ctx(s).Session.Load(&c.Profile.UserID, frm.Sess)
 	if err != nil {
 		return errors.Wrap(err, "can't load request transform session ["+frm.Sess+"]")
 	}
@@ -33,7 +33,7 @@ func onTransformRequest(c *npnconnection.Connection, param json.RawMessage, s *n
 	}
 
 	txr := transformOut{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
-	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageTransformResult, txr)
+	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestTransform, txr)
 	return s.WriteMessage(c.ID, msg)
 }
 
@@ -49,7 +49,7 @@ func onTransformCollection(c *npnconnection.Connection, param json.RawMessage, s
 		return errors.New("can't load collection transformer [" + frm.Fmt + "]")
 	}
 
-	svcs := getContext(s)
+	svcs := ctx(s)
 
 	coll, err := svcs.Collection.Load(&c.Profile.UserID, frm.Coll)
 	if err != nil {
@@ -61,7 +61,7 @@ func onTransformCollection(c *npnconnection.Connection, param json.RawMessage, s
 		return errors.Wrap(err, "can't load collection transform requests for ["+frm.Coll+"]")
 	}
 
-	sess, err := getContext(s).Session.Load(&c.Profile.UserID, frm.Sess)
+	sess, err := ctx(s).Session.Load(&c.Profile.UserID, frm.Sess)
 	if err != nil {
 		return errors.Wrap(err, "can't load collection transform session ["+frm.Sess+"]")
 	}
@@ -72,6 +72,6 @@ func onTransformCollection(c *npnconnection.Connection, param json.RawMessage, s
 	}
 
 	txr := transformOut{Coll: frm.Coll, Req: frm.Req, Fmt: frm.Fmt, Out: rsp.Out}
-	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageTransformResult, txr)
+	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionTransform, txr)
 	return s.WriteMessage(c.ID, msg)
 }

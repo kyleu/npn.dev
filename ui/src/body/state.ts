@@ -57,7 +57,7 @@ function diff(t: BodyConfig, b: RBody | undefined): boolean {
       if (typeof (b.config as JSONConfig).msg === "string") {
         return t.jsonContent !== (b.config as JSONConfig).msg;
       }
-      return t.jsonContent !== jsonStr((b.config as JSONConfig).msg);
+      return jsonStr(jsonParseTry(t.jsonContent)) !== jsonStr((b.config as JSONConfig).msg);
     case "html":
       return t.htmlContent !== (b.config as HTMLConfig).content;
     default:

@@ -30,20 +30,21 @@ const (
 	ServerMessageLog = "log"
 
 	// Collection
-	ServerMessageCollections        = "collections"
-	ServerMessageCollectionDetail   = "collectionDetail"
-	ServerMessageCollectionNotFound = "collectionNotFound"
-	ServerMessageCollectionAdded    = "collectionAdded"
-	ServerMessageCollectionUpdated  = "collectionUpdated"
-	ServerMessageCollectionDeleted  = "collectionDeleted"
+	ServerMessageCollections         = "collections"
+	ServerMessageCollectionDetail    = "collectionDetail"
+	ServerMessageCollectionNotFound  = "collectionNotFound"
+	ServerMessageCollectionAdded     = "collectionAdded"
+	ServerMessageCollectionUpdated   = "collectionUpdated"
+	ServerMessageCollectionDeleted   = "collectionDeleted"
+	ServerMessageCollectionTransform = "collectionTransform"
 
 	// Request
-	ServerMessageRequestDetail   = "requestDetail"
-	ServerMessageRequestNotFound = "requestNotFound"
-	ServerMessageRequestAdded    = "requestAdded"
-	ServerMessageRequestDeleted  = "requestDeleted"
-	ServerMessageCallResult      = "callResult"
-	ServerMessageTransformResult = "transformResult"
+	ServerMessageRequestDetail    = "requestDetail"
+	ServerMessageRequestNotFound  = "requestNotFound"
+	ServerMessageRequestAdded     = "requestAdded"
+	ServerMessageRequestDeleted   = "requestDeleted"
+	ServerMessageCallResult       = "callResult"
+	ServerMessageRequestTransform = "requestTransform"
 
 	// Session
 	ServerMessageSessions        = "sessions"

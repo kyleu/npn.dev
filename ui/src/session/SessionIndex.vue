@@ -18,7 +18,7 @@ import SessionList from "@/session/SessionList.vue";
 
 @Component({components: {SessionList, Icon}})
 export default class SessionIndex extends Vue {
-  updated(): void {
+  mounted(): void {
     setBC(this, {path: "", title: "sessions"});
   }
 }

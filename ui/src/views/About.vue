@@ -19,7 +19,7 @@ import Icon from "@/util/Icon.vue";
 
 @Component({ components: { Icon } })
 export default class About extends Vue {
-  updated(): void {
+  mounted(): void {
     setBC(this, { path: "", title: "about" });
   }
 }

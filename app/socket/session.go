@@ -45,8 +45,7 @@ func sendSessions(s *npnconnection.Service, c *npnconnection.Connection) {
 }
 
 func onGetSession(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	var key string
-	err := npncore.FromJSON(param, &key)
+	key, err := npncore.FromJSONString(param)
 	if err != nil {
 		return errors.Wrap(err, "unable to read session key")
 	}
@@ -94,7 +93,7 @@ func onAddSession(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 }
 
 func onSaveSession(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := getContext(s)
+	svc := ctx(s)
 	frm := &saveSessionIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {

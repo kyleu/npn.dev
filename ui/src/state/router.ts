@@ -12,7 +12,8 @@ import RequestTransform from "@/request/transform/RequestTransform.vue";
 import SessionIndex from "@/session/SessionIndex.vue";
 import SessionDetail from "@/session/SessionDetail.vue";
 import {callResultRef} from "@/call/state";
-import {transformResultRef} from "@/request/transform/state";
+import {collectionTransformResultRef, requestTransformResultRef} from "@/request/transform/state";
+import CollectionTransform from "@/request/transform/CollectionTransform.vue";
 
 const routes: Array<RouteConfig> = [
   {
@@ -34,6 +35,15 @@ const routes: Array<RouteConfig> = [
     path: "/s/:sess",
     name: "SessionDetail",
     component: SessionDetail
+  },
+  {
+    path: "/x/:coll/:fmt",
+    name: "CollectionTransform",
+    component: CollectionTransform,
+    beforeEnter: (to, from, next): void => {
+      collectionTransformResultRef.value = undefined;
+      next();
+    }
   },
   {
     path: "/c",
@@ -68,7 +78,7 @@ const routes: Array<RouteConfig> = [
         name: "RequestTransform",
         component: RequestTransform,
         beforeEnter: (to, from, next): void => {
-          transformResultRef.value = undefined;
+          requestTransformResultRef.value = undefined;
           next();
         }
       }

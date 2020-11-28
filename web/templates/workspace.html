@@ -13,7 +13,7 @@
   <link href="/assets/vendor/<%= npncore.AppKey %>.css" rel="preload" as="style">
   <link href="/assets/vendor/vendor.js" rel="preload" as="script">
   <link href="/assets/vendor/<%= npncore.AppKey %>.js" rel="preload" as="script">
-  <link href="/assets/vendor/hljs/highlight.min.js" rel="preload" as="script">
+  <link href="/assets/vendor/hljs/highlight.js" rel="preload" as="script">
 
   <link href="/assets/vendor/<%= npncore.AppKey %>.css" rel="stylesheet">
   <script>window.initialData = { profile: <%== npncore.ToJSONCompact(ctx.Profile.ToProfile(), ctx.Logger) %> };</script>
@@ -24,7 +24,7 @@
   </div>
   <script src="/assets/vendor/vendor.js"></script>
   <script src="/assets/vendor/<%= npncore.AppKey %>.js"></script>
-  <script src="/assets/vendor/hljs/highlight.min.js" defer="defer"></script>
+  <script src="/assets/vendor/hljs/highlight.js" defer="defer"></script>
   <script>init();</script>
 </body>
 </html>

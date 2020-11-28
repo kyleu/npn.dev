@@ -1,16 +1,16 @@
 import {socketRef} from "@/socket/socket";
-import {TransformResult} from "@/request/transform/transformResult";
+import {CollectionTransformResult, RequestTransformResult} from "@/request/transform/result";
 import {ref} from "@vue/composition-api";
-import {requestService} from "@/util/services";
+import {collectionService, requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
 import {activeSessionRef} from "@/session/state";
 import {requestEditingRef} from "@/request/state";
 
-export const transformResultRef = ref<TransformResult>();
+export const requestTransformResultRef = ref<RequestTransformResult>();
 
-export function getTransformResult(coll: string, req: string, fmt: string): TransformResult | undefined {
-  const v = transformResultRef.value;
+export function getRequestTransformResult(coll: string, req: string, fmt: string): RequestTransformResult | undefined {
+  const v = requestTransformResultRef.value;
   if (v && v.coll === coll && v.req === req && v.fmt === fmt) {
     return v;
   }
@@ -22,7 +22,27 @@ export function getTransformResult(coll: string, req: string, fmt: string): Tran
   return undefined;
 }
 
-export function setTransformResult(r: TransformResult): void {
+export function setRequestTransformResult(r: RequestTransformResult): void {
   clearPendingRequest(pendingRequestsRef, "transform", `${r.coll}::${r.req}::${r.fmt}`);
-  transformResultRef.value = r;
+  requestTransformResultRef.value = r;
+}
+
+export const collectionTransformResultRef = ref<CollectionTransformResult>();
+
+export function getCollectionTransformResult(coll: string, fmt: string): CollectionTransformResult | undefined {
+  const v = collectionTransformResultRef.value;
+  if (v && v.coll === coll && v.fmt === fmt) {
+    return v;
+  }
+  if (socketRef.value && fmt.length > 0 && setPendingRequest(pendingRequestsRef, "export-collection", `${coll}::${fmt}`)) {
+    const param = {coll, fmt};
+    socketRef.value.send({svc: collectionService.key, cmd: clientCommands.transform, param});
+  }
+
+  return undefined;
+}
+
+export function setCollectionTransformResult(r: CollectionTransformResult): void {
+  clearPendingRequest(pendingRequestsRef, "export-collection", `${r.coll}::${r.fmt}`);
+  collectionTransformResultRef.value = r;
 }

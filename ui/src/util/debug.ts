@@ -1,6 +1,6 @@
 import {activeRequestRef, requestEditingRef, requestOriginalRef} from "@/request/state";
 import {breadcrumbsRef} from "@/layout/breadcrumb";
-import {collectionsRef, collectionSummariesRef, requestDetailsRef} from "@/collection/state";
+import {collectionsRef, collectionSummariesRef} from "@/collection/state";
 import {pendingRequestsRef} from "@/socket/pending";
 import {profileRef} from "@/user/profile";
 import {jsonClone} from "@/util/json";
@@ -8,8 +8,9 @@ import Vue from "vue";
 import {VueRouter} from "vue-router/types/router";
 import {sessionDetailsRef, sessionEditingRef, sessionOriginalRef, sessionSummariesRef} from "@/session/state";
 import {callResultRef} from "@/call/state";
-import {transformResultRef} from "@/request/transform/state";
+import {requestTransformResultRef} from "@/request/transform/state";
 import {bodyConfigRef} from "@/body/state";
+import {requestDetailsRef} from "@/collection/requestDetails";
 
 export interface NPNDebug {
   root: Vue;
@@ -38,7 +39,7 @@ export function onDebug(): void {
       requestEditing: requestEditingRef.value,
       requestOriginal: requestOriginalRef.value,
       callResult: callResultRef.value,
-      transformResult: transformResultRef.value
+      transformResult: requestTransformResultRef.value
     },
     body: bodyConfigRef.value
   };

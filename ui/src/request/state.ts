@@ -4,10 +4,11 @@ import {ref} from "@vue/composition-api";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
-import {getCollectionRequestDetails, getCollectionRequestSummaries, setCollectionRequestDetails} from "@/collection/state";
+import {getCollectionRequestSummaries} from "@/collection/state";
 import {jsonClone} from "@/util/json";
 import {authConfigRef, toAuthConfig} from "@/auth/state";
 import {bodyConfigRef, toBodyConfig} from "@/body/state";
+import {getCollectionRequestDetails, setCollectionRequestDetails} from "@/collection/requestDetails";
 
 export interface ActiveRequest {
   readonly coll: string;

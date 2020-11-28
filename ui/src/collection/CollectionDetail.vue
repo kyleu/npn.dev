@@ -98,7 +98,7 @@ export default class CollectionDetail extends Vue {
     }
   }
 
-  updated(): void {
+  mounted(): void {
     let title = this.$route.params.coll;
     if (title === "_") {
       title = "default";

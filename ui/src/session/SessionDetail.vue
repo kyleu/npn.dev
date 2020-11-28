@@ -112,7 +112,7 @@ export default class SessionDetail extends Vue {
     }
   }
 
-  updated(): void {
+  mounted(): void {
     let title = this.$route.params.sess;
     if (title === "_") {
       title = "default";

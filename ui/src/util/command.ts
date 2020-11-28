@@ -2,6 +2,7 @@ export const clientCommands = {
   testbed: "testbed",
   saveProfile: "saveProfile",
   runURL: "runURL",
+  transform: "transform",
 
   // Collection
   getCollection: "getCollection",
@@ -15,7 +16,6 @@ export const clientCommands = {
   saveRequest: "saveRequest",
   deleteRequest: "deleteRequest",
   call: "call",
-  transform: "transform",
 
   // Session
   getSession: "getSession",
@@ -34,6 +34,7 @@ export const serverCommands = {
   collectionAdded: "collectionAdded",
   collectionUpdated: "collectionUpdated",
   collectionDeleted: "collectionDeleted",
+  collectionTransform: "collectionTransform",
 
   // Request
   requestDetail: "requestDetail",
@@ -41,7 +42,7 @@ export const serverCommands = {
   requestAdded: "requestAdded",
   requestDeleted: "requestDeleted",
   callResult: "callResult",
-  transformResult: "transformResult",
+  requestTransform: "requestTransform",
 
   // Session
   sessions: "sessions",

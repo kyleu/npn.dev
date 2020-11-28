@@ -18,7 +18,7 @@ import Icon from "@/util/Icon.vue";
 
 @Component({components: {Icon, CollectionGallery}})
 export default class CollectionIndex extends Vue {
-  updated(): void {
+  mounted(): void {
     setBC(this, {path: "", title: "collections"});
   }
 }

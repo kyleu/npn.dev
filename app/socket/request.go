@@ -32,8 +32,7 @@ func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection,
 }
 
 func onRunURL(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	var url string
-	err := npncore.FromJSON(param, &url)
+	url, err := npncore.FromJSONString(param)
 	if err != nil {
 		return errors.Wrap(err, "unable to read URL")
 	}
@@ -42,7 +41,7 @@ func onRunURL(c *npnconnection.Connection, param json.RawMessage, s *npnconnecti
 }
 
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := getContext(s)
+	svc := ctx(s)
 	frm := &getRequestIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
@@ -59,7 +58,7 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 }
 
 func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := getContext(s)
+	svc := ctx(s)
 	frm := &saveRequestIn{}
 	err := npncore.FromJSON(param, frm)
 	if err != nil {
@@ -76,7 +75,7 @@ func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npncon
 }
 
 func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := getContext(s)
+	svc := ctx(s)
 	frm := &deleteRequestIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
@@ -98,14 +97,14 @@ func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnc
 }
 
 func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
-	svc := getContext(s)
+	svc := ctx(s)
 	frm := &callIn{}
 	err := npncore.FromJSONStrict(param, frm)
 	if err != nil {
 		return errors.Wrap(err, "can't load request call param")
 	}
 
-	sess, err := getContext(s).Session.Load(&c.Profile.UserID, frm.Sess)
+	sess, err := ctx(s).Session.Load(&c.Profile.UserID, frm.Sess)
 	if err != nil {
 		return errors.Wrap(err, "can't load session ["+frm.Sess+"]")
 	}
@@ -117,8 +116,4 @@ func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection
 	}()
 
 	return nil
-}
-
-func getContext(s *npnconnection.Service) *services {
-	return s.Context.(*services)
 }

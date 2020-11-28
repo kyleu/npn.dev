@@ -54,7 +54,7 @@ export default class Home extends Vue {
     }
   }
 
-  updated(): void {
+  mounted(): void {
     setBC(this);
   }
 }

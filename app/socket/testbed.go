@@ -35,8 +35,7 @@ func process(x *tkv) error {
 }
 
 func onTheme(k string, v json.RawMessage) error {
-	var s string
-	err := npncore.FromJSON(v, &s)
+	s, err := npncore.FromJSONString(v)
 	if err != nil {
 		return errors.Wrap(err, "unable to process theme value")
 	}

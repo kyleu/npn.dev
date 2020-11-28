@@ -1,12 +1,12 @@
 import {Collection, CollectionCount} from "@/collection/collection";
-import {NPNRequest, Summary} from "@/request/model";
+import {Summary} from "@/request/model";
 import {socketRef} from "@/socket/socket";
 import {ref} from "@vue/composition-api";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
-import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
-import {setRequestDetail} from "@/request/state";
+import {pendingRequestsRef, setPendingRequest} from "@/socket/pending";
 import {globalRouter} from "@/util/vutils";
+import {requestDetailsRef} from "@/collection/requestDetails";
 
 interface CollectionData<T> {
   readonly key: string;
@@ -14,9 +14,7 @@ interface CollectionData<T> {
 }
 
 export const collectionsRef = ref<CollectionCount[]>([]);
-
 export const collectionSummariesRef = ref<CollectionData<Summary>[]>([]);
-export const requestDetailsRef = ref<CollectionData<NPNRequest>[]>([]);
 
 export function getCollection(key: string): Collection | undefined {
   for (const c of collectionsRef.value) {
@@ -74,50 +72,4 @@ export function setCollectionRequestSummaries(key: string, reqs: Summary[]): voi
     }
   }
   collectionSummariesRef.value.push({key: key, requests: reqs});
-}
-
-export function getCollectionRequestDetails(key: string): NPNRequest[] | undefined {
-  for (const c of requestDetailsRef.value) {
-    if (c.key === key) {
-      return c.requests;
-    }
-  }
-  return undefined;
-}
-
-export function setCollectionRequestDetails(key: string, requests: NPNRequest[]): void {
-  clearPendingRequest(pendingRequestsRef, "collection", key);
-  for (const c of requestDetailsRef.value) {
-    if (c.key === key) {
-      c.requests = requests;
-      return;
-    }
-  }
-  requestDetailsRef.value.push({key, requests});
-}
-
-interface RequestAdded {
-  key: string;
-  requests: Summary[];
-}
-
-export function onRequestAdded(coll: RequestAdded, req: NPNRequest): void {
-  setCollectionRequestSummaries(coll.key, coll.requests);
-  setRequestDetail(coll.key, req);
-  globalRouter().push({name: "RequestDetail", params: {coll: coll.key, req: req.key}});
-}
-
-interface RequestDeleted {
-  req: string;
-  coll: string;
-  requests: Summary[];
-}
-
-export function onRequestDeleted(rd: RequestDeleted): void {
-  setCollectionRequestSummaries(rd.coll, rd.requests);
-  globalRouter().push({name: "CollectionDetail", params: {coll: rd.coll}});
-}
-
-export function onRequestNotFound(coll: string): void {
-  globalRouter().push({name: "CollectionDetail", params: {coll}});
 }
