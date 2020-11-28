@@ -42,8 +42,11 @@ export function toBodyConfig(b: RBody | undefined): BodyConfig {
   }
 }
 
-function diff(t: BodyConfig, p: RBody): boolean {
-  if (t.type !== p.type) {
+function diff(t: BodyConfig, b: RBody | undefined): boolean {
+  if (!b) {
+    return t.type !== "";
+  }
+  if (t.type !== b.type) {
     return true;
   }
 
@@ -51,12 +54,12 @@ function diff(t: BodyConfig, p: RBody): boolean {
     case "":
       return false;
     case "json":
-      if (typeof (p.config as JSONConfig).msg === "string") {
-        return t.jsonContent !== (p.config as JSONConfig).msg;
+      if (typeof (b.config as JSONConfig).msg === "string") {
+        return t.jsonContent !== (b.config as JSONConfig).msg;
       }
-      return t.jsonContent !== jsonStr((p.config as JSONConfig).msg);
+      return t.jsonContent !== jsonStr((b.config as JSONConfig).msg);
     case "html":
-      return t.htmlContent !== (p.config as HTMLConfig).content;
+      return t.htmlContent !== (b.config as HTMLConfig).content;
     default:
       return false;
   }
@@ -68,7 +71,7 @@ watchEffect(() => {
     const v = requestEditingRef.value;
     if (v) {
       const p = v.prototype.body;
-      if (p && diff(t, p)) {
+      if (diff(t, p)) {
         v.prototype.body = toBody(t);
       }
     }

@@ -5,9 +5,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kyleu/npn/gen/templates"
-	"github.com/kyleu/npn/npnweb"
-
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncontroller"
@@ -16,12 +13,6 @@ import (
 )
 
 const assetBase = "web/assets"
-
-func Marketing(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		return npncontroller.T(templates.Marketing(ctx, w))
-	})
-}
 
 func Favicon(w http.ResponseWriter, r *http.Request) {
 	data, hash, contentType, err := assets.Asset(assetBase, "/favicon.ico")

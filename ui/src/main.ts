@@ -15,16 +15,12 @@ declare global {
   interface Window {
     init: () => void;
     npn: NPNDebug;
-    Prism: { manual: boolean };
     UIkit: object;
   }
 }
 
 function init(): void {
   window.UIkit = UIkit;
-
-  window.Prism = window.Prism || {};
-  window.Prism.manual = true;
 
   Vue.config.productionTip = false;
 

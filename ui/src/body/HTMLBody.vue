@@ -9,7 +9,7 @@
     <em>HTML</em>
 
     <div v-if="mode === 'text'">
-      <pre class="prism-view preview-content mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
+      <pre class="code-view preview-content mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
     </div>
     <div v-else>
       <div class="mt"><HTMLPreview :url="url" :html="config.content" /></div>
@@ -20,15 +20,13 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {HTMLConfig} from "@/body/model";
-import {PrismEditor} from "vue-prism-editor";
 import HTMLPreview from "@/body/HTMLPreview.vue";
 
-declare const Prism: {
-  highlight: (c: string, l: object) => string;
-  languages: { html: object };
+declare const hljs: {
+  highlight: (l: string, c: string) => {value: string};
 };
 
-@Component({ components: { HTMLPreview, PrismEditor } })
+@Component({ components: { HTMLPreview } })
 export default class HTMLBody extends Vue {
   @Prop() url!: string;
   @Prop() config!: HTMLConfig;
@@ -36,7 +34,7 @@ export default class HTMLBody extends Vue {
   mode = "text";
 
   get highlighted(): string {
-    return Prism.highlight(this.config.content, Prism.languages.html);
+    return hljs.highlight("html", this.config.content).value;
   }
 }
 </script>

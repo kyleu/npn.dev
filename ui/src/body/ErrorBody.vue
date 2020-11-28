@@ -9,8 +9,6 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {ErrorConfig} from "@/body/model";
 
-declare const Prism: object;
-
 @Component
 export default class ErrorBody extends Vue {
   @Prop() config!: ErrorConfig;

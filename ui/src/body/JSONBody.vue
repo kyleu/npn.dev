@@ -1,7 +1,7 @@
 <template>
   <div class="uk-overflow-auto">
     <em>JSON</em>
-    <pre class="prism-view preview-content mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
+    <pre class="code-view preview-content mt" style="margin: 0;"><code v-html="highlighted"></code></pre>
   </div>
 </template>
 
@@ -10,9 +10,8 @@ import {Component, Prop, Vue} from "vue-property-decorator";
 import {JSONConfig} from "@/body/model";
 import {jsonStr} from "@/util/json";
 
-declare const Prism: {
-  highlight: (c: string, l: object) => string;
-  languages: { js: object };
+declare const hljs: {
+  highlight: (l: string, c: string) => {value: string};
 };
 
 @Component
@@ -20,7 +19,7 @@ export default class JSONBody extends Vue {
   @Prop() config!: JSONConfig
 
   get highlighted(): string {
-    return Prism.highlight(jsonStr(this.config.msg), Prism.languages.js);
+    return hljs.highlight("json", jsonStr(this.config.msg)).value;
   }
 }
 </script>

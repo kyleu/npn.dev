@@ -41,7 +41,10 @@ function compareBasic(lb: Basic, rb: Basic): boolean {
   return lb.username !== rb.username || lb.password !== rb.password || lb.showPassword !== rb.showPassword;
 }
 
-function diff(t: AuthConfig, p: Auth): boolean {
+function diff(t: AuthConfig, p: Auth | undefined): boolean {
+  if (!p) {
+    return t.type !== "";
+  }
   if (t.type !== p.type) {
     return true;
   }
@@ -62,7 +65,7 @@ watchEffect(() => {
     const v = requestEditingRef.value;
     if (v) {
       const p = v.prototype.auth;
-      if (p && diff(t, p)) {
+      if (diff(t, p)) {
         v.prototype.auth = toAuth(t);
       }
     }
