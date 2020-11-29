@@ -8,6 +8,9 @@
     <div v-if="body.type === ''" class="mt">
       No body!
     </div>
+    <div v-else-if="body.type === 'form'" class="mt">
+      <FormEditor />
+    </div>
     <div v-else-if="body.type === 'html'" class="mt">
       <textarea v-model="body.htmlContent" rows="8" class="uk-textarea"></textarea>
     </div>
@@ -15,7 +18,7 @@
       <textarea v-model="body.jsonContent" rows="8" class="uk-textarea"></textarea>
     </div>
     <div v-else class="mt">
-      Unhandled {{ body.type }} editor
+      Unhandled [{{ body.type }}] body editor
     </div>
   </div>
 </template>
@@ -24,8 +27,10 @@
 import {Component, Vue} from "vue-property-decorator";
 import {AllTypes, BodyType} from "@/body/model";
 import {BodyConfig, bodyConfigRef} from "@/body/state";
-
-@Component
+import FormEditor from "@/body/FormEditor.vue";
+@Component({
+  components: {FormEditor}
+})
 export default class BodyEditor extends Vue {
   get body(): BodyConfig | undefined {
     return bodyConfigRef.value;

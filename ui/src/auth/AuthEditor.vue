@@ -36,7 +36,7 @@
       </div>
     </div>
     <div v-else class="mt">
-      Unhandled {{ auth.type }} editor
+      Unhandled [{{ auth.type }}] auth editor
     </div>
   </div>
 </template>

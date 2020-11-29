@@ -1,3 +1,5 @@
+import {QueryParam} from "@/request/model";
+
 export interface BodyType {
   readonly key: string;
   readonly title: string;
@@ -19,14 +21,18 @@ export interface RBody {
   config: object;
 }
 
-export interface JSONConfig {
-  // @ts-ignore
-  // eslint-disable-next-line
-  msg: any;
+export interface FormConfig {
+  data: QueryParam[];
 }
 
 export interface HTMLConfig {
   content: string;
+}
+
+export interface JSONConfig {
+  // @ts-ignore
+  // eslint-disable-next-line
+  msg: any;
 }
 
 export interface ImageConfig {
