@@ -1,7 +1,7 @@
 import {profileRef} from "@/user/profile";
 
 const maxLogs = 32;
-let debug = true;
+let debug = false;
 let logList: HTMLElement | null;
 
 export interface LogMessage {

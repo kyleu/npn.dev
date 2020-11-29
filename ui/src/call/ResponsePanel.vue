@@ -14,7 +14,7 @@
         <li><SummaryResponse :response="response" /></li>
         <li><HeadersResponse title="Final Request Headers" :headers="response.requestHeaders" /></li>
         <li><HeadersResponse title="Response Headers" :headers="response.headers" /></li>
-        <li><BodyResponse :url="response.url" :body="response.body" /></li>
+        <li><BodyResponse ref="body" :url="response.url" :body="response.body" /></li>
         <li><TimingResponse :timing="response.timing" /></li>
       </ul>
     </div>
@@ -37,6 +37,9 @@ export default class ResponsePanel extends Vue {
 
   setTab(s: string): void {
     this.activeTab = s;
+    if (s === "body") {
+      (this.$refs["body"] as BodyResponse).refresh();
+    }
   }
 }
 </script>

@@ -42,8 +42,21 @@
   padding-bottom: 4px;
 }
 
+// Editor
+.uk-dark {
+  .code-editor {
+    border: 1px solid #dddddd;
+  }
+}
+
+.uk-light {
+  .code-editor {
+    border: 1px solid #333333;
+  }
+}
+
 @import "form";
 @import "tags";
 @import "profile";
 @import "workspace";
-@import "highlight";
+@import "codemirror";

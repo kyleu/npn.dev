@@ -1,8 +1,8 @@
 <template>
   <div class="uk-overflow-auto">
     <div v-if="body">
-      <HTMLBody v-if="body.type === 'html'" :url="url" :config="body.config" />
-      <JSONBody v-else-if="body.type === 'json'" :config="body.config" />
+      <HTMLBody v-if="body.type === 'html'" ref="html" :url="url" :config="body.config" />
+      <JSONBody v-else-if="body.type === 'json'" ref="json" :config="body.config" />
       <ImageBody v-else-if="body.type === 'image'" :config="body.config" />
       <RawBody v-else-if="body.type === 'raw'" :config="body.config" />
       <ErrorBody v-else-if="body.type === 'error'" :config="body.config" />
@@ -31,5 +31,16 @@ import ErrorBody from "@/body/ErrorBody.vue";
 export default class BodyResponse extends Vue {
   @Prop() url!: string;
   @Prop() body!: RBody;
+
+  refresh(): void {
+    this.$nextTick(function() {
+      if (this.$refs["html"]) {
+        (this.$refs["html"] as HTMLBody).refresh();
+      }
+      if (this.$refs["json"]) {
+        (this.$refs["json"] as JSONBody).refresh();
+      }
+    });
+  }
 }
 </script>

@@ -15,7 +15,7 @@
           <li><QueryParamsEditor /></li>
           <li><AuthEditor /></li>
           <li><HeadersEditor /></li>
-          <li><BodyEditor /></li>
+          <li><BodyEditor ref="body" /></li>
           <li><OptionsEditor /></li>
         </ul>
       </div>
@@ -49,6 +49,9 @@ export default class RequestEditor extends Vue {
 
   setTab(s: string): void {
     this.activeTab = s;
+    if (s === "body") {
+      (this.$refs["body"] as BodyEditor).refresh();
+    }
   }
 }
 </script>

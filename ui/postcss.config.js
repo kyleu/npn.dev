@@ -17,6 +17,8 @@ module.exports = {
           );
         },
         safelist: [
+          /CodeMirror.*/,
+          /cm-.*/,
           /uk-dropdown.*/,
           /uk-grid.*/,
           /uk-hidden.*/,
