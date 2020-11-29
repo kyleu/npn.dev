@@ -19,6 +19,17 @@ export interface UserSettings {
   bodyL: Color;
 }
 
+export const defaultSettings: UserSettings = {
+  mode: 'light',
+  navB: '#193441',
+  navF: '#dddddd',
+  menuB: '#3e606f',
+  menuF: '#cccccc',
+  menuL: '#91aa9d',
+  bodyB: '#fcfff5',
+  bodyL: '#193441'
+};
+
 export interface Profile {
   readonly userID: string;
   name: string;
@@ -27,6 +38,24 @@ export interface Profile {
   picture: string;
   locale: string;
 }
+
+export const defaultProfile: Profile = {
+  userID: "00000000-0000-0000-0000-000000000000",
+  name: "Kyle",
+  role: "",
+  settings: {
+    mode: 'light',
+    navB: '#193441',
+    navF: '#dddddd',
+    menuB: '#3e606f',
+    menuF: '#cccccc',
+    menuL: '#91aa9d',
+    bodyB: '#fcfff5',
+    bodyL: '#193441'
+  },
+  picture: "",
+  locale: "en-US"
+};
 
 export const profileRef = ref<Profile>();
 export const tempThemeRef = ref<string>("");

@@ -1,114 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>[npn] WASM test</title>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>[npn] WASM test</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-<meta property="og:title" content="npn">
-<meta property="og:type" content="website">
-<meta property="og:locale" content="en_US">
+  <meta property="og:title" content="npn">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="en_US">
 
-<script src="wasm_exec.js"></script>
-<script src="npn_wasm.js"></script>
+  <script src="wasm_exec.js"></script>
+  <script src="npn_wasm.js"></script>
 
-<link rel="stylesheet" media="screen" href="vendor/uikit/uikit.min.css">
-<script src="vendor/uikit/uikit.min.js"></script>
-<script src="vendor/uikit/uikit-icons.min.js"></script>
+  <link href="vendor/npn.css" rel="preload" as="style">
+  <link href="vendor/vendor.js" rel="preload" as="script">
+  <link href="vendor/npn.js" rel="preload" as="script">
+  <link href="vendor/editor/editor.js" rel="preload" as="script">
 
-<link rel="stylesheet" media="screen" href="vendor/npn.css">
-<script src="vendor/npn.js"></script>
-
-<script>window.addEventListener("load", function() { dom.initDom('light', 'bluegrey') }, false);</script>
-
-<script>window.addEventListener("load", function() { npn.init('wasm', '00000000-0000-0000-0000-000000000000'); }, false)</script>
+  <link href="vendor/npn.css" rel="stylesheet">
+  <script>window.initialData = {
+      host: 'localhost:10101',
+      profile: {
+        userID: '00000000-0000-0000-0000-000000000000',
+        name: 'Guest',
+        settings: {
+          mode: 'light',
+          navB: '#193441',
+          navF: '#dddddd',
+          menuB: '#3e606f',
+          menuF: '#cccccc',
+          menuL: '#91aa9d',
+          bodyB: '#fcfff5',
+          bodyL: '#193441'
+        },
+        locale: 'en-US',
+      }
+    };</script>
 </head>
-<body class="uk-dark">
-
-<header>
-  <div data-uk-sticky="sel-target: .uk-navbar-container; cls-active: data-uk-navbar-sticky; media: 960">
-    <nav id="navbar" class="uk-navbar-container bluegrey-bg" data-uk-navbar>
-      <div id="breadcrumbs" class="uk-navbar-left">
-        <a title="npn" class="uk-navbar-item uk-logo" href="/">
-          <svg width="32px" height="32px" viewBox="-0 0 68 68" xmlns="http://www.w3.org/2000/svg">
-            <g fill="none">
-              <path id="logo-symbol" d="M 50.655 0 L 50.611 12.31 L 30.603 26.31 M 30.603 42.31 L 50.611 56.31 L 50.611 68.048 M 2 34.371 L 28.902 34.31 M 28.902 17.31 L 28.902 51.31 M 30.303 51.31 L 30.303 17.31 M 40.607 52.31 L 43.609 48.31 L 47.61 54.31 L 40.607 52.31 Z M 8.594 33.31 C 9.364 11.769 33.173 -0.86 51.451 10.577 C 69.728 22.014 68.766 48.94 49.718 59.043 C 31.449 68.734 9.332 55.971 8.594 35.31" style="stroke-width: 5px; paint-order: fill; stroke: rgb(135, 135, 135);" />
-            </g>
-          </svg>
-        </a>
-        <a class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" href="/">npn</a>
-
-      </div>
-      <div class="uk-navbar-right">
-        <a href="" data-uk-toggle="target: #nav-offcanvas;" data-uk-navbar-toggle-icon="" class="uk-hidden@m uk-icon uk-margin-right"></a>
-      </div>
-    </nav>
+<body class="uk-dark" data-uk-height-viewport="expand: true">
+  <div id="npn">
+    The fastest HTTP/REST/API client app
   </div>
-</header>
-
-<div id="content" data-uk-height-viewport="expand: true">
-  <div id="nav-left" class="uk-visible@m">
-      <div class="nav-section">
-        <div class="nav-header">
-          Collections
-        </div>
-        <div class="nav-list collection-list">
-          <em>Loading</em>
-        </div>
-      </div>
-      <div class="nav-section mt">
-        <div class="nav-header">System</div>
-        <div class="nav-list">
-          <div class="nav-item"><a class="theme" href="" onclick="log.toggle();return false;"><span class="nav-icon" data-uk-icon="icon: list"></span>Toggle Log</a></div>
-          <div class="nav-item"><a class="theme" href="" onclick="npn.debug();return false;"><span class="nav-icon" data-uk-icon="icon: bolt"></span>Debug</a></div>
-          <div class="nav-item"><a class="theme" href="" onclick="npn.testbed();return false;"><span class="nav-icon" data-uk-icon="icon: code"></span>Testbed</a></div>
-        </div>
-      </div>
-  </div>
-  <div id="workspace-content">
-    <div class="uk-section uk-section-small">
-      <div class="uk-container uk-container-expand uk-position-relative">
-
-        <div id="welcome-panel" class="panel">
-          <h3>Welcome to npn!</h3>
-        </div>
-
-        <div id="collection-panel" class="hidden"></div>
-        <div id="request-panel" class="hidden"></div>
-        <div id="action-panel" class="uk-card uk-card-body uk-card-default mt hidden">
-          <div class="right"><a class="theme uk-icon" data-uk-icon="close" href="" onclick="nav.navActiveRequest();return false;" title="close action"></a></div>
-          <div id="request-action" class="mt"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="log-container" class="hidden">
-    <div id="log-content">
-      <ul id="log-list" class="uk-list uk-list-divider"></ul>
-    </div>
-  </div>
-  <div id="nav-offcanvas" data-uk-offcanvas="mode: push; overlay: true">
-    <div class="uk-offcanvas-bar">
-      <div class="nav-section">
-        <div class="nav-header">
-          Collections
-        </div>
-        <div class="nav-list collection-list">
-          <em>Loading</em>
-        </div>
-      </div>
-      <div class="nav-section mt">
-        <div class="nav-header">System</div>
-        <div class="nav-list">
-          <div class="nav-item"><a class="theme" href="" onclick="log.toggle();return false;"><span class="nav-icon" data-uk-icon="icon: list"></span>Toggle Log</a></div>
-          <div class="nav-item"><a class="theme" href="" onclick="npn.debug();return false;"><span class="nav-icon" data-uk-icon="icon: bolt"></span>Debug</a></div>
-          <div class="nav-item"><a class="theme" href="" onclick="npn.testbed();return false;"><span class="nav-icon" data-uk-icon="icon: code"></span>Testbed</a></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+  <script src="vendor/vendor.js"></script>
+  <script src="vendor/npn.js"></script>
+  <script src="vendor/editor/editor.js" defer="defer"></script>
+  <script>init();</script>
 </body>
 </html>
-

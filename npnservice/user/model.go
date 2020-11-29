@@ -31,7 +31,7 @@ func (su *SystemUser) ToProfile() *npnuser.UserProfile {
 		UserID:   su.UserID,
 		Name:     su.Name,
 		Role:     npnuser.RoleFromString(su.Role),
-		Settings: su.Settings,
+		Settings: su.Settings.Normalize(),
 		Picture:  su.Picture,
 		Locale:   locale,
 	}

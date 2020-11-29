@@ -19,6 +19,7 @@ module.exports = {
         safelist: [
           /CodeMirror.*/,
           /cm-.*/,
+          /log-.*/,
           /uk-dropdown.*/,
           /uk-grid.*/,
           /uk-hidden.*/,

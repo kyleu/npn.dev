@@ -1,10 +1,10 @@
-import {Profile, profileRef} from "@/user/profile";
+import {defaultProfile, Profile, profileRef} from "@/user/profile";
 import {hostRef, Message, Socket, socketRef} from "@/socket/socket";
 import {logDebug} from "@/util/log";
 
 interface InitialData {
-  readonly host: string;
-  readonly profile: Profile;
+  host: string;
+  profile: Profile;
 }
 
 declare global {
@@ -14,7 +14,16 @@ declare global {
 }
 
 export function initState(onMessage: (m: Message) => void): void {
-  const cfg = window.initialData;
+  let cfg = window.initialData;
+  if (!cfg) {
+    cfg = { host: "", profile: defaultProfile };
+  }
+  if (!cfg.host) {
+    cfg.host = '';
+  }
+  if (!cfg.profile) {
+    cfg.profile = defaultProfile;
+  }
 
   let profile: Profile | undefined;
   const host = cfg && cfg.host ? cfg.host : "";

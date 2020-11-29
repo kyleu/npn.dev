@@ -34,11 +34,6 @@ func register(_ js.Value, args []js.Value) interface{} {
 	svc := app.Svc(ai)
 	svc.Socket.SetWASMCallback(func(s string) { callback.Invoke(s) })
 
-	err = seedData(svc)
-	if err != nil {
-		panic(err)
-	}
-
 	return nil
 }
 
