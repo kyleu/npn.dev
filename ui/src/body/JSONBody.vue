@@ -1,7 +1,7 @@
 <template>
   <div class="uk-overflow-auto">
     <em>JSON</em>
-    <div ref="content" class="mt"></div>
+    <div ref="content" class="mt code-editor"></div>
   </div>
 </template>
 
@@ -44,7 +44,7 @@ export default class JSONBody extends Vue {
       lineNumbers: true,
       mode: "javascript",
       value: jsonStr(this.config.msg),
-      readOnly: true
+      readOnly: "nocursor"
     });
     this.editor.setSize('100%', '100%');
   }

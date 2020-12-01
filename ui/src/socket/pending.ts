@@ -7,7 +7,7 @@ export interface PendingRequest {
 
 export const pendingRequestsRef = ref<PendingRequest[]>([]);
 
-export function hasPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: string): boolean {
+export function hasPendingRequests(reqs: Ref<PendingRequest[]>, t: string, k: string): boolean {
   for (const pr of reqs.value) {
     if (pr.t === t && pr.k === k) {
       return true;
@@ -16,16 +16,16 @@ export function hasPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: str
   return false;
 }
 
-export function setPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: string): boolean {
-  if (hasPendingRequest(reqs, t, k)) {
+export function setPendingRequests(reqs: Ref<PendingRequest[]>, t: string, k: string): boolean {
+  if (hasPendingRequests(reqs, t, k)) {
     return false;
   }
   reqs.value.push({t, k});
   return true;
 }
 
-export function clearPendingRequest(reqs: Ref<PendingRequest[]>, t: string, k: string): boolean {
-  if (!hasPendingRequest(reqs, t, k)) {
+export function clearPendingRequests(reqs: Ref<PendingRequest[]>, t: string, k: string): boolean {
+  if (!hasPendingRequests(reqs, t, k)) {
     return false;
   }
   reqs.value = (reqs.value || []).filter(x => x.t !== t && x.k !== k);

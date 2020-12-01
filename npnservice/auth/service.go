@@ -18,7 +18,6 @@ type Service interface {
 	UpdateRecord(r *Record) error
 	Delete(userID uuid.UUID, authID uuid.UUID) error
 
-	List(params *npncore.Params) Records
 	GetByID(userID uuid.UUID, authID uuid.UUID) *Record
 	GetByProviderID(userID uuid.UUID, key string, code string) *Record
 	GetByUserID(userID uuid.UUID, params *npncore.Params) Records

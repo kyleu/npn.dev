@@ -1,9 +1,9 @@
-import {NPNRequest} from "@/request/model";
+import {normalize, NPNRequest} from "@/request/model";
 import {socketRef} from "@/socket/socket";
 import {ref} from "@vue/composition-api";
 import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
-import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
+import {clearPendingRequests, pendingRequestsRef, setPendingRequests} from "@/socket/pending";
 import {getCollectionRequestSummaries} from "@/collection/state";
 import {jsonClone} from "@/util/json";
 import {authConfigRef, toAuthConfig} from "@/auth/state";
@@ -36,31 +36,15 @@ export function setActiveRequest(coll: string, req: string): void {
   getCollectionRequestSummaries(coll);
 
   if (req && socketRef.value) {
-    if (setPendingRequest(pendingRequestsRef, "request", coll + "::" + req)) {
+    if (setPendingRequests(pendingRequestsRef, "request", coll + "::" + req)) {
       socketRef.value.send({svc: requestService.key, cmd: clientCommands.getRequest, param: activeRequestRef.value});
     }
   }
 }
 
-function normalize(r: NPNRequest): NPNRequest {
-  if (!r.prototype) {
-    r.prototype = {domain: "", method: "", protocol: ""};
-  }
-  if(!r.prototype.query) {
-    r.prototype.query = [];
-  }
-  if(!r.prototype.headers) {
-    r.prototype.headers = [];
-  }
-  if(!r.prototype.body) {
-    r.prototype.body = {type: "", config: {}};
-  }
-  return r;
-}
-
 export function setRequestDetail(coll: string, req: NPNRequest): void {
   req = normalize(req);
-  clearPendingRequest(pendingRequestsRef, "request", coll + "::" + req.key);
+  clearPendingRequests(pendingRequestsRef, "request", coll + "::" + req.key);
   const rs = getCollectionRequestDetails(coll) || [];
   let matched = false;
   for (const r in rs) {

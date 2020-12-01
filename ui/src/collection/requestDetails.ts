@@ -1,6 +1,6 @@
 import {NPNRequest, Summary} from "@/request/model";
 import {ref} from "@vue/composition-api";
-import {clearPendingRequest, pendingRequestsRef} from "@/socket/pending";
+import {clearPendingRequests, pendingRequestsRef} from "@/socket/pending";
 import {setRequestDetail} from "@/request/state";
 import {globalRouter} from "@/util/vutils";
 import {setCollectionRequestSummaries} from "@/collection/state";
@@ -22,7 +22,7 @@ export function getCollectionRequestDetails(key: string): NPNRequest[] | undefin
 }
 
 export function setCollectionRequestDetails(key: string, requests: NPNRequest[]): void {
-  clearPendingRequest(pendingRequestsRef, "collection", key);
+  clearPendingRequests(pendingRequestsRef, "collection", key);
   for (const c of requestDetailsRef.value) {
     if (c.key === key) {
       c.requests = requests;

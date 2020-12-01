@@ -1,6 +1,7 @@
 package call
 
 import (
+	"github.com/gofrs/uuid"
 	"net/http"
 	"time"
 
@@ -12,18 +13,32 @@ import (
 
 type Service struct {
 	logger logur.Logger
+	sessSvc *session.Service
 }
 
-func NewService(logger logur.Logger) *Service {
+func NewService(sessSvc *session.Service, logger logur.Logger) *Service {
 	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: "call"})
-	return &Service{logger: logger}
+	return &Service{sessSvc: sessSvc, logger: logger}
 }
 
-func (s *Service) Call(coll string, req string, p *request.Prototype, sess *session.Session) *Result {
+func (s *Service) Call(userID *uuid.UUID, coll string, req string, p *request.Prototype, sess *session.Session, started func(started *RequestStarted), completed func(completed *RequestCompleted)) *Result {
+	rID := npncore.UUID()
 	if p == nil {
-		return NewErrorResult(coll, req, "no request")
+		return NewErrorResult(rID, coll, req, "no request")
 	}
-	return call(coll, req, getClient(p), p, nil, sess, s.logger)
+	return call(&CallParams{
+		ID:      rID,
+		UserID:  userID,
+		Coll:    coll,
+		Req:     req,
+		Client:  getClient(p),
+		Proto:   p,
+		Sess:    sess,
+		SessSvc: s.sessSvc,
+		Logger:  s.logger,
+		OnStarted: started,
+		OnCompleted: completed,
+	})
 }
 
 func getClient(p *request.Prototype) *http.Client {

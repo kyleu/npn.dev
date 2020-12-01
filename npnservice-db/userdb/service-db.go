@@ -81,18 +81,6 @@ func (s *ServiceDatabase) GetByID(id uuid.UUID, addIfMissing bool) *user.SystemU
 	return ret
 }
 
-func (s *ServiceDatabase) GetByCreated(d *time.Time, params *npncore.Params) user.SystemUsers {
-	params = npncore.ParamsWithDefaultOrdering(userTable, params, npncore.DefaultCreatedOrdering...)
-	var ret user.SystemUsers
-	q := npndatabase.SQLSelect("*", userTable, "created between $1 and $2", params.OrderByString(), params.Limit, params.Offset)
-	err := s.db.Select(&ret, q, nil, d, d.Add(npncore.HoursInDay*time.Hour))
-	if err != nil {
-		s.logger.Error(fmt.Sprintf("error retrieving users created on [%v]: %+v", d, err))
-		return nil
-	}
-	return ret
-}
-
 func (s *ServiceDatabase) SaveProfile(prof *npnuser.UserProfile) (*npnuser.UserProfile, error) {
 	s.logger.Debug("updating user [" + prof.UserID.String() + "] from profile")
 	cols := []string{npncore.KeyName, npncore.KeyRole, npncore.KeySettings, "picture", "locale"}

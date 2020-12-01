@@ -59,7 +59,6 @@ function diff(t: BodyConfig, b: RBody | undefined): boolean {
     case "":
       return false;
     case "form":
-      // TODO Nah, this ain't right
       return t.formContent !== (b.config as FormConfig).data;
     case "html":
       return t.htmlContent !== (b.config as HTMLConfig).content;

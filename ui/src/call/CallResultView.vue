@@ -3,22 +3,22 @@
     <div class="right">
       <router-link :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"><Icon icon="close" /></router-link>
     </div>
-    <div v-for="(r, idx) in responses" :key="idx">
+    <div v-for="(cycle, idx) in cycles" :key="idx">
       <hr v-if="idx > 0" />
-      <ResponsePanel :response="r" />
+      <ResponsePanel :cycle="cycle" />
     </div>
-    <h3 v-if="responses.length === 0" class="uk-card-title">Loading...</h3>
+    <h3 v-if="cycles.length === 0" class="uk-card-title">Loading...</h3>
   </div>
 </template>
 
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {setBCReq} from "@/util/vutils";
-import {CallResult, NPNResponse} from "@/call/model";
+import {RequestResultCycle, RequestResults} from "@/call/model";
 import {Prototype} from "@/request/model";
 import ResponsePanel from "@/call/ResponsePanel.vue";
 import Icon from "@/util/Icon.vue";
-import {getCallResult} from "@/call/state";
+import {getRequestResults} from "@/call/state";
 
 interface CallParam {
   coll: string;
@@ -30,18 +30,12 @@ interface CallParam {
 export default class CallResultView extends Vue {
   private pending: CallParam | undefined;
 
-  get result(): CallResult | undefined {
-    return getCallResult(this.$route.params.coll, this.$route.params.req);
+  get result(): RequestResults | undefined {
+    return getRequestResults(this.$route.params.coll, this.$route.params.req);
   }
 
-  get responses(): NPNResponse[] {
-    const ret: NPNResponse[] = [];
-    let r = this.result?.response;
-    while(r) {
-      ret.push(r);
-      r = r.prior;
-    }
-    return ret.reverse();
+  get cycles(): RequestResultCycle[] {
+    return this.result?.cycles || [];
   }
 
   mounted(): void {

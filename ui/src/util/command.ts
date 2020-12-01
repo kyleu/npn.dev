@@ -41,8 +41,9 @@ export const serverCommands = {
   requestNotFound: "requestNotFound",
   requestAdded: "requestAdded",
   requestDeleted: "requestDeleted",
-  callResult: "callResult",
   requestTransform: "requestTransform",
+  requestStarted: "requestStarted",
+  requestCompleted: "requestCompleted",
 
   // Session
   sessions: "sessions",

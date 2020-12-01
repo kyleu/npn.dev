@@ -11,7 +11,7 @@ import RequestEditor from "@/request/editor/RequestEditor.vue";
 import RequestTransform from "@/request/transform/RequestTransform.vue";
 import SessionIndex from "@/session/SessionIndex.vue";
 import SessionDetail from "@/session/SessionDetail.vue";
-import {callResultRef} from "@/call/state";
+import {requestResultsRef} from "@/call/state";
 import {collectionTransformResultRef, requestTransformResultRef} from "@/request/transform/state";
 import CollectionTransform from "@/request/transform/CollectionTransform.vue";
 
@@ -69,7 +69,7 @@ const routes: Array<RouteConfig> = [
         name: "CallResult",
         component: CallResultView,
         beforeEnter: (to, from, next): void => {
-          callResultRef.value = undefined;
+          requestResultsRef.value = {id: "", coll: "", req: "", cycles: []};
           next();
         }
       },

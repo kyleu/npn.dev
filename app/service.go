@@ -39,7 +39,7 @@ func NewService(debug bool, files npncore.FileLoader, redir string, logger logur
 	sessSvc := session.NewService(multiuser, files, logger)
 	collSvc := collection.NewService(multiuser, files, logger)
 	reqSvc := request.NewService(multiuser, files, logger)
-	callSvc := call.NewService(logger)
+	callSvc := call.NewService(sessSvc, logger)
 
 	return &Service{
 		debug:      debug,

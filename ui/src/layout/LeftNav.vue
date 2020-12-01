@@ -2,6 +2,10 @@
   <div>
     <SessionSelector />
     <div class="nav-section mt">
+      <router-link v-style-menu-section class="nav-header" tag="div" :to="{name: 'CollectionDetail', params: {coll: '_'}}">Requests</router-link>
+      <RequestList />
+    </div>
+    <div class="nav-section mt">
       <router-link v-style-menu-section class="nav-header" tag="div" :to="{name: 'CollectionIndex'}">Collections</router-link>
       <CollectionList />
     </div>
@@ -21,8 +25,9 @@ import { Component, Vue } from "vue-property-decorator";
 import CollectionList from "@/collection/CollectionList.vue";
 import Icon from "@/util/Icon.vue";
 import SessionSelector from "@/session/SessionSelector.vue";
+import RequestList from "@/request/RequestList.vue";
 
-@Component({ components: { Icon, CollectionList, SessionSelector } })
+@Component({ components: {RequestList, Icon, CollectionList, SessionSelector } })
 export default class LeftNav extends Vue {
   toggleLog(): void {
     const el = document.getElementById("log-container");

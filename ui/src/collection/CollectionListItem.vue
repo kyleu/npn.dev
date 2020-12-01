@@ -7,6 +7,7 @@
     <div v-if="this.$route.params.coll === cc.coll.key && requests.length > 0">
       <div v-for="r in requests" :key="r.key" class="nav-request-link">
         <router-link v-style-menu-link :to="'/c/' + cc.coll.key + '/' + r.key">
+          <Icon icon="link" class="nav-icon" />
           {{ (!r.title || r.title.length === 0) ? r.key : r.title }}
         </router-link>
       </div>

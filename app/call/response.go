@@ -31,7 +31,6 @@ type Response struct {
 	Close            bool           `json:"close,omitempty"`
 	Uncompressed     bool           `json:"uncompressed,omitempty"`
 	Body             *body.Body     `json:"body,omitempty"`
-	Prior            *Response      `json:"prior,omitempty"`
 	Timing           *Timing        `json:"timing,omitempty"`
 	Error            *string        `json:"error,omitempty"`
 }

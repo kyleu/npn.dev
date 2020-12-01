@@ -12,7 +12,7 @@ import {
   setCollectionRequestSummaries
 } from "@/collection/state";
 import {jsonClone} from "@/util/json";
-import {setCallResult} from "@/call/state";
+import {onRequestCompleted, onRequestStarted} from "@/call/state";
 import {setCollectionTransformResult, setRequestTransformResult} from "@/request/transform/state";
 import {onRequestAdded, onRequestDeleted, onRequestNotFound} from "@/collection/requestDetails";
 import {collectionService, requestService, sessionService, systemService} from "@/util/services";
@@ -75,11 +75,14 @@ function onRequestMessage(cmd: string, param: any): void {
     case serverCommands.requestNotFound:
       onRequestNotFound(param.coll);
       break;
-    case serverCommands.callResult:
-      setCallResult(param);
-      break;
     case serverCommands.requestTransform:
       setRequestTransformResult(param);
+      break;
+    case serverCommands.requestStarted:
+      onRequestStarted(param);
+      break;
+    case serverCommands.requestCompleted:
+      onRequestCompleted(param);
       break;
     default:
       logWarn("unhandled request message [" + cmd + "]", param);

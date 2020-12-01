@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"github.com/kyleu/npn/app/call"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npnconnection"
@@ -110,9 +111,15 @@ func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection
 	}
 
 	go func() {
-		rsp := svc.Caller.Call(frm.Coll, frm.Req, frm.Proto, sess)
-		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageCallResult, rsp)
-		_ = s.WriteMessage(c.ID, msg)
+		onStarted := func(started *call.RequestStarted) {
+			msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestStarted, started)
+			_ = s.WriteMessage(c.ID, msg)
+		}
+		onCompleted := func(completed *call.RequestCompleted) {
+			msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestCompleted, completed)
+			_ = s.WriteMessage(c.ID, msg)
+		}
+		_ = svc.Caller.Call(&c.Profile.UserID, frm.Coll, frm.Req, frm.Proto, sess, onStarted, onCompleted)
 	}()
 
 	return nil

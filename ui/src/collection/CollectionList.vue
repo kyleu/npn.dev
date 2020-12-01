@@ -13,7 +13,7 @@ import {collectionsRef} from "@/collection/state";
 @Component({ components: { CollectionListItem } })
 export default class CollectionList extends Vue {
   get collections(): CollectionCount[] {
-    return collectionsRef.value;
+    return collectionsRef.value.filter(x => x.coll.key !== "_");
   }
 }
 </script>

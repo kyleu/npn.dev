@@ -4,7 +4,7 @@ import {socketRef} from "@/socket/socket";
 import {ref} from "@vue/composition-api";
 import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
-import {pendingRequestsRef, setPendingRequest} from "@/socket/pending";
+import {pendingRequestsRef, setPendingRequests} from "@/socket/pending";
 import {globalRouter} from "@/util/vutils";
 import {requestDetailsRef} from "@/collection/requestDetails";
 
@@ -57,7 +57,7 @@ export function getCollectionRequestSummaries(key: string): Summary[] | undefine
       return c.requests;
     }
   }
-  if (socketRef.value && key.length > 0 && setPendingRequest(pendingRequestsRef, "collection", key)) {
+  if (socketRef.value && key.length > 0 && setPendingRequests(pendingRequestsRef, "collection", key)) {
     socketRef.value.send({svc: collectionService.key, cmd: clientCommands.getCollection, param: key});
   }
 

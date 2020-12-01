@@ -536,3 +536,62 @@ div.CodeMirror-dragcursors {
 span.CodeMirror-selectedtext {
   background: none;
 }
+
+// THEMES
+.uk-dark {
+  span.cm-meta { color: #808000; }
+  span.cm-number { color: #0000FF; }
+  span.cm-keyword { line-height: 1em; font-weight: bold; color: #000080; }
+  span.cm-atom { font-weight: bold; color: #000080; }
+  span.cm-def { color: #000000; }
+  span.cm-variable { color: black; }
+  span.cm-variable-2 { color: black; }
+  span.cm-variable-3, span.cm-type { color: black; }
+  span.cm-property { color: black; }
+  span.cm-operator { color: black; }
+  span.cm-comment { color: #808080; }
+  span.cm-string { color: #008000; }
+  span.cm-string-2 { color: #008000; }
+  span.cm-qualifier { color: #555; }
+  span.cm-error { color: #FF0000; }
+  span.cm-attribute { color: #0000FF; }
+  span.cm-tag { color: #000080; }
+  span.cm-link { color: #0000FF; }
+  .CodeMirror-activeline-background { background: #FFFAE3; }
+  span.cm-builtin { color: #30a; }
+  span.cm-bracket { color: #cc7; }
+  .CodeMirror { font-family: Consolas, Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New, monospace, serif;}
+  .CodeMirror-matchingbracket { outline:1px solid grey; color:black !important; }
+  .CodeMirror-hints { font-family: Menlo, Monaco, Consolas, 'Courier New', monospace; color: #616569; background-color: #ebf3fd !important; }
+  .CodeMirror-hints .CodeMirror-hint-active { background-color: #a2b8c9 !important; color: #5c6065 !important; }
+}
+
+.uk-light {
+  .CodeMirror { background: #2c2827; color: #8F938F; line-height: 1.5; }
+  .CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: rgba(221,240,255,0.2); }
+  .CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: rgba(221,240,255,0.2); }
+  .CodeMirror-gutters { background: #34302f; border-right: 0; padding: 0 3px; }
+  .CodeMirror-guttermarker { color: white; }
+  .CodeMirror-guttermarker-subtle { color: #8F938F; }
+  .CodeMirror-linenumber { color: #8F938F; }
+  .CodeMirror-cursor { border-left: 1px solid #A7A7A7; }
+  div.CodeMirror-selected { background: rgba(221,240,255,0.2); }
+  span.cm-comment { color: #A6C6FF; }
+  span.cm-atom { color: #DE8E30; }
+  span.cm-number { color: #CCCCCC; }
+  span.cm-property { color: #8F938F; }
+  span.cm-attribute { color: #a6e22e; }
+  span.cm-keyword { color: #AEB2F8; }
+  span.cm-string { color: #66A968; }
+  span.cm-variable { color: #AEB2F8; }
+  span.cm-variable-2 { color: #BEBF55; }
+  span.cm-variable-3, span.cm-type { color: #DE8E30; }
+  span.cm-def { color: #757aD8; }
+  span.cm-bracket { color: #f8f8f2; }
+  span.cm-tag { color: #C1C144; }
+  span.cm-link { color: #ae81ff; }
+  span.cm-qualifier,span.cm-builtin { color: #C1C144; }
+  span.cm-error { background: #757aD8; color: #f8f8f0; }
+  .CodeMirror-activeline-background { background: rgba(255, 255, 255, 0.031); }
+  .CodeMirror-matchingbracket { border: 1px solid rgba(255,255,255,0.25); color: #8F938F !important; margin: -1px -1px 0 -1px; }
+}

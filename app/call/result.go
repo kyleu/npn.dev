@@ -2,7 +2,6 @@ package call
 
 import (
 	"github.com/gofrs/uuid"
-	"github.com/kyleu/npn/npncore"
 )
 
 type Result struct {
@@ -14,12 +13,12 @@ type Result struct {
 	Error      string    `json:"error,omitempty"`
 }
 
-func NewResult(coll string, req string, status string) *Result {
-	return &Result{ID: npncore.UUID(), Collection: coll, Request: req, Status: status}
+func NewResult(id uuid.UUID, coll string, req string, status string) *Result {
+	return &Result{ID: id, Collection: coll, Request: req, Status: status}
 }
 
-func NewErrorResult(coll string, req string, err string) *Result {
-	ret := NewResult(coll, req, "error")
+func NewErrorResult(id uuid.UUID, coll string, req string, err string) *Result {
+	ret := NewResult(id, coll, req, "error")
 	ret.Error = err
 	return ret
 }

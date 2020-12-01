@@ -1,26 +1,28 @@
 package call
 
 import (
-	"net/http"
+	"fmt"
 	"net/http/httptrace"
+	"time"
 
-	"github.com/kyleu/npn/app/session"
 	"golang.org/x/text/language"
 
-	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/npncore"
-	"logur.dev/logur"
 )
 
-func call(coll string, req string, client *http.Client, p *request.Prototype, prior *Response, sess *session.Session, logger logur.Logger) *Result {
-	httpReq := p.ToHTTP(sess)
+func call(p *CallParams) *Result {
+	httpReq := p.Proto.ToHTTP(p.Sess)
 	timing := &Timing{}
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
 	url := httpReq.URL.String()
-	logger.Info("making call to [" + url + "]")
+
+	reqStartedMsg := &RequestStarted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, URL: url, Started: time.Now()}
+	p.OnStarted(reqStartedMsg)
+
+	p.Logger.Info("making call to [" + url + "]")
 	timing.Begin()
 
-	hr, err := client.Do(httpReq)
+	hr, err := p.Client.Do(httpReq)
 
 	status := "ok"
 	var errStr = ""
@@ -33,37 +35,43 @@ func call(coll string, req string, client *http.Client, p *request.Prototype, pr
 
 	var rsp *Response
 	if hr != nil {
-		rsp = ResponseFromHTTP(p, hr, sess, timing)
-		parseCookies := p.Options == nil || (!p.Options.IgnoreCookies)
-		if parseCookies && sess != nil && len(rsp.Cookies) > 0 {
-			if sess.AddCookies(rsp.Cookies...) {
-				// TODO save session
+		rsp = ResponseFromHTTP(p.Proto, hr, p.Sess, timing)
+		parseCookies := p.Proto.Options == nil || (!p.Proto.Options.IgnoreCookies)
+		if parseCookies && p.Sess != nil && len(rsp.Cookies) > 0 {
+			if p.Sess.AddCookies(rsp.Cookies...) {
+				if p.SessSvc != nil {
+					// p.Logger.Debug(fmt.Sprintf("saving session [%v] (%v cookies, %v variables)", p.Sess.Key, len(p.Sess.Cookies), len(p.Sess.Variables)))
+					err = p.SessSvc.Save(p.UserID, p.Sess.Key, p.Sess)
+					if err != nil {
+						p.Logger.Warn(fmt.Sprintf("unable to save session: %+v", err))
+					}
+				}
 			}
 		}
-		rsp.Prior = prior
-	}
-	if rsp == nil {
-		rsp = prior
 	}
 
 	timing.Complete()
 
-	ret := NewResult(coll, req, status)
+	ret := NewResult(p.ID, p.Coll, p.Req, status)
 	ret.Response = rsp
 	ret.Error = errStr
 
-	logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
+	p.Logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
 
-	shouldRedir := p.Options == nil || (!p.Options.IgnoreRedirects)
+	reqCompleteMsg := &RequestCompleted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Status: status, Rsp: ret.Response, Error: errStr, Duration: timing.Completed}
+	p.OnCompleted(reqCompleteMsg)
+
+	shouldRedir := p.Proto.Options == nil || (!p.Proto.Options.IgnoreRedirects)
 	redir := rsp != nil && rsp.StatusCode >= 300 && rsp.StatusCode < 400 && rsp.Headers.Contains("location")
 
 	if shouldRedir && redir {
-		redirP := getRedir(rsp, p)
+		redirP := getRedir(rsp, p.Proto)
 		if redirP == nil {
 			return ret
 		}
-		logger.Debug("redirecting to [" + redirP.URLString() + "]")
-		return call(coll, req, client, redirP, ret.Response, sess, logger)
+		p.Logger.Debug("redirecting to [" + redirP.URLString() + "]")
+		redirParams := p.Clone(redirP)
+		return call(redirParams)
 	}
 
 	return ret

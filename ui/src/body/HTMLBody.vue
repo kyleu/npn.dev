@@ -8,11 +8,9 @@
     </div>
     <em>HTML</em>
 
-    <div v-if="mode === 'text'">
-      <div ref="content" class="mt"></div>
-    </div>
-    <div v-else>
-      <div class="mt"><HTMLPreview :url="url" :html="config.content" /></div>
+    <div ref="content" class="mt code-editor" :style="{display: mode === 'text' ? 'block' : 'none'}"></div>
+    <div v-if="mode === 'preview'">
+      <HTMLPreview :url="url" :html="config.content" />
     </div>
   </div>
 </template>

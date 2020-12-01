@@ -7,10 +7,10 @@ import {jsonClone} from "@/util/json";
 import Vue from "vue";
 import {VueRouter} from "vue-router/types/router";
 import {sessionDetailsRef, sessionEditingRef, sessionOriginalRef, sessionSummariesRef} from "@/session/state";
-import {callResultRef} from "@/call/state";
 import {requestTransformResultRef} from "@/request/transform/state";
 import {bodyConfigRef} from "@/body/state";
 import {requestDetailsRef} from "@/collection/requestDetails";
+import {requestResultsRef} from "@/call/state";
 
 export interface NPNDebug {
   root: Vue;
@@ -38,7 +38,7 @@ export function onDebug(): void {
       requestDetails: requestDetailsRef.value,
       requestEditing: requestEditingRef.value,
       requestOriginal: requestOriginalRef.value,
-      callResult: callResultRef.value,
+      requestResultsRef: requestResultsRef.value,
       transformResult: requestTransformResultRef.value
     },
     body: bodyConfigRef.value

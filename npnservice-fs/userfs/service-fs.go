@@ -51,7 +51,11 @@ func (s *ServiceFilesystem) List(params *npncore.Params) user.SystemUsers {
 	var ret user.SystemUsers
 
 	if s.Multiuser {
-		// TODO s.files.ListDirectories("/users")
+		x := s.files.ListDirectories("/users")
+		for _, f := range x {
+			uid := npncore.GetUUIDFromString(f)
+			ret = append(ret, s.GetByID(*uid, false))
+		}
 	} else {
 		ret = append(ret, systemUser)
 	}
@@ -82,12 +86,6 @@ func (s *ServiceFilesystem) GetByID(userID uuid.UUID, addIfMissing bool) *user.S
 		return nil
 	}
 	return user.FromProfile(tgt, time.Now())
-}
-
-func (s *ServiceFilesystem) GetByCreated(*time.Time, *npncore.Params) user.SystemUsers {
-	var ret user.SystemUsers
-	// TODO maybe
-	return ret
 }
 
 func (s *ServiceFilesystem) SaveProfile(prof *npnuser.UserProfile) (*npnuser.UserProfile, error) {

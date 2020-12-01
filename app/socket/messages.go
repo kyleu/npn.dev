@@ -43,8 +43,10 @@ const (
 	ServerMessageRequestNotFound  = "requestNotFound"
 	ServerMessageRequestAdded     = "requestAdded"
 	ServerMessageRequestDeleted   = "requestDeleted"
-	ServerMessageCallResult       = "callResult"
 	ServerMessageRequestTransform = "requestTransform"
+
+	ServerMessageRequestStarted   = "requestStarted"
+	ServerMessageRequestCompleted = "requestCompleted"
 
 	// Session
 	ServerMessageSessions        = "sessions"

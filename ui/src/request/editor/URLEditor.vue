@@ -27,7 +27,7 @@ import {Part, prototypeToURL, prototypeToURLParts} from "@/request/prototype/url
 import {prototypeFromURL} from "@/request/prototype/prototype";
 import {requestEditingRef} from "@/request/state";
 import Icon from "@/util/Icon.vue";
-import {callResultRef} from "@/call/state";
+import {requestResultsRef} from "@/call/state";
 
 @Component({ components: {Icon} })
 export default class URLEditor extends Vue {
@@ -85,7 +85,7 @@ export default class URLEditor extends Vue {
 
   doCall(): void {
     if (this.$route.name === 'CallResult') {
-      callResultRef.value = undefined;
+      requestResultsRef.value = {id: "", coll: "", req: "", cycles: []};
     } else {
       this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}});
     }

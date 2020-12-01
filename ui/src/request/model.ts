@@ -38,6 +38,14 @@ export const MethodTrace = {"key": "TRACE", "description": ""};
 
 export const allMethods: Method[] = [MethodGet, MethodHead, MethodPost, MethodPut, MethodPatch, MethodDelete, MethodConnect, MethodOptions, MethodTrace];
 
+export interface Summary {
+  readonly key: string;
+  readonly title: string;
+  readonly description: string;
+  readonly url: string;
+  readonly order: number;
+}
+
 export interface Prototype {
   method: string;
   protocol: string;
@@ -59,10 +67,18 @@ export interface NPNRequest {
   prototype: Prototype;
 }
 
-export interface Summary {
-  readonly key: string;
-  readonly title: string;
-  readonly description: string;
-  readonly url: string;
-  readonly order: number;
+export function normalize(r: NPNRequest): NPNRequest {
+  if (!r.prototype) {
+    r.prototype = {domain: "", method: "", protocol: ""};
+  }
+  if(!r.prototype.query) {
+    r.prototype.query = [];
+  }
+  if(!r.prototype.headers) {
+    r.prototype.headers = [];
+  }
+  if(!r.prototype.body) {
+    r.prototype.body = {type: "", config: {}};
+  }
+  return r;
 }

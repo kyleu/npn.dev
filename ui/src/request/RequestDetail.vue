@@ -36,9 +36,9 @@ import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import Icon from "@/util/Icon.vue";
 import {jsonClone} from "@/util/json";
-import {callResultRef} from "@/call/state";
 import {authConfigRef, toAuthConfig} from "@/auth/state";
 import {bodyConfigRef, toBodyConfig} from "@/body/state";
+import {requestResultsRef} from "@/call/state";
 
 @Component({ components: {Icon, ExportActions, RequestEditor, URLEditor } })
 export default class RequestDetail extends Vue {
@@ -72,7 +72,7 @@ export default class RequestDetail extends Vue {
 
   doCall(): void {
     if (this.$route.name === 'CallResult') {
-      callResultRef.value = undefined;
+      requestResultsRef.value = {id: "", coll: "", req: "", cycles: []};
     } else {
       this.$router.push({name: "CallResult", params: {coll: this.$route.params.coll, req: this.$route.params.req}});
     }

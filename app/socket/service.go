@@ -54,8 +54,9 @@ func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, 
 }
 
 func onOpen(s *npnconnection.Service, c *npnconnection.Connection) error {
-	go sendSessions(s, c)
 	go sendCollections(s, c)
+	go sendRequests(s, c)
+	go sendSessions(s, c)
 	return nil
 }
 

@@ -6,28 +6,33 @@
         <h3 class="uk-card-title">npn</h3>
         <p>You're using <a href="https://npn.dev">npn</a>, an HTTP client that helps you document and test APIs</p>
 
-        <div class="mt">
-          <div class="uk-inline" style="width: 100%;">
-            <a class="uk-form-icon uk-form-icon-flip" title="Call a URL" href="" @click.prevent="runRequest()"><Icon icon="play" /></a>
-            <form @submit.prevent="runRequest()">
-              <input id="home-add-input" class="uk-input" type="text" placeholder="Call a URL" data-lpignore="true" />
-            </form>
-          </div>
+        <div class="uk-inline mt" style="width: 100%;">
+          <a class="uk-form-icon uk-form-icon-flip" title="Call a URL" href="" @click.prevent="runRequest()"><Icon icon="play" /></a>
+          <form @submit.prevent="runRequest()">
+            <input id="home-add-input" class="uk-input" type="text" placeholder="Call a URL" data-lpignore="true" />
+          </form>
         </div>
       </div>
+
       <div class="uk-card uk-card-body uk-card-default mt">
-        <h3 class="uk-card-title">Sessions</h3>
-        <p>Each session contains variables used in the request and cookies from responses</p>
-        <SessionList />
-      </div>
-      <div class="uk-card uk-card-body uk-card-default mt">
-        <h3 class="uk-card-title">Collections</h3>
-        <p>Store related URLs in a collection of requests, which you can run in bulk or share with colleagues</p>
-        <CollectionGallery />
-      </div>
-      <div class="uk-card uk-card-body uk-card-default mt">
-        <h3 class="uk-card-title">Recent Requests</h3>
-        <p>TODO</p>
+        <ul data-uk-tab="">
+          <li><a href="#requests" @click="setTab('requests')">Recent Requests</a></li>
+          <li><a href="#collections" @click="setTab('collections')">Collections</a></li>
+          <li><a href="#sessions" @click="setTab('sessions')">Sessions</a></li>
+        </ul>
+        <ul class="uk-switcher uk-margin">
+          <li>
+            <p>No recent requests</p>
+          </li>
+          <li>
+            <p>Store related URLs in a collection of requests, which you can run in bulk or share with colleagues</p>
+            <CollectionGallery />
+          </li>
+          <li>
+            <p>Each session contains variables used in the request and cookies from responses</p>
+            <SessionList />
+          </li>
+        </ul>
       </div>
     </div>
   </div>
@@ -45,6 +50,8 @@ import SessionList from "@/session/SessionList.vue";
 
 @Component({ components: {SessionList, Icon, CollectionGallery } })
 export default class Home extends Vue {
+  activeTab = "";
+
   runRequest(): void {
     const el = document.getElementById("home-add-input") as HTMLInputElement;
     const url = el.value.trim();
@@ -52,6 +59,10 @@ export default class Home extends Vue {
     if (socketRef.value) {
       socketRef.value.send({svc: requestService.key, cmd: clientCommands.runURL, param: url});
     }
+  }
+
+  setTab(s: string): void {
+    this.activeTab = s;
   }
 
   mounted(): void {

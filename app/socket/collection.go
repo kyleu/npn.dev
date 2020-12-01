@@ -120,6 +120,16 @@ func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (
 	return cd, nil
 }
 
+func sendRequests(s *npnconnection.Service, c *npnconnection.Connection) {
+	cd, _ := parseCollDetails(s, &c.Profile.UserID, "_")
+	if cd == nil {
+		msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionNotFound, &cd)
+		_ = s.WriteMessage(c.ID, msg)
+	}
+	msg := npnconnection.NewMessage(npncore.KeyCollection, ServerMessageCollectionDetail, cd)
+	_ = s.WriteMessage(c.ID, msg)
+}
+
 func getCollDetails(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
 	key, err := npncore.FromJSONString(param)
 	if err != nil {

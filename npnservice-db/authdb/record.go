@@ -2,10 +2,8 @@ package authdb
 
 import (
 	"database/sql"
-	"fmt"
-	"time"
-
 	"emperror.dev/errors"
+	"fmt"
 	"github.com/kyleu/npn/npnuser"
 
 	"github.com/kyleu/npn/npnservice/auth"
@@ -45,30 +43,6 @@ func (s *ServiceDatabase) MergeProfile(p *npnuser.UserProfile, record *auth.Reco
 	}
 
 	return record, nil
-}
-
-func (s *ServiceDatabase) List(params *npncore.Params) auth.Records {
-	params = npncore.ParamsWithDefaultOrdering(npncore.KeyAuth, params, npncore.DefaultCreatedOrdering...)
-	var dtos []recordDTO
-	q := npndatabase.SQLSelect("*", npncore.KeyAuth, "", params.OrderByString(), params.Limit, params.Offset)
-	err := s.db.Select(&dtos, q, nil)
-	if err != nil {
-		s.logger.Error(fmt.Sprintf("error retrieving auth records: %+v", err))
-		return nil
-	}
-	return toRecords(dtos)
-}
-
-func (s *ServiceDatabase) GetByCreated(d *time.Time, params *npncore.Params) auth.Records {
-	params = npncore.ParamsWithDefaultOrdering("system_user", params, npncore.DefaultCreatedOrdering...)
-	var dtos []recordDTO
-	q := npndatabase.SQLSelect("*", "system_user", "created between $1 and $2", params.OrderByString(), params.Limit, params.Offset)
-	err := s.db.Select(&dtos, q, nil, d, d.Add(npncore.HoursInDay*time.Hour))
-	if err != nil {
-		s.logger.Error(fmt.Sprintf("error retrieving auth records created on [%v]: %+v", d, err))
-		return nil
-	}
-	return toRecords(dtos)
 }
 
 func (s *ServiceDatabase) GetByID(userID uuid.UUID, authID uuid.UUID) *auth.Record {

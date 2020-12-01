@@ -7,8 +7,8 @@
       <RawBody v-else-if="body.type === 'raw'" :config="body.config" />
       <ErrorBody v-else-if="body.type === 'error'" :config="body.config" />
       <div v-else>
-        <em>{{ body.type }}</em>
-        <h4>TODO</h4>
+        <h4>{{ body.type }}</h4>
+        <em>currently unhandled</em>
       </div>
     </div>
     <div v-else>

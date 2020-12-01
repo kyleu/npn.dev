@@ -2,7 +2,7 @@ import {socketRef} from "@/socket/socket";
 import {ref} from "@vue/composition-api";
 import {sessionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
-import {clearPendingRequest, pendingRequestsRef, setPendingRequest} from "@/socket/pending";
+import {clearPendingRequests, pendingRequestsRef, setPendingRequests} from "@/socket/pending";
 import {jsonClone} from "@/util/json";
 import {SessAdded, Session, SessionSummary} from "@/session/model";
 import {globalRouter} from "@/util/vutils";
@@ -34,14 +34,14 @@ export function setActiveSession(key: string): void {
   }
 
   if (key.length > 0 && socketRef.value) {
-    if (setPendingRequest(pendingRequestsRef, "session", key)) {
+    if (setPendingRequests(pendingRequestsRef, "session", key)) {
       socketRef.value.send({svc: sessionService.key, cmd: clientCommands.getSession, param: activeSessionRef.value});
     }
   }
 }
 
 export function setSessionDetail(s: Session): void {
-  clearPendingRequest(pendingRequestsRef, "session", s.key);
+  clearPendingRequests(pendingRequestsRef, "session", s.key);
 
   const rs = sessionDetailsRef.value || [];
   let matched = false;

@@ -38,13 +38,6 @@ func (s *ServiceFS) MergeProfile(p *npnuser.UserProfile, record *auth.Record) (*
 	return record, nil
 }
 
-func (s *ServiceFS) List(params *npncore.Params) auth.Records {
-	params = npncore.ParamsWithDefaultOrdering(npncore.KeyAuth, params, npncore.DefaultCreatedOrdering...)
-	var dtos []recordDTO
-	// TODO
-	return toRecords(dtos)
-}
-
 func (s *ServiceFS) GetByID(userID uuid.UUID, authID uuid.UUID) *auth.Record {
 	ud := userDir(userID)
 	fn := path.Join(ud, authID.String()+".json")

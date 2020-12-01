@@ -44,7 +44,8 @@ export default class RequestEditor extends Vue {
   }
 
   mounted(): void {
-    setBC(this, {path: "/c/" + this.$route.params.coll, title: this.$route.params.coll}, {path: "", title: this.$route.params.req});
+    const title = this.$route.params.coll === "_" ? "default" : this.$route.params.coll;
+    setBC(this, {path: "/c/" + this.$route.params.coll, title}, {path: "", title: this.$route.params.req});
   }
 
   setTab(s: string): void {
