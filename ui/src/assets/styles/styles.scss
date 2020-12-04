@@ -44,19 +44,24 @@
 
 // Editor
 .uk-dark {
-  .code-editor {
+  .code-editor, .image-body {
     border: 1px solid #dddddd;
   }
 }
 
 .uk-light {
-  .code-editor {
+  .code-editor, .image-body {
     border: 1px solid #333333;
   }
+}
+
+.image-body {
+  padding: 12px;
 }
 
 @import "form";
 @import "tags";
 @import "profile";
+@import "marketing";
 @import "workspace";
 @import "codemirror";

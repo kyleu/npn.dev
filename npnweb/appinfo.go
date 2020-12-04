@@ -14,4 +14,5 @@ type AppInfo interface {
 	Auth() auth.Service
 	Logger() logur.Logger
 	Valid() bool
+	Public() bool
 }

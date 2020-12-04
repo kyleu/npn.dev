@@ -50,6 +50,12 @@ func (p *Prototype) FinalHeaders(sess *session.Session) header.Headers {
 	//	check("js.fetch:redirect", func() string { return "manual" })
 	//}
 
+	cookies := p.GetCookies()
+	if len(cookies) > 0 || len(sess.Cookies) > 0 {
+		cookies = append(cookies, sess.Cookies...)
+		p.SetCookies(cookies)
+	}
+
 	ret.Sort()
 	return ret
 }

@@ -2,6 +2,7 @@ package request
 
 import (
 	"encoding/json"
+	"strings"
 )
 
 type Protocol struct {
@@ -26,8 +27,12 @@ func ProtocolFromString(s string) Protocol {
 	return Protocol{Key: s, Description: "Custom protocol"}
 }
 
-func (t *Protocol) String() string {
+func (t Protocol) String() string {
 	return t.Key
+}
+
+func (t Protocol) Secure() bool {
+	return strings.HasSuffix(t.Key, "s")
 }
 
 func (t *Protocol) MarshalJSON() ([]byte, error) {

@@ -25,8 +25,11 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(routes.Path("health")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Health))).Name(routes.Name("health"))
 
 	// Workspace
-	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("workspace"))
+	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(WorkspaceIndex))).Name(routes.Name("home"))
 	r.Path(routes.Path("u")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("settings"))
+
+	// Static
+	r.Path(routes.Path("download")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Download))).Name(routes.Name("download"))
 
 	// Session
 	r.Path(routes.Path("s")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("sessions"))
@@ -48,7 +51,6 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 
 	// Import
 	imprt := r.Path(routes.Path("i")).Subrouter()
-	imprt.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportForm))).Name(routes.Name("import", "form"))
 	imprt.Methods(http.MethodPost).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportUpload))).Name(routes.Name("import", "upload"))
 	r.Path(routes.Path("i", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportDetail))).Name(routes.Name("import", "detail"))
 

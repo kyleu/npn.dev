@@ -28,6 +28,7 @@ export interface RequestStarted {
   readonly req: string;
   readonly id: string;
   readonly idx: number;
+  readonly method: string;
   readonly url: string;
   readonly started: string;
 }
@@ -45,6 +46,7 @@ export interface RequestCompleted {
 
 export interface RequestResultCycle {
   readonly idx: number;
+  readonly method: string;
   readonly url: string;
   readonly started: string;
 

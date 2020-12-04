@@ -5,6 +5,8 @@
         <Breadcrumbs />
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
+            <li v-if="pub"><a v-style-nav-link href="/">About</a></li>
+            <li v-if="pub"><a v-style-nav-link href="/download"><div class="download-link">Download</div></a></li>
             <li class="mrs">
               <router-link v-if="(!profile.picture) || profile.picture.length === 0 || profile.picture === 'none'" v-style-nav-link to="/u" title="Profile"><Icon icon="user" /></router-link>
               <router-link v-else to="/u" title="Profile"><img class="uk-border-circle" alt="user profile" :src="profile.picture" /></router-link>
@@ -22,9 +24,14 @@ import { Component, Vue } from "vue-property-decorator";
 import Breadcrumbs from "@/layout/Breadcrumbs.vue";
 import {Profile, profileRef} from "@/user/profile";
 import Icon from "@/util/Icon.vue";
+import {isPublic} from "@/util/log";
 
 @Component({ components: {Icon, Breadcrumbs } })
 export default class NavBar extends Vue {
+  get pub(): boolean {
+    return isPublic();
+  }
+
   get profile(): Profile | undefined {
     return profileRef.value;
   }

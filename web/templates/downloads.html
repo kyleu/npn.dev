@@ -1,0 +1,63 @@
+<%: func Downloads(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">Download <%= npncore.AppName %> v0.0.1</h3>
+    </div>
+
+    <div class="uk-card uk-card-body uk-card-default mt">
+      <h3 class="uk-card-title">macOS</h3>
+      <ul class="uk-list uk-list-divider">
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.app.macos.zip">macOS App</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.macos.zip">macOS Server</a></li>
+      </ul>
+    </div>
+
+    <div class="uk-card uk-card-body uk-card-default mt">
+      <h3 class="uk-card-title">Windows</h3>
+      <ul class="uk-list uk-list-divider">
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.windows.zip">Windows Server (64-bit)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.windows.386.zip">Windows Server (32-bit)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.windows.arm.zip">Windows Server (arm)</a></li>
+      </ul>
+    </div>
+
+    <div class="uk-card uk-card-body uk-card-default mt">
+      <h3 class="uk-card-title">Linux</h3>
+      <ul class="uk-list uk-list-divider">
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.linux.zip">Linux Server (64-bit)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.linux.386.zip">Linux Server (32-bit)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.linux.arm.zip">Linux Server (arm)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.linux.arm64.zip">Linux Server (arm64)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.linux.mips.zip">Linux Server (mips)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.linux.riscv64.zip">Linux Server (riscv64)</a></li>
+      </ul>
+    </div>
+
+    <div class="uk-card uk-card-body uk-card-default mt">
+      <h3 class="uk-card-title">FreeBSD</h3>
+      <ul class="uk-list uk-list-divider">
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.freebsd.zip">FreeBSD Server (64-bit)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.freebsd.386.zip">FreeBSD Server (32-bit)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.freebsd.arm64.zip">FreeBSD Server (arm64)</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.freebsd.arm.zip">FreeBSD Server (arm)</a></li>
+      </ul>
+    </div>
+
+    <div class="uk-card uk-card-body uk-card-default mt">
+      <h3 class="uk-card-title">Mobile</h3>
+      <ul class="uk-list uk-list-divider">
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.app.ios.zip">iOS App</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.library.ios.zip">iOS Framework</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.app.android.zip">Android App</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.library.android.zip">Android Framework</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.html.zip">HTML App</a></li>
+        <li><a class="body-l" href="https://github.com/kyleu/npn/releases/download/v0.0.1/npn.server.wasm.zip">WASM Server</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+<% } %>

@@ -56,3 +56,19 @@ func (p *Prototype) ToHTTP(sess *session.Session) *http.Request {
 
 	return ret
 }
+
+func (p *Prototype) GetCookies() header.Cookies {
+	cookieHeader := p.Headers.Get("Cookie")
+	if cookieHeader == nil {
+		return header.Cookies{}
+	}
+	// TODO parse
+	return header.Cookies{}
+}
+
+func (p *Prototype) SetCookies(cookies header.Cookies) {
+	cookies = cookies.Qualifying(p.URL())
+	if len(cookies) > 0 {
+		p.Headers = p.Headers.Set("Cookie", cookies.String())
+	}
+}

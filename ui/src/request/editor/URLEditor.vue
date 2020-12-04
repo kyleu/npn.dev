@@ -40,10 +40,7 @@ export default class URLEditor extends Vue {
     this.e = e;
     if (e) {
       setTimeout(() => {
-        const el = document.getElementById("url-input-el");
-        if (el) {
-          el.focus();
-        }
+        document.getElementById("url-input-el")?.focus();
       }, 0);
     }
   }

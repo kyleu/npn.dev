@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"github.com/kyleu/npn/gen/templates"
+	"github.com/kyleu/npn/npnweb"
 	"net/http"
 	"path/filepath"
 	"strings"
@@ -13,6 +15,13 @@ import (
 )
 
 const assetBase = "web/assets"
+
+func Download(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple("", "download")
+		return npncontroller.T(templates.Downloads(ctx, w))
+	})
+}
 
 func Favicon(w http.ResponseWriter, r *http.Request) {
 	data, hash, contentType, err := assets.Asset(assetBase, "/favicon.ico")

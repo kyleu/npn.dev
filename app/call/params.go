@@ -14,6 +14,7 @@ type RequestStarted struct {
 	Req     string    `json:"req"`
 	ID      uuid.UUID `json:"id"`
 	Idx     int       `json:"idx"`
+	Method  string    `json:"method,omitempty"`
 	URL     string    `json:"url,omitempty"`
 	Started time.Time `json:"started,omitempty"`
 }

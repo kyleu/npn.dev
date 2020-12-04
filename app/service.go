@@ -21,6 +21,7 @@ const multiuser = false
 
 type Service struct {
 	debug      bool
+	public      bool
 	files      npncore.FileLoader
 	user       user.Service
 	auth       auth.Service
@@ -34,7 +35,7 @@ type Service struct {
 
 var _ npnweb.AppInfo = (*Service)(nil)
 
-func NewService(debug bool, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
+func NewService(debug bool, public bool, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
 	sessSvc := session.NewService(multiuser, files, logger)
 	collSvc := collection.NewService(multiuser, files, logger)
@@ -43,6 +44,7 @@ func NewService(debug bool, files npncore.FileLoader, redir string, logger logur
 
 	return &Service{
 		debug:      debug,
+		public:     public,
 		files:      files,
 		user:       us,
 		auth:       authfs.NewServiceFS(multiuser, redir, files, logger, us),
@@ -55,28 +57,32 @@ func NewService(debug bool, files npncore.FileLoader, redir string, logger logur
 	}
 }
 
-func (c *Service) Debug() bool {
-	return c.debug
+func (s *Service) Debug() bool {
+	return s.debug
 }
 
-func (c *Service) Files() npncore.FileLoader {
-	return c.files
+func (s *Service) Files() npncore.FileLoader {
+	return s.files
 }
 
-func (c *Service) User() user.Service {
-	return c.user
+func (s *Service) User() user.Service {
+	return s.user
 }
 
-func (c *Service) Auth() auth.Service {
-	return c.auth
+func (s *Service) Auth() auth.Service {
+	return s.auth
 }
 
-func (c *Service) Logger() logur.Logger {
-	return c.logger
+func (s *Service) Logger() logur.Logger {
+	return s.logger
 }
 
-func (c *Service) Valid() bool {
+func (s *Service) Valid() bool {
 	return true
+}
+
+func (s *Service) Public() bool {
+	return s.public
 }
 
 func Svc(a npnweb.AppInfo) *Service {

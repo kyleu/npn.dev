@@ -20,7 +20,8 @@
     </div>
   </div>
   <div v-else>
-    Loading!
+    <h3 class="uk-card-title">Loading...</h3>
+    <em>{{ cycle.method }} {{ cycle.url }}</em>
   </div>
 </template>
 

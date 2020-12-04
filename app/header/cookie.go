@@ -1,8 +1,10 @@
 package header
 
 import (
-	"fmt"
 	"net/http"
+	"net/http/cookiejar"
+	"net/url"
+	"strings"
 	"time"
 )
 
@@ -50,7 +52,12 @@ func ParseCookies(cs []*http.Cookie) Cookies {
 }
 
 func (c *Cookie) String() string {
-	return fmt.Sprintf("{%v}", c.Name)
+	return c.NativeSmall().String()
+}
+
+func (c *Cookie) NativeSmall() *http.Cookie {
+	ret := &http.Cookie{Name: c.Name, Value: c.Value}
+	return ret
 }
 
 func (c *Cookie) Native() *http.Cookie {
@@ -63,7 +70,7 @@ func (c *Cookie) Native() *http.Cookie {
 	case "none":
 		ss = http.SameSiteNoneMode
 	}
-	return &http.Cookie{
+	ret := &http.Cookie{
 		Name:       c.Name,
 		Value:      c.Value,
 		Path:       c.Path,
@@ -74,8 +81,8 @@ func (c *Cookie) Native() *http.Cookie {
 		Secure:     c.Secure,
 		HttpOnly:   c.HTTPOnly,
 		SameSite:   ss,
-		Raw:        c.String(),
 	}
+	return ret
 }
 
 func (c *Cookie) Matches(x *Cookie) bool {
@@ -90,3 +97,32 @@ func (c *Cookie) Equals(x *Cookie) bool {
 }
 
 type Cookies []*Cookie
+
+func (c Cookies) String() string {
+	ret := make([]string, 0, len(c))
+	for _, cook := range c {
+		ret = append(ret, cook.String())
+	}
+	return strings.Join(ret, "; ")
+}
+
+func (c Cookies) Native() []*http.Cookie {
+	ret := make([]*http.Cookie, 0, len(c))
+	for _, cook := range c {
+		ret = append(ret, cook.Native())
+	}
+	return ret
+}
+
+func (c Cookies) Qualifying(url *url.URL) Cookies {
+	x, _ := cookiejar.New(nil)
+	x.SetCookies(url, c.Native())
+
+	q := x.Cookies(url)
+
+	ret := make(Cookies, 0, len(q))
+	for _, cook := range q {
+		ret = append(ret, NewCookie(cook))
+	}
+	return ret
+}

@@ -16,7 +16,7 @@ func call(p *CallParams) *Result {
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
 	url := httpReq.URL.String()
 
-	reqStartedMsg := &RequestStarted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, URL: url, Started: time.Now()}
+	reqStartedMsg := &RequestStarted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Method: p.Proto.Method.Key, URL: url, Started: time.Now()}
 	p.OnStarted(reqStartedMsg)
 
 	p.Logger.Info("making call to [" + url + "]")

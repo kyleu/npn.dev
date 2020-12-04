@@ -9,17 +9,20 @@ import "@/assets/styles/styles.scss";
 import {messageHandler} from "@/state/handler";
 
 import Vue from "vue";
-import {logInfo} from "@/util/log";
+import {logInfo, setDebug, setPublic} from "@/util/log";
 
 declare global {
   interface Window {
-    init: () => void;
+    init: (debug: boolean) => void;
     npn: NPNDebug;
     UIkit: object;
   }
 }
 
-function init(): void {
+function init(debug?: boolean, pub?: boolean): void {
+  // TODO use `pub`
+  setDebug(debug || false);
+  setPublic(pub || false);
   window.UIkit = UIkit;
 
   Vue.config.productionTip = false;
@@ -30,7 +33,11 @@ function init(): void {
 
   const root = new Vue({router, el: "#npn", render});
 
-  logInfo("npn has started");
+  let msg = "[npn] has started";
+  if(debug) {
+    msg = `${msg} (debug)`;
+  }
+  logInfo(msg);
 
   window.npn = {root, router, onDebug};
 }

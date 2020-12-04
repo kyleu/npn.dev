@@ -2,9 +2,13 @@ package npnweb
 
 import "fmt"
 
-var IconContent = ""
+var IconContent = func(color string) string {
+	return ""
+}
 
-var NavbarContent = ""
+var NavbarContent = func(color string) string {
+	return ""
+}
 
 func AdminLink(params ...string) string {
 	ret := fmt.Sprintf("admin")

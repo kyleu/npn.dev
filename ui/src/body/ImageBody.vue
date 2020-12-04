@@ -1,7 +1,7 @@
 <template>
   <div class="uk-overflow-auto">
     <em>Image ({{ config.type }})</em>
-    <div>
+    <div class="image-body">
       <img alt="response image" :src="dataURL" />
     </div>
   </div>

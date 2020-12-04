@@ -25,6 +25,7 @@ Vue.directive("style-nav", function(el) {
 });
 
 Vue.directive("style-nav-link", function(el) {
+  el.style.borderColor = profileRef.value?.settings.navF || "";
   el.style.color = profileRef.value?.settings.navF || "";
 });
 

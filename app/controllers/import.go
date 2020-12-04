@@ -6,18 +6,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/imprt"
-	"github.com/kyleu/npn/gen/templates"
 	"github.com/kyleu/npn/npncontroller"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
 )
-
-func ImportForm(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		ctx.Title = "Import"
-		return npncontroller.T(templates.ImportForm(ctx, w))
-	})
-}
 
 func ImportDetail(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
@@ -28,7 +20,8 @@ func ImportDetail(w http.ResponseWriter, r *http.Request) {
 			return npncontroller.EResp(err)
 		}
 		ctx.Title = "Import"
-		return npncontroller.T(templates.ImportDetail(key, cfg, out, ctx, w))
+		ret := map[string]interface{}{"cfg": cfg, "out": out}
+		return npncontroller.RespondJSON(w, "", ret, ctx.Logger)
 	})
 }
 

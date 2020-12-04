@@ -33,6 +33,7 @@ export function onRequestStarted(r: RequestStarted): void {
   }
   v.cycles.push({
     idx: r.idx,
+    method: r.method,
     url: r.url,
     started: r.started,
 

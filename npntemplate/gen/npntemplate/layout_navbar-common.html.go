@@ -18,14 +18,15 @@ func NavbarCommon(section string, showToggle bool, ctx *npnweb.RequestContext, b
     <nav id="navbar" class="uk-navbar-container nav-b nav-f" data-uk-navbar>
       <div id="breadcrumbs" class="uk-navbar-left">
         `)
-	if len(npnweb.IconContent) > 0 {
+	iconContent := npnweb.IconContent(ctx.Profile.Settings.NavF)
+	if len(iconContent) > 0 {
 		buffer.WriteString(`<a title="`)
 		hero.EscapeHTML(npncore.AppName, buffer)
 		buffer.WriteString(`" class="nav-f uk-navbar-item uk-logo" href="`)
 		hero.EscapeHTML(ctx.Route(`home`), buffer)
 		buffer.WriteString(`">
           `)
-		buffer.WriteString(npnweb.IconContent)
+		buffer.WriteString(iconContent)
 		buffer.WriteString(`
         </a>`)
 	}
@@ -35,13 +36,15 @@ func NavbarCommon(section string, showToggle bool, ctx *npnweb.RequestContext, b
       <div class="uk-navbar-right">
         <ul class="uk-navbar-nav">
           `)
-	buffer.WriteString(npnweb.NavbarContent)
+	buffer.WriteString(npnweb.NavbarContent(ctx.Profile.Settings.NavF))
 	buffer.WriteString(`<li class="mrs">
             `)
 	if len(ctx.Profile.Picture) == 0 || ctx.Profile.Picture == "none" {
 		buffer.WriteString(`<a href="`)
-		hero.EscapeHTML(ctx.Route(`u`), buffer)
-		buffer.WriteString(`" data-uk-icon="icon:user" title="Profile" class="nav-f"></a>`)
+		hero.EscapeHTML(ctx.Route(`settings`), buffer)
+		buffer.WriteString(`" title="Profile" class="nav-f">
+              <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" data-svg="user"><circle fill="none" stroke="currentcolor" stroke-width="1.1" cx="9.9" cy="6.4" r="4.4"></circle><path fill="none" stroke="currentcolor" stroke-width="1.1" d="M1.5,19 C2.3,14.5 5.8,11.2 10,11.2 C14.2,11.2 17.7,14.6 18.5,19.2"></path></svg>
+            </a>`)
 	} else {
 		buffer.WriteString(`<a href="`)
 		hero.EscapeHTML(ctx.Route(npncore.KeyProfile), buffer)

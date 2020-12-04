@@ -1,7 +1,9 @@
 import {profileRef} from "@/user/profile";
 
+let debug = true;
+let pub = false;
+
 const maxLogs = 32;
-let debug = false;
 let logList: HTMLElement | null;
 
 export interface LogMessage {
@@ -79,6 +81,14 @@ export function setDebug(d: boolean): void {
 
 export function isDebug(): boolean {
   return debug;
+}
+
+export function setPublic(d: boolean): void {
+  pub = d;
+}
+
+export function isPublic(): boolean {
+  return pub;
 }
 
 // @ts-ignore

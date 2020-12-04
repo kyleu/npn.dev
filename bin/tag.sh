@@ -14,6 +14,7 @@ rplc () {
   rm -f go.sum
   find . -type f -name "go.mod" -print0 | xargs -0 sed -i '' -e "s/v[01]\.[0-9]*[0-9]\.[0-9]*[0-9] \/\/ npn/v${TGT} \/\/ npn/g"
   sed -i '' -e "s/v[01]\.[0-9]*[0-9]\.[0-9]*[0-9]/v${TGT}/g" doc/downloads.md
+  sed -i '' -e "s/v[01]\.[0-9]*[0-9]\.[0-9]*[0-9]/v${TGT}/g" web/templates/downloads.html
 }
 
 bld () {

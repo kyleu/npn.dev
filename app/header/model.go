@@ -59,3 +59,18 @@ func (h Headers) Sort() {
 		return h[l].Key < h[r].Key
 	})
 }
+
+func (h Headers) Set(k string, v string) Headers {
+	matched := false
+	hdr := &Header{Key: k, Value: v}
+	for idx, x := range h {
+		if strings.EqualFold(x.Key, k) {
+			matched = true
+			h[idx] = hdr
+		}
+	}
+	if !matched {
+		h = append(h, hdr)
+	}
+	return h
+}

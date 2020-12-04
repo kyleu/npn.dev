@@ -12,9 +12,15 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
+func WorkspaceIndex(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		return npncontroller.T(templates.WorkspaceUI(ctx.App.Public(), true, ctx, w))
+	})
+}
+
 func Workspace(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		return npncontroller.T(templates.WorkspaceUI(ctx, w))
+		return npncontroller.T(templates.WorkspaceUI(ctx.App.Public(), false, ctx, w))
 	})
 }
 

@@ -4,12 +4,12 @@ go 1.15
 
 require (
 	emperror.dev/errors v0.8.0
-	github.com/kyleu/npn v0.0.1 // npn
-	github.com/kyleu/npn/npnconnection v0.0.1 // npn
-	github.com/kyleu/npn/npncontroller v0.0.1 // npn
-	github.com/kyleu/npn/npncore v0.0.1 // npn
-	github.com/kyleu/npn/npnuser v0.0.1 // npn
-	github.com/kyleu/npn/npnweb v0.0.1 // npn
+	github.com/kyleu/npn v0.0.3 // npn
+	github.com/kyleu/npn/npnconnection v0.0.3 // npn
+	github.com/kyleu/npn/npncontroller v0.0.3 // npn
+	github.com/kyleu/npn/npncore v0.0.3 // npn
+	github.com/kyleu/npn/npnuser v0.0.3 // npn
+	github.com/kyleu/npn/npnweb v0.0.3 // npn
 )
 
 replace github.com/kyleu/npn => ../../

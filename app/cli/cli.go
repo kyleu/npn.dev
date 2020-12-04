@@ -7,6 +7,7 @@ import (
 )
 
 var verbose bool
+var public bool
 var redir string
 var addr string
 var port uint16
@@ -32,7 +33,8 @@ func Configure() cobra.Command {
 	flags.StringVarP(&redir, "redir", "r", "http://localhost:10101", "redirect url for signin, defaults to localhost")
 	flags.StringVarP(&addr, "address", "a", "127.0.0.1", "interface address to listen on")
 	flags.Uint16VarP(&port, "port", "p", 10101, "port for http server to listen on")
-	flags.BoolVarP(&verbose, "verbose", "v", false, "verbose output")
+	flags.BoolVarP(&verbose, "verbose", "v", false, "when set, displays verbose output")
+	flags.BoolVar(&public, "public", false, "if set, renders as public server")
 
 	return rootCmd
 }
