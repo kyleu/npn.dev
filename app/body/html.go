@@ -1,5 +1,10 @@
 package body
 
+import (
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
+)
+
 const KeyHTML = "html"
 
 type HTML struct {
@@ -12,22 +17,28 @@ func NewHTML(content string) *Body {
 	return NewBody(KeyHTML, &HTML{Content: content})
 }
 
-func (l *HTML) ContentLength() int64 {
-	return int64(len(l.Content))
+func parseHTML(b []byte) *Body {
+	return NewHTML(string(b))
 }
 
-func (l *HTML) Bytes() []byte {
-	return []byte(l.Content)
+func (h *HTML) ContentLength() int64 {
+	return int64(len(h.Content))
 }
 
-func (l *HTML) MimeType() string {
+func (h *HTML) Bytes() []byte {
+	return []byte(h.Content)
+}
+
+func (h *HTML) MimeType() string {
 	return "text/html"
 }
 
-func (l *HTML) String() string {
-	return l.Content
+func (h *HTML) String() string {
+	return h.Content
 }
 
-func parseHTML(b []byte) *Body {
-	return NewHTML(string(b))
+func (h *HTML) Merge(data npncore.Data, logger logur.Logger) Config {
+	return &HTML{
+		Content: npncore.MergeLog("body.html.content", h.Content, data, logger),
+	}
 }

@@ -1,6 +1,9 @@
 package body
 
-import "github.com/kyleu/npn/npncore"
+import (
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
+)
 
 const KeyJSON = "json"
 
@@ -13,6 +16,19 @@ var _ Config = (*JSON)(nil)
 
 func NewJSON(msg interface{}) *Body {
 	return NewBody(KeyJSON, &JSON{Msg: msg})
+}
+
+func parseJSON(ct string, charset string, b []byte) *Body {
+	var x interface{}
+	err := npncore.FromJSON(b, &x)
+	if err != nil {
+		if ct == "" {
+			return NewError(err.Error())
+		}
+		return detect("", charset, b)
+	}
+
+	return NewJSON(x)
 }
 
 func (j *JSON) ContentLength() int64 {
@@ -34,15 +50,24 @@ func (j *JSON) String() string {
 	return j.str
 }
 
-func parseJSON(ct string, charset string, b []byte) *Body {
-	var x interface{}
-	err := npncore.FromJSON(b, &x)
-	if err != nil {
-		if ct == "" {
-			return NewError(err.Error())
+func (j *JSON) Merge(data npncore.Data, logger logur.Logger) Config {
+	m := j.Msg
+	ms := npncore.ToJSONCompact(j.Msg, nil)
+	if len(ms) > 0 {
+		ms = npncore.MergeLog("body.json.msg", ms, data, logger)
+		var i interface{}
+		err := npncore.FromJSON([]byte(ms), &i)
+		if err == nil && i != nil {
+			m = i
 		}
-		return detect("", charset, b)
 	}
 
-	return NewJSON(x)
+	s := j.str
+	if len(s) > 0 {
+		s = npncore.MergeLog("body.json.str", s, data, logger)
+	}
+	return &JSON{
+		Msg: m,
+		str: s,
+	}
 }

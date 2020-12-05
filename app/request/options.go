@@ -1,5 +1,10 @@
 package request
 
+import (
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
+)
+
 type Options struct {
 	Timeout               int      `json:"timeout,omitempty"`
 	IgnoreRedirects       bool     `json:"ignoreRedirects,omitempty"`
@@ -45,4 +50,31 @@ func (o *Options) Empty() bool {
 		return false
 	}
 	return true
+}
+
+func (o *Options) Merge(data npncore.Data, logger logur.Logger) *Options {
+	if o == nil {
+		return nil
+	}
+	edh := make([]string, 0, len(o.ExcludeDefaultHeaders))
+	for _, dh := range o.ExcludeDefaultHeaders {
+		edh = append(edh, npncore.MergeLog("options.excludeDefaultHeaders", dh, data, logger))
+	}
+	rcj := make([]string, 0, len(o.ReadCookieJars))
+	for _, cj := range o.ReadCookieJars {
+		rcj = append(rcj, npncore.MergeLog("options.readCookieJars", cj, data, logger))
+	}
+
+	return &Options{
+		Timeout:               o.Timeout,
+		IgnoreRedirects:       o.IgnoreRedirects,
+		IgnoreReferrer:        o.IgnoreReferrer,
+		IgnoreCerts:           o.IgnoreCerts,
+		IgnoreCookies:         o.IgnoreCookies,
+		ExcludeDefaultHeaders: edh,
+		ReadCookieJars:        rcj,
+		WriteCookieJar:        npncore.MergeLog("options.writeCookieJar", o.WriteCookieJar, data, logger),
+		SSLCert:               npncore.MergeLog("options.sslCert", o.SSLCert, data, logger),
+		UserAgentOverride:     npncore.MergeLog("options.userAgentOverride", o.UserAgentOverride, data, logger),
+	}
 }

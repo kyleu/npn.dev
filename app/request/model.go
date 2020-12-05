@@ -1,6 +1,7 @@
 package request
 
 import (
+	"logur.dev/logur"
 	"strings"
 
 	"emperror.dev/errors"
@@ -12,10 +13,6 @@ type Request struct {
 	Title       string     `json:"title,omitempty"`
 	Description string     `json:"description,omitempty"`
 	Prototype   *Prototype `json:"prototype"`
-}
-
-func NewRequest() *Request {
-	return &Request{Prototype: NewPrototype()}
 }
 
 func FromString(key string, content string) (*Request, error) {
@@ -55,6 +52,15 @@ func (r *Request) Options() *Options {
 		return &Options{}
 	}
 	return r.Prototype.Options
+}
+
+func (r *Request) Merge(data npncore.Data, logger logur.Logger) *Request {
+	return &Request{
+		Key:         r.Key,
+		Title:       npncore.MergeLog("title", r.Title, data, logger),
+		Description: npncore.MergeLog("description", r.Description, data, logger),
+		Prototype:   r.Prototype.Merge(data, logger),
+	}
 }
 
 type Requests []*Request

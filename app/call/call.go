@@ -10,7 +10,7 @@ import (
 	"github.com/kyleu/npn/npncore"
 )
 
-func call(p *CallParams) *Result {
+func call(p *CallParams) error {
 	httpReq := p.Proto.ToHTTP(p.Sess)
 	timing := &Timing{}
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
@@ -23,12 +23,11 @@ func call(p *CallParams) *Result {
 	timing.Begin()
 
 	hr, err := p.Client.Do(httpReq)
-
-	status := "ok"
-	var errStr = ""
 	if err != nil {
-		status = "error"
-		errStr = err.Error()
+		timing.Complete()
+		reqCompleteMsg := &RequestCompleted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Status: "ok", Error: err.Error(), Duration: timing.Completed}
+		p.OnCompleted(reqCompleteMsg)
+		return err
 	}
 
 	timing.CompleteHeaders()
@@ -52,13 +51,9 @@ func call(p *CallParams) *Result {
 
 	timing.Complete()
 
-	ret := NewResult(p.ID, p.Coll, p.Req, status)
-	ret.Response = rsp
-	ret.Error = errStr
-
 	p.Logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
 
-	reqCompleteMsg := &RequestCompleted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Status: status, Rsp: ret.Response, Error: errStr, Duration: timing.Completed}
+	reqCompleteMsg := &RequestCompleted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Status: "ok", Rsp: rsp, Duration: timing.Completed}
 	p.OnCompleted(reqCompleteMsg)
 
 	shouldRedir := p.Proto.Options == nil || (!p.Proto.Options.IgnoreRedirects)
@@ -67,12 +62,12 @@ func call(p *CallParams) *Result {
 	if shouldRedir && redir {
 		redirP := getRedir(rsp, p.Proto)
 		if redirP == nil {
-			return ret
+			return nil
 		}
 		p.Logger.Debug("redirecting to [" + redirP.URLString() + "]")
 		redirParams := p.Clone(redirP)
 		return call(redirParams)
 	}
 
-	return ret
+	return nil
 }

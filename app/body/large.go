@@ -1,5 +1,10 @@
 package body
 
+import (
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
+)
+
 const KeyLarge = "large"
 
 type Large struct {
@@ -28,4 +33,12 @@ func (l *Large) MimeType() string {
 
 func (l *Large) String() string {
 	return l.Filename
+}
+
+func (l *Large) Merge(data npncore.Data, logger logur.Logger) Config {
+	return &Large{
+		Filename:    npncore.MergeLog("body.large.filename", l.Filename, data, logger),
+		ContentType: npncore.MergeLog("body.large.content.type", l.ContentType, data, logger),
+		Length:      l.Length,
+	}
 }

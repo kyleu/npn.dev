@@ -39,7 +39,7 @@ interface RequestAdded {
 
 export function onRequestAdded(coll: RequestAdded, req: NPNRequest): void {
   setCollectionRequestSummaries(coll.key, coll.requests);
-  setRequestDetail(coll.key, req);
+  setRequestDetail(coll.key, req.key, req);
   globalRouter().push({name: "RequestDetail", params: {coll: coll.key, req: req.key}});
 }
 

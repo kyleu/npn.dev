@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 )
 
 type Variable struct {
@@ -25,3 +26,11 @@ func (v *Variable) Equals(x *Variable) bool {
 }
 
 type Variables []*Variable
+
+func (v Variables) ToData() npncore.Data {
+	ret := make(npncore.Data, len(v))
+	for _, vr := range v {
+		ret[vr.Key] = vr.Value
+	}
+	return ret
+}

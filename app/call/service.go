@@ -1,7 +1,10 @@
 package call
 
 import (
+	"context"
+	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
+	"net"
 	"net/http"
 	"time"
 
@@ -12,7 +15,7 @@ import (
 )
 
 type Service struct {
-	logger logur.Logger
+	logger  logur.Logger
 	sessSvc *session.Service
 }
 
@@ -21,33 +24,48 @@ func NewService(sessSvc *session.Service, logger logur.Logger) *Service {
 	return &Service{sessSvc: sessSvc, logger: logger}
 }
 
-func (s *Service) Call(userID *uuid.UUID, coll string, req string, p *request.Prototype, sess *session.Session, started func(started *RequestStarted), completed func(completed *RequestCompleted)) *Result {
+func (s *Service) Call(userID *uuid.UUID, coll string, req string, p *request.Prototype, sess *session.Session, started func(started *RequestStarted), completed func(completed *RequestCompleted)) error {
 	rID := npncore.UUID()
 	if p == nil {
-		return NewErrorResult(rID, coll, req, "no request")
+		return errors.New("nil request passed to [call]")
 	}
 	return call(&CallParams{
-		ID:      rID,
-		UserID:  userID,
-		Coll:    coll,
-		Req:     req,
-		Client:  getClient(p),
-		Proto:   p,
-		Sess:    sess,
-		SessSvc: s.sessSvc,
-		Logger:  s.logger,
-		OnStarted: started,
+		ID:          rID,
+		UserID:      userID,
+		Coll:        coll,
+		Req:         req,
+		Client:      getClient(p),
+		Proto:       p.Merge(sess.Variables.ToData(), s.logger),
+		Sess:        sess,
+		SessSvc:     s.sessSvc,
+		Logger:      s.logger,
+		OnStarted:   started,
 		OnCompleted: completed,
 	})
 }
 
+var d = &net.Dialer{Timeout: 4 * time.Second}
+var transport = &http.Transport{
+	DialContext: func(ctx context.Context, network string, addr string) (net.Conn, error) {
+		return d.Dial(network, addr)
+	},
+	DialTLSContext: func(ctx context.Context, network string, addr string) (net.Conn, error) {
+		return d.Dial(network, addr)
+	},
+	TLSHandshakeTimeout:   2 * time.Second,
+	IdleConnTimeout:       1 * time.Second,
+	ResponseHeaderTimeout: 0,
+	ExpectContinueTimeout: 0,
+}
+
 func getClient(p *request.Prototype) *http.Client {
-	timeout := 60 * time.Second
+	timeout := 10 * time.Second
 	if p.Options != nil && p.Options.Timeout > 0 {
 		timeout = time.Duration(p.Options.Timeout) * time.Second
 	}
+
 	return &http.Client{
-		Transport: &http.Transport{},
+		Transport: transport,
 		CheckRedirect: func(req *http.Request, via []*http.Request) error {
 			return http.ErrUseLastResponse
 		},

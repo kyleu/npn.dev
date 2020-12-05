@@ -3,6 +3,8 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
 
 	"emperror.dev/errors"
 )
@@ -61,4 +63,14 @@ func (a *Auth) GetBasic() (string, string) {
 
 func (a *Auth) IsBasic() bool {
 	return a != nil && a.Type == KeyBasic
+}
+
+func (a *Auth) Merge(data npncore.Data, logger logur.Logger) *Auth {
+	if a == nil {
+		return nil
+	}
+	return &Auth{
+		Type:   npncore.MergeLog("auth.type", a.Type, data, logger),
+		Config: a.Config, // TODO
+	}
 }

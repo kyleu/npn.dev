@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"net/http"
 
 	"github.com/gorilla/websocket"
@@ -14,6 +15,10 @@ import (
 
 func WorkspaceIndex(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		err := npncore.MergeTests()
+		if err != nil {
+			return npncontroller.EResp(err, "Template test failure!")
+		}
 		return npncontroller.T(templates.WorkspaceUI(ctx.App.Public(), true, ctx, w))
 	})
 }

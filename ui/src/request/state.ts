@@ -42,13 +42,13 @@ export function setActiveRequest(coll: string, req: string): void {
   }
 }
 
-export function setRequestDetail(coll: string, req: NPNRequest): void {
+export function setRequestDetail(coll: string, origKey: string, req: NPNRequest): void {
   req = normalize(req);
   clearPendingRequests(pendingRequestsRef, "request", coll + "::" + req.key);
   const rs = getCollectionRequestDetails(coll) || [];
   let matched = false;
   for (const r in rs) {
-    if (rs[r].key === req.key) {
+    if (rs[r].key === origKey) {
       matched = true;
       rs[r] = req;
     }

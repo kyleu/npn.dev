@@ -2,6 +2,8 @@ package body
 
 import (
 	"encoding/base64"
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
 	"unicode/utf8"
 )
 
@@ -45,4 +47,13 @@ func (r *Raw) MimeType() string {
 
 func (r *Raw) String() string {
 	return r.Content
+}
+
+func (r *Raw) Merge(data npncore.Data, logger logur.Logger) Config {
+	return &Raw{
+		Type:    npncore.MergeLog("body.raw.type", r.Type, data, logger),
+		Content: npncore.MergeLog("body.raw.content", r.Content, data, logger),
+		Length:  r.Length,
+		Binary:  r.Binary,
+	}
 }

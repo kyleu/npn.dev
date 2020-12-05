@@ -41,8 +41,9 @@ type transformCollectionIn struct {
 
 // Request
 type reqDetailOut struct {
-	Coll string           `json:"coll"`
-	Req  *request.Request `json:"req"`
+	Coll    string           `json:"coll"`
+	OrigKey string           `json:"origKey"`
+	Req     *request.Request `json:"req"`
 }
 
 type reqDeletedOut struct {

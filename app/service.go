@@ -21,7 +21,7 @@ const multiuser = false
 
 type Service struct {
 	debug      bool
-	public      bool
+	public     bool
 	files      npncore.FileLoader
 	user       user.Service
 	auth       auth.Service

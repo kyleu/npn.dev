@@ -70,7 +70,7 @@ function onRequestMessage(cmd: string, param: any): void {
       onRequestDeleted(param);
       break;
     case serverCommands.requestDetail:
-      setRequestDetail(param.coll, param.req);
+      setRequestDetail(param.coll, param.origKey, param.req);
       break;
     case serverCommands.requestNotFound:
       onRequestNotFound(param.coll);

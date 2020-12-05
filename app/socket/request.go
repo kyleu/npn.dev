@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/kyleu/npn/app/call"
 
 	"emperror.dev/errors"
@@ -53,7 +54,7 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestNotFound, frm)
 		return s.WriteMessage(c.ID, msg)
 	}
-	ret := &reqDetailOut{Coll: frm.Coll, Req: req}
+	ret := &reqDetailOut{Coll: frm.Coll, OrigKey: req.Key, Req: req}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }
@@ -70,7 +71,7 @@ func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npncon
 	if err != nil {
 		return errors.Wrap(err, "can't save request ["+frm.Req.Key+"]")
 	}
-	ret := &reqDetailOut{Coll: frm.Coll, Req: frm.Req}
+	ret := &reqDetailOut{Coll: frm.Coll, OrigKey: frm.Orig, Req: frm.Req}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestDetail, ret)
 	return s.WriteMessage(c.ID, msg)
 }
@@ -119,7 +120,10 @@ func onCall(c *npnconnection.Connection, param json.RawMessage, s *npnconnection
 			msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestCompleted, completed)
 			_ = s.WriteMessage(c.ID, msg)
 		}
-		_ = svc.Caller.Call(&c.Profile.UserID, frm.Coll, frm.Req, frm.Proto, sess, onStarted, onCompleted)
+		err := svc.Caller.Call(&c.Profile.UserID, frm.Coll, frm.Req, frm.Proto, sess, onStarted, onCompleted)
+		if err != nil {
+			s.Logger.Warn(fmt.Sprintf("error calling [%v]: %+v", frm.Req, err))
+		}
 	}()
 
 	return nil

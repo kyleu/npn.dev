@@ -2,6 +2,8 @@ package request
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
 	"net/http"
 
 	"github.com/kyleu/npn/app/session"
@@ -70,5 +72,30 @@ func (p *Prototype) SetCookies(cookies header.Cookies) {
 	cookies = cookies.Qualifying(p.URL())
 	if len(cookies) > 0 {
 		p.Headers = p.Headers.Set("Cookie", cookies.String())
+	}
+}
+
+func (p *Prototype) Merge(data npncore.Data, logger logur.Logger) *Prototype {
+	meth := p.Method
+	if npncore.MergeNeeded(meth.Key) {
+		meth = Method{Key: npncore.MergeLog("proto.method", meth.Key, data, logger)}
+	}
+	prot := p.Protocol
+	if npncore.MergeNeeded(prot.Key) {
+		prot = Protocol{Key: npncore.MergeLog("proto.protocol", prot.Key, data, logger)}
+	}
+
+	return &Prototype{
+		Method:   meth,
+		Protocol: prot,
+		Domain:   npncore.MergeLog("proto.domain", p.Domain, data, logger),
+		Port:     p.Port,
+		Path:     npncore.MergeLog("proto.path", p.Path, data, logger),
+		Query:    p.Query.Merge(data, logger),
+		Fragment: npncore.MergeLog("proto.fragment", p.Fragment, data, logger),
+		Headers:  p.Headers.Merge(data, logger),
+		Auth:     p.Auth.Merge(data, logger),
+		Body:     p.Body.Merge(data, logger),
+		Options:  p.Options.Merge(data, logger),
 	}
 }

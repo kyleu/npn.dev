@@ -26,9 +26,7 @@ func ToJSONBytes(x interface{}, logger logur.Logger, indent bool) []byte {
 	}
 	if err != nil {
 		msg := fmt.Sprintf("unable to serialize json from type [%T]: %+v", x, err)
-		if logger == nil {
-			println(msg)
-		} else {
+		if logger != nil {
 			logger.Warn(msg)
 		}
 	}

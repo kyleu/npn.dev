@@ -1,6 +1,8 @@
 package body
 
 import (
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
 	"net/url"
 	"strings"
 )
@@ -54,4 +56,24 @@ func (f *Form) String() string {
 		f.str = f.Data.String()
 	}
 	return f.str
+}
+
+func (f *Form) Merge(data npncore.Data, logger logur.Logger) Config {
+	d := make(FormData, 0, len(f.Data))
+	for _, dt := range f.Data {
+		d = append(d, &FormEntry{
+			K: npncore.MergeLog("body.form.data.k", dt.K, data, logger),
+			V: npncore.MergeLog("body.form.data.v", dt.V, data, logger),
+		})
+	}
+
+	s := f.str
+	if len(s) > 0 {
+		s = npncore.MergeLog("body.form.str", s, data, logger)
+	}
+
+	return &Form{
+		Data: d,
+		str:  s,
+	}
 }

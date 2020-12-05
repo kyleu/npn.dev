@@ -1,6 +1,10 @@
 package body
 
-import "encoding/base64"
+import (
+	"encoding/base64"
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
+)
 
 const KeyImage = "image"
 
@@ -14,6 +18,10 @@ var _ Config = (*Image)(nil)
 func NewImage(t string, bytes []byte) *Body {
 	content := base64.StdEncoding.EncodeToString(bytes)
 	return NewBody(KeyImage, &Image{Type: t, Content: content})
+}
+
+func parseImage(contentType string, b []byte) *Body {
+	return NewImage(contentType, b)
 }
 
 func (r *Image) ContentLength() int64 {
@@ -33,6 +41,9 @@ func (r *Image) String() string {
 	return r.Content
 }
 
-func parseImage(contentType string, b []byte) *Body {
-	return NewImage(contentType, b)
+func (r *Image) Merge(data npncore.Data, logger logur.Logger) Config {
+	return &Image{
+		Type:    npncore.MergeLog("body.image.type", r.Type, data, logger),
+		Content: npncore.MergeLog("body.image.content", r.Content, data, logger),
+	}
 }

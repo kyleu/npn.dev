@@ -1,6 +1,7 @@
 package npncontroller
 
 import (
+	"logur.dev/logur"
 	"net/url"
 	"strings"
 
@@ -17,6 +18,14 @@ func (q *QueryParam) String() string {
 	return url.QueryEscape(q.Key) + "=" + url.QueryEscape(q.Value)
 }
 
+func (q *QueryParam) Merge(data npncore.Data, logger logur.Logger) *QueryParam {
+	return &QueryParam{
+		Key:         npncore.MergeLog("query." + q.Key + ".key", q.Key, data, logger),
+		Value:       npncore.MergeLog("query." + q.Key + ".value", q.Value, data, logger),
+		Description: npncore.MergeLog("query." + q.Key + ".description", q.Description, data, logger),
+	}
+}
+
 type QueryParams []*QueryParam
 
 func (q QueryParams) String() string {
@@ -25,6 +34,14 @@ func (q QueryParams) String() string {
 		ret = append(ret, x.String())
 	}
 	return strings.Join(ret, "&")
+}
+
+func (q QueryParams) Merge(data npncore.Data, logger logur.Logger) QueryParams {
+	ret := make(QueryParams, 0, len(q))
+	for _, qp := range q {
+		ret = append(ret, qp.Merge(data, logger))
+	}
+  return ret
 }
 
 func QueryParamsFromRaw(s string) QueryParams {

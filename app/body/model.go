@@ -5,8 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/kyleu/npn/npncore"
 	"io"
 	"io/ioutil"
+	"logur.dev/logur"
 )
 
 type Config interface {
@@ -14,6 +16,7 @@ type Config interface {
 	Bytes() []byte
 	MimeType() string
 	String() string
+	Merge(data npncore.Data, logger logur.Logger) Config
 }
 
 type Body struct {
@@ -71,6 +74,13 @@ func (b *Body) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		b.Config = h
+	case KeyImage:
+		i := &Image{}
+		err = json.Unmarshal(x.Config, &i)
+		if err != nil {
+			return err
+		}
+		b.Config = i
 	case KeyJSON:
 		js := &JSON{}
 		err = json.Unmarshal(x.Config, &js)
@@ -112,4 +122,19 @@ func (b *Body) ContentLength() int64 {
 		return 0
 	}
 	return b.Config.ContentLength()
+}
+
+func (b *Body) Merge(data npncore.Data, logger logur.Logger) *Body {
+	if b == nil || len(b.Type) == 0 {
+		return nil
+	}
+	cfg := b.Config
+	if cfg != nil {
+		cfg = b.Config.Merge(data, logger)
+	}
+	return &Body{
+		Type: npncore.MergeLog("body.type", b.Type, data, logger),
+		Length: b.Length,
+		Config: cfg,
+	}
 }

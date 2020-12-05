@@ -19,6 +19,11 @@
       </ul>
     </div>
   </div>
+  <div v-else-if="cycle.error.length > 0">
+    <h3 class="uk-card-title">Error</h3>
+    <em>{{ cycle.method }} {{ cycle.url }}</em>
+    <p>{{ cycle.error }}</p>
+  </div>
   <div v-else>
     <h3 class="uk-card-title">Loading...</h3>
     <em>{{ cycle.method }} {{ cycle.url }}</em>

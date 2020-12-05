@@ -1,37 +1,37 @@
 package npncore
 
 import (
-	"errors"
+	"emperror.dev/errors"
+	"fmt"
+	"logur.dev/logur"
 	"strings"
 )
 
-func Template(content string, args Data) (string, error) {
-	return parseTemplate(content, args, "{{", "}}", 0)
+var defaultPrefix = "{{"
+var defaultSuffix = "}}"
+
+func Merge(content string, args Data) (string, error) {
+	return mergeVariables(content, args, defaultPrefix, defaultSuffix, 0)
 }
 
-func SplitString(s string, sep byte, cutc bool) (string, string) {
-	i := strings.IndexByte(s, sep)
-	if i < 0 {
-		return s, ""
-	}
-	if cutc {
-		return s[:i], s[i+1:]
-	}
-	return s[:i], s[i:]
+func MergeNeeded(key string) bool {
+	return strings.Contains(key, defaultPrefix)
 }
 
-func SplitStringLast(s string, sep byte, cutc bool) (string, string) {
-	i := strings.LastIndexByte(s, sep)
-	if i < 0 {
-		return s, ""
+func MergeLog(key string, content string, args Data, logger logur.Logger) string {
+	x, err := Merge(content, args)
+	if err != nil {
+		logger.Warn(fmt.Sprintf("unable to merge [%v] %+v", key, err))
+		return content
 	}
-	if cutc {
-		return s[:i], s[i+1:]
-	}
-	return s[:i], s[i:]
+	return x
 }
 
-func parseTemplate(content string, args Data, start string, end string, depth int) (string, error) {
+func mergeVariables(content string, args Data, start string, end string, depth int) (string, error) {
+	if MergeNeeded(content) {
+		println(content)
+	}
+
 	if depth > 32 {
 		return content, errors.New("template recursion error for [" + content + "]")
 	}
@@ -46,16 +46,44 @@ func parseTemplate(content string, args Data, start string, end string, depth in
 			dIdx := strings.Index(orig, "|")
 			if dIdx > -1 {
 				n = orig[len(start):dIdx]
-				d = orig[dIdx + 1:len(orig) - 1]
+				d = orig[dIdx + 1:len(orig) - len(end)]
 			}
 
 			o := args.GetString(n)
-			if len(o) == 0 {
+			if len(o) == 0 || o == "<nil>" {
 				o = d
 			}
-			return parseTemplate(strings.Replace(content, orig, o, 1), args, start, end, depth + 1)
+			if len(o) == 0 || o == "<nil>" {
+				o = n
+			}
+			return mergeVariables(strings.Replace(content, orig, o, 1), args, start, end, depth + 1)
 		}
 	}
 
 	return content, nil
+}
+
+var tests = []struct {
+	Src  string
+	Data Data
+	Tgt  string
+}{
+	{Src: "a{{b}}c", Data: nil, Tgt: "abc"},                                // Missing
+	{Src: "a{{b}}c", Data: Data{"b": "x"}, Tgt: "axc"},                     // Basic
+	{Src: "a{{b}}c", Data: Data{"b": "{{foo}}", "foo": "xx"}, Tgt: "axxc"}, // Recursive
+	{Src: "a{{b|default}}c", Data: nil, Tgt: "adefaultc"},                  // Default
+	{Src: "a{{b|default}}c", Data: Data{"b": "x"}, Tgt: "axc"},             // Skip default
+}
+
+func MergeTests() error {
+	for _, t := range tests {
+		r, err := Merge(t.Src, t.Data)
+		if err != nil {
+			return errors.Wrap(err, "merge error for ["+t.Src+"]")
+		}
+		if r != t.Tgt {
+			return errors.New(fmt.Sprintf("merge expected [%v] but observed [%v]", t.Tgt, r))
+		}
+	}
+	return nil
 }
