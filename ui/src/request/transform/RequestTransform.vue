@@ -1,10 +1,12 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
     <div class="right"><router-link :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"><Icon icon="close" /></router-link></div>
-    <h3 v-if="result" class="uk-card-title">{{ format.title }}</h3>
+    <h3 v-if="result" class="uk-card-title">Export</h3>
     <h3 v-else class="uk-card-title">Loading...</h3>
     <div v-if="result" class="mt">
-      <pre>{{ result.out }}</pre>
+      <em>{{ format.title }}</em> <a href="" title="copy result to clipboard" @click.prevent="copyText()"><Icon icon="copy" /></a>
+
+      <pre class="export-result" ref="output">{{ result.out }}</pre>
     </div>
   </div>
 </template>
@@ -25,6 +27,11 @@ export default class RequestTransform extends Vue {
 
   get format(): RequestTransformer {
     return getRequestTransformer(this.result?.fmt);
+  }
+
+  copyText(): void {
+    const text = (this.$refs["output"] as Element).innerHTML;
+    navigator.clipboard.writeText(text);
   }
 
   mounted(): void {

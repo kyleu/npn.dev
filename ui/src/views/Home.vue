@@ -7,9 +7,9 @@
         <p>You're using <a href="https://npn.dev">npn</a>, an HTTP client that helps you document and test APIs</p>
 
         <div class="uk-inline mt" style="width: 100%;">
-          <a class="uk-form-icon uk-form-icon-flip" title="Call a URL" href="" @click.prevent="runRequest()"><Icon icon="play" /></a>
+          <a class="uk-form-icon uk-form-icon-flip" title="Add a URL" href="" @click.prevent="runRequest()"><Icon icon="play" /></a>
           <form @submit.prevent="runRequest()">
-            <input id="home-add-input" class="uk-input" type="text" placeholder="Call a URL" data-lpignore="true" />
+            <input id="home-add-input" class="uk-input" type="text" placeholder="Add a URL" data-lpignore="true" />
           </form>
         </div>
       </div>

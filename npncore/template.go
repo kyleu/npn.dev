@@ -28,10 +28,6 @@ func MergeLog(key string, content string, args Data, logger logur.Logger) string
 }
 
 func mergeVariables(content string, args Data, start string, end string, depth int) (string, error) {
-	if MergeNeeded(content) {
-		println(content)
-	}
-
 	if depth > 32 {
 		return content, errors.New("template recursion error for [" + content + "]")
 	}

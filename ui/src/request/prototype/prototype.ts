@@ -1,7 +1,6 @@
 import {Prototype, QueryParam} from "@/request/model";
 import {Auth} from "@/auth/model";
-import {endsWith, startsWith} from "@/util/string";
-import {jsonClone} from "@/util/json";
+import {endsWith, splitString, startsWith} from "@/util/string";
 
 function newPrototype(protocol: string, hostname: string, port: number | undefined, path: string, qp: QueryParam[], fragment: string, auth: Auth | undefined): Prototype {
   if (endsWith(protocol, ":")) {
@@ -15,26 +14,45 @@ function newPrototype(protocol: string, hostname: string, port: number | undefin
 }
 
 export function prototypeFromURL(u: string): Prototype {
-  const url = new URL(u);
+  const [r1, frag] = splitString(u, "#", true);
+  const [r2, query] = splitString(r1, "?", true);
 
   const qp: QueryParam[] = [];
-  url.searchParams.forEach((v, k) => qp.push({k: k, v: v}));
-
-  let auth: Auth | undefined;
-
-  if(url.username.length > 0) {
-    auth = {type: "basic", config: {"username": url.username, "password": url.password, "showPassword": true}};
+  const qpSplit = query.split("&");
+  for (const q in qpSplit) {
+    const [k, v] = splitString(qpSplit[q], "=", true);
+    qp.push({k, v});
   }
 
-  let port: number | undefined;
-  if (url.port && url.port.length > 0) {
-    port = parseInt(url.port, 10);
+  let [proto, r3] = splitString(r2, ":", true);
+  if (r3.length === 0) {
+    r3 = proto;
+    proto = "http";
+  }
+  while(r3.startsWith("/")) {
+    r3 = r3.substr(1);
+  }
+  const [r4, path] = splitString(r3, "/", true);
+
+  let [aut, hostOrig] = splitString(r4, '@', true);
+  if (hostOrig === "") {
+    hostOrig = aut;
+    aut = "";
+  }
+  const [host, portString] = splitString(hostOrig, ':', true);
+  let port = 0;
+  if (portString.length > 0) {
+    port = parseInt(portString);
   }
 
-  let path = url.pathname;
-  if (path.indexOf("/") === 0) {
-    path = path.substr(1);
+  let at: Auth | undefined;
+
+  if (aut !== "") {
+    const [user, pass] = splitString(aut, ':', true);
+    at = { "type": "basic", config: {"username": user, "password": pass, "showPassword": false}};
   }
 
-  return newPrototype(url.protocol, url.hostname, port, path, qp, url.hash, auth);
+  const ret = newPrototype(proto, host, port, path, qp, frag, at);
+  console.log(u, ret);
+  return ret;
 }

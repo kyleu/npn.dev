@@ -59,6 +59,12 @@
   padding: 12px;
 }
 
+// Export
+.export-result {
+  padding: 12px;
+  border: 1px solid #dddddd;
+}
+
 @import "form";
 @import "tags";
 @import "profile";

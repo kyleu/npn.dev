@@ -17,34 +17,38 @@ func addRequestURL(s *npnconnection.Service, c *npnconnection.Connection, param 
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input from URL")
 	}
-	req, err := request.FromString("new", p.URL)
+	return AddRequestFromURL(s, c, p.Coll, p.URL)
+}
+
+func AddRequestFromURL(s *npnconnection.Service, c *npnconnection.Connection, coll string, url string) error {
+	req, err := request.FromString("new", url)
 	if err != nil {
-		return errors.Wrap(err, "unable to parse request from URL ["+p.URL+"]")
+		return errors.Wrap(err, "unable to parse request from URL ["+url+"]")
 	}
 	req.Key = npncore.Slugify(req.Prototype.Domain)
 
 	svcs := ctx(s)
-	curr, _ := svcs.Request.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
+	curr, _ := svcs.Request.LoadRequest(&c.Profile.UserID, coll, req.Key)
 	if curr != nil {
 		clean(req)
-		curr, _ = svcs.Request.LoadRequest(&c.Profile.UserID, p.Coll, req.Key)
+		curr, _ = svcs.Request.LoadRequest(&c.Profile.UserID, coll, req.Key)
 		if curr != nil {
 			req.Key += "-" + strings.ToLower(npncore.RandomString(4))
 		}
 	}
 
-	err = svcs.Request.SaveRequest(&c.Profile.UserID, p.Coll, "", req)
+	err = svcs.Request.SaveRequest(&c.Profile.UserID, coll, "", req)
 	if err != nil {
-		return errors.Wrap(err, "unable to save request from URL ["+p.URL+"]")
+		return errors.Wrap(err, "unable to save request from URL ["+url+"]")
 	}
 
-	coll, err := parseCollDetails(s, &c.Profile.UserID, p.Coll)
+	x, err := parseCollDetails(s, &c.Profile.UserID, coll)
 	if err != nil {
 		return err
 	}
 
 	out := &addURLOut{
-		Coll: coll,
+		Coll: x,
 		Req:  req,
 	}
 	msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestAdded, out)

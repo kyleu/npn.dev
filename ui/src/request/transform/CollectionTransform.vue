@@ -2,13 +2,16 @@
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <div class="right"><router-link to="/c"><Icon icon="close" /></router-link></div>
+        <div class="right"><router-link :to="'/c/' + $route.params.coll"><Icon icon="close" /></router-link></div>
         <h3 class="uk-card-title">
           <Icon class="nav-icon-h3" icon="album" />
           {{ (coll && coll.title.length > 0) ? coll.title : $route.params.coll }}
         </h3>
-        <em>{{ transformer.title }} export</em>
-        <pre v-if="result"><code>{{ result.out }}</code></pre>
+        <div v-if="result" class="mt">
+          <em>{{ transformer.title }} export</em> <a href="" title="copy result to clipboard" @click.prevent="copyText()"><Icon icon="copy" /></a>
+          <pre class="export-result"><code ref="output">{{ result.out }}</code></pre>
+        </div>
+        <div v-else class="mt"><em>Loading...</em></div>
       </div>
     </div>
   </div>
@@ -36,6 +39,11 @@ export default class CollectionTransform extends Vue {
 
   get result(): CollectionTransformResult | undefined {
     return getCollectionTransformResult(this.$route.params.coll, this.$route.params.fmt);
+  }
+
+  copyText(): void {
+    const text = (this.$refs["output"] as Element).innerHTML;
+    navigator.clipboard.writeText(text);
   }
 
   mounted(): void {

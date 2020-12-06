@@ -23,3 +23,20 @@ export function trimSuffix(s: string, suffix: string): string {
     return s;
   }
 }
+
+
+export function splitString(s: string, sep: string, cutc: boolean): [string, string] {
+  const idx = s.indexOf(sep);
+  if (idx == -1) {
+    return [s, ""];
+  }
+  return [s.substr(0, idx), s.substr(cutc ? idx + sep.length : idx)];
+}
+
+export function splitStringLast(s: string, sep: string, cutc: boolean): string[] {
+  const idx = s.lastIndexOf(sep);
+  if (idx == -1) {
+    return [s, ""];
+  }
+  return [s.substr(0, idx), s.substr(cutc ? idx + sep.length : idx)];
+}

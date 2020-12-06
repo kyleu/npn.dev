@@ -11,26 +11,22 @@ import (
 )
 
 func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {
-	var err error
-
 	switch cmd {
 	case ClientMessageRunURL:
-		err = onRunURL(c, param, s)
+		return onRunURL(c, param, s)
 	case ClientMessageGetRequest:
-		err = onGetRequest(c, param, s)
+		return onGetRequest(c, param, s)
 	case ClientMessageSaveRequest:
-		err = onSaveRequest(c, param, s)
+		return onSaveRequest(c, param, s)
 	case ClientMessageDeleteRequest:
-		err = onDeleteRequest(c, param, s)
+		return onDeleteRequest(c, param, s)
 	case ClientMessageCall:
-		err = onCall(c, param, s)
+		return onCall(c, param, s)
 	case ClientMessageTransform:
-		err = onTransformRequest(c, param, s)
+		return onTransformRequest(c, param, s)
 	default:
-		err = errors.New("invalid request command [" + cmd + "]")
+		return errors.New("invalid request command [" + cmd + "]")
 	}
-
-	return err
 }
 
 func onRunURL(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
@@ -38,8 +34,7 @@ func onRunURL(c *npnconnection.Connection, param json.RawMessage, s *npnconnecti
 	if err != nil {
 		return errors.Wrap(err, "unable to read URL")
 	}
-	println("TODO: onRunURL(" + url + ")")
-	return nil
+	return AddRequestFromURL(s, c, "_", url)
 }
 
 func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
