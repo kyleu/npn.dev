@@ -6,7 +6,7 @@
     <div v-if="result" class="mt">
       <em>{{ format.title }}</em> <a href="" title="copy result to clipboard" @click.prevent="copyText()"><Icon icon="copy" /></a>
 
-      <pre class="export-result" ref="output">{{ result.out }}</pre>
+      <pre ref="output" class="export-result">{{ result.out }}</pre>
     </div>
   </div>
 </template>

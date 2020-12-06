@@ -40,7 +40,7 @@ export function prototypeFromURL(u: string): Prototype {
     aut = "";
   }
   const [host, portString] = splitString(hostOrig, ':', true);
-  let port = 0;
+  let port = undefined;
   if (portString.length > 0) {
     port = parseInt(portString);
   }
@@ -52,7 +52,5 @@ export function prototypeFromURL(u: string): Prototype {
     at = { "type": "basic", config: {"username": user, "password": pass, "showPassword": false}};
   }
 
-  const ret = newPrototype(proto, host, port, path, qp, frag, at);
-  console.log(u, ret);
-  return ret;
+  return newPrototype(proto, host, port, path, qp, frag, at);
 }
