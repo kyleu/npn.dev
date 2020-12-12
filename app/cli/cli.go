@@ -8,6 +8,7 @@ import (
 
 var verbose bool
 var public bool
+var secret string
 var redir string
 var addr string
 var port uint16
@@ -35,6 +36,7 @@ func Configure() cobra.Command {
 	flags.Uint16VarP(&port, "port", "p", 10101, "port for http server to listen on")
 	flags.BoolVarP(&verbose, "verbose", "v", false, "when set, displays verbose output")
 	flags.BoolVar(&public, "public", false, "if set, renders as public server")
+	flags.StringVarP(&secret, "secret", "s", "", "protect the site with this super-secret password")
 
 	return rootCmd
 }

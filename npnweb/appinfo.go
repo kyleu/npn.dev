@@ -15,4 +15,5 @@ type AppInfo interface {
 	Logger() logur.Logger
 	Valid() bool
 	Public() bool
+	Secret() string
 }

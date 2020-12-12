@@ -23,6 +23,7 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 
 	// Home
 	r.Path(routes.Path("health")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Health))).Name(routes.Name("health"))
+	r.Path(routes.Path("enable")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Enable))).Name(routes.Name("enable"))
 
 	// Workspace
 	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(WorkspaceIndex))).Name(routes.Name("home"))

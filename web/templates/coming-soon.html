@@ -1,0 +1,12 @@
+<%: func ComingSoon(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">Coming Soon!</h3>
+    </div>
+  </div>
+</div>
+<% } %>

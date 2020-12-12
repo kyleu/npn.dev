@@ -22,6 +22,7 @@ const multiuser = false
 type Service struct {
 	debug      bool
 	public     bool
+	secret     string
 	files      npncore.FileLoader
 	user       user.Service
 	auth       auth.Service
@@ -35,7 +36,7 @@ type Service struct {
 
 var _ npnweb.AppInfo = (*Service)(nil)
 
-func NewService(debug bool, public bool, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
+func NewService(debug bool, public bool, secret string, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
 	sessSvc := session.NewService(multiuser, files, logger)
 	collSvc := collection.NewService(multiuser, files, logger)
@@ -45,6 +46,7 @@ func NewService(debug bool, public bool, files npncore.FileLoader, redir string,
 	return &Service{
 		debug:      debug,
 		public:     public,
+		secret:     secret,
 		files:      files,
 		user:       us,
 		auth:       authfs.NewServiceFS(multiuser, redir, files, logger, us),
@@ -83,6 +85,10 @@ func (s *Service) Valid() bool {
 
 func (s *Service) Public() bool {
 	return s.public
+}
+
+func (s *Service) Secret() string {
+	return s.secret
 }
 
 func Svc(a npnweb.AppInfo) *Service {
