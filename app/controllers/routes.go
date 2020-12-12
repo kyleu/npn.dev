@@ -55,7 +55,8 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.Path(routes.Path("i", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportDetail))).Name(routes.Name("import", "detail"))
 
 	// Test
-	_ = r.Path(routes.Path(npncore.KeyTest)).Subrouter()
+	test := r.Path(routes.Path(npncore.KeyTest)).Subrouter()
+	test.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Testbed))).Name(routes.Name("testbed"))
 	r.PathPrefix(routes.Path("test/")).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path(npncore.KeyTest), http.HandlerFunc(TestCall)))).Name(routes.Name(npncore.KeyTest, "run"))
 
 	// Assets
