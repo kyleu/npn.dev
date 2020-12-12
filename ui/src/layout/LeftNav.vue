@@ -13,6 +13,7 @@
       <div v-style-menu-section>System</div>
       <div class="nav-list">
         <div class="nav-link"><a v-style-menu-link href="" onclick="npn.onDebug();return false"><Icon icon="code" class="nav-icon" /> Debug</a></div>
+        <div class="nav-link"><router-link v-style-menu-link to="/testbed"><Icon icon="code" class="nav-icon" /> Testbed</router-link></div>
         <div class="nav-link"><a v-style-menu-link href="" @click.prevent="toggleLog()"><Icon icon="list" class="nav-icon" /> Toggle Log</a></div>
         <div class="nav-link"><router-link v-style-menu-link to="/about"><Icon icon="question" class="nav-icon" /> About</router-link></div>
       </div>

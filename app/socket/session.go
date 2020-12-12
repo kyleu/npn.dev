@@ -3,6 +3,7 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kyleu/npn/app/transform"
 	"strings"
 
 	"github.com/kyleu/npn/app/session"
@@ -24,6 +25,8 @@ func handleSessionMessage(s *npnconnection.Service, c *npnconnection.Connection,
 		err = onSaveSession(c, param, s)
 	case ClientMessageDeleteSession:
 		err = onDeleteSession(c, param, s)
+	case ClientMessageTransform:
+		return onTransformSession(c, param, s)
 	default:
 		err = errors.New("invalid session command [" + cmd + "]")
 	}
@@ -120,5 +123,26 @@ func onDeleteSession(c *npnconnection.Connection, param json.RawMessage, s *npnc
 	}
 
 	msg := npnconnection.NewMessage(npncore.KeySession, ServerMessageSessionDeleted, key)
+	return s.WriteMessage(c.ID, msg)
+}
+
+func onTransformSession(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {
+	frm := ""
+	err := npncore.FromJSONStrict(param, &frm)
+	if err != nil {
+		return errors.Wrap(err, "can't load session transform param")
+	}
+
+	sess, err := ctx(s).Session.Load(&c.Profile.UserID, frm)
+	if err != nil {
+		return errors.Wrap(err, "can't load session transform ["+frm+"]")
+	}
+
+	rsp, err := transform.TransformSession(sess, s.Logger)
+	if err != nil {
+		return errors.Wrap(err, "can't load transform session")
+	}
+
+	msg := npnconnection.NewMessage(npncore.KeySession, ServerMessageSessionTransform, rsp)
 	return s.WriteMessage(c.ID, msg)
 }

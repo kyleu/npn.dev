@@ -31,7 +31,7 @@
 
         <div v-if="showEditor.length === 0">
           <button v-style-button class="uk-button uk-button-default mrs mt" @click="editSession()">Edit</button>
-          <button v-style-button class="uk-button uk-button-default mt" @click="exportSession()">Export</button>
+          <router-link v-style-button class="uk-button uk-button-default mt" :to="'/x/' + $route.params.sess">Export</router-link>
         </div>
         <div v-else>
           <button v-style-button class="uk-button uk-button-default mrs mt" @click="cancelEdit()">Cancel</button>

@@ -13,7 +13,7 @@ import {
 } from "@/collection/state";
 import {jsonClone} from "@/util/json";
 import {onRequestCompleted, onRequestStarted} from "@/call/state";
-import {setCollectionTransformResult, setRequestTransformResult} from "@/request/transform/state";
+import {setCollectionTransformResult, setRequestTransformResult, setSessionTransformResult} from "@/request/transform/state";
 import {onRequestAdded, onRequestDeleted, onRequestNotFound} from "@/collection/requestDetails";
 import {collectionService, requestService, sessionService, systemService} from "@/util/services";
 
@@ -107,6 +107,9 @@ function onSessionMessage(cmd: string, param: any): void {
       break;
     case serverCommands.sessionNotFound:
       onSessionNotFound();
+      break;
+    case serverCommands.sessionTransform:
+      setSessionTransformResult(param);
       break;
     default:
       logWarn("unhandled session message [" + cmd + "]", param);

@@ -50,5 +50,6 @@ export const serverCommands = {
   sessionAdded: "sessionAdded",
   sessionDetail: "sessionDetail",
   sessionDeleted: "sessionDeleted",
-  sessionNotFound: "sessionNotFound"
+  sessionNotFound: "sessionNotFound",
+  sessionTransform: "sessionTransform"
 };

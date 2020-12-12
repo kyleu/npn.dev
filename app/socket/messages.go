@@ -54,4 +54,5 @@ const (
 	ServerMessageSessionDetail   = "sessionDetail"
 	ServerMessageSessionDeleted  = "sessionDeleted"
 	ServerMessageSessionNotFound = "sessionNotFound"
+	ServerMessageSessionTransform = "sessionTransform"
 )

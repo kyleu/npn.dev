@@ -1,3 +1,5 @@
+import {ref} from "@vue/composition-api";
+
 export interface RequestTransformResult {
   coll: string;
   req:  string;
@@ -8,5 +10,10 @@ export interface RequestTransformResult {
 export interface CollectionTransformResult {
   coll: string;
   fmt:  string;
+  out:  string;
+}
+
+export interface SessionTransformResult {
+  key: string;
   out:  string;
 }

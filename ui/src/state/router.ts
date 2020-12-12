@@ -12,8 +12,10 @@ import RequestTransform from "@/request/transform/RequestTransform.vue";
 import SessionIndex from "@/session/SessionIndex.vue";
 import SessionDetail from "@/session/SessionDetail.vue";
 import {requestResultsRef} from "@/call/state";
-import {collectionTransformResultRef, requestTransformResultRef} from "@/request/transform/state";
+import {collectionTransformResultRef, requestTransformResultRef, sessionTransformResultRef} from "@/request/transform/state";
 import CollectionTransform from "@/request/transform/CollectionTransform.vue";
+import Testbed from "@/views/Testbed.vue";
+import SessionTransform from "@/request/transform/SessionTransform.vue";
 
 const routes: Array<RouteConfig> = [
   {
@@ -35,6 +37,15 @@ const routes: Array<RouteConfig> = [
     path: "/s/:sess",
     name: "SessionDetail",
     component: SessionDetail
+  },
+  {
+    path: "/x/:sess",
+    name: "SessionTransform",
+    component: SessionTransform,
+    beforeEnter: (to, from, next): void => {
+      sessionTransformResultRef.value = undefined;
+      next();
+    }
   },
   {
     path: "/x/:coll/:fmt",
@@ -88,6 +99,11 @@ const routes: Array<RouteConfig> = [
     path: "/about",
     name: "About",
     component: About
+  },
+  {
+    path: "/testbed",
+    name: "Testbed",
+    component: Testbed
   },
   {
     path: "*",

@@ -95,8 +95,11 @@ h4 {
   }
 }
 
-.uk-navbar-item.trim {
-  padding: 0;
+.uk-navbar-item {
+  // font-weight: lighter;
+  &.trim {
+    padding: 0;
+  }
 }
 
 // Search

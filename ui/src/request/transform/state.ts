@@ -1,7 +1,7 @@
 import {socketRef} from "@/socket/socket";
-import {CollectionTransformResult, RequestTransformResult} from "@/request/transform/result";
+import {CollectionTransformResult, RequestTransformResult, SessionTransformResult} from "@/request/transform/result";
 import {ref} from "@vue/composition-api";
-import {collectionService, requestService} from "@/util/services";
+import {collectionService, requestService, sessionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {clearPendingRequests, pendingRequestsRef, setPendingRequests} from "@/socket/pending";
 import {activeSessionRef} from "@/session/state";
@@ -45,4 +45,24 @@ export function getCollectionTransformResult(coll: string, fmt: string): Collect
 export function setCollectionTransformResult(r: CollectionTransformResult): void {
   clearPendingRequests(pendingRequestsRef, "export-collection", `${r.coll}::${r.fmt}`);
   collectionTransformResultRef.value = r;
+}
+
+export const sessionTransformResultRef = ref<SessionTransformResult>();
+
+export function getSessionTransformResult(sess: string): SessionTransformResult | undefined {
+  const v = sessionTransformResultRef.value;
+  if (v && v.key === sess) {
+    return v;
+  }
+  if (socketRef.value && sess.length > 0 && setPendingRequests(pendingRequestsRef, "export-session", sess)) {
+    socketRef.value.send({svc: sessionService.key, cmd: clientCommands.transform, param: sess});
+  }
+
+  return undefined;
+}
+
+export function setSessionTransformResult(r: SessionTransformResult): void {
+  console.log("SET", r);
+  clearPendingRequests(pendingRequestsRef, "export-session", r.key);
+  sessionTransformResultRef.value = r;
 }

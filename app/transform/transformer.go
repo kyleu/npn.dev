@@ -4,6 +4,7 @@ import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
+	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
 
@@ -49,3 +50,7 @@ func (t CollectionTransformers) Get(s string) CollectionTransformer {
 }
 
 var AllCollectionTransformers = CollectionTransformers{txJSON, txPostman}
+
+func TransformSession(sess *session.Session, logger logur.Logger) (*Result, error) {
+	return &Result{Key: sess.Key, Out: npncore.ToJSON(sess, logger)}, nil
+}
