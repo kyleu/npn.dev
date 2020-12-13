@@ -8,14 +8,14 @@ import CollectionDetail from "@/collection/CollectionDetail.vue";
 import CollectionIndex from "@/collection/CollectionIndex.vue";
 import RequestDetail from "@/request/RequestDetail.vue";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
-import RequestTransform from "@/request/transform/RequestTransform.vue";
+import RequestTransform from "@/transform/RequestTransform.vue";
 import SessionIndex from "@/session/SessionIndex.vue";
 import SessionDetail from "@/session/SessionDetail.vue";
 import {requestResultsRef} from "@/call/state";
-import {collectionTransformResultRef, requestTransformResultRef, sessionTransformResultRef} from "@/request/transform/state";
-import CollectionTransform from "@/request/transform/CollectionTransform.vue";
+import {collectionTransformResultRef, requestTransformResultRef, sessionTransformResultRef} from "@/transform/state";
+import CollectionTransform from "@/transform/CollectionTransform.vue";
 import Testbed from "@/views/Testbed.vue";
-import SessionTransform from "@/request/transform/SessionTransform.vue";
+import SessionTransform from "@/transform/SessionTransform.vue";
 
 const routes: Array<RouteConfig> = [
   {

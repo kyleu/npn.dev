@@ -19,6 +19,10 @@ func (x *HTTP) Key() string {
 	return "http"
 }
 
+func (x *HTTP) Title() string {
+	return "HTTP"
+}
+
 func (x *HTTP) Description() string {
 	return "TODO: http"
 }

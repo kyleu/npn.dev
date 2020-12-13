@@ -15,9 +15,9 @@
 import {Component, Vue} from "vue-property-decorator";
 import {setBCReq} from "@/util/vutils";
 import Icon from "@/util/Icon.vue";
-import {getRequestTransformResult} from "@/request/transform/state";
+import {getRequestTransformResult} from "@/transform/state";
 import {getRequestTransformer, RequestTransformer} from "@/util/transformers";
-import {RequestTransformResult} from "@/request/transform/result";
+import {RequestTransformResult} from "@/transform/result";
 
 @Component({ components: {Icon} })
 export default class RequestTransform extends Vue {

@@ -8,10 +8,13 @@ export interface RequestTransformer {
 const requestTestbed = {key: "testbed", title: "Testbed", description: "an internal transformer for testing request exports"};
 
 export const RequestTransformers: RequestTransformer[] = [
-  {key: "http", title: "HTTP", description: "exports this request as HTTP text"},
-  {key: "json", title: "JSON", description: "exports this request in its native format"},
-  {key: "curl", title: "curl", description: "exports this request in a format usable by curl"},
-  {key: "postman", title: "Postman", description: "exports this request as a Postman collection"},
+  // start of generated request code
+  {"key": "curl", "title": "CURL", "description": "TODO: curl"},
+  {"key": "http", "title": "HTTP", "description": "TODO: http"},
+  {"key": "json", "title": "JSON", "description": "TODO: json"},
+  {"key": "openapi", "title": "OpenAPI", "description": "TODO: OpenAPI"},
+  {"key": "postman", "title": "Postman", "description": "TODO: postman"},
+  // end of generated request code
   requestTestbed
 ];
 
@@ -32,8 +35,11 @@ export interface CollectionTransformer {
 const collectionTestbed = {key: "testbed", title: "Testbed", description: "an internal transformer for testing collection exports"};
 
 export const CollectionTransformers: CollectionTransformer[] = [
-  {key: "json", title: "JSON", description: "exports this collection in its native format"},
-  {key: "postman", title: "Postman", description: "exports all requests in this collection as a Postman collection"},
+  // start of generated collection code
+  {"key": "json", "title": "JSON", "description": "TODO: json"},
+  {"key": "openapi", "title": "OpenAPI", "description": "TODO: OpenAPI"},
+  {"key": "postman", "title": "Postman", "description": "TODO: postman"},
+  // end of generated collection code
   collectionTestbed
 ];
 

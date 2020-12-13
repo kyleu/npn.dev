@@ -14,7 +14,7 @@
             <button v-style-button class="uk-button uk-button-default mt" @click="save();">Save Changes</button>
           </div>
           <button v-style-button class="uk-button uk-button-default mrs mt" @click="doCall()">Call</button>
-          <ExportActions />
+          <RequestTransformActions />
           <button v-style-button class="uk-button uk-button-default mrs mt" @click="deleteRequest()">Delete</button>
         </div>
       </div>
@@ -29,7 +29,7 @@ import {NPNRequest} from "@/request/model";
 import RequestEditor from "@/request/editor/RequestEditor.vue";
 import URLEditor from "@/request/editor/URLEditor.vue";
 import {diffRequests} from "@/request/prototype/diff";
-import ExportActions from "@/request/editor/ExportActions.vue";
+import RequestTransformActions from "@/transform/RequestTransformActions.vue";
 import {requestEditingRef, requestOriginalRef, setActiveRequest} from "@/request/state";
 import {socketRef} from "@/socket/socket";
 import {requestService} from "@/util/services";
@@ -40,7 +40,7 @@ import {authConfigRef, toAuthConfig} from "@/auth/state";
 import {bodyConfigRef, toBodyConfig} from "@/body/state";
 import {requestResultsRef} from "@/call/state";
 
-@Component({ components: {Icon, ExportActions, RequestEditor, URLEditor } })
+@Component({ components: {Icon, RequestTransformActions, RequestEditor, URLEditor } })
 export default class RequestDetail extends Vue {
   get req(): NPNRequest | undefined {
     setActiveRequest(this.$route.params.coll, this.$route.params.req);

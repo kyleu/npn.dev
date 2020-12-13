@@ -17,6 +17,10 @@ func (x *JSON) Key() string {
 	return "json"
 }
 
+func (x *JSON) Title() string {
+	return "JSON"
+}
+
 func (x *JSON) Description() string {
 	return "TODO: json"
 }

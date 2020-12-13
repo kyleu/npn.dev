@@ -24,8 +24,8 @@ import {setBC} from "@/util/vutils";
 import {getCollection} from "@/collection/state";
 import Icon from "@/util/Icon.vue";
 import {CollectionTransformer, getCollectionTransformer} from "@/util/transformers";
-import {CollectionTransformResult} from "@/request/transform/result";
-import {getCollectionTransformResult} from "@/request/transform/state";
+import {CollectionTransformResult} from "@/transform/result";
+import {getCollectionTransformResult} from "@/transform/state";
 
 @Component({ components: { Icon } })
 export default class CollectionTransform extends Vue {

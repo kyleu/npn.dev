@@ -37,7 +37,7 @@
         </div>
         <div v-else>
           <button v-style-button class="uk-button uk-button-default mrs mt" @click="editCollection()">Edit</button>
-          <TransformActions />
+          <CollectionTransformActions />
         </div>
       </div>
       <RequestSummaryList :coll="$route.params.coll" :requests="requests" />
@@ -57,9 +57,9 @@ import {collectionService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {jsonClone} from "@/util/json";
 import Icon from "@/util/Icon.vue";
-import TransformActions from "@/collection/TransformActions.vue";
+import CollectionTransformActions from "@/transform/CollectionTransformActions.vue";
 
-@Component({ components: {TransformActions, Icon, RequestSummaryList } })
+@Component({ components: {CollectionTransformActions, Icon, RequestSummaryList } })
 export default class CollectionDetail extends Vue {
   showEditor = "";
 

@@ -13,9 +13,14 @@ type Result struct {
 	Out string `json:"out,omitempty"`
 }
 
-type RequestTransformer interface {
+type Transformer interface {
 	Key() string
+	Title() string
 	Description() string
+}
+
+type RequestTransformer interface {
+	Transformer
 	TransformRequest(proto *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error)
 }
 
@@ -30,11 +35,10 @@ func (t RequestTransformers) Get(s string) RequestTransformer {
 	return nil
 }
 
-var AllRequestTransformers = RequestTransformers{txCURL, txHTTP, txJSON, txPostman}
+var AllRequestTransformers = RequestTransformers{txCURL, txHTTP, txJSON, txOpenAPI, txPostman}
 
 type CollectionTransformer interface {
-	Key() string
-	Description() string
+	Transformer
 	TransformCollection(coll *collection.Collection, requests request.Requests, sess *session.Session, logger logur.Logger) (*Result, error)
 }
 
@@ -49,7 +53,7 @@ func (t CollectionTransformers) Get(s string) CollectionTransformer {
 	return nil
 }
 
-var AllCollectionTransformers = CollectionTransformers{txJSON, txPostman}
+var AllCollectionTransformers = CollectionTransformers{txJSON, txOpenAPI, txPostman}
 
 func TransformSession(sess *session.Session, logger logur.Logger) (*Result, error) {
 	return &Result{Key: sess.Key, Out: npncore.ToJSON(sess, logger)}, nil

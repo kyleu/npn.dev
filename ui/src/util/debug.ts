@@ -7,7 +7,7 @@ import {jsonClone} from "@/util/json";
 import Vue from "vue";
 import {VueRouter} from "vue-router/types/router";
 import {sessionDetailsRef, sessionEditingRef, sessionOriginalRef, sessionSummariesRef} from "@/session/state";
-import {requestTransformResultRef} from "@/request/transform/state";
+import {requestTransformResultRef} from "@/transform/state";
 import {bodyConfigRef} from "@/body/state";
 import {requestDetailsRef} from "@/collection/requestDetails";
 import {requestResultsRef} from "@/call/state";

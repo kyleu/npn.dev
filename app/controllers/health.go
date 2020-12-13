@@ -17,11 +17,3 @@ func Health(w http.ResponseWriter, r *http.Request) {
 		return "", nil
 	})
 }
-
-func Testbed(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		ret := "Hello from testbed!"
-		_, _ = w.Write([]byte(ret))
-		return "", nil
-	})
-}

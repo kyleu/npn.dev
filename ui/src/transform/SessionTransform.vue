@@ -21,8 +21,8 @@
 import {Component, Vue} from "vue-property-decorator";
 import {setBC} from "@/util/vutils";
 import Icon from "@/util/Icon.vue";
-import {SessionTransformResult} from "@/request/transform/result";
-import {getSessionTransformResult} from "@/request/transform/state";
+import {SessionTransformResult} from "@/transform/result";
+import {getSessionTransformResult} from "@/transform/state";
 import {Session} from "@/session/model";
 import {getSessionDetail} from "@/session/state";
 

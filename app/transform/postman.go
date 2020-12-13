@@ -21,6 +21,10 @@ func (x *Postman) Key() string {
 	return "postman"
 }
 
+func (x *Postman) Title() string {
+	return "Postman"
+}
+
 func (x *Postman) Description() string {
 	return "TODO: postman"
 }

@@ -21,6 +21,10 @@ func (x *CURL) Key() string {
 	return "curl"
 }
 
+func (x *CURL) Title() string {
+	return "CURL"
+}
+
 func (x *CURL) Description() string {
 	return "TODO: curl"
 }

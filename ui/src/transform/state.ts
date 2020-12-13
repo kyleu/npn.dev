@@ -1,5 +1,5 @@
 import {socketRef} from "@/socket/socket";
-import {CollectionTransformResult, RequestTransformResult, SessionTransformResult} from "@/request/transform/result";
+import {CollectionTransformResult, RequestTransformResult, SessionTransformResult} from "@/transform/result";
 import {ref} from "@vue/composition-api";
 import {collectionService, requestService, sessionService} from "@/util/services";
 import {clientCommands} from "@/util/command";

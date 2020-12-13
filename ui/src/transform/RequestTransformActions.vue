@@ -16,7 +16,7 @@ import {Component, Vue} from "vue-property-decorator";
 import {RequestTransformers, RequestTransformer} from "@/util/transformers";
 
 @Component
-export default class ExportActions extends Vue {
+export default class RequestTransformActions extends Vue {
   get transforms(): RequestTransformer[] {
     return RequestTransformers;
   }
