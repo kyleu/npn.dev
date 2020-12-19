@@ -12,6 +12,7 @@ import (
 type Config interface {
 	GetType() string
 	String() string
+	Clone() *Auth
 }
 
 type Auth struct {
@@ -73,4 +74,11 @@ func (a *Auth) Merge(data npncore.Data, logger logur.Logger) *Auth {
 		Type:   npncore.MergeLog("auth.type", a.Type, data, logger),
 		Config: a.Config, // TODO
 	}
+}
+
+func (a *Auth) Clone() *Auth {
+	if a == nil || a.Config == nil {
+		return nil
+	}
+	return a.Config.Clone()
 }

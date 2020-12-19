@@ -42,3 +42,7 @@ func (h *HTML) Merge(data npncore.Data, logger logur.Logger) Config {
 		Content: npncore.MergeLog("body.html.content", h.Content, data, logger),
 	}
 }
+
+func (h *HTML) Clone() *Body {
+	return NewBody(KeyHTML, &HTML{Content: h.Content})
+}

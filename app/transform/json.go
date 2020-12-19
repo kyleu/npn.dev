@@ -30,8 +30,8 @@ func (x *JSON) TransformRequest(proto *request.Prototype, sess *session.Session,
 	return &Result{Out: out}, nil
 }
 
-func (x *JSON) TransformCollection(coll *collection.Collection, requests request.Requests, sess *session.Session, logger logur.Logger) (*Result, error) {
-	src := map[string]interface{}{"coll": coll, "requests": requests}
+func (x *JSON) TransformCollection(c *collection.FullCollection, logger logur.Logger) (*Result, error) {
+	src := map[string]interface{}{"coll": c.Coll, "requests": c.Requests}
 	out := npncore.ToJSON(src, nil)
 	return &Result{Out: out}, nil
 }

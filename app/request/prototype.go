@@ -99,3 +99,19 @@ func (p *Prototype) Merge(data npncore.Data, logger logur.Logger) *Prototype {
 		Options:  p.Options.Merge(data, logger),
 	}
 }
+
+func (p *Prototype) Clone() *Prototype {
+	return &Prototype{
+		Method:   p.Method,
+		Protocol: p.Protocol,
+		Domain:   p.Domain,
+		Port:     p.Port,
+		Path:     p.Path,
+		Query:    p.Query.Clone(),
+		Fragment: p.Fragment,
+		Headers:  p.Headers.Clone(),
+		Auth:     p.Auth.Clone(),
+		Body:     p.Body.Clone(),
+		Options:  p.Options.Clone(),
+	}
+}

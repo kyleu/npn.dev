@@ -7,8 +7,8 @@ import (
 	"strings"
 )
 
-var defaultPrefix = "{{"
-var defaultSuffix = "}}"
+var defaultPrefix = "{"
+var defaultSuffix = "}"
 
 func Merge(content string, args Data) (string, error) {
 	return mergeVariables(content, args, defaultPrefix, defaultSuffix, 0)
@@ -35,14 +35,14 @@ func mergeVariables(content string, args Data, start string, end string, depth i
 	if sIdx > -1 {
 		eIdx := strings.Index(content[sIdx:], end)
 		if eIdx > -1 {
-			orig := content[sIdx:sIdx + eIdx + len(end)]
+			orig := content[sIdx : sIdx+eIdx+len(end)]
 
-			n := orig[len(start):len(orig) - len(end)]
+			n := orig[len(start) : len(orig)-len(end)]
 			d := ""
 			dIdx := strings.Index(orig, "|")
 			if dIdx > -1 {
 				n = orig[len(start):dIdx]
-				d = orig[dIdx + 1:len(orig) - len(end)]
+				d = orig[dIdx+1 : len(orig)-len(end)]
 			}
 
 			o := args.GetString(n)
@@ -52,7 +52,7 @@ func mergeVariables(content string, args Data, start string, end string, depth i
 			if len(o) == 0 || o == "<nil>" {
 				o = n
 			}
-			return mergeVariables(strings.Replace(content, orig, o, 1), args, start, end, depth + 1)
+			return mergeVariables(strings.Replace(content, orig, o, 1), args, start, end, depth+1)
 		}
 	}
 
@@ -64,11 +64,11 @@ var tests = []struct {
 	Data Data
 	Tgt  string
 }{
-	{Src: "a{{b}}c", Data: nil, Tgt: "abc"},                                // Missing
-	{Src: "a{{b}}c", Data: Data{"b": "x"}, Tgt: "axc"},                     // Basic
-	{Src: "a{{b}}c", Data: Data{"b": "{{foo}}", "foo": "xx"}, Tgt: "axxc"}, // Recursive
-	{Src: "a{{b|default}}c", Data: nil, Tgt: "adefaultc"},                  // Default
-	{Src: "a{{b|default}}c", Data: Data{"b": "x"}, Tgt: "axc"},             // Skip default
+	{Src: "a{b}c", Data: nil, Tgt: "abc"},                                  // Missing
+	{Src: "a{b}c", Data: Data{"b": "x"}, Tgt: "axc"},                       // Basic
+	{Src: "a{b}c", Data: Data{"b": "{foo}zz", "foo": "xx"}, Tgt: "axxzzc"}, // Recursive
+	{Src: "a{b|default}c", Data: nil, Tgt: "adefaultc"},                    // Default
+	{Src: "a{b|default}c", Data: Data{"b": "x"}, Tgt: "axc"},               // Skip default
 }
 
 func MergeTests() error {

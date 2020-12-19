@@ -20,10 +20,14 @@ func (q *QueryParam) String() string {
 
 func (q *QueryParam) Merge(data npncore.Data, logger logur.Logger) *QueryParam {
 	return &QueryParam{
-		Key:         npncore.MergeLog("query." + q.Key + ".key", q.Key, data, logger),
-		Value:       npncore.MergeLog("query." + q.Key + ".value", q.Value, data, logger),
-		Description: npncore.MergeLog("query." + q.Key + ".description", q.Description, data, logger),
+		Key:         npncore.MergeLog("query."+q.Key+".key", q.Key, data, logger),
+		Value:       npncore.MergeLog("query."+q.Key+".value", q.Value, data, logger),
+		Description: npncore.MergeLog("query."+q.Key+".description", q.Description, data, logger),
 	}
+}
+
+func (q *QueryParam) Clone() *QueryParam {
+	return &QueryParam{Key: q.Key, Value: q.Value, Description: q.Description}
 }
 
 type QueryParams []*QueryParam
@@ -41,7 +45,15 @@ func (q QueryParams) Merge(data npncore.Data, logger logur.Logger) QueryParams {
 	for _, qp := range q {
 		ret = append(ret, qp.Merge(data, logger))
 	}
-  return ret
+	return ret
+}
+
+func (q QueryParams) Clone() QueryParams {
+	ret := make(QueryParams, 0, len(q))
+	for _, qp := range q {
+		ret = append(ret, qp.Clone())
+	}
+	return ret
 }
 
 func QueryParamsFromRaw(s string) QueryParams {

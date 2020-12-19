@@ -2,6 +2,7 @@ package imprt
 
 import (
 	"encoding/json"
+	"github.com/kyleu/npn/app/transform"
 	"strings"
 
 	"emperror.dev/errors"
@@ -22,6 +23,8 @@ func initialPhaseKey(filename string, contentType string) string {
 	switch {
 	case contentType == "application/json" || strings.HasSuffix(filename, ".json"):
 		return "json"
+	case contentType == "application/x-yaml" || strings.HasSuffix(filename, ".yaml"):
+		return "yaml"
 	default:
 		return "bytes"
 	}
@@ -38,6 +41,8 @@ func parsePhase(p *phase, depth int) *phase {
 	switch p.Key {
 	case "json":
 		ret = parseJSON(p.Value.([]byte))
+	case "yaml":
+		ret = parseYAML(p.Value.([]byte))
 	case "string":
 		ret = parseString(p.Value.(string))
 	}
@@ -83,6 +88,23 @@ func parseJSON(content []byte) *phase {
 	return errorPhase(errors.New("unhandled JSON"), string(content))
 }
 
+func parseYAML(content []byte) *phase {
+	c := string(content)
+	println(c)
+	if strings.Contains(c, "openapi") {
+		oapi, err := transform.OpenAPIImport(content)
+		if err != nil {
+			return errorPhase(errors.Wrap(err, "unhandled OpenAPI error"), c)
+		}
+		coll, err := transform.OpenAPIToFullCollection(oapi)
+		if err != nil {
+			return errorPhase(errors.Wrap(err, "error transforming OpenAPI"), c)
+		}
+		return &phase{Key: "request", Value: coll, Final: true}
+	}
+	return errorPhase(errors.New("unhandled YAML"), c)
+}
+
 func parseJSONObject(obj map[string]interface{}, content []byte) *phase {
 	_, pok := obj["prototype"]
 	_, mok := obj["method"]
@@ -90,10 +112,10 @@ func parseJSONObject(obj map[string]interface{}, content []byte) *phase {
 	if pok || (mok && dok) {
 		ret, err := request.FromString("import", string(content))
 		if err == nil {
-			return &phase{Key: "request", Value: ret, Final: true}
+			return &phase{Key: "full", Value: ret, Final: true}
 		}
 	}
-	return &phase{Key: "unhandled", Value: obj, Final: true}
+	return &phase{Key: "unhandled JSON object", Value: obj, Final: true}
 }
 
 func parseString(s string) *phase {

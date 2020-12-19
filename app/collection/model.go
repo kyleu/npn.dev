@@ -1,5 +1,10 @@
 package collection
 
+import (
+	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/session"
+)
+
 type Collection struct {
 	Key          string   `json:"key"`
 	Title        string   `json:"title,omitempty"`
@@ -32,3 +37,9 @@ type Summary struct {
 }
 
 type Summaries []*Summary
+
+type FullCollection struct {
+	Coll     *Collection      `json:"coll"`
+	Requests request.Requests `json:"reqs"`
+	Sess     *session.Session `json:"sess"`
+}

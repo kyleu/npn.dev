@@ -42,3 +42,7 @@ func (l *Large) Merge(data npncore.Data, logger logur.Logger) Config {
 		Length:      l.Length,
 	}
 }
+
+func (l *Large) Clone() *Body {
+	return NewBody(KeyLarge, &Large{Filename: l.Filename, ContentType: l.ContentType, Length: l.Length})
+}

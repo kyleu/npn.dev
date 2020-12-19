@@ -18,6 +18,10 @@ func (f *FormEntry) String() string {
 	return url.QueryEscape(f.K) + "=" + url.QueryEscape(f.V)
 }
 
+func (f *FormEntry) Clone() *FormEntry {
+	return &FormEntry{K: f.K, V: f.V}
+}
+
 type FormData []*FormEntry
 
 func (f FormData) String() string {
@@ -26,6 +30,14 @@ func (f FormData) String() string {
 		ret = append(ret, x.String())
 	}
 	return strings.Join(ret, "&")
+}
+
+func (f FormData) Clone() FormData {
+	ret := make(FormData, len(f))
+	for _, x := range ret {
+		ret = append(ret, x.Clone())
+	}
+	return ret
 }
 
 type Form struct {
@@ -76,4 +88,8 @@ func (f *Form) Merge(data npncore.Data, logger logur.Logger) Config {
 		Data: d,
 		str:  s,
 	}
+}
+
+func (f *Form) Clone() *Body {
+	return NewBody(KeyForm, &Form{Data: f.Data.Clone(), str: f.str})
 }

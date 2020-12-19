@@ -35,9 +35,9 @@ func (x *Postman) TransformRequest(proto *request.Prototype, sess *session.Sessi
 	return &Result{Out: out}, nil
 }
 
-func (x *Postman) TransformCollection(coll *collection.Collection, requests request.Requests, sess *session.Session, logger logur.Logger) (*Result, error) {
-	pColl := postman.CreateCollection(coll.TitleWithFallback(), coll.Description)
-	for _, r := range requests {
+func (x *Postman) TransformCollection(c *collection.FullCollection, logger logur.Logger) (*Result, error) {
+	pColl := postman.CreateCollection(c.Coll.TitleWithFallback(), c.Coll.Description)
+	for _, r := range c.Requests {
 		pColl.AddItem(postman.CreateItem(postman.Item{
 			Name:        r.TitleWithFallback(),
 			Description: r.Description,

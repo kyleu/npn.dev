@@ -17,6 +17,7 @@ type Config interface {
 	MimeType() string
 	String() string
 	Merge(data npncore.Data, logger logur.Logger) Config
+	Clone() *Body
 }
 
 type Body struct {
@@ -137,4 +138,11 @@ func (b *Body) Merge(data npncore.Data, logger logur.Logger) *Body {
 		Length: b.Length,
 		Config: cfg,
 	}
+}
+
+func (b *Body) Clone() *Body {
+	if b == nil || b.Config == nil {
+		return nil
+	}
+	return b.Config.Clone()
 }

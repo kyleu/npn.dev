@@ -1,0 +1,24 @@
+<%: func ImportForm(ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">Import</h3>
+      <p>TODO...</p>
+      <form class="uk-form-stacked" action="<%= ctx.Route(`import.upload`) %>" method="post" enctype="multipart/form-data">
+        <fieldset class="uk-fieldset">
+          <div class="uk-margin" data-uk-margin>
+            <div data-uk-form-custom="target: true">
+              <input name="file" multiple="" type="file" />
+              <input class="uk-input uk-form-width-medium" type="text" placeholder="Select file" disabled />
+            </div>
+            <button class="uk-button uk-button-default">Submit</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+  </div>
+</div>
+<% } %>

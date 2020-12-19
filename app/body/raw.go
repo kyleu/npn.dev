@@ -57,3 +57,7 @@ func (r *Raw) Merge(data npncore.Data, logger logur.Logger) Config {
 		Binary:  r.Binary,
 	}
 }
+
+func (r *Raw) Clone() *Body {
+	return NewBody(KeyRaw, &Raw{Type: r.Type, Content: r.Content, Length: r.Length, Binary: r.Binary})
+}

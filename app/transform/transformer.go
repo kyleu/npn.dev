@@ -39,7 +39,7 @@ var AllRequestTransformers = RequestTransformers{txCURL, txHTTP, txJSON, txOpenA
 
 type CollectionTransformer interface {
 	Transformer
-	TransformCollection(coll *collection.Collection, requests request.Requests, sess *session.Session, logger logur.Logger) (*Result, error)
+	TransformCollection(x *collection.FullCollection, logger logur.Logger) (*Result, error)
 }
 
 type CollectionTransformers []CollectionTransformer

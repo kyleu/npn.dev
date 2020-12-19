@@ -1,0 +1,30 @@
+<%: func ImportDetail(key string, cfg *imprt.Config, os imprt.Outputs, ctx *npnweb.RequestContext, w io.Writer) (int, error) %>
+<%~ "layout/basic.html" %>
+<%@ nav { %><% npntemplate.Navbar(ctx, _buffer) %><% } %>
+<%@ body { %>
+<div class="uk-section uk-section-small">
+  <div class="uk-container">
+    <div class="uk-card uk-card-body uk-card-default">
+      <h3 class="uk-card-title">Import [<%= key %>]</h3>
+      <p>TODO...</p>
+    </div>
+    <% for _, f := range cfg.Files { %>
+    <div class="uk-card uk-card-body uk-card-default mt">
+      <h3 class="uk-card-title"><%= f.Filename %></h3>
+      <% matched := false %>
+      <% for _, o := range os { %>
+      <% if o.Filename == f.Filename { %>
+      <% matched = true %>
+      <p>
+        <%= o.Type %><% if len(o.Error) > 0 { %>: <%= o.Error %><% } %>
+      </p>
+      <% } %>
+      <% } %>
+      <% if !matched { %>
+      <p><em>no output</em></p>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+</div>
+<% } %>

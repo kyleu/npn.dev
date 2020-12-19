@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/kyleu/npn/gen/templates"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -10,6 +11,13 @@ import (
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
 )
+
+func ImportForm(w http.ResponseWriter, r *http.Request) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+		ctx.Title = "Import"
+		return npncontroller.T(templates.ImportForm(ctx, w))
+	})
+}
 
 func ImportDetail(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {

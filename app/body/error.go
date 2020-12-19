@@ -37,3 +37,7 @@ func (e *Error) Merge(data npncore.Data, logger logur.Logger) Config {
 	return &Error{Message: npncore.MergeLog("body.error.message", e.Message, data, logger)}
 }
 
+func (e *Error) Clone() *Body {
+	return NewBody(KeyError, &Error{Message: e.Message})
+}
+

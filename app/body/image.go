@@ -47,3 +47,7 @@ func (r *Image) Merge(data npncore.Data, logger logur.Logger) Config {
 		Content: npncore.MergeLog("body.image.content", r.Content, data, logger),
 	}
 }
+
+func (r *Image) Clone() *Body {
+	return NewBody(KeyImage, &Image{Type: r.Type, Content: r.Content})
+}

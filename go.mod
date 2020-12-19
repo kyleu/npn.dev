@@ -34,6 +34,7 @@ require (
 	emperror.dev/emperror v0.33.0
 	emperror.dev/errors v0.8.0
 	emperror.dev/handler/logur v0.4.0
+	github.com/getkin/kin-openapi v0.33.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2

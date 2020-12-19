@@ -2,17 +2,16 @@ package transform
 
 import (
 	"github.com/kyleu/npn/app/collection"
+	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
 	"logur.dev/logur"
-
-	"github.com/kyleu/npn/app/request"
 )
 
 type OpenAPI struct {
 	Multiline bool
 }
 
-var _ RequestTransformer = (*OpenAPI)(nil)
+var _ CollectionTransformer = (*OpenAPI)(nil)
 
 func (x *OpenAPI) Key() string {
 	return "openapi"
@@ -35,7 +34,7 @@ func (x *OpenAPI) TransformRequest(p *request.Prototype, sess *session.Session, 
 	return &Result{Out: out}, nil
 }
 
-func (x *OpenAPI) TransformCollection(coll *collection.Collection, requests request.Requests, sess *session.Session, logger logur.Logger) (*Result, error) {
+func (x *OpenAPI) TransformCollection(f *collection.FullCollection, logger logur.Logger) (*Result, error) {
 	out := "OpenAPI: TODO!"
 	return &Result{Out: out}, nil
 }

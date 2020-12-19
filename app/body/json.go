@@ -66,8 +66,9 @@ func (j *JSON) Merge(data npncore.Data, logger logur.Logger) Config {
 	if len(s) > 0 {
 		s = npncore.MergeLog("body.json.str", s, data, logger)
 	}
-	return &JSON{
-		Msg: m,
-		str: s,
-	}
+	return &JSON{Msg: m, str: s}
+}
+
+func (r *JSON) Clone() *Body {
+	return NewBody(KeyJSON, &JSON{Msg: r.Msg, str: r.str})
 }

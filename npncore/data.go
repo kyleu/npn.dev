@@ -9,13 +9,16 @@ import (
 	"emperror.dev/errors"
 )
 
+// A helper class, wrapping map[string]interface{}
 type Data map[string]interface{}
 
+// Returns a boolean indicating if the data has a value associated to the provided key
 func (d Data) HasKey(s string) bool {
 	_, ok := d[s]
 	return ok
 }
 
+// Returns a string representation of this Data's contents, mostly used for debugging
 func (d Data) String() string {
 	ret := make([]string, 0, len(d))
 	for k, v := range d {
@@ -24,6 +27,7 @@ func (d Data) String() string {
 	return strings.Join(ret, ", ")
 }
 
+// Returns a string representation of this Data's contents, URL-encoded in query string format
 func (d Data) ToQueryString() string {
 	params := url.Values{}
 	for k, v := range d {
@@ -32,6 +36,7 @@ func (d Data) ToQueryString() string {
 	return params.Encode()
 }
 
+// Returns a new shallow copy of this Data
 func (d Data) Clone() Data {
 	ret := make(Data, len(d))
 	for k, v := range d {
@@ -40,6 +45,7 @@ func (d Data) Clone() Data {
 	return ret
 }
 
+// Returns the value associated to this path, traversing child objects if a path like "x.y.z" is passed
 func (d Data) GetPath(path string) interface{} {
 	r := csv.NewReader(strings.NewReader(path))
 	r.Comma = '.'
@@ -72,6 +78,7 @@ func getPath(i interface{}, path []string) interface{} {
 	}
 }
 
+// Sets the value associated to this path, traversing child objects if a path like "x.y.z" is passed
 func (d Data) SetPath(path string, val interface{}) interface{} {
 	r := csv.NewReader(strings.NewReader(path))
 	r.Comma = '.'
@@ -110,6 +117,7 @@ func setPath(i interface{}, path []string, val interface{}) error {
 	return nil
 }
 
-func (d Data) GetString(k string) string {
-	return fmt.Sprint(d.GetPath(k))
+// Returns a string representation of the value associated to the provided key
+func (d Data) GetString(key string) string {
+	return fmt.Sprint(d.GetPath(key))
 }

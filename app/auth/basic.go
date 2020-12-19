@@ -30,3 +30,7 @@ func (b *Basic) String() string {
 	}
 	return fmt.Sprintf("%v%v", b.Username, passStr)
 }
+
+func (b *Basic) Clone() *Auth {
+	return NewBasic(b.Username, b.Password, b.ShowPassword)
+}

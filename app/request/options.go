@@ -78,3 +78,21 @@ func (o *Options) Merge(data npncore.Data, logger logur.Logger) *Options {
 		UserAgentOverride:     npncore.MergeLog("options.userAgentOverride", o.UserAgentOverride, data, logger),
 	}
 }
+
+func (o *Options) Clone() *Options {
+	if o == nil {
+		return nil
+	}
+	return &Options{
+		Timeout:               o.Timeout,
+		IgnoreRedirects:       o.IgnoreRedirects,
+		IgnoreReferrer:        o.IgnoreReferrer,
+		IgnoreCerts:           o.IgnoreCerts,
+		IgnoreCookies:         o.IgnoreCookies,
+		ExcludeDefaultHeaders: o.ExcludeDefaultHeaders,
+		ReadCookieJars:        o.ReadCookieJars,
+		WriteCookieJar:        o.WriteCookieJar,
+		SSLCert:               o.SSLCert,
+		UserAgentOverride:     o.UserAgentOverride,
+	}
+}
