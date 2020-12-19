@@ -12,6 +12,7 @@ import (
 	"logur.dev/logur"
 )
 
+// Runs a provided command, redirecting output and returning the exit code
 func RunProcess(cmd string, path string, logger logur.Logger, in io.Reader, out io.Writer, er io.Writer) (int, error) {
 	logger.Info(fmt.Sprintf("Running [" + cmd + "] in [" + path + "]"))
 
@@ -52,6 +53,8 @@ func RunProcess(cmd string, path string, logger logur.Logger, in io.Reader, out 
 	return 0, nil
 }
 
+
+// Runs a provided command, returning the exit code and string output
 func RunProcessSimple(cmd string, path string, logger logur.Logger) (int, string, error) {
 	var buf bytes.Buffer
 	ec, err := RunProcess(cmd, path, logger, nil, &buf, &buf)

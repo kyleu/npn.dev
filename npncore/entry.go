@@ -11,7 +11,7 @@ type Entry struct {
 	V interface{}
 }
 
-// a set of entries
+// a set of Entry pointers
 type Entries []*Entry
 
 // Returns a string representation of the value associated to the provided key

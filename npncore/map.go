@@ -11,6 +11,7 @@ import (
 	"emperror.dev/errors"
 )
 
+// Returns the value associated to the key in the provided map, logging a detailed message and returning nil if not found
 func GetEntry(m map[string]interface{}, key string, logger logur.Logger) interface{} {
 	retEntry, ok := m[key]
 	if !ok {
@@ -27,6 +28,8 @@ func GetEntry(m map[string]interface{}, key string, logger logur.Logger) interfa
 	return retEntry
 }
 
+
+// Returns the string value associated to the key in the provided map, logging a detailed message and returning nil if not found or value is not a string
 func MapGetString(m map[string]interface{}, key string, logger logur.Logger) string {
 	retEntry := GetEntry(m, key, logger)
 	ret, ok := retEntry.(string)
@@ -37,6 +40,7 @@ func MapGetString(m map[string]interface{}, key string, logger logur.Logger) str
 	return ret
 }
 
+// Returns the bool value associated to the key in the provided map, logging a detailed message and returning nil if not found or value is not a boolean
 func MapGetBool(m map[string]interface{}, key string, logger logur.Logger) bool {
 	retEntry := GetEntry(m, key, logger)
 	ret, ok := retEntry.(bool)
@@ -47,6 +51,7 @@ func MapGetBool(m map[string]interface{}, key string, logger logur.Logger) bool 
 	return ret
 }
 
+// Returns the UUID value associated to the key in the provided map, logging a detailed message and returning nil if not found or value is not a UUID
 func MapGetUUID(m map[string]interface{}, key string, logger logur.Logger) *uuid.UUID {
 	retEntry := GetEntry(m, key, logger)
 	ret, ok := retEntry.(uuid.UUID)
@@ -66,6 +71,7 @@ func MapGetUUID(m map[string]interface{}, key string, logger logur.Logger) *uuid
 	return &ret
 }
 
+// Returns the map resulting for applying the arguments, alternating between keys and values
 func MapFromPairs(x ...interface{}) (map[interface{}]interface{}, error) {
 	if len(x)%2 != 0 {
 		return nil, errors.New(fmt.Sprintf("observed [%v] args, need an even number", len(x)))
@@ -79,6 +85,7 @@ func MapFromPairs(x ...interface{}) (map[interface{}]interface{}, error) {
 	return ret, nil
 }
 
+// Returns the map resulting for applying the arguments, alternating between string keys and values
 func StringKeyMapFromPairs(x ...interface{}) (map[string]interface{}, error) {
 	curr, err := MapFromPairs(x...)
 	if err != nil {
@@ -95,6 +102,7 @@ func StringKeyMapFromPairs(x ...interface{}) (map[string]interface{}, error) {
 	return ret, nil
 }
 
+// Returns the map resulting for applying the arguments, alternating between string keys and string values
 func StringMapFromPairs(x ...interface{}) (map[string]string, error) {
 	curr, err := StringKeyMapFromPairs(x...)
 	if err != nil {
@@ -111,6 +119,7 @@ func StringMapFromPairs(x ...interface{}) (map[string]string, error) {
 	return ret, nil
 }
 
+// Returns a string representing the provided map, in HStore format
 func MapToDBString(m map[string]string) string {
 	ret := make([]string, 0, len(m))
 	for k, v := range m {
@@ -119,6 +128,7 @@ func MapToDBString(m map[string]string) string {
 	return strings.Join(ret, ",")
 }
 
+// Returns a map representing the provided HStore format string
 func StringToDBMap(s string) (map[string]string, error) {
 	if len(strings.TrimSpace(s)) == 0 {
 		return make(map[string]string, 0), nil

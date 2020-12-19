@@ -27,7 +27,7 @@ func exec(file *MigrationFile, s *Service, logger logur.Logger) (string, error) 
 	file.F(sb)
 	sql := sb.String()
 	sqls := strings.Split(sql, ";")
-	startNanos := npncore.StartTimer()
+	startNanos := npncore.TimerStart()
 	for _, q := range sqls {
 		if len(strings.TrimSpace(strings.TrimSuffix(strings.TrimSpace(q), "--"))) > 0 {
 			_, err := s.Exec(q, nil, -1)
@@ -36,7 +36,7 @@ func exec(file *MigrationFile, s *Service, logger logur.Logger) (string, error) 
 			}
 		}
 	}
-	ms := npncore.MicrosToMillis(language.AmericanEnglish, npncore.EndTimer(startNanos))
+	ms := npncore.MicrosToMillis(language.AmericanEnglish, npncore.TimerEnd(startNanos))
 	logger.Debug(fmt.Sprintf("ran query [%s] in [%v]", file.Title, ms))
 	return sql, nil
 }

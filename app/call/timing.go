@@ -57,11 +57,11 @@ func (t *Timing) ConnectComplete() int {
 }
 
 func (t *Timing) CompleteHeaders() {
-	t.ResponseHeaders = int((npncore.StartTimer() - t.Began) / 1000)
+	t.ResponseHeaders = int((npncore.TimerStart() - t.Began) / 1000)
 }
 
 func (t *Timing) Complete() {
-	t.Completed = int((npncore.StartTimer() - t.Began) / 1000)
+	t.Completed = int((npncore.TimerStart() - t.Began) / 1000)
 }
 
 func (t *Timing) Duration() int {
@@ -71,31 +71,31 @@ func (t *Timing) Duration() int {
 func (t *Timing) Trace() *httptrace.ClientTrace {
 	return &httptrace.ClientTrace{
 		DNSStart: func(httptrace.DNSStartInfo) {
-			t.DNSStart = int((npncore.StartTimer() - t.Began) / 1000)
+			t.DNSStart = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		DNSDone: func(httptrace.DNSDoneInfo) {
-			t.DNSEnd = int((npncore.StartTimer() - t.Began) / 1000)
+			t.DNSEnd = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		ConnectStart: func(string, string) {
-			t.ConnectStart = int((npncore.StartTimer() - t.Began) / 1000)
+			t.ConnectStart = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		ConnectDone: func(string, string, error) {
-			t.ConnectEnd = int((npncore.StartTimer() - t.Began) / 1000)
+			t.ConnectEnd = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		TLSHandshakeStart: func() {
-			t.TLSStart = int((npncore.StartTimer() - t.Began) / 1000)
+			t.TLSStart = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		TLSHandshakeDone: func(tls.ConnectionState, error) {
-			t.TLSEnd = int((npncore.StartTimer() - t.Began) / 1000)
+			t.TLSEnd = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		WroteHeaders: func() {
-			t.WroteHeaders = int((npncore.StartTimer() - t.Began) / 1000)
+			t.WroteHeaders = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		WroteRequest: func(httptrace.WroteRequestInfo) {
-			t.WroteRequest = int((npncore.StartTimer() - t.Began) / 1000)
+			t.WroteRequest = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 		GotFirstResponseByte: func() {
-			t.FirstResponseByte = int((npncore.StartTimer() - t.Began) / 1000)
+			t.FirstResponseByte = int((npncore.TimerStart() - t.Began) / 1000)
 		},
 	}
 }

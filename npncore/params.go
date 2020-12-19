@@ -7,8 +7,10 @@ import (
 	"logur.dev/logur"
 )
 
+// A map with arbitrary string keys associated to a string array containing all allowed columns
 var AllowedColumns = map[string][]string{}
 
+// Details of a specific set of ordering parameters, with limit and offset
 type Params struct {
 	Key       string    `json:"key"`
 	Orderings Orderings `json:"orderings,omitempty"`
@@ -16,6 +18,7 @@ type Params struct {
 	Offset    int       `json:"offset,omitempty"`
 }
 
+// Updates or creates Params with the provided Orderings
 func ParamsWithDefaultOrdering(key string, params *Params, orderings ...*Ordering) *Params {
 	if params == nil {
 		params = &Params{Key: key}
@@ -28,14 +31,17 @@ func ParamsWithDefaultOrdering(key string, params *Params, orderings ...*Orderin
 	return params
 }
 
+// Clones this Params, replacing the orderings with the provided arguments
 func (p *Params) CloneOrdering(orderings ...*Ordering) *Params {
 	return &Params{Key: p.Key, Orderings: orderings, Limit: p.Limit, Offset: p.Offset}
 }
 
+// Indicates if there is more data past the provided page
 func (p *Params) HasNextPage(count int) bool {
 	return count > (p.Offset + p.Limit)
 }
 
+// Returns a clone of this Params, configured for the next page
 func (p *Params) NextPage() *Params {
 	limit := p.Limit
 	if limit == 0 {
@@ -48,10 +54,12 @@ func (p *Params) NextPage() *Params {
 	return &Params{Key: p.Key, Orderings: p.Orderings, Limit: p.Limit, Offset: offset}
 }
 
+// Indicates if there is data prior to the provided page
 func (p *Params) HasPreviousPage() bool {
 	return p.Offset > 0
 }
 
+// Returns a clone of this Params, configured for the previous page
 func (p *Params) PreviousPage() *Params {
 	limit := p.Limit
 	if limit == 0 {
@@ -64,6 +72,7 @@ func (p *Params) PreviousPage() *Params {
 	return &Params{Key: p.Key, Orderings: p.Orderings, Limit: p.Limit, Offset: offset}
 }
 
+// Returns the Orderings of this Params that match the provided column
 func (p *Params) GetOrdering(col string) *Ordering {
 	var ret *Ordering
 
@@ -76,6 +85,7 @@ func (p *Params) GetOrdering(col string) *Ordering {
 	return ret
 }
 
+// converts this Params into a SQL order by clause
 func (p *Params) OrderByString() string {
 	var ret = make([]string, 0, len(p.Orderings))
 
@@ -91,6 +101,7 @@ func (p *Params) OrderByString() string {
 	return strings.Join(ret, ", ")
 }
 
+// Filters this Params, limiting columns to those matching the AllowedColumns
 func (p *Params) Filtered(logger logur.Logger) *Params {
 	if len(p.Orderings) > 0 {
 		allowed := make(Orderings, 0)

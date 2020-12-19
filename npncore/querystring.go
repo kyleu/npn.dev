@@ -5,6 +5,7 @@ import (
 	"net/url"
 )
 
+// Converts this Params to a URL-safe query string
 func (p *Params) ToQueryString(u *url.URL) string {
 	if p == nil {
 		return ""

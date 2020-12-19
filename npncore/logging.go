@@ -18,6 +18,7 @@ type appFormatter struct {
 
 var root, _ = filepath.Abs(".")
 
+// Fancy log formatting, will remove soon
 func (a *appFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	entry.Message = "\n" + entry.Message + "\n\n"
 	b, err := a.nested.Format(entry)
@@ -56,6 +57,7 @@ func (a *appFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	return []byte(strings.Join(ret, "\n")), nil
 }
 
+// Initializes the logging subsystem
 func InitLogging(verbose bool) logur.Logger {
 	logger := logrus.New()
 

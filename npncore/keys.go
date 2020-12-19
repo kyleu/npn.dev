@@ -6,6 +6,7 @@ import (
 	"github.com/jinzhu/inflection"
 )
 
+// Useful constants
 const (
 	KeyAbout      = "about"
 	KeyAct        = "act"
@@ -65,10 +66,12 @@ const (
 	KeyVoyager    = "voyager"
 )
 
+// Pluralizes a string
 func Plural(s string) string {
 	return inflection.Plural(s)
 }
 
+// Converts a string to TitleCase
 func Title(k string) string {
 	if len(k) == 0 {
 		return k
@@ -82,14 +85,17 @@ func Title(k string) string {
 	return strings.ToUpper(k[0:1]) + k[1:]
 }
 
+// Pluralizes a string and converts it to TitleCase
 func PluralTitle(k string) string {
 	return Plural(Title(k))
 }
 
+// Appends "ID". That's it
 func WithID(k string) string {
 	return k + "ID"
 }
 
+// Appends "_id". That's it
 func WithDBID(k string) string {
 	return k + "_id"
 }

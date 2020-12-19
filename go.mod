@@ -41,8 +41,13 @@ require (
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
 	github.com/kyleu/npn/npnconnection v0.0.3 // npn
 	github.com/kyleu/npn/npncontroller v0.0.3 // npn
-	github.com/kyleu/npn/npncore v0.0.3 // npn
+	github.com/kyleu/npn/npncore v0.0.60 // npn
+	github.com/kyleu/npn/npnexport v0.0.0-00010101000000-000000000000 // indirect
+	github.com/kyleu/npn/npngraphql v0.0.0-00010101000000-000000000000 // indirect
+	github.com/kyleu/npn/npnqueue v0.0.0-00010101000000-000000000000 // indirect
+	github.com/kyleu/npn/npnscript v0.0.0-00010101000000-000000000000 // indirect
 	github.com/kyleu/npn/npnservice v0.0.3 // npn
+	github.com/kyleu/npn/npnservice-db v0.0.0-00010101000000-000000000000 // indirect
 	github.com/kyleu/npn/npnservice-fs v0.0.3 // npn
 	github.com/kyleu/npn/npntemplate v0.0.3 // npn
 	github.com/kyleu/npn/npnuser v0.0.3 // npn

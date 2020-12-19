@@ -4,10 +4,12 @@ import (
 	"time"
 )
 
-func StartTimer() int64 {
+// Returns current time as nanos
+func TimerStart() int64 {
 	return time.Now().UnixNano()
 }
 
-func EndTimer(startNanos int64) int {
+// Returns the difference between the provided start time and current time in nanoseconds, as microseconds
+func TimerEnd(startNanos int64) int {
 	return int((time.Now().UnixNano() - startNanos) / int64(time.Microsecond))
 }

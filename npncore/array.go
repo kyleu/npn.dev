@@ -1,6 +1,6 @@
 package npncore
 
-// Returns a boolean indicating if a provided value is present in the provided string array
+// Returns a bool indicating if a provided value is present in the provided string array
 func StringArrayContains(a []string, s string) bool {
 	for _, x := range a {
 		if x == s {

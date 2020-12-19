@@ -12,6 +12,7 @@ import (
 	"logur.dev/logur"
 )
 
+// Implements `FileLoader` for local filesystem access
 type FileSystem struct {
 	root   string
 	logger logur.Logger
@@ -19,6 +20,7 @@ type FileSystem struct {
 
 var _ FileLoader = (*FileSystem)(nil)
 
+// Constructor
 func NewFileSystem(root string, logger logur.Logger) *FileSystem {
 	return &FileSystem{root: root, logger: logger}
 }
@@ -31,10 +33,12 @@ func (f *FileSystem) getPath(ss ...string) string {
 	return path.Join(f.root, s)
 }
 
+// Root directory, as a string
 func (f *FileSystem) Root() string {
 	return f.root
 }
 
+// Reads the contents of a file as a byte array
 func (f *FileSystem) ReadFile(path string) ([]byte, error) {
 	b, err := ioutil.ReadFile(f.getPath(path))
 	if err != nil {
@@ -43,6 +47,7 @@ func (f *FileSystem) ReadFile(path string) ([]byte, error) {
 	return b, nil
 }
 
+// Creates a directory, like it says on the tin
 func (f *FileSystem) CreateDirectory(path string) error {
 	p := f.getPath(path)
 	err := os.MkdirAll(p, 0755)
@@ -52,6 +57,7 @@ func (f *FileSystem) CreateDirectory(path string) error {
 	return nil
 }
 
+// Writes the the provided byte array to a file
 func (f *FileSystem) WriteFile(path string, content []byte, overwrite bool) error {
 	p := f.getPath(path)
 	_, err := os.Stat(p)
@@ -75,6 +81,7 @@ func (f *FileSystem) WriteFile(path string, content []byte, overwrite bool) erro
 	return nil
 }
 
+// Copies the contents of one file to another
 func (f *FileSystem) CopyFile(src string, tgt string) error {
 	sp := f.getPath(src)
 	tp := f.getPath(tgt)
@@ -93,10 +100,12 @@ func (f *FileSystem) CopyFile(src string, tgt string) error {
 	return err
 }
 
+// Lists all files in a directory with a `.json` extension
 func (f *FileSystem) ListJSON(path string) []string {
 	return f.ListExtension(path, "json")
 }
 
+// Lists all files in a directory with a provided extension
 func (f *FileSystem) ListExtension(path string, ext string) []string {
 	glob := "*." + ext
 	matches, err := filepath.Glob(f.getPath(path, glob))
@@ -114,6 +123,7 @@ func (f *FileSystem) ListExtension(path string, ext string) []string {
 	return ret
 }
 
+// Lists all directories in a directory
 func (f *FileSystem) ListDirectories(path string) []string {
 	p := f.getPath(path)
 	files, err := ioutil.ReadDir(p)
@@ -129,6 +139,7 @@ func (f *FileSystem) ListDirectories(path string) []string {
 	return ret
 }
 
+// Returns a boolean indicating if the file exists, and another boolean to indicate if it's a directory
 func (f *FileSystem) Exists(path string) (bool, bool) {
 	p := f.getPath(path)
 	s, err := os.Stat(p)
@@ -138,12 +149,14 @@ func (f *FileSystem) Exists(path string) (bool, bool) {
 	return false, false
 }
 
+// Removes the file at the provided path
 func (f *FileSystem) Remove(path string) error {
 	p := f.getPath(path)
 	f.logger.Warn("removing file at path [" + p + "]")
 	return os.Remove(p)
 }
 
+// Removes the file at the provided path, recursively
 func (f *FileSystem) RemoveRecursive(pt string) error {
 	p := f.getPath(pt)
 	s, err := os.Stat(p)
