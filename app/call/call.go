@@ -2,6 +2,7 @@ package call
 
 import (
 	"fmt"
+	"net/http"
 	"net/http/httptrace"
 	"time"
 
@@ -10,7 +11,7 @@ import (
 	"github.com/kyleu/npn/npncore"
 )
 
-func call(p *CallParams) error {
+func call(p *Params) error {
 	httpReq := p.Proto.ToHTTP(p.Sess)
 	timing := &Timing{}
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
@@ -34,19 +35,7 @@ func call(p *CallParams) error {
 
 	var rsp *Response
 	if hr != nil {
-		rsp = ResponseFromHTTP(p.Proto, hr, p.Sess, timing)
-		parseCookies := p.Proto.Options == nil || (!p.Proto.Options.IgnoreCookies)
-		if parseCookies && p.Sess != nil && len(rsp.Cookies) > 0 {
-			if p.Sess.AddCookies(rsp.Cookies...) {
-				if p.SessSvc != nil {
-					// p.Logger.Debug(fmt.Sprintf("saving session [%v] (%v cookies, %v variables)", p.Sess.Key, len(p.Sess.Cookies), len(p.Sess.Variables)))
-					err = p.SessSvc.Save(p.UserID, p.Sess.Key, p.Sess)
-					if err != nil {
-						p.Logger.Warn(fmt.Sprintf("unable to save session: %+v", err))
-					}
-				}
-			}
-		}
+		rsp = parseResponse(hr, p, timing)
 	}
 
 	timing.Complete()
@@ -70,4 +59,25 @@ func call(p *CallParams) error {
 	}
 
 	return nil
+}
+
+func parseResponse(hr *http.Response, p *Params, timing *Timing) *Response {
+	rsp := ResponseFromHTTP(p.Proto, hr, p.Sess, timing)
+	parseCookies := p.Proto.Options == nil || (!p.Proto.Options.IgnoreCookies)
+	if parseCookies && p.Sess != nil && len(rsp.Cookies) > 0 {
+		addCookies(p, rsp)
+	}
+	return rsp
+}
+
+func addCookies(p *Params, rsp *Response) {
+	if p.Sess.AddCookies(rsp.Cookies...) {
+		if p.SessSvc != nil {
+			// p.Logger.Debug(fmt.Sprintf("saving session [%v] (%v cookies, %v variables)", p.Sess.Key, len(p.Sess.Cookies), len(p.Sess.Variables)))
+			err := p.SessSvc.Save(p.UserID, p.Sess.Key, p.Sess)
+			if err != nil {
+				p.Logger.Warn(fmt.Sprintf("unable to save session: %+v", err))
+			}
+		}
+	}
 }

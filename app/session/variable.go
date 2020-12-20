@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+
 	"github.com/kyleu/npn/npncore"
 )
 

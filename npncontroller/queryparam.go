@@ -1,9 +1,10 @@
 package npncontroller
 
 import (
-	"logur.dev/logur"
 	"net/url"
 	"strings"
+
+	"logur.dev/logur"
 
 	"github.com/kyleu/npn/npncore"
 )
@@ -36,7 +37,6 @@ func (q *QueryParam) Clone() *QueryParam {
 
 // Helper for arrays, represents a URL's querystring
 type QueryParams []*QueryParam
-
 
 // Returns a string in URL-encoded querystring format
 func (q QueryParams) String() string {

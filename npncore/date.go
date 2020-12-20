@@ -8,6 +8,7 @@ import (
 
 // Year, month, day
 const YMD = "2006-01-02"
+
 // Full date format
 const DateFull = "2006-01-02 15:04:05"
 

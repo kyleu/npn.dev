@@ -1,10 +1,11 @@
 package npncore
 
 import (
-	"emperror.dev/errors"
 	"fmt"
-	"logur.dev/logur"
 	"strings"
+
+	"emperror.dev/errors"
+	"logur.dev/logur"
 )
 
 var defaultPrefix = "{"
@@ -61,4 +62,3 @@ func mergeVariables(content string, args Data, start string, end string, depth i
 
 	return content, nil
 }
-

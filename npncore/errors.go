@@ -84,7 +84,6 @@ func IDErrorString(k string, v string) string {
 	return fmt.Sprintf("invalid %v id [%v]", k, v)
 }
 
-
 // Helper for making errors related to an ID
 func IDError(k string, v string) error {
 	return errors.New(IDErrorString(k, v))

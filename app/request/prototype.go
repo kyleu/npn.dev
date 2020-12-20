@@ -2,9 +2,10 @@ package request
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
-	"net/http"
 
 	"github.com/kyleu/npn/app/session"
 

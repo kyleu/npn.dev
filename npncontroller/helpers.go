@@ -1,15 +1,16 @@
 package npncontroller
 
 import (
-	"emperror.dev/errors"
 	"fmt"
+	"net/http"
+	"strings"
+	"time"
+
+	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
 	"golang.org/x/text/language"
 	"logur.dev/logur"
-	"net/http"
-	"strings"
-	"time"
 )
 
 // Used by RespondJSON

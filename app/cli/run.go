@@ -21,7 +21,7 @@ import (
 // The global version for this application. Should probably be pulled from git
 const Version = "0.0.1"
 
-// Allows a custom FileLoader to be specified before calling InitApp. If left nil, a new one will be created
+// FileLoaderOverride allows a custom FileLoader to be specified before calling InitApp. If left nil, a new one will be created
 var FileLoaderOverride npncore.FileLoader
 
 func InitKeys() {

@@ -53,7 +53,6 @@ func RunProcess(cmd string, path string, logger logur.Logger, in io.Reader, out 
 	return 0, nil
 }
 
-
 // Runs a provided command, returning the exit code and string output
 func RunProcessSimple(cmd string, path string, logger logur.Logger) (int, string, error) {
 	var buf bytes.Buffer

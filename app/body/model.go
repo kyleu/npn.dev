@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/kyleu/npn/npncore"
 	"io"
 	"io/ioutil"
+
+	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 )
 
@@ -134,7 +135,7 @@ func (b *Body) Merge(data npncore.Data, logger logur.Logger) *Body {
 		cfg = b.Config.Merge(data, logger)
 	}
 	return &Body{
-		Type: npncore.MergeLog("body.type", b.Type, data, logger),
+		Type:   npncore.MergeLog("body.type", b.Type, data, logger),
 		Length: b.Length,
 		Config: cfg,
 	}

@@ -3,8 +3,9 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kyleu/npn/app/transform"
 	"strings"
+
+	"github.com/kyleu/npn/app/transform"
 
 	"github.com/kyleu/npn/app/session"
 
@@ -138,7 +139,7 @@ func onTransformSession(c *npnconnection.Connection, param json.RawMessage, s *n
 		return errors.Wrap(err, "can't load session transform ["+frm+"]")
 	}
 
-	rsp, err := transform.TransformSession(sess, s.Logger)
+	rsp, err := transform.Session(sess, s.Logger)
 	if err != nil {
 		return errors.Wrap(err, "can't load transform session")
 	}

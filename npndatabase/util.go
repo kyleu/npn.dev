@@ -21,4 +21,3 @@ func StringToArray(s string) []string {
 
 	return ret
 }
-

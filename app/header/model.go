@@ -1,11 +1,12 @@
 package header
 
 import (
-	"github.com/kyleu/npn/npncore"
-	"logur.dev/logur"
 	"net/http"
 	"sort"
 	"strings"
+
+	"github.com/kyleu/npn/npncore"
+	"logur.dev/logur"
 )
 
 type Header struct {
@@ -16,9 +17,9 @@ type Header struct {
 
 func (h Header) Merge(data npncore.Data, logger logur.Logger) *Header {
 	return &Header{
-		Key:         npncore.MergeLog("header." + h.Key + ".key", h.Key, data, logger),
-		Value:       npncore.MergeLog("header." + h.Key + ".value", h.Value, data, logger),
-		Description: npncore.MergeLog("header." + h.Key + ".description", h.Description, data, logger),
+		Key:         npncore.MergeLog("header."+h.Key+".key", h.Key, data, logger),
+		Value:       npncore.MergeLog("header."+h.Key+".value", h.Value, data, logger),
+		Description: npncore.MergeLog("header."+h.Key+".description", h.Description, data, logger),
 	}
 }
 

@@ -1,8 +1,9 @@
 package request
 
 import (
-	"logur.dev/logur"
 	"strings"
+
+	"logur.dev/logur"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/npncore"

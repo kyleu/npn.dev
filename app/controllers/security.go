@@ -1,16 +1,17 @@
 package controllers
 
 import (
-	errors "emperror.dev/errors"
 	"fmt"
-	"github.com/kyleu/npn/app/transform"
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
+
+	errors "emperror.dev/errors"
+	"github.com/kyleu/npn/app/transform"
+	"github.com/kyleu/npn/npncontroller"
+	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/npn/npnweb"
 )
 
 func allow(secret string, r *http.Request) bool {
@@ -32,7 +33,7 @@ func Enable(w http.ResponseWriter, r *http.Request) {
 
 func Testbed(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		out, err := writeTransformerScript(ctx)
+		out, err := writeTransformerScript()
 		if err != nil {
 			return npncontroller.EResp(err)
 		}
@@ -43,12 +44,12 @@ func Testbed(w http.ResponseWriter, r *http.Request) {
 }
 
 type tx struct {
-	Key string `json:"key"`
-	Title string `json:"title"`
+	Key         string `json:"key"`
+	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-func writeTransformerScript(ctx *npnweb.RequestContext) (string, error) {
+func writeTransformerScript() (string, error) {
 	fn := "./ui/src/util/transformers.ts"
 
 	info, err := os.Stat(fn)
@@ -79,7 +80,7 @@ func writeTransformerScript(ctx *npnweb.RequestContext) (string, error) {
 			return errors.New("no index for [" + eKey + "]")
 		}
 
-		fileContent = fileContent[0:sIdx + len(sKey) + 1] + content + "," + fileContent[eIdx - 1:]
+		fileContent = fileContent[0:sIdx+len(sKey)+1] + content + "," + fileContent[eIdx-1:]
 
 		return nil
 	}

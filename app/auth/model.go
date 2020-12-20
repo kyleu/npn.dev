@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
 

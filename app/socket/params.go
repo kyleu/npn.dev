@@ -34,11 +34,6 @@ type saveCollOut struct {
 	Coll        *collection.Collection `json:"coll"`
 }
 
-type transformCollectionIn struct {
-	Coll string `json:"coll"`
-	Fmt  string `json:"fmt"`
-}
-
 // Request
 type reqDetailOut struct {
 	Coll    string           `json:"coll"`

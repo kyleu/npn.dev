@@ -40,4 +40,3 @@ func (e *Error) Merge(data npncore.Data, logger logur.Logger) Config {
 func (e *Error) Clone() *Body {
 	return NewBody(KeyError, &Error{Message: e.Message})
 }
-

@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+
 	"github.com/kyleu/npn/app/collection"
 
 	"github.com/kyleu/npn/app/transform"
@@ -67,7 +68,8 @@ func onTransformCollection(c *npnconnection.Connection, param json.RawMessage, s
 		return errors.Wrap(err, "can't load collection transform session ["+frm.Sess+"]")
 	}
 
-	rsp, err := tx.TransformCollection(&collection.FullCollection{coll, requests, sess}, s.Logger)
+	tc := &collection.FullCollection{Coll: coll, Requests: requests, Sess: sess}
+	rsp, err := tx.TransformCollection(tc, s.Logger)
 	if err != nil {
 		return errors.Wrap(err, "can't load transform colllection")
 	}

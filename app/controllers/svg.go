@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"fmt"
-	"github.com/kyleu/npn/npncontroller"
 	"math"
 	"net/http"
 	"strconv"
 	"strings"
+
+	"github.com/kyleu/npn/npncontroller"
 
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npnweb"
@@ -110,52 +111,56 @@ func parseGanttRequest(r *http.Request) ([]*ganttSection, int, string) {
 	return ret, width, mode
 }
 
+var dark = "dark"
+var lightColor = "#397adb"
+var darkColor = "#101e33"
+
 func colorForSection(key string, mode string) string {
 	switch key {
 	case "dns":
-		if mode == "dark" {
+		if mode == dark {
 			return "#30444e"
 		}
 		return "#89b6cc"
 	case "connect":
-		if mode == "dark" {
+		if mode == dark {
 			return "#30444e"
 		}
 		return "#89b6cc"
 	case "tls":
-		if mode == "dark" {
+		if mode == dark {
 			return "#462206"
 		}
 		return "#c96112"
 	case "reqheaders":
-		if mode == "dark" {
+		if mode == dark {
 			return "#072918"
 		}
 		return "#177245"
 	case "reqbody":
-		if mode == "dark" {
+		if mode == dark {
 			return "#072918"
 		}
 		return "#177245"
 	case "rspwait":
-		if mode == "dark" {
-			return "#101e33"
+		if mode == dark {
+			return darkColor
 		}
-		return "#397adb"
+		return lightColor
 	case "rspheaders":
-		if mode == "dark" {
-			return "#101e33"
+		if mode == dark {
+			return darkColor
 		}
-		return "#397adb"
+		return lightColor
 	case "rspbody":
-		if mode == "dark" {
-			return "#101e33"
+		if mode == dark {
+			return darkColor
 		}
-		return "#397adb"
+		return lightColor
 	default:
-		if mode == "dark" {
-			return "#101e33"
+		if mode == dark {
+			return darkColor
 		}
-		return "#397adb"
+		return lightColor
 	}
 }

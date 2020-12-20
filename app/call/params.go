@@ -1,12 +1,13 @@
 package call
 
 import (
+	"net/http"
+	"time"
+
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
 	"logur.dev/logur"
-	"net/http"
-	"time"
 )
 
 type RequestStarted struct {
@@ -30,7 +31,7 @@ type RequestCompleted struct {
 	Duration int       `json:"duration,omitempty"`
 }
 
-type CallParams struct {
+type Params struct {
 	ID          uuid.UUID
 	Idx         int
 	UserID      *uuid.UUID
@@ -45,8 +46,8 @@ type CallParams struct {
 	OnCompleted func(completed *RequestCompleted)
 }
 
-func (p *CallParams) Clone(proto *request.Prototype) *CallParams {
-	return &CallParams{
+func (p *Params) Clone(proto *request.Prototype) *Params {
+	return &Params{
 		ID:          p.ID,
 		Idx:         p.Idx + 1,
 		UserID:      p.UserID,

@@ -69,6 +69,6 @@ func (j *JSON) Merge(data npncore.Data, logger logur.Logger) Config {
 	return &JSON{Msg: m, str: s}
 }
 
-func (r *JSON) Clone() *Body {
-	return NewBody(KeyJSON, &JSON{Msg: r.Msg, str: r.str})
+func (j *JSON) Clone() *Body {
+	return NewBody(KeyJSON, &JSON{Msg: j.Msg, str: j.str})
 }

@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/kyleu/npn/gen/templates"
 	"net/http"
+
+	"github.com/kyleu/npn/gen/templates"
 
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"

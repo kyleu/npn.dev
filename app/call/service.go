@@ -2,11 +2,12 @@ package call
 
 import (
 	"context"
-	"emperror.dev/errors"
-	"github.com/gofrs/uuid"
 	"net"
 	"net/http"
 	"time"
+
+	"emperror.dev/errors"
+	"github.com/gofrs/uuid"
 
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
@@ -29,7 +30,7 @@ func (s *Service) Call(userID *uuid.UUID, coll string, req string, p *request.Pr
 	if p == nil {
 		return errors.New("nil request passed to [call]")
 	}
-	return call(&CallParams{
+	return call(&Params{
 		ID:          rID,
 		UserID:      userID,
 		Coll:        coll,

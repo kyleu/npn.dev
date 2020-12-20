@@ -28,7 +28,6 @@ func GetEntry(m map[string]interface{}, key string, logger logur.Logger) interfa
 	return retEntry
 }
 
-
 // Returns the string value associated to the key in the provided map, logging a detailed message and returning nil if not found or value is not a string
 func MapGetString(m map[string]interface{}, key string, logger logur.Logger) string {
 	retEntry := GetEntry(m, key, logger)

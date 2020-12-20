@@ -55,6 +55,6 @@ func (t CollectionTransformers) Get(s string) CollectionTransformer {
 
 var AllCollectionTransformers = CollectionTransformers{txJSON, txOpenAPI, txPostman}
 
-func TransformSession(sess *session.Session, logger logur.Logger) (*Result, error) {
+func Session(sess *session.Session, logger logur.Logger) (*Result, error) {
 	return &Result{Key: sess.Key, Out: npncore.ToJSON(sess, logger)}, nil
 }

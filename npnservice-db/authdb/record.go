@@ -2,8 +2,9 @@ package authdb
 
 import (
 	"database/sql"
-	"emperror.dev/errors"
 	"fmt"
+
+	"emperror.dev/errors"
 	"github.com/kyleu/npn/npnuser"
 
 	"github.com/kyleu/npn/npnservice/auth"

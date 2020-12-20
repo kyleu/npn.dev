@@ -2,9 +2,10 @@ package body
 
 import (
 	"encoding/base64"
+	"unicode/utf8"
+
 	"github.com/kyleu/npn/npncore"
 	"logur.dev/logur"
-	"unicode/utf8"
 )
 
 const KeyRaw = "raw"

@@ -1,12 +1,15 @@
 package transform
 
 import (
+	"path"
+
+	"emperror.dev/errors"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
 	"github.com/kyleu/npn/npncore"
-	"path"
 )
 
 func OpenAPIImport(data []byte) (*openapi3.Swagger, error) {
@@ -57,7 +60,13 @@ func openAPIPathToRequests(pathKey string, pathItem *openapi3.PathItem, proto *r
 
 		rk := op.OperationID
 		if len(rk) == 0 {
+			rk = npncore.Slugify(op.Description)
+		}
+		if len(rk) == 0 {
 			rk = npncore.Slugify(p.Method.Key + "_" + p.Path)
+		}
+		if len(rk) == 0 {
+			return nil, errors.New("unable to determine action name")
 		}
 
 		ret = append(ret, &request.Request{

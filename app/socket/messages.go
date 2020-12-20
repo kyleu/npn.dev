@@ -49,10 +49,10 @@ const (
 	ServerMessageRequestCompleted = "requestCompleted"
 
 	// Session
-	ServerMessageSessions        = "sessions"
-	ServerMessageSessionAdded    = "sessionAdded"
-	ServerMessageSessionDetail   = "sessionDetail"
-	ServerMessageSessionDeleted  = "sessionDeleted"
-	ServerMessageSessionNotFound = "sessionNotFound"
+	ServerMessageSessions         = "sessions"
+	ServerMessageSessionAdded     = "sessionAdded"
+	ServerMessageSessionDetail    = "sessionDetail"
+	ServerMessageSessionDeleted   = "sessionDeleted"
+	ServerMessageSessionNotFound  = "sessionNotFound"
 	ServerMessageSessionTransform = "sessionTransform"
 )
