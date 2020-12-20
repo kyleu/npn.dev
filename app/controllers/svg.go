@@ -1,7 +1,8 @@
-package npncontroller
+package controllers
 
 import (
 	"fmt"
+	"github.com/kyleu/npn/npncontroller"
 	"math"
 	"net/http"
 	"strconv"
@@ -20,7 +21,7 @@ type ganttSection struct {
 }
 
 func Gantt(w http.ResponseWriter, r *http.Request) {
-	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		rowHeight := 24
 		sections, completed, mode := parseGanttRequest(r)
 		var pc = func(n int) float64 { return math.Floor((float64(n)/float64(completed))*10000) / 100 }
@@ -60,12 +61,12 @@ func Gantt(w http.ResponseWriter, r *http.Request) {
 		}
 
 		ap("</svg>")
-		return RespondMIME("", "image/svg+xml", "svg", []byte(strings.Join(ret, "")), w)
+		return npncontroller.RespondMIME("", "image/svg+xml", "svg", []byte(strings.Join(ret, "")), w)
 	})
 }
 
 func parseGanttRequest(r *http.Request) ([]*ganttSection, int, string) {
-	qps := QueryParamsFromRaw(r.URL.RawQuery)
+	qps := npncontroller.QueryParamsFromRaw(r.URL.RawQuery)
 	width := -1
 	mode := "light"
 	ret := make([]*ganttSection, 0)

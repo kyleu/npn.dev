@@ -9,6 +9,7 @@ import (
 	"emperror.dev/errors"
 )
 
+// Lists the available Migrations defined in DatabaseMigrations
 func (s *Service) ListMigrations(params *npncore.Params) Migrations {
 	params = npncore.ParamsWithDefaultOrdering(npncore.KeyMigration, params, npncore.DefaultCreatedOrdering...)
 
@@ -24,6 +25,7 @@ func (s *Service) ListMigrations(params *npncore.Params) Migrations {
 	return toMigrations(dtos)
 }
 
+// Gets a migration at the provided index
 func (s *Service) GetMigrationByIdx(idx int) *Migration {
 	var dto = &migrationDTO{}
 	q := SQLSelectSimple("*", "migration", "idx = $1")
@@ -38,6 +40,7 @@ func (s *Service) GetMigrationByIdx(idx int) *Migration {
 	return dto.toMigration()
 }
 
+// Removes a migration for some reason
 func (s *Service) RemoveMigrationByIdx(idx int) error {
 	q := SQLDelete("migration", "idx = $1")
 	_, err := s.Delete(q, nil, 1, idx)

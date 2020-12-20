@@ -10,17 +10,20 @@ import (
 	"logur.dev/logur"
 )
 
+// Database access service
 type Service struct {
 	debug  bool
 	db     *sqlx.DB
 	logger logur.Logger
 }
 
+// Returns a fresh Service
 func NewService(debug bool, db *sqlx.DB, logger logur.Logger) *Service {
 	logger = logur.WithFields(logger, map[string]interface{}{"service": "db"})
 	return &Service{debug: debug, db: db, logger: logger}
 }
 
+// Begins a transaction, be sure to commit it when you're done
 func (s *Service) StartTransaction() (*sqlx.Tx, error) {
 	if s.debug {
 		s.logger.Debug("opening transaction")
@@ -36,6 +39,7 @@ func logQuery(s *Service, msg string, q string, values []interface{}) {
 	s.logger.Debug(fmt.Sprintf("%v {\n  SQL: %v\n  Values: %v\n}", msg, strings.TrimSpace(q), npncore.ValueStrings(values)))
 }
 
+// Lists the tables in the database
 func (s *Service) Tables() ([]string, error) {
 	type table struct {
 		Name string `db:"n"`
@@ -52,13 +56,10 @@ func (s *Service) Tables() ([]string, error) {
 	return ret, err
 }
 
+// Lists the indexes in the provided table
 func (s *Service) Indexes(tableName string) ([]*Index, error) {
 	ret := []*Index{}
 	sql := "select indexname n, indexdef d from pg_indexes where schemaname = 'public' and tablename = $1 order by indexname"
 	err := s.db.Select(&ret, sql, tableName)
 	return ret, err
-}
-
-func ArrayToString(a []string) string {
-	return "{" + strings.Join(a, ",") + "}"
 }

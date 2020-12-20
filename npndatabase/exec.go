@@ -10,6 +10,7 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
+// Runs a SQL insert statement, returning an optional error
 func (s *Service) Insert(q string, tx *sqlx.Tx, values ...interface{}) error {
 	if s.debug {
 		logQuery(s, "inserting row", q, values)
@@ -24,19 +25,23 @@ func (s *Service) Insert(q string, tx *sqlx.Tx, values ...interface{}) error {
 	return nil
 }
 
+// Runs a SQL update statement, returning the number of affected rows and an optional error
 func (s *Service) Update(q string, tx *sqlx.Tx, expected int, values ...interface{}) (int, error) {
 	return s.process("updating", "updated", q, tx, expected, values...)
 }
 
+// Runs a SQL update statement for a single row, returning an optional error and verifying that a single row was updated
 func (s *Service) UpdateOne(q string, tx *sqlx.Tx, values ...interface{}) error {
 	_, err := s.Update(q, tx, 1, values...)
 	return err
 }
 
+// Runs a SQL delete statement, returning the number of affected rows and an optional error
 func (s *Service) Delete(q string, tx *sqlx.Tx, expected int, values ...interface{}) (int, error) {
 	return s.process("deleting", "deleted", q, tx, expected, values...)
 }
 
+// Runs a SQL delete statement for a single row, returning an optional error and verifying that a single row was removed
 func (s *Service) DeleteOne(q string, tx *sqlx.Tx, values ...interface{}) error {
 	_, err := s.Delete(q, tx, 1, values...)
 	if err != nil {
@@ -45,6 +50,7 @@ func (s *Service) DeleteOne(q string, tx *sqlx.Tx, values ...interface{}) error 
 	return err
 }
 
+// Runs an arbitrary SQL statement, returning the number of affected rows and an optional error
 func (s *Service) Exec(q string, tx *sqlx.Tx, expected int, values ...interface{}) (int, error) {
 	return s.process("executing", "executed", q, tx, expected, values...)
 }

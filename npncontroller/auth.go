@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Common routes for OAuth callbacks and signing out
 func RoutesAuth(app npnweb.AppInfo, r *mux.Router) {
 	_ = r.Path(routes.Path(npncore.KeyAuth)).Subrouter()
 	r.Path(routes.Path(npncore.KeyAuth, "callback", "{key}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(AuthCallback))).Name(routes.Name(npncore.KeyAuth, "callback"))
@@ -22,6 +23,7 @@ func RoutesAuth(app npnweb.AppInfo, r *mux.Router) {
 	r.Path(routes.Path(npncore.KeyAuth, "{key}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(AuthSubmit))).Name(routes.Name(npncore.KeyAuth, "submit"))
 }
 
+// OAuth submission, redirects to 3rd-party
 func AuthSubmit(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		if !ctx.App.Auth().Enabled() {
@@ -45,6 +47,7 @@ func AuthSubmit(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// OAuth callback from 3rd-party service
 func AuthCallback(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		if !ctx.App.Auth().Enabled() {
@@ -83,6 +86,7 @@ func AuthCallback(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Removes an OAuth session record from the user's session
 func AuthSignout(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		if !ctx.App.Auth().Enabled() {

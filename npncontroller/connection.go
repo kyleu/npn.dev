@@ -23,6 +23,7 @@ type connectionForm struct {
 
 var globalSvc *npnconnection.Service
 
+// Common routes for WebSocket administration, actions that manage connections
 func RoutesSocketAdmin(app npnweb.AppInfo, svc *npnconnection.Service, r *mux.Router) {
 	globalSvc = svc
 	sr := r.Path(routes.Adm(npncore.KeyConnection)).Subrouter()
@@ -31,6 +32,7 @@ func RoutesSocketAdmin(app npnweb.AppInfo, svc *npnconnection.Service, r *mux.Ro
 	r.Path(routes.Adm(npncore.KeyConnection, "{id}")).Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(ConnectionDetail))).Name(npnweb.AdminLink(npncore.KeyConnection, npncore.KeyDetail))
 }
 
+// Lists all active WebSocket connections
 func ConnectionList(w http.ResponseWriter, r *http.Request) {
 	AdminAct(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Title = "Connection List"
@@ -42,6 +44,7 @@ func ConnectionList(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Show the details of an active WebSocket connection
 func ConnectionDetail(w http.ResponseWriter, r *http.Request) {
 	AdminAct(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		connectionID, err := npnweb.IDFromParams(npncore.KeyConnection, mux.Vars(r))
@@ -60,6 +63,7 @@ func ConnectionDetail(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Posts a message to a WebSocket connection
 func ConnectionPost(w http.ResponseWriter, r *http.Request) {
 	AdminAct(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		frm := &connectionForm{}

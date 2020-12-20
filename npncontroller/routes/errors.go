@@ -15,6 +15,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// Configures the route, injecting an npnweb.RequestContext and mux.Router into the Context. Provides 500-class error handler
 func AddContext(router *mux.Router, info npnweb.AppInfo, next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer internalServerError(router, info, w, r)

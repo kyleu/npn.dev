@@ -8,6 +8,7 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
+// 404 handler
 func NotFound(w http.ResponseWriter, r *http.Request) {
 	WriteCORS(w)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -19,6 +20,7 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 	_, _ = npntemplate.NotFound(r, ctx, w)
 }
 
+// Handles HTTP requests of type OPTIONS, adds CORS headers
 func Options(w http.ResponseWriter, r *http.Request) {
 	WriteCORS(w)
 	w.WriteHeader(http.StatusOK)

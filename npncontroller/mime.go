@@ -2,6 +2,7 @@ package npncontroller
 
 import "mime"
 
+// Common MIME types
 func InitMime() {
 	_ = mime.AddExtensionType(".ico", "image/x-icon")
 	_ = mime.AddExtensionType(".eot", "font/eot")

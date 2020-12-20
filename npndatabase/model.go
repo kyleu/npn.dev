@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// A database migration
 type Migration struct {
 	Idx     int       `json:"idx"`
 	Title   string    `json:"title"`
@@ -11,6 +12,7 @@ type Migration struct {
 	Created time.Time `json:"created"`
 }
 
+// Array helper
 type Migrations []*Migration
 
 type migrationDTO struct {
@@ -29,10 +31,12 @@ func (dto *migrationDTO) toMigration() *Migration {
 	}
 }
 
+// Count type for queries, contains a single int64 field
 type Count struct {
 	C int64 `db:"c"`
 }
 
+// Helper class for Index definitions
 type Index struct {
 	Name       string `db:"n"`
 	Definition string `db:"d"`

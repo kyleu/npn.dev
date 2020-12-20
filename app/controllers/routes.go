@@ -42,7 +42,7 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 
 	// Response
 	r.PathPrefix(routes.Path("r")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("result"))
-	r.Path(routes.Path("svg", "gantt")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(npncontroller.Gantt))).Name(routes.Name("svg", "gantt"))
+	r.Path(routes.Path("svg", "gantt")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Gantt))).Name(routes.Name("svg", "gantt"))
 
 	// Utility
 	r.Path(routes.Path("about")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("about"))

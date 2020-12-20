@@ -12,6 +12,7 @@ import (
 	"logur.dev/logur"
 )
 
+// Parameters used to start a database connection
 type DBParams struct {
 	Username string
 	Password string
@@ -22,6 +23,7 @@ type DBParams struct {
 	Logger   logur.Logger
 }
 
+// Opens a database connection pool
 func OpenDatabase(params DBParams) (*Service, error) {
 	params.Logger = logur.WithFields(params.Logger, map[string]interface{}{npncore.KeySvc: "database"})
 

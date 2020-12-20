@@ -3,7 +3,6 @@ package npncontroller
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"time"
 
 	"github.com/kyleu/npn/npnservice/auth"
@@ -13,18 +12,9 @@ import (
 	"github.com/kyleu/npn/npncore"
 	"github.com/kyleu/npn/npntemplate/gen/npntemplate"
 	"github.com/kyleu/npn/npnweb"
-
-	"emperror.dev/errors"
-	"logur.dev/logur"
-
-	"golang.org/x/text/language"
 )
 
-type errorResult struct {
-	Status  string
-	Message string
-}
-
+// Entrypoint for most requests. It times the request, handles flashes, adds CORS headers, logs errors and handles redirects
 func Act(w http.ResponseWriter, r *http.Request, f func(ctx *npnweb.RequestContext) (string, error)) {
 	startNanos := npncore.TimerStart()
 	ctx := npnweb.ExtractContext(w, r, false)
@@ -56,56 +46,7 @@ func Act(w http.ResponseWriter, r *http.Request, f func(ctx *npnweb.RequestConte
 	}
 }
 
-func T(_ int, err error) (string, error) {
-	return "", err
-}
-
-func EResp(err error, msgs ...string) (string, error) {
-	msg := strings.Join(msgs, "\n")
-	if len(msg) == 0 {
-		return "", err
-	}
-	return "", errors.Wrap(err, msg)
-}
-
-func ENew(msg string) (string, error) {
-	return "", errors.New(msg)
-}
-
-func RespondJSON(w http.ResponseWriter, filename string, body interface{}, logger logur.Logger) (string, error) {
-	return RespondMIME(filename, "application/json", "json", npncore.ToJSONBytes(body, logger, true), w)
-}
-
-func RespondMIME(filename string, mime string, ext string, ba []byte, w http.ResponseWriter) (string, error) {
-	w.Header().Set("Content-Type", mime+"; charset=UTF-8")
-	if len(filename) > 0 {
-		if !strings.HasSuffix(filename, "."+ext) {
-			filename = filename + "." + ext
-		}
-		w.Header().Set("Content-Disposition", `attachment; filename="`+filename+`"`)
-	}
-	WriteCORS(w)
-	if len(ba) == 0 {
-		return "", errors.New("no bytes available to write")
-	}
-	_, err := w.Write(ba)
-	return "", errors.Wrap(err, "cannot write to response")
-}
-
-func WriteCORS(w http.ResponseWriter) {
-	w.Header().Set("Access-Control-Allow-Headers", "*")
-	w.Header().Set("Access-Control-Allow-Method", "GET,POST,DELETE,PUT,PATCH,OPTIONS,HEAD")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Credentials", "true")
-}
-
-type JSONResponse struct {
-	Status   string    `json:"status"`
-	Message  string    `json:"message"`
-	Path     string    `json:"path"`
-	Occurred time.Time `json:"occurred"`
-}
-
+// An action that requires a successful auth.Check before proceeding
 func AuthAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestContext) (string, error)) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		allowed := auth.Check(ctx.App.Auth(), ctx.Profile.UserID, ctx.Logger)
@@ -121,8 +62,9 @@ func AuthAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestConte
 	})
 }
 
+// An action that requires a successful auth.Check and a user role of npnuser.RoleAdmin
 func AdminAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestContext) (string, error)) {
-	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
+	AuthAct(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		if ctx.Profile.Role != npnuser.RoleAdmin {
 			if IsContentTypeJSON(GetContentType(r)) {
 				ae := JSONResponse{Status: "error", Message: "you are not an administrator", Path: r.URL.Path, Occurred: time.Now()}
@@ -135,16 +77,9 @@ func AdminAct(w http.ResponseWriter, r *http.Request, f func(*npnweb.RequestCont
 	})
 }
 
+// Creates breadcrumbs for admin actions
 func AdminBC(ctx *npnweb.RequestContext, action string, name string) npnweb.Breadcrumbs {
 	bc := npnweb.BreadcrumbsSimple(ctx.Route(npnweb.AdminLink()), npncore.KeyAdmin)
 	bc = append(bc, npnweb.BreadcrumbsSimple(ctx.Route(npnweb.AdminLink(action)), name)...)
 	return bc
-}
-
-func logComplete(startNanos int64, ctx *npnweb.RequestContext, status int, r *http.Request) {
-	delta := npncore.TimerEnd(startNanos)
-	ms := npncore.MicrosToMillis(language.AmericanEnglish, delta)
-	args := map[string]interface{}{"elapsed": delta, npncore.KeyStatus: status}
-	msg := fmt.Sprintf("%v %v returned [%v] in [%v]", r.Method, r.URL.Path, status, ms)
-	ctx.Logger.Debug(msg, args)
 }

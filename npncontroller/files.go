@@ -18,12 +18,14 @@ var FileExtraContent func(string) string
 
 var FileBrowseRoot = "."
 
+// Common routes for browsing the filesystem
 func RoutesFile(app npnweb.AppInfo, r *mux.Router) {
 	file := r.Path(routes.Path(npncore.KeyFile)).Subrouter()
 	file.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(FileRoot))).Name(routes.Name(npncore.KeyFile, "root"))
 	r.PathPrefix("/" + npncore.KeyFile + "/").Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(FilePath))).Name(routes.Name(npncore.KeyFile))
 }
 
+// Displays the root of the filesystem
 func FileRoot(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Title = npncore.PluralTitle(npncore.KeyFile)
@@ -36,6 +38,7 @@ func FileRoot(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Displays the contents of a path in the filesystem
 func FilePath(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		p := r.URL.Path

@@ -9,6 +9,7 @@ import (
 	"logur.dev/logur"
 )
 
+// Wipes the database, probably
 func DBWipe(s *Service, logger logur.Logger) error {
 	for _, file := range InitialSchemaMigrations {
 		_, err := exec(file, s, logger)
@@ -19,6 +20,7 @@ func DBWipe(s *Service, logger logur.Logger) error {
 	return nil
 }
 
+// Runs database SQL migrations provided in DatabaseMigrations, if needed
 func Migrate(s *Service) error {
 	var err error
 
@@ -66,6 +68,7 @@ func Migrate(s *Service) error {
 	return errors.Wrap(err, "error running database migration")
 }
 
+// Applies a single migration
 func applyMigration(s *Service, idx int, file *MigrationFile) error {
 	s.logger.Info(fmt.Sprintf("applying database migration [%v]: %v", idx, file.Title))
 	sql, err := exec(file, s, s.logger)

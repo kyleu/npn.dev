@@ -18,8 +18,10 @@ type MigrationFile struct {
 
 type MigrationFiles []*MigrationFile
 
+// Set this in your application's startup if needed, these build your schema from scratch, called by DBWipe
 var InitialSchemaMigrations = MigrationFiles{}
 
+// Set this in your application's startup, it's used as the store for all migrations, call by Migrate
 var DatabaseMigrations = MigrationFiles{}
 
 func exec(file *MigrationFile, s *Service, logger logur.Logger) (string, error) {

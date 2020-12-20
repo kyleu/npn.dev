@@ -11,6 +11,7 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
+// Common utility routes, for viewing the installed routes and modules, and providing sitemap.xml, OPTIONS, and 404 handlers
 func RoutesUtil(app npnweb.AppInfo, r *mux.Router) {
 	rts := r.Path(routes.Path(npncore.KeyRoutes)).Subrouter()
 	rts.Methods(http.MethodGet).Handler(routes.AddContext(r, app, http.HandlerFunc(RouteList))).Name(routes.Name(npncore.KeyRoutes))
@@ -25,6 +26,7 @@ func RoutesUtil(app npnweb.AppInfo, r *mux.Router) {
 	r.PathPrefix("").Handler(routes.AddContext(r, app, http.HandlerFunc(NotFound)))
 }
 
+// List the configured HTTP routes
 func RouteList(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Title = npncore.Title(npncore.KeyRoutes)
@@ -33,6 +35,7 @@ func RouteList(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Lists the Go modules used
 func ModuleList(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Title = npncore.Title(npncore.KeyModules)
@@ -41,6 +44,7 @@ func ModuleList(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Handles the standard /sitemap.xml request for the configured routes
 func SitemapXML(w http.ResponseWriter, r *http.Request) {
 	Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ret := make([]string, 0)
