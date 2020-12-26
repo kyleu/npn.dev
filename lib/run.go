@@ -9,6 +9,7 @@ import (
 	"github.com/kyleu/npn/npnweb"
 )
 
+// Starts the application as a library, returning the actual TCP port the server is listening on
 func Run(platform string, path string) int32 {
 	cli.InitKeys()
 	a := "0.0.0.0"

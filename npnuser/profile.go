@@ -5,8 +5,10 @@ import (
 	"golang.org/x/text/language"
 )
 
+// Global ID used by the system UserProfile
 var SystemUserID = uuid.FromStringOrNil("00000000-0000-0000-0000-000000000000")
 
+// Represent's a user and their settings
 type UserProfile struct {
 	UserID   uuid.UUID
 	Name     string
@@ -16,6 +18,7 @@ type UserProfile struct {
 	Locale   language.Tag
 }
 
+// Constructor
 func NewUserProfile(userID uuid.UUID, name string) *UserProfile {
 	return &UserProfile{
 		UserID:   userID,
@@ -26,6 +29,7 @@ func NewUserProfile(userID uuid.UUID, name string) *UserProfile {
 	}
 }
 
+// Converts this UserProfile into a Profile
 func (p *UserProfile) ToProfile() *Profile {
 	return &Profile{
 		UserID:   p.UserID,
@@ -37,6 +41,7 @@ func (p *UserProfile) ToProfile() *Profile {
 	}
 }
 
+// Represent's a user and their settings, intended for JSON representation
 type Profile struct {
 	UserID   uuid.UUID     `json:"userID"`
 	Name     string        `json:"name"`
@@ -46,6 +51,7 @@ type Profile struct {
 	Locale   string        `json:"locale,omitempty"`
 }
 
+// Converts this Profile into a UserProfile
 func (p *Profile) ToUserProfile() *UserProfile {
 	loc, err := language.Parse(p.Locale)
 	if err != nil {

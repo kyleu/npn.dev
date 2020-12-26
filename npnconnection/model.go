@@ -14,6 +14,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Represents a user's WebSocket session
 type Connection struct {
 	ID      uuid.UUID
 	Profile *npnuser.Profile
@@ -24,6 +25,7 @@ type Connection struct {
 	mu      sync.Mutex
 }
 
+// Creates a new Connection
 func NewConnection(svc string, profile *npnuser.Profile, socket *websocket.Conn) *Connection {
 	return &Connection{
 		ID:      npncore.UUID(),
@@ -35,6 +37,7 @@ func NewConnection(svc string, profile *npnuser.Profile, socket *websocket.Conn)
 	}
 }
 
+// Transforms this Connection to a serializable Status object
 func (c *Connection) ToStatus() *Status {
 	if c.Channel == nil {
 		return &Status{ID: c.ID, UserID: c.Profile.UserID, Username: c.Profile.Name, ChannelSvc: npncore.KeySystem, ChannelID: nil}
@@ -42,6 +45,7 @@ func (c *Connection) ToStatus() *Status {
 	return &Status{ID: c.ID, UserID: c.Profile.UserID, Username: c.Profile.Name, ChannelSvc: c.Channel.Svc, ChannelID: &c.Channel.ID}
 }
 
+// Writes bytes to this Connection, you should probably use a helper method
 func (c *Connection) Write(b []byte) error {
 	c.mu.Lock()
 	defer c.mu.Unlock()
@@ -50,15 +54,18 @@ func (c *Connection) Write(b []byte) error {
 	return errors.Wrap(err, "unable to write to websocket")
 }
 
+// Reads bytes from this Connection, you should probably use a helper method
 func (c *Connection) Read() ([]byte, error) {
 	_, message, err := c.socket.ReadMessage()
 	return message, errors.Wrap(err, "unable to write to websocket")
 }
 
+// Closes the backing socket
 func (c *Connection) Close() error {
 	return c.socket.Close()
 }
 
+// Serializable representation of a Connection
 type Status struct {
 	ID         uuid.UUID `json:"id"`
 	UserID     uuid.UUID `json:"userID"`
@@ -67,36 +74,28 @@ type Status struct {
 	ChannelID  *uuid.UUID
 }
 
+// Array helper
 type Statuses = []*Status
 
+// Common message struct for passing a service, command and parameter
 type Message struct {
 	Svc   string          `json:"svc"`
 	Cmd   string          `json:"cmd"`
 	Param json.RawMessage `json:"param"`
 }
 
+// Constructor
 func NewMessage(svc string, cmd string, param interface{}) *Message {
 	return &Message{Svc: svc, Cmd: cmd, Param: json.RawMessage(npncore.ToJSON(param, nil))}
 }
 
+// Returns a string in "svc/cmd" format, ignoring the param
 func (m *Message) String() string {
 	return fmt.Sprintf("%s/%s", m.Svc, m.Cmd)
 }
 
+// Message for updates of a user's online status
 type OnlineUpdate struct {
 	UserID    uuid.UUID `json:"userID"`
 	Connected bool      `json:"connected"`
-}
-
-func DifferentPointerValues(l *uuid.UUID, r *uuid.UUID) bool {
-	switch {
-	case l != nil && r != nil:
-		return *l != *r
-	case l == nil && r != nil:
-		return true
-	case l != nil && r == nil:
-		return true
-	default:
-		return false
-	}
 }

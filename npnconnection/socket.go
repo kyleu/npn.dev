@@ -11,6 +11,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Write a text message to the Connection matching the provided ID
 func (s *Service) Write(connID uuid.UUID, message string) error {
 	if connID == systemID {
 		s.Logger.Warn("--- admin message sent ---")
@@ -39,14 +40,17 @@ func (s *Service) Write(connID uuid.UUID, message string) error {
 	return nil
 }
 
+// Write a Message to the Connection matching the provided ID
 func (s *Service) WriteMessage(connID uuid.UUID, message *Message) error {
 	return s.Write(connID, npncore.ToJSON(message, s.Logger))
 }
 
+// Write a log message to the Connection matching the provided ID
 func (s *Service) WriteLog(connID uuid.UUID, level string, msg string, ctx ...string) error {
 	return s.WriteMessage(connID, NewMessage(npncore.KeySystem, npncore.KeyLog, NewLogMessage(level, msg, ctx...)))
 }
 
+// Write a Message to the provided Channel
 func (s *Service) WriteChannel(channel Channel, message *Message, except ...uuid.UUID) error {
 	conns, ok := s.channels[channel]
 	if !ok {
@@ -66,6 +70,7 @@ func (s *Service) WriteChannel(channel Channel, message *Message, except ...uuid
 	return nil
 }
 
+// Enter an loop that reads Message objects from the Connection matching the provided ID
 func (s *Service) ReadLoop(connID uuid.UUID) error {
 	c, ok := s.connections[connID]
 	if !ok {

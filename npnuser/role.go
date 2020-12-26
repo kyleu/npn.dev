@@ -4,27 +4,32 @@ import (
 	"encoding/json"
 )
 
+// A user's Role
 type Role struct {
 	Key string
 }
 
+// Restricted default role
 var RoleGuest = Role{
 	Key: "guest",
 }
 
+// Regular user of the system
 var RoleUser = Role{
 	Key: "user",
 }
 
+// An adminstrator of the system
 var RoleAdmin = Role{
 	Key: "admin",
 }
 
 var AllRoles = []Role{RoleGuest, RoleUser, RoleAdmin}
 
-func RoleFromString(s string) Role {
+// Finds the Role matching the provided key, or RoleGuest
+func RoleFromString(key string) Role {
 	for _, t := range AllRoles {
-		if t.Key == s {
+		if t.Key == key {
 			return t
 		}
 	}

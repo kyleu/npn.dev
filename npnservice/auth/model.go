@@ -17,6 +17,7 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+// An auth provider, such as Google or Facebook
 type Provider struct {
 	Key      string          `json:"key"`
 	Title    string          `json:"title,omitempty"`
@@ -25,8 +26,10 @@ type Provider struct {
 	Scopes   []string        `json:"scopes,omitempty"`
 }
 
+// Array helper
 type Providers []*Provider
 
+// Returns an array of names for these Providers
 func (p Providers) Names() []string {
 	ret := make([]string, 0, len(p))
 	for _, prv := range p {
@@ -44,6 +47,7 @@ var ProviderMicrosoft = Provider{Key: "microsoft", Title: "Microsoft", Icon: "wo
 
 var AllProviders = Providers{&ProviderGitHub, &ProviderGoogle, &ProviderSlack, &ProviderFacebook, &ProviderAmazon, &ProviderMicrosoft}
 
+// Finds the Provider matching the provided Key
 func ProviderFromString(s string) *Provider {
 	for _, t := range AllProviders {
 		if t.Key == s {
@@ -53,6 +57,7 @@ func ProviderFromString(s string) *Provider {
 	return &ProviderGitHub
 }
 
+// A JSON display representation of a Record
 type Display struct {
 	ID            uuid.UUID `json:"id"`
 	Provider      string    `json:"provider"`
@@ -60,8 +65,10 @@ type Display struct {
 	ProvidesUsers string    `json:"providesUsers"`
 }
 
+// Array helper
 type Displays []*Display
 
+// An auth Record instance from a Provider
 type Record struct {
 	ID           uuid.UUID
 	UserID       uuid.UUID
@@ -77,8 +84,10 @@ type Record struct {
 	Created      time.Time
 }
 
+// Array helper
 type Records []*Record
 
+// Converts this Record to a Display, hiding sensitive information
 func (r *Record) ToDisplay() *Display {
 	return &Display{
 		ID:            r.ID,
@@ -88,6 +97,7 @@ func (r *Record) ToDisplay() *Display {
 	}
 }
 
+// Filters these Records to those matching the provided key
 func (r Records) FindByProvider(key string) Records {
 	var ret Records
 	for _, e := range r {
@@ -98,6 +108,7 @@ func (r Records) FindByProvider(key string) Records {
 	return ret
 }
 
+// Returns an array of email addresses for these Records
 func (r Records) Emails() []string {
 	ret := make([]string, 0, len(r))
 	for _, e := range r {
@@ -106,4 +117,5 @@ func (r Records) Emails() []string {
 	return ret
 }
 
+// Error used with auth isn't enabled
 var ErrorAuthDisabled = errors.New("authorization is disabled")

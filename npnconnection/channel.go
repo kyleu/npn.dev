@@ -6,15 +6,18 @@ import (
 	"github.com/gofrs/uuid"
 )
 
+// A group or room used to send broadcast messages
 type Channel struct {
 	Svc string
 	ID  uuid.UUID
 }
 
+// Format "svc:id"
 func (ch *Channel) String() string {
 	return fmt.Sprintf("%s:%s", ch.Svc, ch.ID)
 }
 
+// Adds a Connection to this Channel
 func (s *Service) Join(connID uuid.UUID, ch Channel) error {
 	conn, ok := s.connections[connID]
 	if !ok {
@@ -37,6 +40,7 @@ func (s *Service) Join(connID uuid.UUID, ch Channel) error {
 	return nil
 }
 
+// Removes a Connection from this Channel
 func (s *Service) Leave(connID uuid.UUID, ch Channel) error {
 	conn, ok := s.connections[connID]
 	if !ok {

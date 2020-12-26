@@ -9,6 +9,7 @@ import (
 
 var DefSheet = "Sheet1"
 
+// Renders an Excel document, returning the filename and a byte array representing the contents
 func Render(rsp interface{}, url string, callback func(rsp interface{}, f *excelize.File) (string, string, error)) (string, []byte, error) {
 	f := newDoc()
 	filename, title, err := callback(rsp, f)

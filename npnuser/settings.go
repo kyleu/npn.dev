@@ -1,5 +1,6 @@
 package npnuser
 
+// User settings, mostly theme choices
 type UserSettings struct {
 	Mode  string `json:"mode"`
 	NavB  string `json:"navB"`
@@ -11,6 +12,7 @@ type UserSettings struct {
 	BodyL string `json:"bodyL"`
 }
 
+// Returns a shallow clones of this UserSettings
 func (u *UserSettings) Clone() *UserSettings {
 	return &UserSettings{
 		Mode:  u.Mode,
@@ -24,6 +26,7 @@ func (u *UserSettings) Clone() *UserSettings {
 	}
 }
 
+// CSS class for this Mode
 func (u *UserSettings) ModeCSS() string {
 	if u == nil {
 		return "uk-dark"
@@ -34,6 +37,7 @@ func (u *UserSettings) ModeCSS() string {
 	return "uk-dark"
 }
 
+// Cleans up empty string fields with defaults
 func (u *UserSettings) Normalize() *UserSettings {
 	if u == nil {
 		return DefaultSettings
@@ -65,6 +69,7 @@ func (u *UserSettings) Normalize() *UserSettings {
 	return u
 }
 
+// The default settings for new users, feel free to update this
 var DefaultSettings = &UserSettings{
 	Mode:  "light",
 	NavB:  "#193441",

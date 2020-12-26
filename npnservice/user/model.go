@@ -9,6 +9,7 @@ import (
 	"golang.org/x/text/language"
 )
 
+// A user profile, in a representation intended for long-term storage
 type SystemUser struct {
 	UserID   uuid.UUID             `db:"id"`
 	Name     string                `db:"name"`
@@ -19,8 +20,10 @@ type SystemUser struct {
 	Created  time.Time             `db:"created"`
 }
 
+// Array helper
 type SystemUsers = []*SystemUser
 
+// Returns a representation of this SystemUser as an npnuser.UserProfile
 func (su *SystemUser) ToProfile() *npnuser.UserProfile {
 	locale, err := language.Parse(su.Locale)
 	if err != nil {
@@ -37,6 +40,7 @@ func (su *SystemUser) ToProfile() *npnuser.UserProfile {
 	}
 }
 
+// Create a SystemUser from the provided npnuser.UserProfile
 func FromProfile(p *npnuser.UserProfile, created time.Time) *SystemUser {
 	return &SystemUser{
 		UserID:   p.UserID,

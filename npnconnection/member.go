@@ -5,6 +5,7 @@ import (
 	"github.com/kyleu/npn/npncore"
 )
 
+// Returns membership details for the provided Channel
 func (s *Service) GetOnline(ch Channel) []uuid.UUID {
 	connections, ok := s.channels[ch]
 	if !ok {

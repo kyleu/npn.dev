@@ -9,6 +9,7 @@ import (
 	"github.com/johnfercher/maroto/pkg/props"
 )
 
+// Renders a PDF document, returning the filename and a byte array representing the contents
 func Render(rsp interface{}, url string, callback func(rsp interface{}, m pdf.Maroto) (string, error)) (string, []byte, error) {
 	m := newDoc()
 	writeDocHeader(url, m)

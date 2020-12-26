@@ -9,6 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+// Registers a new Connection for this Service using the provided npnuser.Profile and websocket.Conn
 func (s *Service) Register(profile *npnuser.Profile, c *websocket.Conn) (uuid.UUID, error) {
 	conn := &Connection{
 		ID:      npncore.UUID(),
@@ -26,6 +27,7 @@ func (s *Service) Register(profile *npnuser.Profile, c *websocket.Conn) (uuid.UU
 	return conn.ID, nil
 }
 
+// Removes a Connection from this Service
 func (s *Service) Disconnect(connID uuid.UUID) (bool, error) {
 	conn, ok := s.connections[connID]
 	if !ok {
