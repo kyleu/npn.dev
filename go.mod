@@ -2,33 +2,33 @@ module github.com/kyleu/npn
 
 go 1.15
 
-replace github.com/kyleu/libnpn/npnconnection => ../libnpn/npnconnection
+replace github.com/kyleu/libnpn/npnconnection => ./libnpn/npnconnection
 
-replace github.com/kyleu/libnpn/npncontroller => ../libnpn/npncontroller
+replace github.com/kyleu/libnpn/npncontroller => ./libnpn/npncontroller
 
-replace github.com/kyleu/libnpn/npncore => ../libnpn/npncore
+replace github.com/kyleu/libnpn/npncore => ./libnpn/npncore
 
-replace github.com/kyleu/libnpn/npndatabase => ../libnpn/npndatabase
+replace github.com/kyleu/libnpn/npndatabase => ./libnpn/npndatabase
 
-replace github.com/kyleu/libnpn/npnexport => ../libnpn/npnexport
+replace github.com/kyleu/libnpn/npnexport => ./libnpn/npnexport
 
-replace github.com/kyleu/libnpn/npngraphql => ../libnpn/npngraphql
+replace github.com/kyleu/libnpn/npngraphql => ./libnpn/npngraphql
 
-replace github.com/kyleu/libnpn/npnqueue => ../libnpn/npnqueue
+replace github.com/kyleu/libnpn/npnqueue => ./libnpn/npnqueue
 
-replace github.com/kyleu/libnpn/npnscript => ../libnpn/npnscript
+replace github.com/kyleu/libnpn/npnscript => ./libnpn/npnscript
 
-replace github.com/kyleu/libnpn/npnservice => ../libnpn/npnservice
+replace github.com/kyleu/libnpn/npnservice => ./libnpn/npnservice
 
-replace github.com/kyleu/libnpn/npnservice-db => ../libnpn/npnservice-db
+replace github.com/kyleu/libnpn/npnservice-db => ./libnpn/npnservice-db
 
-replace github.com/kyleu/libnpn/npnservice-fs => ../libnpn/npnservice-fs
+replace github.com/kyleu/libnpn/npnservice-fs => ./libnpn/npnservice-fs
 
-replace github.com/kyleu/libnpn/npnuser => ../libnpn/npnuser
+replace github.com/kyleu/libnpn/npnuser => ./libnpn/npnuser
 
-replace github.com/kyleu/libnpn/npntemplate => ../libnpn/npntemplate
+replace github.com/kyleu/libnpn/npntemplate => ./libnpn/npntemplate
 
-replace github.com/kyleu/libnpn/npnweb => ../libnpn/npnweb
+replace github.com/kyleu/libnpn/npnweb => ./libnpn/npnweb
 
 require (
 	emperror.dev/emperror v0.33.0
@@ -58,6 +58,5 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/spf13/cobra v1.0.0
 	golang.org/x/text v0.3.3
-	golang.org/x/tools v0.0.0-20200825202427-b303f430e36d
 	logur.dev/logur v0.17.0
 )
