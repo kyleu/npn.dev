@@ -11,7 +11,7 @@ import (
 	"github.com/kyleu/libnpn/npncore"
 )
 
-func Parse(contentEncoding string, contentType string, charset string, contentLength int64, rd io.ReadCloser) (*Body, error) {
+func Parse(path string, contentEncoding string, contentType string, charset string, contentLength int64, rd io.ReadCloser) (*Body, error) {
 	defer func() { _ = rd.Close() }()
 
 	if contentLength > 1024*1024 {
@@ -41,15 +41,22 @@ func Parse(contentEncoding string, contentType string, charset string, contentLe
 		return nil, nil
 	}
 
-	return detect(contentType, charset, b), nil
+	extension := path
+	if strings.Contains(path, ".") {
+		extension = path[strings.LastIndex(path, "."):]
+	}
+
+	return detect(extension, contentType, charset, b), nil
 }
 
-func detect(contentType string, charset string, b []byte) *Body {
+func detect(extension string, contentType string, charset string, b []byte) *Body {
 	switch {
-	case contentType == "application/json":
+	case contentType == "application/json" || contentType == "text/javascript" || extension == "json" || extension == "js":
 		return parseJSON(contentType, charset, b)
-	case contentType == "text/html":
+	case contentType == "text/html" || extension == "html":
 		return parseHTML(b)
+	case contentType == "text/xml" || contentType == "application/xml" || extension == "xml":
+		return parseXML(b)
 	case strings.HasPrefix(contentType, "image/"):
 		return parseImage(contentType, b)
 	default:

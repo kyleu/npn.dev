@@ -50,9 +50,6 @@ var transport = &http.Transport{
 	DialContext: func(ctx context.Context, network string, addr string) (net.Conn, error) {
 		return d.Dial(network, addr)
 	},
-	DialTLSContext: func(ctx context.Context, network string, addr string) (net.Conn, error) {
-		return d.Dial(network, addr)
-	},
 	TLSHandshakeTimeout:   2 * time.Second,
 	IdleConnTimeout:       1 * time.Second,
 	ResponseHeaderTimeout: 0,

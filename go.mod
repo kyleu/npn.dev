@@ -52,7 +52,6 @@ require (
 	github.com/kyleu/libnpn/npntemplate v0.0.1 // npn
 	github.com/kyleu/libnpn/npnuser v0.0.1 // npn
 	github.com/kyleu/libnpn/npnweb v0.0.1 // npn
-	github.com/mccutchen/go-httpbin v1.1.1
 	github.com/rbretecher/go-postman-collection v0.3.0
 	github.com/sagikazarmark/ocmux v0.2.0
 	github.com/shiyanhui/hero v0.0.2

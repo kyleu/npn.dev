@@ -76,6 +76,13 @@ func (b *Body) UnmarshalJSON(data []byte) error {
 			return err
 		}
 		b.Config = h
+	case KeyXML:
+		h := &XML{}
+		err = json.Unmarshal(x.Config, &h)
+		if err != nil {
+			return err
+		}
+		b.Config = h
 	case KeyImage:
 		i := &Image{}
 		err = json.Unmarshal(x.Config, &i)

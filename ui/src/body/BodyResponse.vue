@@ -2,6 +2,7 @@
   <div class="uk-overflow-auto">
     <div v-if="body">
       <HTMLBody v-if="body.type === 'html'" ref="html" :url="url" :config="body.config" />
+      <XMLBody v-else-if="body.type === 'xml'" ref="xml" :config="body.config" />
       <JSONBody v-else-if="body.type === 'json'" ref="json" :config="body.config" />
       <ImageBody v-else-if="body.type === 'image'" :config="body.config" />
       <RawBody v-else-if="body.type === 'raw'" :config="body.config" />
@@ -12,8 +13,7 @@
       </div>
     </div>
     <div v-else>
-      <div>no body</div>
-      <p><em>{{ url }}!</em></p>
+      <p><em>no response body</em></p>
     </div>
   </div>
 </template>
@@ -26,8 +26,9 @@ import ImageBody from "@/body/ImageBody.vue";
 import JSONBody from "@/body/JSONBody.vue";
 import RawBody from "@/body/RawBody.vue";
 import ErrorBody from "@/body/ErrorBody.vue";
+import XMLBody from "@/body/XMLBody.vue";
 
-@Component({ components: { HTMLBody, ImageBody, JSONBody, RawBody, ErrorBody } })
+@Component({ components: {XMLBody, HTMLBody, ImageBody, JSONBody, RawBody, ErrorBody } })
 export default class BodyResponse extends Vue {
   @Prop() url!: string;
   @Prop() body!: RBody;
@@ -36,6 +37,9 @@ export default class BodyResponse extends Vue {
     this.$nextTick(function() {
       if (this.$refs["html"]) {
         (this.$refs["html"] as HTMLBody).refresh();
+      }
+      if (this.$refs["xml"]) {
+        (this.$refs["xml"] as XMLBody).refresh();
       }
       if (this.$refs["json"]) {
         (this.$refs["json"] as JSONBody).refresh();

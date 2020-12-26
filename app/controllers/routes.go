@@ -6,7 +6,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kyleu/libnpn/npncontroller"
 	"github.com/kyleu/libnpn/npncontroller/routes"
-	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnweb"
 	"github.com/sagikazarmark/ocmux"
 )
@@ -55,11 +54,6 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	imprt.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportForm))).Name(routes.Name("import", "form"))
 	imprt.Methods(http.MethodPost).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportUpload))).Name(routes.Name("import", "upload"))
 	r.Path(routes.Path("i", keyParam)).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(ImportDetail))).Name(routes.Name("import", "detail"))
-
-	// Test
-	test := r.Path(routes.Path(npncore.KeyTest)).Subrouter()
-	test.Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Testbed))).Name(routes.Name("testbed"))
-	r.PathPrefix(routes.Path("test/")).Handler(routes.AddContext(r, ai, http.StripPrefix(routes.Path(npncore.KeyTest), http.HandlerFunc(TestCall)))).Name(routes.Name(npncore.KeyTest, "run"))
 
 	// Assets
 	_ = r.Path(routes.Path("assets")).Subrouter()

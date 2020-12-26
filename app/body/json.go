@@ -25,7 +25,7 @@ func parseJSON(ct string, charset string, b []byte) *Body {
 		if ct == "" {
 			return NewError(err.Error())
 		}
-		return detect("", charset, b)
+		return detect("", "", charset, b)
 	}
 
 	return NewJSON(x)

@@ -14,6 +14,9 @@
     <div v-else-if="body.type === 'html'" class="mt">
       <CodeEditor ref="html" v-model="body.htmlContent" language="htmlmixed" />
     </div>
+    <div v-else-if="body.type === 'xml'" class="mt">
+      <CodeEditor ref="xml" v-model="body.xmlContent" language="htmlmixed" />
+    </div>
     <div v-else-if="body.type === 'json'" class="mt">
       <CodeEditor ref="json" v-model="body.jsonContent" language="javascript" />
     </div>
@@ -40,6 +43,9 @@ export default class BodyEditor extends Vue {
     this.$nextTick(function() {
       if (this.$refs["html"]) {
         (this.$refs["html"] as CodeEditor).refresh();
+      }
+      if (this.$refs["xml"]) {
+        (this.$refs["xml"] as CodeEditor).refresh();
       }
       if (this.$refs["json"]) {
         (this.$refs["json"] as CodeEditor).refresh();
