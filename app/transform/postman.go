@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"github.com/kyleu/libnpn/npncore"
 	"github.com/rbretecher/go-postman-collection"
 	"logur.dev/logur"
 )

@@ -7,8 +7,8 @@ import (
 
 	"github.com/kyleu/libnpn/npncontroller"
 
-	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/npn/app/auth"
 )
 
 func PrototypeFromURL(u *url.URL) *Prototype {

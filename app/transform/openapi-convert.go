@@ -6,10 +6,10 @@ import (
 	"emperror.dev/errors"
 
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"github.com/kyleu/libnpn/npncore"
 )
 
 func OpenAPIImport(data []byte) (*openapi3.Swagger, error) {

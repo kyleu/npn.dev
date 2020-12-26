@@ -3,9 +3,10 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kyleu/libnpn/npnconnection"
 	"io/ioutil"
 	"strings"
+
+	"github.com/kyleu/libnpn/npnconnection"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/libnpn/npncore"

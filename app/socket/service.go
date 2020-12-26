@@ -11,9 +11,9 @@ import (
 	"github.com/kyleu/npn/app/call"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/libnpn/npnconnection"
 	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/npn/app/collection"
 	"logur.dev/logur"
 )
 

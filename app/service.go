@@ -1,12 +1,6 @@
 package app
 
 import (
-	"github.com/kyleu/npn/app/call"
-	"github.com/kyleu/npn/app/collection"
-	"github.com/kyleu/npn/app/imprt"
-	"github.com/kyleu/npn/app/request"
-	"github.com/kyleu/npn/app/session"
-	"github.com/kyleu/npn/app/socket"
 	"github.com/kyleu/libnpn/npnconnection"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnservice-fs/authfs"
@@ -14,6 +8,12 @@ import (
 	"github.com/kyleu/libnpn/npnservice/auth"
 	"github.com/kyleu/libnpn/npnservice/user"
 	"github.com/kyleu/libnpn/npnweb"
+	"github.com/kyleu/npn/app/call"
+	"github.com/kyleu/npn/app/collection"
+	"github.com/kyleu/npn/app/imprt"
+	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/session"
+	"github.com/kyleu/npn/app/socket"
 	"logur.dev/logur"
 )
 

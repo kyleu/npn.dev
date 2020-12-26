@@ -9,9 +9,9 @@ import (
 	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
 
+	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 )
 

@@ -8,9 +8,9 @@ import (
 
 	"github.com/kyleu/npn/app/request"
 
+	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/body"
 	"github.com/kyleu/npn/app/header"
-	"github.com/kyleu/libnpn/npncore"
 )
 
 type Response struct {

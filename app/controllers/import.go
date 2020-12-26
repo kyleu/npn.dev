@@ -6,11 +6,11 @@ import (
 	"github.com/kyleu/npn/gen/templates"
 
 	"github.com/gorilla/mux"
-	"github.com/kyleu/npn/app"
-	"github.com/kyleu/npn/app/imprt"
 	"github.com/kyleu/libnpn/npncontroller"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnweb"
+	"github.com/kyleu/npn/app"
+	"github.com/kyleu/npn/app/imprt"
 )
 
 func ImportForm(w http.ResponseWriter, r *http.Request) {

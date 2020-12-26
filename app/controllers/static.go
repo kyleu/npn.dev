@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/kyleu/npn/gen/templates"
 	"github.com/kyleu/libnpn/npnweb"
+	"github.com/kyleu/npn/gen/templates"
 
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
