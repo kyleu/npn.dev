@@ -8,7 +8,7 @@ import (
 	"io"
 	"io/ioutil"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 )
 

@@ -3,12 +3,12 @@ package collection
 import (
 	"path"
 
-	"github.com/kyleu/npn/npnuser"
+	"github.com/kyleu/libnpn/npnuser"
 
 	"github.com/gofrs/uuid"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 )
 

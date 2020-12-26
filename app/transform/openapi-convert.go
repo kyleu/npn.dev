@@ -9,7 +9,7 @@ import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func OpenAPIImport(data []byte) (*openapi3.Swagger, error) {

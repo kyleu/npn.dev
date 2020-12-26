@@ -5,7 +5,7 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 )
 

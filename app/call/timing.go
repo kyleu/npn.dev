@@ -5,7 +5,7 @@ import (
 	"net/http/httptrace"
 	"time"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 type TimingSection struct {

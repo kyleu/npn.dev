@@ -6,7 +6,7 @@ import (
 	"path"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 )
 

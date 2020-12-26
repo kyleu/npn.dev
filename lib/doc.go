@@ -1,2 +1,2 @@
-// Used to start the application as a library, used in native apps
+// Used to start the application as a library, for native apps
 package lib

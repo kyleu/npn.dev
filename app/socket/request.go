@@ -7,8 +7,8 @@ import (
 	"github.com/kyleu/npn/app/call"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npnconnection"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npnconnection"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func handleRequestMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {

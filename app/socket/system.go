@@ -3,9 +3,9 @@ package socket
 import (
 	"encoding/json"
 
-	"github.com/kyleu/npn/npnconnection"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnuser"
+	"github.com/kyleu/libnpn/npnconnection"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnuser"
 
 	"emperror.dev/errors"
 )

@@ -3,12 +3,12 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/kyleu/npn/npnconnection"
+	"github.com/kyleu/libnpn/npnconnection"
 	"io/ioutil"
 	"strings"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 type tkv struct {

@@ -9,9 +9,9 @@ import (
 
 	errors "emperror.dev/errors"
 	"github.com/kyleu/npn/app/transform"
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncontroller"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnweb"
 )
 
 func allow(secret string, r *http.Request) bool {

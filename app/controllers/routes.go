@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npncontroller/routes"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncontroller"
+	"github.com/kyleu/libnpn/npncontroller/routes"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnweb"
 	"github.com/sagikazarmark/ocmux"
 )
 

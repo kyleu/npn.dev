@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func Parse(contentEncoding string, contentType string, charset string, contentLength int64, rd io.ReadCloser) (*Body, error) {

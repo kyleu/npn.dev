@@ -8,7 +8,7 @@ import (
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/request"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func parse(filename string, contentType string, content []byte) (string, interface{}, error) {

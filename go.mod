@@ -2,33 +2,33 @@ module github.com/kyleu/npn
 
 go 1.15
 
-replace github.com/kyleu/npn/npnconnection => ./npnconnection
+replace github.com/kyleu/libnpn/npnconnection => ../libnpn/npnconnection
 
-replace github.com/kyleu/npn/npncontroller => ./npncontroller
+replace github.com/kyleu/libnpn/npncontroller => ../libnpn/npncontroller
 
-replace github.com/kyleu/npn/npncore => ./npncore
+replace github.com/kyleu/libnpn/npncore => ../libnpn/npncore
 
-replace github.com/kyleu/npn/npndatabase => ./npndatabase
+replace github.com/kyleu/libnpn/npndatabase => ../libnpn/npndatabase
 
-replace github.com/kyleu/npn/npnexport => ./npnexport
+replace github.com/kyleu/libnpn/npnexport => ../libnpn/npnexport
 
-replace github.com/kyleu/npn/npngraphql => ./npngraphql
+replace github.com/kyleu/libnpn/npngraphql => ../libnpn/npngraphql
 
-replace github.com/kyleu/npn/npnqueue => ./npnqueue
+replace github.com/kyleu/libnpn/npnqueue => ../libnpn/npnqueue
 
-replace github.com/kyleu/npn/npnscript => ./npnscript
+replace github.com/kyleu/libnpn/npnscript => ../libnpn/npnscript
 
-replace github.com/kyleu/npn/npnservice => ./npnservice
+replace github.com/kyleu/libnpn/npnservice => ../libnpn/npnservice
 
-replace github.com/kyleu/npn/npnservice-db => ./npnservice-db
+replace github.com/kyleu/libnpn/npnservice-db => ../libnpn/npnservice-db
 
-replace github.com/kyleu/npn/npnservice-fs => ./npnservice-fs
+replace github.com/kyleu/libnpn/npnservice-fs => ../libnpn/npnservice-fs
 
-replace github.com/kyleu/npn/npnuser => ./npnuser
+replace github.com/kyleu/libnpn/npnuser => ../libnpn/npnuser
 
-replace github.com/kyleu/npn/npntemplate => ./npntemplate
+replace github.com/kyleu/libnpn/npntemplate => ../libnpn/npntemplate
 
-replace github.com/kyleu/npn/npnweb => ./npnweb
+replace github.com/kyleu/libnpn/npnweb => ../libnpn/npnweb
 
 require (
 	emperror.dev/emperror v0.33.0
@@ -39,19 +39,19 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/kirsle/configdir v0.0.0-20170128060238-e45d2f54772f
-	github.com/kyleu/npn/npnconnection v0.0.3 // npn
-	github.com/kyleu/npn/npncontroller v0.0.3 // npn
-	github.com/kyleu/npn/npncore v0.0.60 // npn
-	github.com/kyleu/npn/npnexport v0.0.0-00010101000000-000000000000 // indirect
-	github.com/kyleu/npn/npngraphql v0.0.0-00010101000000-000000000000 // indirect
-	github.com/kyleu/npn/npnqueue v0.0.0-00010101000000-000000000000 // indirect
-	github.com/kyleu/npn/npnscript v0.0.0-00010101000000-000000000000 // indirect
-	github.com/kyleu/npn/npnservice v0.0.3 // npn
-	github.com/kyleu/npn/npnservice-db v0.0.0-00010101000000-000000000000 // indirect
-	github.com/kyleu/npn/npnservice-fs v0.0.3 // npn
-	github.com/kyleu/npn/npntemplate v0.0.3 // npn
-	github.com/kyleu/npn/npnuser v0.0.3 // npn
-	github.com/kyleu/npn/npnweb v0.0.3 // npn
+	github.com/kyleu/libnpn/npnconnection v0.0.1 // npn
+	github.com/kyleu/libnpn/npncontroller v0.0.1 // npn
+	github.com/kyleu/libnpn/npncore v0.0.1 // npn
+	github.com/kyleu/libnpn/npnexport v0.0.1 // npn
+	github.com/kyleu/libnpn/npngraphql v0.0.1 // npn
+	github.com/kyleu/libnpn/npnqueue v0.0.1 // npn
+	github.com/kyleu/libnpn/npnscript v0.0.1 // npn
+	github.com/kyleu/libnpn/npnservice v0.0.1 // npn
+	github.com/kyleu/libnpn/npnservice-db v0.0.1 // npn
+	github.com/kyleu/libnpn/npnservice-fs v0.0.1 // npn
+	github.com/kyleu/libnpn/npntemplate v0.0.1 // npn
+	github.com/kyleu/libnpn/npnuser v0.0.1 // npn
+	github.com/kyleu/libnpn/npnweb v0.0.1 // npn
 	github.com/mccutchen/go-httpbin v1.1.1
 	github.com/rbretecher/go-postman-collection v0.3.0
 	github.com/sagikazarmark/ocmux v0.2.0

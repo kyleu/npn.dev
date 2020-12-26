@@ -1,8 +1,0 @@
-<%: func Flash(ctx *npnweb.RequestContext, buffer *bytes.Buffer) %>
-<% for _, flash := range ctx.Flashes { %>
-<% cls, content := npnweb.ParseFlash(flash) %>
-<div class="alert-top <%= cls %>" data-uk-alert>
-  <a class="uk-alert-close" href="" data-uk-close=""></a>
-  <p><%= content %></p>
-</div>
-<% } %>

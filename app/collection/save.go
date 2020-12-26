@@ -7,7 +7,7 @@ import (
 	"github.com/gofrs/uuid"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, title string, description string) error {

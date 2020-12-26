@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/kirsle/configdir"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 	"github.com/spf13/cobra"
 )
 

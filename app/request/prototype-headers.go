@@ -7,7 +7,7 @@ import (
 
 	"github.com/kyleu/npn/app/session"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 
 	"github.com/kyleu/npn/app/header"
 )

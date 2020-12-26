@@ -13,15 +13,8 @@ function tmpl {
   if test -f "$ftgt"; then
     mv "$ftgt" "$fsrc"
   fi
-  if [ "$1" = "npntemplate" ]; then
-    cd npntemplate
-    rm -rf gen
-    hero -extensions .html,.sql -source "html" -pkgname $1 -dest "gen/npntemplate"
-    cd ..
-  else
-    rm -rf $3
-    hero -extensions .html,.sql -source "$2" -pkgname $1 -dest $3
-  fi
+  rm -rf $3
+  hero -extensions .html,.sql -source "$2" -pkgname $1 -dest $3
 }
 
 function check {
@@ -47,5 +40,4 @@ function check {
   fi
 }
 
-check "npntemplate" "npntemplate/html" "npntemplate/gen"
 check "templates" "web/templates" "gen/templates"

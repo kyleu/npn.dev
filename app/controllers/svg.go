@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kyleu/npn/npncontroller"
+	"github.com/kyleu/libnpn/npncontroller"
 
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnweb"
 	"golang.org/x/text/language"
 )
 

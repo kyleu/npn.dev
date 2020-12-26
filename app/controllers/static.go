@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"github.com/kyleu/npn/gen/templates"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npnweb"
 
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncontroller"
+	"github.com/kyleu/libnpn/npncontroller"
 
 	"github.com/kyleu/npn/app/assets"
 )

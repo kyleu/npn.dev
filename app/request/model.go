@@ -6,7 +6,7 @@ import (
 	"logur.dev/logur"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 type Request struct {

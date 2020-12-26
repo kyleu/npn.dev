@@ -3,7 +3,7 @@ package session
 import (
 	"fmt"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 type Variable struct {

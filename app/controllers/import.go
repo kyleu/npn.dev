@@ -8,9 +8,9 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/imprt"
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncontroller"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnweb"
 )
 
 func ImportForm(w http.ResponseWriter, r *http.Request) {

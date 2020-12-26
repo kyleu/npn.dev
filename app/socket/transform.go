@@ -8,8 +8,8 @@ import (
 	"github.com/kyleu/npn/app/transform"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npnconnection"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npnconnection"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func onTransformRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconnection.Service) error {

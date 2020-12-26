@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncontroller"
+	"github.com/kyleu/libnpn/npnweb"
 )
 
 func Health(w http.ResponseWriter, r *http.Request) {

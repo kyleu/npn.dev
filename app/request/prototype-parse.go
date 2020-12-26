@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/kyleu/npn/npncontroller"
+	"github.com/kyleu/libnpn/npncontroller"
 
 	"github.com/kyleu/npn/app/auth"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func PrototypeFromURL(u *url.URL) *Prototype {

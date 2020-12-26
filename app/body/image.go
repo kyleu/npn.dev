@@ -3,7 +3,7 @@ package body
 import (
 	"encoding/base64"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 )
 

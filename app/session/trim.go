@@ -2,7 +2,7 @@ package session
 
 import (
 	"github.com/kyleu/npn/app/header"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func (s *Session) Normalize(key string) *Session {

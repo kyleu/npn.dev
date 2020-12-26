@@ -5,8 +5,8 @@ import (
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/cli"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnweb"
 )
 
 // Starts the application as a library, returning the actual TCP port the server is listening on

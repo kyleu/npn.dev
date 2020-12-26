@@ -6,14 +6,14 @@ import (
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
 
-	"github.com/kyleu/npn/npnservice/user"
+	"github.com/kyleu/libnpn/npnservice/user"
 
 	"github.com/kyleu/npn/app/call"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/npn/app/collection"
-	"github.com/kyleu/npn/npnconnection"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npnconnection"
+	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 )
 

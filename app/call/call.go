@@ -8,7 +8,7 @@ import (
 
 	"golang.org/x/text/language"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func call(p *Params) error {

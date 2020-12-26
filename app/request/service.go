@@ -8,8 +8,8 @@ import (
 
 	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnuser"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnuser"
 	"logur.dev/logur"
 )
 

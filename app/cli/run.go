@@ -5,16 +5,16 @@ import (
 	"strings"
 
 	"github.com/gorilla/mux"
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npnservice/auth"
+	"github.com/kyleu/libnpn/npncontroller"
+	"github.com/kyleu/libnpn/npnservice/auth"
 
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
 	"emperror.dev/handler/logur"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/controllers"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnweb"
 	log "logur.dev/logur"
 )
 

@@ -2,8 +2,8 @@ package request
 
 import (
 	"github.com/kyleu/npn/app/header"
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncontroller"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 func (r *Request) Normalize(key string) *Request {

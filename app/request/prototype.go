@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 	"logur.dev/logur"
 
 	"github.com/kyleu/npn/app/session"
 
-	"github.com/kyleu/npn/npncontroller"
+	"github.com/kyleu/libnpn/npncontroller"
 
 	"github.com/kyleu/npn/app/auth"
 	"github.com/kyleu/npn/app/body"

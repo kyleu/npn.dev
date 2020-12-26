@@ -8,8 +8,8 @@ import (
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/gen/templates"
 
-	"github.com/kyleu/npn/npncontroller"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npncontroller"
+	"github.com/kyleu/libnpn/npnweb"
 )
 
 func WorkspaceIndex(w http.ResponseWriter, r *http.Request) {
