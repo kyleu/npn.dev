@@ -3,6 +3,7 @@ package socket
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/kyleu/npn/npnconnection"
 	"io/ioutil"
 	"strings"
 
@@ -16,22 +17,37 @@ type tkv struct {
 	V json.RawMessage `json:"v"`
 }
 
-func testbed(input json.RawMessage) error {
+func testbed(input json.RawMessage, connSvc *npnconnection.Service) error {
 	parsed := &tkv{}
 	err := npncore.FromJSON(input, parsed)
 	if err != nil {
 		return errors.Wrap(err, "cannot parse input")
 	}
-	return process(parsed)
+	return process(parsed, connSvc)
 }
 
-func process(x *tkv) error {
+func process(x *tkv, connSvc *npnconnection.Service) error {
 	switch x.T {
 	case "theme":
 		return onTheme(x.K, x.V)
+	case "log":
+		return onLog(x.K, x.V, connSvc)
 	default:
 		return errors.New("unhandled testbed type [" + x.T + "]")
 	}
+}
+
+func onLog(level string, json json.RawMessage, svc *npnconnection.Service) error {
+	content, err := npncore.FromJSONString(json)
+	if err != nil {
+		return errors.Wrap(err, "invalid content")
+	}
+
+	err = svc.BroadcastLog(level, content)
+	if err != nil {
+		return errors.Wrap(err, "error broadcasting log")
+	}
+	return nil
 }
 
 func onTheme(k string, v json.RawMessage) error {

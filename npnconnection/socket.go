@@ -50,6 +50,24 @@ func (s *Service) WriteLog(connID uuid.UUID, level string, msg string, ctx ...st
 	return s.WriteMessage(connID, NewMessage(npncore.KeySystem, npncore.KeyLog, NewLogMessage(level, msg, ctx...)))
 }
 
+// Broadcast a Message to call Connection instances
+func (s *Service) Broadcast(message *Message, except ...uuid.UUID) error {
+	// s.Logger.Debug(fmt.Sprintf("broadcasting message [%v::%v] to [%v] connections", message.Svc, message.Cmd, len(s.connections)))
+	for id, _ := range s.connections {
+		if !contains(except, id) {
+			go func() {
+				_ = s.Write(id, npncore.ToJSON(message, s.Logger))
+			}()
+		}
+	}
+	return nil
+}
+
+// Write a log message to all Connection instances
+func (s *Service) BroadcastLog(level string, msg string, ctx ...string) error {
+	return s.Broadcast(NewMessage(npncore.KeySystem, npncore.KeyLog, NewLogMessage(level, msg, ctx...)))
+}
+
 // Write a Message to the provided Channel
 func (s *Service) WriteChannel(channel Channel, message *Message, except ...uuid.UUID) error {
 	conns, ok := s.channels[channel]

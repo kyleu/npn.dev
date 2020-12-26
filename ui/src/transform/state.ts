@@ -62,7 +62,6 @@ export function getSessionTransformResult(sess: string): SessionTransformResult 
 }
 
 export function setSessionTransformResult(r: SessionTransformResult): void {
-  console.log("SET", r);
   clearPendingRequests(pendingRequestsRef, "export-session", r.key);
   sessionTransformResultRef.value = r;
 }

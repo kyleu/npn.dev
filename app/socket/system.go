@@ -13,7 +13,7 @@ import (
 func handleSystemMessage(s *npnconnection.Service, c *npnconnection.Connection, cmd string, param json.RawMessage) error {
 	switch cmd {
 	case ClientMessageTestbed:
-		return testbed(param)
+		return testbed(param, s)
 	case ClientMessageSaveProfile:
 		return saveProfile(s, c, param)
 	default:
