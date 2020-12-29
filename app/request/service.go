@@ -23,12 +23,12 @@ func NewService(multiuser bool, f npncore.FileLoader, logger logur.Logger) *Serv
 	return &Service{multiuser: multiuser, files: f, logger: logger}
 }
 
-func (s *Service) LoadRequests(userID *uuid.UUID, c string) (Requests, error) {
+func (s *Service) LoadAll(userID *uuid.UUID, c string) (Requests, error) {
 	p := s.dirFor(userID, c)
 	files := s.files.ListJSON(p)
 	ret := make(Requests, 0, len(files))
 	for _, rk := range files {
-		r, err := s.LoadRequest(userID, c, rk)
+		r, err := s.Load(userID, c, rk)
 		if err != nil {
 			return nil, errors.Wrap(err, "error loading request ["+rk+"]")
 		}
@@ -37,8 +37,8 @@ func (s *Service) LoadRequests(userID *uuid.UUID, c string) (Requests, error) {
 	return ret, nil
 }
 
-func (s *Service) ListRequests(userID *uuid.UUID, c string) (Summaries, error) {
-	requests, err := s.LoadRequests(userID, c)
+func (s *Service) List(userID *uuid.UUID, c string) (Summaries, error) {
+	requests, err := s.LoadAll(userID, c)
 	if err != nil {
 		return nil, err
 	}
@@ -59,7 +59,7 @@ func (s *Service) ListRequests(userID *uuid.UUID, c string) (Summaries, error) {
 	return ret, nil
 }
 
-func (s *Service) LoadRequest(userID *uuid.UUID, c string, f string) (*Request, error) {
+func (s *Service) Load(userID *uuid.UUID, c string, f string) (*Request, error) {
 	f = strings.TrimSuffix(f, ".json")
 	p := path.Join(s.dirFor(userID, c), f+".json")
 	content, err := s.files.ReadFile(p)
@@ -73,7 +73,7 @@ func (s *Service) LoadRequest(userID *uuid.UUID, c string, f string) (*Request, 
 	return ret, nil
 }
 
-func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string, req *Request) error {
+func (s *Service) Save(userID *uuid.UUID, coll string, originalKey string, req *Request) error {
 	originalKey = npncore.Slugify(originalKey)
 	if len(req.Key) == 0 {
 		req.Key = "new"
@@ -90,7 +90,7 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 	shouldDelete := len(originalKey) > 0 && req.Key != originalKey
 
 	if shouldDelete {
-		orig, err := s.LoadRequest(userID, coll, req.Key)
+		orig, err := s.Load(userID, coll, req.Key)
 		if err == nil && orig != nil {
 			return errors.New("request file already exists in collection [" + coll + "] with key [" + req.Key + "]")
 		}
@@ -122,7 +122,7 @@ func (s *Service) SaveRequest(userID *uuid.UUID, coll string, originalKey string
 	return nil
 }
 
-func (s *Service) DeleteRequest(userID *uuid.UUID, coll string, key string) error {
+func (s *Service) Delete(userID *uuid.UUID, coll string, key string) error {
 	p := path.Join(s.dirFor(userID, coll), key+".json")
 	return s.files.RemoveRecursive(p)
 }

@@ -1,3 +1,0 @@
-[submodule "libnpn"]
-	path = libnpn
-	url = git@github.com:KyleU/libnpn.git

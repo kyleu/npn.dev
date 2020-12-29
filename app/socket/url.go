@@ -28,16 +28,16 @@ func AddRequestFromURL(s *npnconnection.Service, c *npnconnection.Connection, co
 	req.Key = npncore.Slugify(req.Prototype.Domain)
 
 	svcs := ctx(s)
-	curr, _ := svcs.Request.LoadRequest(&c.Profile.UserID, coll, req.Key)
+	curr, _ := svcs.Request.Load(&c.Profile.UserID, coll, req.Key)
 	if curr != nil {
 		clean(req)
-		curr, _ = svcs.Request.LoadRequest(&c.Profile.UserID, coll, req.Key)
+		curr, _ = svcs.Request.Load(&c.Profile.UserID, coll, req.Key)
 		if curr != nil {
 			req.Key += "-" + strings.ToLower(npncore.RandomString(4))
 		}
 	}
 
-	err = svcs.Request.SaveRequest(&c.Profile.UserID, coll, "", req)
+	err = svcs.Request.Save(&c.Profile.UserID, coll, "", req)
 	if err != nil {
 		return errors.Wrap(err, "unable to save request from URL ["+url+"]")
 	}

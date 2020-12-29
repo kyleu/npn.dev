@@ -112,7 +112,7 @@ func parseCollDetails(s *npnconnection.Service, userID *uuid.UUID, key string) (
 	if coll == nil {
 		return nil, nil
 	}
-	reqs, err := svcs.Request.ListRequests(userID, key)
+	reqs, err := svcs.Request.List(userID, key)
 	if err != nil {
 		return nil, errors.Wrap(err, fmt.Sprintf("error retrieving requests for collection [%v]: %+v", key, err))
 	}

@@ -45,7 +45,7 @@ func onGetRequest(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 	if err != nil {
 		return errors.Wrap(err, "can't load getRequest param")
 	}
-	req, err := svc.Request.LoadRequest(&c.Profile.UserID, frm.Coll, frm.Req)
+	req, err := svc.Request.Load(&c.Profile.UserID, frm.Coll, frm.Req)
 	if err != nil {
 		msg := npnconnection.NewMessage(npncore.KeyRequest, ServerMessageRequestNotFound, frm)
 		return s.WriteMessage(c.ID, msg)
@@ -63,7 +63,7 @@ func onSaveRequest(c *npnconnection.Connection, param json.RawMessage, s *npncon
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
 	frm.Req = frm.Req.Minify()
-	err = svc.Request.SaveRequest(&c.Profile.UserID, frm.Coll, frm.Orig, frm.Req)
+	err = svc.Request.Save(&c.Profile.UserID, frm.Coll, frm.Orig, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't save request ["+frm.Req.Key+"]")
 	}
@@ -79,12 +79,12 @@ func onDeleteRequest(c *npnconnection.Connection, param json.RawMessage, s *npnc
 	if err != nil {
 		return errors.Wrap(err, "can't load saveRequest param")
 	}
-	err = svc.Request.DeleteRequest(&c.Profile.UserID, frm.Coll, frm.Req)
+	err = svc.Request.Delete(&c.Profile.UserID, frm.Coll, frm.Req)
 	if err != nil {
 		return errors.Wrap(err, "can't remove request")
 	}
 
-	summaries, err := svc.Request.ListRequests(&c.Profile.UserID, frm.Coll)
+	summaries, err := svc.Request.List(&c.Profile.UserID, frm.Coll)
 	if err != nil {
 		return errors.Wrap(err, "can't list requests")
 	}

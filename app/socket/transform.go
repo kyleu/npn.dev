@@ -58,7 +58,7 @@ func onTransformCollection(c *npnconnection.Connection, param json.RawMessage, s
 		return errors.Wrap(err, "can't load collection transform collection ["+frm.Coll+"]")
 	}
 
-	requests, err := svcs.Request.LoadRequests(&c.Profile.UserID, frm.Coll)
+	requests, err := svcs.Request.LoadAll(&c.Profile.UserID, frm.Coll)
 	if err != nil {
 		return errors.Wrap(err, "can't load collection transform requests for ["+frm.Coll+"]")
 	}
