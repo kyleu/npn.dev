@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptrace"
+	"strings"
 	"time"
 
 	"golang.org/x/text/language"
@@ -15,18 +16,22 @@ func call(p *Params) error {
 	httpReq := p.Proto.ToHTTP(p.Sess)
 	timing := &Timing{}
 	httpReq = httpReq.WithContext(httptrace.WithClientTrace(httpReq.Context(), timing.Trace()))
-	url := httpReq.URL.String()
+	u := httpReq.URL.String()
 
-	reqStartedMsg := &RequestStarted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Method: p.Proto.Method.Key, URL: url, Started: time.Now()}
+	reqStartedMsg := &RequestStarted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Method: p.Proto.Method.Key, URL: u, Started: time.Now()}
 	p.OnStarted(reqStartedMsg)
 
-	p.Logger.Info("making call to [" + url + "]")
+	p.Logger.Info("making call to [" + u + "]")
 	timing.Begin()
 
 	hr, err := p.Client.Do(httpReq)
 	if err != nil {
 		timing.Complete()
-		reqCompleteMsg := &RequestCompleted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Status: "ok", Error: err.Error(), Duration: timing.Completed}
+		msg := err.Error()
+		if strings.Contains(msg, "Client.Timeout exceeded while awaiting headers") {
+			msg = fmt.Sprintf("timeout after [%v]", npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed))
+		}
+		reqCompleteMsg := &RequestCompleted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Status: "ok", Error: msg, Duration: timing.Completed}
 		p.OnCompleted(reqCompleteMsg)
 		return err
 	}
@@ -40,7 +45,7 @@ func call(p *Params) error {
 
 	timing.Complete()
 
-	p.Logger.Info("call to [" + url + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
+	p.Logger.Info("call to [" + u + "] complete in [" + npncore.MicrosToMillis(language.AmericanEnglish, timing.Completed) + "]")
 
 	reqCompleteMsg := &RequestCompleted{Coll: p.Coll, Req: p.Req, ID: p.ID, Idx: p.Idx, Status: "ok", Rsp: rsp, Duration: timing.Completed}
 	p.OnCompleted(reqCompleteMsg)

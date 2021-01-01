@@ -10,7 +10,7 @@
         <li><a href="#body" @click="setTab('body')">Body</a></li>
         <li><a href="#timing" @click="setTab('timing')">Timing</a></li>
       </ul>
-      <ul class="uk-switcher uk-margin">
+      <ul class="uk-switcher">
         <li><SummaryResponse :response="cycle.rsp" /></li>
         <li><HeadersResponse title="Final Request Headers" :headers="cycle.rsp.requestHeaders" /></li>
         <li><HeadersResponse title="Response Headers" :headers="cycle.rsp.headers" /></li>

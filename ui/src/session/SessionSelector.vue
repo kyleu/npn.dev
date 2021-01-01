@@ -1,7 +1,11 @@
 <template>
-  <div class="nav-section">
-    <router-link v-style-menu-link :to="{name: 'SessionIndex'}" onclick="return false;"><Icon icon="bookmark" class="nav-icon" /></router-link>
-    <router-link v-style-menu-link :to="{name: 'SessionDetail', params: { sess: sessKey } }" onclick="return false;">{{ sessTitle }}</router-link>
+  <div class="nav-list">
+    <div class="nav-link">
+      <router-link v-style-menu-link :to="{name: 'SessionDetail', params: { sess: sessKey } }" onclick="return false;">
+        <Icon icon="bookmark" class="nav-icon" />
+        {{ sessTitle }}
+      </router-link>
+    </div>
   </div>
 </template>
 

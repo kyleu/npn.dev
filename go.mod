@@ -22,7 +22,7 @@ replace github.com/kyleu/libnpn/npnservice => ../libnpn/npnservice
 
 replace github.com/kyleu/libnpn/npnservice-db => ../libnpn/npnservice-db
 
-replace github.com/kyleu/libnpn/npnservice-fs => .../libnpn/npnservice-fs
+replace github.com/kyleu/libnpn/npnservice-fs => ../libnpn/npnservice-fs
 
 replace github.com/kyleu/libnpn/npnuser => ../libnpn/npnuser
 
@@ -34,6 +34,7 @@ require (
 	emperror.dev/emperror v0.33.0
 	emperror.dev/errors v0.8.0
 	emperror.dev/handler/logur v0.4.0
+	github.com/andybalholm/brotli v1.0.1
 	github.com/getkin/kin-openapi v0.33.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/gorilla/mux v1.8.0

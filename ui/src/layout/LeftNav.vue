@@ -1,6 +1,5 @@
 <template>
   <div>
-    <SessionSelector />
     <div class="nav-section mt">
       <router-link v-style-menu-section class="nav-header" tag="div" :to="{name: 'CollectionDetail', params: {coll: '_'}}">Requests</router-link>
       <RequestList />
@@ -8,6 +7,10 @@
     <div class="nav-section mt">
       <router-link v-style-menu-section class="nav-header" tag="div" :to="{name: 'CollectionIndex'}">Collections</router-link>
       <CollectionList />
+    </div>
+    <div class="nav-section mt">
+      <router-link v-style-menu-section class="nav-header" tag="div" :to="{name: 'SessionIndex'}">Sessions</router-link>
+      <SessionSelector />
     </div>
     <div class="nav-section mt">
       <div v-style-menu-section>System</div>

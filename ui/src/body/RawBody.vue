@@ -1,7 +1,7 @@
 <template>
   <div class="uk-overflow-auto">
     <em>{{ config.type || 'Raw Result' }}</em>
-    <pre style="margin: 0;">{{ config.content }}</pre>
+    <pre class="raw-content">{{ config.content }}</pre>
   </div>
 </template>
 

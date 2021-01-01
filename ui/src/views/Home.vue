@@ -20,7 +20,7 @@
           <li><a href="#collections" @click="setTab('collections')">Collections</a></li>
           <li><a href="#sessions" @click="setTab('sessions')">Sessions</a></li>
         </ul>
-        <ul class="uk-switcher uk-margin">
+        <ul class="uk-switcher">
           <li>
             <p>No recent requests</p>
           </li>

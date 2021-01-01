@@ -2,7 +2,7 @@
   <div>
     <div class="mt">
       <label class="uk-form-label">
-        Timeout
+        Timeout (seconds)
         <input v-model.number="opts.timeout" class="uk-input" name="opt-timeout" type="number" />
       </label>
     </div>

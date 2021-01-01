@@ -10,7 +10,7 @@
           <li><a href="#body" @click="setTab('body')">Body</a></li>
           <li><a href="#options" @click="setTab('options')">Options</a></li>
         </ul>
-        <ul class="uk-switcher uk-margin">
+        <ul class="uk-switcher">
           <li><RequestEditorDetails /></li>
           <li><QueryParamsEditor /></li>
           <li><AuthEditor /></li>

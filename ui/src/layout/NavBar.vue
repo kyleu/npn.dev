@@ -5,6 +5,14 @@
         <Breadcrumbs />
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
+            <li>
+              <a v-style-nav-link class="uk-navbar-toggle" data-uk-search-icon data-uk-toggle href=""></a>
+              <div class="uk-drop" data-uk-drop="mode: click; pos: left-center; offset: 0">
+                <form class="uk-search uk-search-navbar uk-width-1-1" @submit.prevent="onSearch">
+                  <input ref="seachInput" class="uk-search-input" type="search" placeholder="Search" autofocus />
+                </form>
+              </div>
+            </li>
             <li v-if="pub"><a v-style-nav-link href="/">About</a></li>
             <li v-if="pub"><a v-style-nav-link href="/download"><div class="download-link">Download</div></a></li>
             <li class="mrs">
@@ -34,6 +42,11 @@ export default class NavBar extends Vue {
 
   get profile(): Profile | undefined {
     return profileRef.value;
+  }
+
+  onSearch() {
+    const i = this.$refs["seachInput"] as HTMLInputElement;
+    console.log(i.value);
   }
 }
 </script>
