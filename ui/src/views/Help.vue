@@ -3,10 +3,12 @@
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
         <div class="right">
-          <router-link to="/help"><Icon icon="close" /></router-link>
+          <router-link to="/"><Icon icon="close" /></router-link>
         </div>
-        <h3 class="uk-card-title"><Icon icon="npn" class="nav-icon-h3" /> npn</h3>
-        <p>TODO</p>
+        <h3 class="uk-card-title"><Icon icon="question" class="nav-icon-h3" /> Help</h3>
+        <ul class="uk-list uk-list-divider">
+          <li><router-link to="/about">About</router-link></li>
+        </ul>
       </div>
     </div>
   </div>
@@ -18,9 +20,9 @@ import { setBC } from "@/util/vutils";
 import Icon from "@/util/Icon.vue";
 
 @Component({ components: { Icon } })
-export default class About extends Vue {
+export default class Help extends Vue {
   mounted(): void {
-    setBC(this, { path: "", title: "about" });
+    setBC(this, { path: "", title: "help" });
   }
 }
 </script>

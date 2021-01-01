@@ -44,7 +44,7 @@ export default class NavBar extends Vue {
     return profileRef.value;
   }
 
-  onSearch() {
+  onSearch(): void {
     const i = this.$refs["seachInput"] as HTMLInputElement;
     console.log(i.value);
   }

@@ -26,10 +26,18 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 
 	// Workspace
 	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(WorkspaceIndex))).Name(routes.Name("home"))
-	r.Path(routes.Path("u")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("settings"))
 
 	// Static
 	r.Path(routes.Path("download")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Download))).Name(routes.Name("download"))
+
+	// Export
+	r.PathPrefix(routes.Path("x")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("export"))
+
+	// Utility
+	r.Path(routes.Path("about")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("about"))
+	r.Path(routes.Path("cfg")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("config"))
+	r.Path(routes.Path("help")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("help"))
+	r.Path(routes.Path("u")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("settings"))
 
 	// Session
 	r.Path(routes.Path("s")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("sessions"))
@@ -42,9 +50,6 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	// Response
 	r.PathPrefix(routes.Path("r")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("result"))
 	r.Path(routes.Path("svg", "gantt")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Gantt))).Name(routes.Name("svg", "gantt"))
-
-	// Utility
-	r.Path(routes.Path("about")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Workspace))).Name(routes.Name("about"))
 
 	// Socket
 	r.Path(routes.Path("ws")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Socket))).Name(routes.Name("websocket"))

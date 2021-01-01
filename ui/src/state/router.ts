@@ -16,6 +16,8 @@ import {collectionTransformResultRef, requestTransformResultRef, sessionTransfor
 import CollectionTransform from "@/transform/CollectionTransform.vue";
 import Testbed from "@/views/Testbed.vue";
 import SessionTransform from "@/transform/SessionTransform.vue";
+import Config from "@/views/Config.vue";
+import Help from "@/views/Help.vue";
 
 const routes: Array<RouteConfig> = [
   {
@@ -96,9 +98,19 @@ const routes: Array<RouteConfig> = [
     ]
   },
   {
+    path: "/cfg",
+    name: "Config",
+    component: Config
+  },
+  {
     path: "/about",
     name: "About",
     component: About
+  },
+  {
+    path: "/help",
+    name: "Help",
+    component: Help
   },
   {
     path: "/testbed",

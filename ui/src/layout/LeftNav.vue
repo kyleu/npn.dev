@@ -15,10 +15,8 @@
     <div class="nav-section mt">
       <div v-style-menu-section>System</div>
       <div class="nav-list">
-        <div class="nav-link"><a v-style-menu-link href="" onclick="npn.onDebug();return false"><Icon icon="code" class="nav-icon" /> Debug</a></div>
-        <div class="nav-link"><router-link v-style-menu-link to="/testbed"><Icon icon="code" class="nav-icon" /> Testbed</router-link></div>
-        <div class="nav-link"><a v-style-menu-link href="" @click.prevent="toggleLog()"><Icon icon="list" class="nav-icon" /> Toggle Log</a></div>
-        <div class="nav-link"><router-link v-style-menu-link to="/about"><Icon icon="question" class="nav-icon" /> About</router-link></div>
+        <div class="nav-link"><router-link v-style-menu-link to="/cfg"><Icon icon="cog" class="nav-icon" /> Config</router-link></div>
+        <div class="nav-link"><router-link v-style-menu-link to="/help"><Icon icon="question" class="nav-icon" /> Help</router-link></div>
       </div>
     </div>
   </div>
@@ -33,11 +31,5 @@ import RequestList from "@/request/RequestList.vue";
 
 @Component({ components: {RequestList, Icon, CollectionList, SessionSelector } })
 export default class LeftNav extends Vue {
-  toggleLog(): void {
-    const el = document.getElementById("log-container");
-    if (el) {
-      el.style.display = el.style.display === "block" ? "none" : "block";
-    }
-  }
 }
 </script>
