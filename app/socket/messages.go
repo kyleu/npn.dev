@@ -4,6 +4,10 @@ const (
 	ClientMessageTestbed     = "testbed"
 	ClientMessageSaveProfile = "saveProfile"
 
+	ClientMessageSearch    = "search"
+	ClientMessageRunURL    = "runURL"
+	ClientMessageTransform = "transform"
+
 	// Collection
 	ClientMessageGetCollection    = "getCollection"
 	ClientMessageAddCollection    = "addCollection"
@@ -12,12 +16,10 @@ const (
 	ClientMessageAddRequestURL    = "addRequestURL"
 
 	// Request
-	ClientMessageRunURL        = "runURL"
 	ClientMessageGetRequest    = "getRequest"
 	ClientMessageSaveRequest   = "saveRequest"
 	ClientMessageDeleteRequest = "deleteRequest"
 	ClientMessageCall          = "call"
-	ClientMessageTransform     = "transform"
 
 	// Session
 	ClientMessageGetSession    = "getSession"
@@ -28,6 +30,7 @@ const (
 
 const (
 	ServerMessageLog = "log"
+	ServerMessageSearchResults = "searchResults"
 
 	// Collection
 	ServerMessageCollections         = "collections"

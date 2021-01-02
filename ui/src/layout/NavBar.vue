@@ -6,10 +6,10 @@
         <div class="uk-navbar-right">
           <ul class="uk-navbar-nav">
             <li>
-              <a v-style-nav-link class="uk-navbar-toggle" data-uk-search-icon data-uk-toggle href=""></a>
-              <div class="uk-drop" data-uk-drop="mode: click; pos: left-center; offset: 0">
+              <a v-style-nav-link class="uk-navbar-toggle" data-uk-toggle href=""><Icon icon="search" /></a>
+              <div ref="searchContainer" class="uk-drop" data-uk-drop="mode: click; pos: left-center; offset: 0">
                 <form class="uk-search uk-search-navbar uk-width-1-1" @submit.prevent="onSearch">
-                  <input ref="seachInput" class="uk-search-input" type="search" placeholder="Search" autofocus />
+                  <input ref="searchInput" class="uk-search-input" type="search" placeholder="Search" autofocus />
                 </form>
               </div>
             </li>
@@ -33,6 +33,7 @@ import Breadcrumbs from "@/layout/Breadcrumbs.vue";
 import {Profile, profileRef} from "@/user/profile";
 import Icon from "@/util/Icon.vue";
 import {isPublic} from "@/util/log";
+import UIkit from "uikit";
 
 @Component({ components: {Icon, Breadcrumbs } })
 export default class NavBar extends Vue {
@@ -45,8 +46,15 @@ export default class NavBar extends Vue {
   }
 
   onSearch(): void {
-    const i = this.$refs["seachInput"] as HTMLInputElement;
-    console.log(i.value);
+    const i = this.$refs["searchInput"] as HTMLInputElement;
+    const params = {"q": i.value};
+    i.blur();
+    const c = this.$refs["searchContainer"] as HTMLElement;
+    // @ts-ignore
+    // eslint-disable-next-line
+    const f = UIkit.drop(c) as any;
+    f.hide(false);
+    this.$router.push({name: "SearchResults", params});
   }
 }
 </script>

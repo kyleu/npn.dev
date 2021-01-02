@@ -18,6 +18,8 @@ import Testbed from "@/views/Testbed.vue";
 import SessionTransform from "@/transform/SessionTransform.vue";
 import Config from "@/views/Config.vue";
 import Help from "@/views/Help.vue";
+import SearchResults from "@/search/SearchResults.vue";
+import {searchResultsRef} from "@/search/state";
 
 const routes: Array<RouteConfig> = [
   {
@@ -29,6 +31,15 @@ const routes: Array<RouteConfig> = [
     path: "/u",
     name: "Profile",
     component: ProfileView
+  },
+  {
+    path: "/search/:q",
+    name: "SearchResults",
+    component: SearchResults,
+    beforeEnter: (to, from, next): void => {
+      searchResultsRef.value = [];
+      next();
+    }
   },
   {
     path: "/s",

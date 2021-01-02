@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"github.com/kyleu/npn/app/search"
 
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
@@ -17,23 +18,17 @@ import (
 	"logur.dev/logur"
 )
 
-type services struct {
+type Dependencies struct {
 	User       user.Service
 	Session    *session.Service
 	Collection *collection.Service
 	Request    *request.Service
 	Caller     *call.Service
+	Search     *search.Service
 }
 
-func NewService(userSvc user.Service, sessSvc *session.Service, collectionSvc *collection.Service, requestSvc *request.Service, callSvc *call.Service, logger logur.Logger) *npnconnection.Service {
-	ctx := &services{
-		User:       userSvc,
-		Session:    sessSvc,
-		Collection: collectionSvc,
-		Request:    requestSvc,
-		Caller:     callSvc,
-	}
-	return npnconnection.NewService(logger, onOpen, handler, onClose, ctx)
+func NewService(deps *Dependencies, logger logur.Logger) *npnconnection.Service {
+	return npnconnection.NewService(logger, onOpen, handler, onClose, deps)
 }
 
 func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, cmd string, param json.RawMessage) error {
@@ -64,6 +59,6 @@ func onClose(*npnconnection.Service, *npnconnection.Connection) error {
 	return nil
 }
 
-func ctx(s *npnconnection.Service) *services {
-	return s.Context.(*services)
+func ctx(s *npnconnection.Service) *Dependencies {
+	return s.Context.(*Dependencies)
 }

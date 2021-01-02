@@ -1,6 +1,8 @@
 export const clientCommands = {
   testbed: "testbed",
   saveProfile: "saveProfile",
+
+  search: "search",
   runURL: "runURL",
   transform: "transform",
 
@@ -26,6 +28,7 @@ export const clientCommands = {
 
 export const serverCommands = {
   log: "log",
+  searchResults: "searchResults",
 
   // Collection
   collections: "collections",

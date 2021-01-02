@@ -12,6 +12,7 @@ import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/imprt"
 	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/search"
 	"github.com/kyleu/npn/app/session"
 	"github.com/kyleu/npn/app/socket"
 	"logur.dev/logur"
@@ -42,6 +43,9 @@ func NewService(debug bool, public bool, secret string, files npncore.FileLoader
 	collSvc := collection.NewService(multiuser, files, logger)
 	reqSvc := request.NewService(multiuser, files, logger)
 	callSvc := call.NewService(sessSvc, logger)
+	searchSvc := search.NewService(logger)
+
+	socketDeps := &socket.Dependencies{User: us, Session: sessSvc, Collection: collSvc, Request: reqSvc, Caller: callSvc, Search: searchSvc}
 
 	return &Service{
 		debug:      debug,
@@ -55,7 +59,7 @@ func NewService(debug bool, public bool, secret string, files npncore.FileLoader
 		Collection: collSvc,
 		Import:     imprt.NewService(files, logger),
 		Caller:     callSvc,
-		Socket:     socket.NewService(us, sessSvc, collSvc, reqSvc, callSvc, logger),
+		Socket:     socket.NewService(socketDeps, logger),
 	}
 }
 
