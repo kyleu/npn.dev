@@ -30,7 +30,7 @@ func onSearch(s *npnconnection.Service, c *npnconnection.Connection, param json.
 	if err != nil {
 		return errors.Wrap(err, "unable to parse search params")
 	}
-	results, err := ctx(s).Search.Run(sp, c.Profile.UserID, c.Profile.Role)
+	results, err := ctx(s).Search.Run(sp, &c.Profile.UserID, c.Profile.Role)
 	msg := npnconnection.NewMessage(npncore.KeySystem, ServerMessageSearchResults, results)
 	err = s.WriteMessage(c.ID, msg)
 	return err

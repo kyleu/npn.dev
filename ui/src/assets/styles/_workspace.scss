@@ -127,6 +127,14 @@
   font-weight: bold;
 }
 
+// Search
+.search-result {
+  .match {
+    padding: 6px 0 0 0;
+  }
+}
+
+// Body
 .raw-content {
   margin: 0;
   padding-bottom: 6px;

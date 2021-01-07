@@ -6,6 +6,7 @@ import {requestService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 import {requestEditingRef} from "@/request/state";
 import {ref} from "@vue/composition-api";
+import {logError} from "@/util/log";
 
 export const requestResultsRef = ref<RequestResults>({id: "", coll: "", req: "", cycles: []});
 
@@ -47,7 +48,7 @@ export function onRequestStarted(r: RequestStarted): void {
 export function onRequestCompleted(r: RequestCompleted): void {
   const v = requestResultsRef.value;
   if(v.cycles.length < (r.idx + 1)) {
-    console.log("error: request for idx [" + r.idx + "] found length [" + v.cycles.length + "]");
+    logError("request for idx [" + r.idx + "] found length [" + v.cycles.length + "]");
   }
   const c = v.cycles[r.idx || 0];
   c.status = r.status;
