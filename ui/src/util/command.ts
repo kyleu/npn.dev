@@ -23,7 +23,10 @@ export const clientCommands = {
   getSession: "getSession",
   addSession: "addSession",
   saveSession: "saveSession",
-  deleteSession: "deleteSession"
+  deleteSession: "deleteSession",
+
+  // Imports
+  getImport: "getImport"
 };
 
 export const serverCommands = {
@@ -54,5 +57,8 @@ export const serverCommands = {
   sessionDetail: "sessionDetail",
   sessionDeleted: "sessionDeleted",
   sessionNotFound: "sessionNotFound",
-  sessionTransform: "sessionTransform"
+  sessionTransform: "sessionTransform",
+
+  // Imports
+  importDetail: "importDetail"
 };

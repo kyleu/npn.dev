@@ -1,2 +1,1 @@
-npn is a public domain project. 
-This means that anyone is free to do anything they want with it, no questions asked.
+npn is an open source project available under the [MIT license](../LICENSE.md).

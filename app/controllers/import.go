@@ -1,24 +1,16 @@
 package controllers
 
 import (
-	"net/http"
-
-	"github.com/kyleu/npn/gen/templates"
-
+	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/kyleu/libnpn/npncontroller"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnweb"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/imprt"
+	"net/http"
+	"net/url"
 )
-
-func ImportForm(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		ctx.Title = "Import"
-		return npncontroller.T(templates.ImportForm(ctx, w))
-	})
-}
 
 func ImportDetail(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
@@ -74,6 +66,14 @@ func ImportUpload(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
+		ref := r.Header.Get("referer")
+		if len(ref) > 0 {
+			u, err := url.Parse(ref)
+			if err == nil {
+				dest := fmt.Sprintf("%v://%v/i/%v", u.Scheme, u.Host, importKey)
+				return dest, nil
+			}
+		}
 		return ctx.Route("import.detail", npncore.KeyKey, importKey), nil
 	})
 }

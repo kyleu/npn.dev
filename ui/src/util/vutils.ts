@@ -34,6 +34,10 @@ Vue.directive("style-button", function(el) {
   el.style.color = profileRef.value?.settings.bodyL || "";
 });
 
+Vue.directive("style-link", function(el) {
+  el.style.color = profileRef.value?.settings.bodyL || "";
+});
+
 export function setBC(me: Vue, ...bc: Breadcrumb[]): void {
   breadcrumbsRef.value = bc;
 }

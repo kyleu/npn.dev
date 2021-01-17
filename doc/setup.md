@@ -18,5 +18,4 @@ This document is for configuring your computer to build the application
 
 - Install go: https://golang.org
 - Install git: https://git-scm.com/downloads
-- Install gcc: https://jmeubank.github.io/tdm-gcc
 - Go Dependencies: bin\bootstrap.bat

@@ -19,6 +19,8 @@ import SessionTransform from "@/transform/SessionTransform.vue";
 import Config from "@/views/Config.vue";
 import Help from "@/views/Help.vue";
 import SearchResults from "@/search/SearchResults.vue";
+import ImportForm from "@/import/ImportForm.vue";
+import ImportResults from "@/import/ImportResults.vue";
 
 const routes: Array<RouteConfig> = [
   {
@@ -107,6 +109,16 @@ const routes: Array<RouteConfig> = [
     path: "/cfg",
     name: "Config",
     component: Config
+  },
+  {
+    path: "/i",
+    name: "ImportForm",
+    component: ImportForm
+  },
+  {
+    path: "/i/:id",
+    name: "ImportResults",
+    component: ImportResults
   },
   {
     path: "/about",

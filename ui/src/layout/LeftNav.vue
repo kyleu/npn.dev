@@ -15,6 +15,7 @@
     <div class="nav-section mt">
       <div v-style-menu-section>System</div>
       <div class="nav-list">
+        <div class="nav-link"><router-link v-style-menu-link to="/i"><Icon icon="upload" class="nav-icon" /> Import</router-link></div>
         <div class="nav-link"><router-link v-style-menu-link to="/cfg"><Icon icon="cog" class="nav-icon" /> Config</router-link></div>
         <div class="nav-link"><router-link v-style-menu-link to="/help"><Icon icon="question" class="nav-icon" /> Help</router-link></div>
       </div>

@@ -23,7 +23,6 @@ endif
 .PHONY: clean
 clean: ## Clean builds
 	rm -rf gen
-	rm -rf npntemplate/gen
 	rm -rf out
 
 .PHONY: dev

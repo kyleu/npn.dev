@@ -15,28 +15,24 @@ RUN go get -u golang.org/x/tools/cmd/goimports
 
 ADD ./go.mod          /npn/go.mod
 ADD ./go.sum          /npn/go.sum
+
+RUN sed -i '/^replace/d' /npn/go.mod
+
+ENV GOPRIVATE github.com/kyleu
+ARG GITHUB_KEY
+RUN git config --global url."https://${GITHUB_KEY}:x-oauth-basic@github.com/kyleu".insteadOf "https://github.com/kyleu"
+
+RUN go mod download
+
 ADD ./app             /npn/app
 ADD ./bin             /npn/bin
 ADD ./main.go         /npn/main.go
 ADD ./Makefile        /npn/Makefile
-ADD ./npnconnection   /npn/npnconnection
-ADD ./npncontroller   /npn/npncontroller
-ADD ./npncore         /npn/npncore
-ADD ./npnscript       /npn/npnscript
-ADD ./npnservice      /npn/npnservice
-ADD ./npnservice-fs   /npn/npnservice-fs
-ADD ./npntemplate     /npn/npntemplate
-ADD ./npnuser         /npn/npnuser
-ADD ./npnweb          /npn/npnweb
 ADD ./web             /npn/web
 
-ARG BUILD_TARGET
-
-COPY go.mod /npn/
 RUN go mod download
 
-RUN set -xe && make clean
-RUN set -xe && make build-release-ci
+RUN set -xe && bash -c 'make build-release-ci'
 
 RUN mv build/release /build
 
@@ -46,14 +42,6 @@ FROM alpine
 RUN apk add --update --no-cache ca-certificates tzdata bash curl
 
 SHELL ["/bin/bash", "-c"]
-
-# set up nsswitch.conf for Go's "netgo" implementation
-# https://github.com/gliderlabs/docker-alpine/issues/367#issuecomment-424546457
-RUN test ! -e /etc/nsswitch.conf && echo 'hosts: files dns' > /etc/nsswitch.conf
-
-ARG BUILD_TARGET
-
-RUN if [[ "${BUILD_TARGET}" == "debug" ]]; then apk add --update --no-cache libc6-compat; fi
 
 COPY --from=builder /build/* /usr/local/bin/
 

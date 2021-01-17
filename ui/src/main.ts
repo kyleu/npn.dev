@@ -20,7 +20,6 @@ declare global {
 }
 
 function init(debug?: boolean, pub?: boolean): void {
-  // TODO use `pub`
   setDebug(debug || false);
   setPublic(pub || false);
   window.UIkit = UIkit;

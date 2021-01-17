@@ -11,7 +11,7 @@
 
     <span v-for="bc in breadcrumbs" :key="bc.path" class="uk-navbar-item trim dynamic">
       <span v-style-nav-link :style="{ padding: '0 8px' }"> / </span>
-      <router-link v-style-nav-link title="npn" class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" :to="bc.path" exact>{{ bc.title }}</router-link>
+      <router-link v-style-nav-link class="uk-navbar-item uk-logo uk-margin-remove uk-padding-remove dynamic" :to="bc.path" exact>{{ bc.title }}</router-link>
     </span>
   </div>
 </template>

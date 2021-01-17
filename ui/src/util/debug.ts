@@ -11,6 +11,7 @@ import {requestTransformResultRef} from "@/transform/state";
 import {bodyConfigRef} from "@/body/state";
 import {requestDetailsRef} from "@/collection/requestDetails";
 import {requestResultsRef} from "@/call/state";
+import {hostRef} from "@/socket/socket";
 
 export interface NPNDebug {
   root: Vue;
@@ -20,6 +21,7 @@ export interface NPNDebug {
 
 export function onDebug(): void {
   const ret = {
+    host: hostRef.value,
     profile: profileRef.value,
     breadcrumbs: breadcrumbsRef.value,
     session: {
