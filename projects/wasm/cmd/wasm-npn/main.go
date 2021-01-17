@@ -6,9 +6,9 @@ import (
 
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/cli"
-	"github.com/kyleu/npn/npnconnection"
-	"github.com/kyleu/npn/npncore"
-	"github.com/kyleu/npn/npnweb"
+	"github.com/kyleu/libnpn/npnconnection"
+	"github.com/kyleu/libnpn/npncore"
+	"github.com/kyleu/libnpn/npnweb"
 )
 
 var exitChannel = make(chan bool)

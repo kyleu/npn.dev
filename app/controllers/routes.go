@@ -21,11 +21,9 @@ func BuildRouter(ai npnweb.AppInfo) (*mux.Router, error) {
 	r.Use(ocmux.Middleware())
 
 	// Home
+	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(WorkspaceIndex))).Name(routes.Name("home"))
 	r.Path(routes.Path("health")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Health))).Name(routes.Name("health"))
 	r.Path(routes.Path("enable")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Enable))).Name(routes.Name("enable"))
-
-	// Workspace
-	r.Path("/").Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(WorkspaceIndex))).Name(routes.Name("home"))
 
 	// Static
 	r.Path(routes.Path("download")).Methods(http.MethodGet).Handler(routes.AddContext(r, ai, http.HandlerFunc(Download))).Name(routes.Name("download"))

@@ -7,7 +7,7 @@ import (
 	"syscall/js"
 
 	"emperror.dev/errors"
-	"github.com/kyleu/npn/npncore"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 type LocalStorageLoader struct {

@@ -27,7 +27,7 @@ func allow(secret string, r *http.Request) bool {
 func Enable(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		http.SetCookie(w, &http.Cookie{Name: "secret", Value: ctx.App.Secret()})
-		return ctx.Route("workspace"), nil
+		return ctx.Route("home"), nil
 	})
 }
 

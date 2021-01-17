@@ -2,33 +2,21 @@ module github.com/kyleu/npn
 
 go 1.15
 
-replace github.com/kyleu/libnpn/npnconnection => ../libnpn/npnconnection
+replace github.com/kyleu/libnpn/npnconnection => ./libnpn/npnconnection
 
-replace github.com/kyleu/libnpn/npncontroller => ../libnpn/npncontroller
+replace github.com/kyleu/libnpn/npncontroller => ./libnpn/npncontroller
 
-replace github.com/kyleu/libnpn/npncore => ../libnpn/npncore
+replace github.com/kyleu/libnpn/npncore => ./libnpn/npncore
 
-replace github.com/kyleu/libnpn/npndatabase => ../libnpn/npndatabase
+replace github.com/kyleu/libnpn/npnservice => ./libnpn/npnservice
 
-replace github.com/kyleu/libnpn/npnexport => ../libnpn/npnexport
+replace github.com/kyleu/libnpn/npnservice-fs => ./libnpn/npnservice-fs
 
-replace github.com/kyleu/libnpn/npngraphql => ../libnpn/npngraphql
+replace github.com/kyleu/libnpn/npnuser => ./libnpn/npnuser
 
-replace github.com/kyleu/libnpn/npnqueue => ../libnpn/npnqueue
+replace github.com/kyleu/libnpn/npntemplate => ./libnpn/npntemplate
 
-replace github.com/kyleu/libnpn/npnscript => ../libnpn/npnscript
-
-replace github.com/kyleu/libnpn/npnservice => ../libnpn/npnservice
-
-replace github.com/kyleu/libnpn/npnservice-db => ../libnpn/npnservice-db
-
-replace github.com/kyleu/libnpn/npnservice-fs => ../libnpn/npnservice-fs
-
-replace github.com/kyleu/libnpn/npnuser => ../libnpn/npnuser
-
-replace github.com/kyleu/libnpn/npntemplate => ../libnpn/npntemplate
-
-replace github.com/kyleu/libnpn/npnweb => ../libnpn/npnweb
+replace github.com/kyleu/libnpn/npnweb => ./libnpn/npnweb
 
 require (
 	emperror.dev/emperror v0.33.0
@@ -43,12 +31,7 @@ require (
 	github.com/kyleu/libnpn/npnconnection v0.0.1 // npn
 	github.com/kyleu/libnpn/npncontroller v0.0.1 // npn
 	github.com/kyleu/libnpn/npncore v0.0.1 // npn
-	github.com/kyleu/libnpn/npnexport v0.0.1 // npn
-	github.com/kyleu/libnpn/npngraphql v0.0.1 // npn
-	github.com/kyleu/libnpn/npnqueue v0.0.1 // npn
-	github.com/kyleu/libnpn/npnscript v0.0.1 // npn
 	github.com/kyleu/libnpn/npnservice v0.0.1 // npn
-	github.com/kyleu/libnpn/npnservice-db v0.0.1 // npn
 	github.com/kyleu/libnpn/npnservice-fs v0.0.1 // npn
 	github.com/kyleu/libnpn/npntemplate v0.0.1 // npn
 	github.com/kyleu/libnpn/npnuser v0.0.1 // npn

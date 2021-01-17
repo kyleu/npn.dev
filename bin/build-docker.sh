@@ -7,7 +7,7 @@ set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 
-docker build -m 4g --build-arg GITHUB_KEY=$GITHUB_KEY -t kyleu/npn .
+docker build -m 4g -t kyleu/npn .
 
 mkdir -p build/docker
 docker save -o build/docker/npn.docker.tar kyleu/npn

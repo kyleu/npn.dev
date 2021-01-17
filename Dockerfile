@@ -1,7 +1,7 @@
 # Build image
 FROM golang:alpine AS builder
 
-ENV GOFLAGS="-mod=readonly"
+# ENV GOFLAGS="-mod=readonly"
 
 RUN apk add --update --no-cache bash ca-certificates make git curl build-base
 
@@ -15,12 +15,7 @@ RUN go get -u golang.org/x/tools/cmd/goimports
 
 ADD ./go.mod          /npn/go.mod
 ADD ./go.sum          /npn/go.sum
-
-RUN sed -i '/^replace/d' /npn/go.mod
-
-ENV GOPRIVATE github.com/kyleu
-ARG GITHUB_KEY
-RUN git config --global url."https://${GITHUB_KEY}:x-oauth-basic@github.com/kyleu".insteadOf "https://github.com/kyleu"
+ADD ./libnpn          /npn/libnpn
 
 RUN go mod download
 

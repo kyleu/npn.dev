@@ -1,0 +1,3 @@
+[submodule "libnpn"]
+	path = libnpn
+	url = https://github.com/kyleu/libnpn
