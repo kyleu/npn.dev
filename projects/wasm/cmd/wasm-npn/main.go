@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"syscall/js"
 
-	"github.com/kyleu/npn/app"
-	"github.com/kyleu/npn/app/cli"
 	"github.com/kyleu/libnpn/npnconnection"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnweb"
+	"github.com/kyleu/npn/app"
+	"github.com/kyleu/npn/app/cli"
 )
 
 var exitChannel = make(chan bool)

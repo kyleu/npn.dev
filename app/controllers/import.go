@@ -2,14 +2,15 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
+
 	"github.com/gorilla/mux"
 	"github.com/kyleu/libnpn/npncontroller"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnweb"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/imprt"
-	"net/http"
-	"net/url"
 )
 
 func ImportDetail(w http.ResponseWriter, r *http.Request) {

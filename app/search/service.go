@@ -25,7 +25,7 @@ func (s Service) Run(p *Params, userID *uuid.UUID, role string) (Results, error)
 
 	ret := make(Results, 0)
 
-	matchedColls, err := searchCollections(colls, p.Q, p.Offset)
+	matchedColls, err := searchCollections(colls, p.Q)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (s Service) Run(p *Params, userID *uuid.UUID, role string) (Results, error)
 	return ret, nil
 }
 
-func searchCollections(colls collection.Collections, q string, offset int) (Results, error) {
+func searchCollections(colls collection.Collections, q string) (Results, error) {
 	ret := make(Results, 0, len(colls))
 	for _, coll := range colls {
 		matched, prelude, loc, postlude := coll.Matches(q)

@@ -29,7 +29,7 @@ const (
 )
 
 const (
-	ServerMessageLog = "log"
+	ServerMessageLog           = "log"
 	ServerMessageSearchResults = "searchResults"
 
 	// Collection

@@ -21,7 +21,7 @@ func check(s string, q string) (bool, string, string) {
 	low := strings.ToLower(s)
 	if strings.Contains(low, q) {
 		idx := strings.Index(low, q)
-		return true, s[0:idx], s[idx + len(q):]
+		return true, s[0:idx], s[idx+len(q):]
 	}
 	return false, "", ""
 }

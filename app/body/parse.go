@@ -8,8 +8,9 @@ import (
 	"io"
 	"io/ioutil"
 	"strings"
-	"github.com/andybalholm/brotli"
+
 	"emperror.dev/errors"
+	"github.com/andybalholm/brotli"
 	"github.com/kyleu/libnpn/npncore"
 )
 

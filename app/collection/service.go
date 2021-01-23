@@ -109,4 +109,3 @@ func (s *Service) dirFor(userID *uuid.UUID) string {
 	}
 	return path.Join("users", userID.String(), "collections")
 }
-

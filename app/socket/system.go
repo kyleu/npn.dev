@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+
 	"github.com/kyleu/npn/app/search"
 
 	"github.com/kyleu/libnpn/npnconnection"
@@ -32,8 +33,7 @@ func onSearch(s *npnconnection.Service, c *npnconnection.Connection, param json.
 	}
 	results, err := ctx(s).Search.Run(sp, &c.Profile.UserID, c.Profile.Role)
 	msg := npnconnection.NewMessage(npncore.KeySystem, ServerMessageSearchResults, results)
-	err = s.WriteMessage(c.ID, msg)
-	return err
+	return s.WriteMessage(c.ID, msg)
 }
 
 func saveProfile(s *npnconnection.Service, c *npnconnection.Connection, param json.RawMessage) error {
