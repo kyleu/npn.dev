@@ -57,7 +57,7 @@ export default class Home extends Vue {
     const url = el.value.trim();
     el.value = "";
     if (socketRef.value) {
-      socketRef.value.send({svc: requestService.key, cmd: clientCommands.runURL, param: url});
+      socketRef.value.send({channel: requestService.key, cmd: clientCommands.runURL, param: url});
     }
   }
 

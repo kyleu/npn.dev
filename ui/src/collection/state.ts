@@ -58,7 +58,7 @@ export function getCollectionRequestSummaries(key: string): Summary[] | undefine
     }
   }
   if (socketRef.value && key.length > 0 && setPendingRequests(pendingRequestsRef, "collection", key)) {
-    socketRef.value.send({svc: collectionService.key, cmd: clientCommands.getCollection, param: key});
+    socketRef.value.send({channel: collectionService.key, cmd: clientCommands.getCollection, param: key});
   }
 
   return undefined;

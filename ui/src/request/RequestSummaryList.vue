@@ -41,7 +41,7 @@ export default class RequestSummaryList extends Vue {
     const url = el.value.trim();
     el.value = "";
     if (socketRef.value) {
-      socketRef.value.send({svc: collectionService.key, cmd: clientCommands.addRequestURL, param: {coll: this.$route.params.coll, url}});
+      socketRef.value.send({channel: collectionService.key, cmd: clientCommands.addRequestURL, param: {coll: this.$route.params.coll, url}});
     }
   }
 }

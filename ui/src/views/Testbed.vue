@@ -48,7 +48,7 @@ export default class Testbed extends Vue {
   send(): void {
     if (socketRef.value) {
       const p = {"t": "log", "k": this.level, "v": this.message};
-      socketRef.value.send({svc: systemService.key, cmd: clientCommands.testbed, param: p});
+      socketRef.value.send({channel: systemService.key, cmd: clientCommands.testbed, param: p});
     }
   }
 

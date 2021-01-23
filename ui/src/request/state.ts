@@ -37,7 +37,7 @@ export function setActiveRequest(coll: string, req: string): void {
 
   if (req && socketRef.value) {
     if (setPendingRequests(pendingRequestsRef, "request", coll + "::" + req)) {
-      socketRef.value.send({svc: requestService.key, cmd: clientCommands.getRequest, param: activeRequestRef.value});
+      socketRef.value.send({channel: requestService.key, cmd: clientCommands.getRequest, param: activeRequestRef.value});
     }
   }
 }

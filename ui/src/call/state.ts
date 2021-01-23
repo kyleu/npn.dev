@@ -18,7 +18,7 @@ export function getRequestResults(coll: string, req: string): RequestResults | u
   if (requestEditingRef.value && socketRef.value && req.length > 0) {
     if (setPendingRequests(pendingRequestsRef, "call", `${coll}::${req}`)) {
       const param = {coll, req, sess: activeSessionRef.value, proto: requestEditingRef.value.prototype};
-      socketRef.value.send({svc: requestService.key, cmd: clientCommands.call, param});
+      socketRef.value.send({channel: requestService.key, cmd: clientCommands.call, param});
     }
   }
 

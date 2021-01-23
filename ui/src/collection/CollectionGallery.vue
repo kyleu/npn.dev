@@ -36,7 +36,7 @@ export default class CollectionGallery extends Vue {
     const el = document.getElementById("coll-add-input") as HTMLInputElement;
     const title = el.value.trim();
     if (socketRef.value) {
-      socketRef.value.send({svc: collectionService.key, cmd: clientCommands.addCollection, param: title});
+      socketRef.value.send({channel: collectionService.key, cmd: clientCommands.addCollection, param: title});
     }
   }
 }

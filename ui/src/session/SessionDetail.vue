@@ -82,7 +82,7 @@ export default class SessionDetail extends Vue {
   deleteSession(): void {
     if (confirm('Are you sure you want to delete the session named [' + this.$route.params.sess + ']?')) {
       if (socketRef.value) {
-        socketRef.value.send({svc: sessionService.key, cmd: clientCommands.deleteSession, param: this.$route.params.sess});
+        socketRef.value.send({channel: sessionService.key, cmd: clientCommands.deleteSession, param: this.$route.params.sess});
       }
     }
   }
@@ -108,7 +108,7 @@ export default class SessionDetail extends Vue {
     const sess = sessionEditingRef.value;
     if (sess) {
       const param = {orig: sessionOriginalRef.value?.key || sess.key, sess: sess};
-      s.send({svc: sessionService.key, cmd: clientCommands.saveSession, param});
+      s.send({channel: sessionService.key, cmd: clientCommands.saveSession, param});
     }
   }
 

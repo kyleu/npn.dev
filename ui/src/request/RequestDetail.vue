@@ -66,7 +66,7 @@ export default class RequestDetail extends Vue {
     const e = requestEditingRef.value;
     if (e) {
       const param = {coll: this.$route.params.coll, orig: requestOriginalRef.value?.key || e.key, req: e};
-      s.send({svc: requestService.key, cmd: clientCommands.saveRequest, param});
+      s.send({channel: requestService.key, cmd: clientCommands.saveRequest, param});
     }
   }
 
@@ -82,7 +82,7 @@ export default class RequestDetail extends Vue {
     if (confirm('Are you sure you want to delete request [' + this.$route.params.req + ']?')) {
       if (socketRef.value) {
         const param = { coll: this.$route.params.coll, req: this.$route.params.req};
-        socketRef.value.send({svc: requestService.key, cmd: clientCommands.deleteRequest, param});
+        socketRef.value.send({channel: requestService.key, cmd: clientCommands.deleteRequest, param});
       }
     }
   }

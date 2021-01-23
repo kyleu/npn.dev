@@ -40,7 +40,7 @@ export default class SessionList extends Vue {
     const el = document.getElementById("sess-add-input") as HTMLInputElement;
     const title = el.value.trim();
     if (socketRef.value) {
-      socketRef.value.send({svc: sessionService.key, cmd: clientCommands.addSession, param: title});
+      socketRef.value.send({channel: sessionService.key, cmd: clientCommands.addSession, param: title});
     }
   }
 

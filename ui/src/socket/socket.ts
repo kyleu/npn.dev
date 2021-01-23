@@ -3,7 +3,7 @@ import {isDebug, logDebug} from "@/util/log";
 import {ref} from "@vue/composition-api";
 
 export interface Message {
-  readonly svc: string;
+  readonly channel: string;
   readonly cmd: string;
   // @ts-ignore
   // eslint-disable-next-line
@@ -29,12 +29,12 @@ export class Socket {
 
   private onOpen: (id: string) => void;
   private onMessage: (m: Message) => void;
-  private onError: (svc: string, err: string) => void;
+  private onError: (channel: string, err: string) => void;
 
   private pauseSeconds = 0;
   private pendingMessages: Message[] = [];
 
-  constructor(openF: (id: string) => void, recvF: (m: Message) => void, errF: (svc: string, err: string) => void, url?: string) {
+  constructor(openF: (id: string) => void, recvF: (m: Message) => void, errF: (channel: string, err: string) => void, url?: string) {
     this.url = (url && url.length > 0) ? url : socketUrl();
     this.onOpen = openF;
     this.onMessage = recvF;

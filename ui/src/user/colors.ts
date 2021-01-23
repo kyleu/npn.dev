@@ -28,7 +28,7 @@ export function debugTheme(): void {
       // @ts-ignore
       setTimeout(() => {
         if (socketRef.value) {
-          socketRef.value.send({svc: systemService.key, cmd: clientCommands.testbed, param: {t: "theme", k: key, v: content}});
+          socketRef.value.send({channel: systemService.key, cmd: clientCommands.testbed, param: {t: "theme", k: key, v: content}});
         }
       }, 1000);
     } else {

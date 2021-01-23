@@ -168,7 +168,7 @@ export default class Theme extends Vue {
   menuL: "${this.settings.menuL}"
 }`;
     if (socketRef.value) {
-      socketRef.value.send({svc: systemService.key, cmd: clientCommands.testbed, param: {t: "theme", k: this.tempTheme, v: theme}});
+      socketRef.value.send({channel: systemService.key, cmd: clientCommands.testbed, param: {t: "theme", k: this.tempTheme, v: theme}});
     }
 
     logDebug(theme);

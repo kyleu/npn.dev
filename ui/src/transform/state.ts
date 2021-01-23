@@ -16,7 +16,7 @@ export function getRequestTransformResult(coll: string, req: string, fmt: string
   }
   if (requestEditingRef.value && socketRef.value && fmt.length > 0 && setPendingRequests(pendingRequestsRef, "transform", `${coll}::${req}::${fmt}`)) {
     const param = {coll, req, sess: activeSessionRef.value, fmt, proto: requestEditingRef.value.prototype};
-    socketRef.value.send({svc: requestService.key, cmd: clientCommands.transform, param});
+    socketRef.value.send({channel: requestService.key, cmd: clientCommands.transform, param});
   }
 
   return undefined;
@@ -36,7 +36,7 @@ export function getCollectionTransformResult(coll: string, fmt: string): Collect
   }
   if (socketRef.value && fmt.length > 0 && setPendingRequests(pendingRequestsRef, "export-collection", `${coll}::${fmt}`)) {
     const param = {coll, fmt};
-    socketRef.value.send({svc: collectionService.key, cmd: clientCommands.transform, param});
+    socketRef.value.send({channel: collectionService.key, cmd: clientCommands.transform, param});
   }
 
   return undefined;
@@ -55,7 +55,7 @@ export function getSessionTransformResult(sess: string): SessionTransformResult 
     return v;
   }
   if (socketRef.value && sess.length > 0 && setPendingRequests(pendingRequestsRef, "export-session", sess)) {
-    socketRef.value.send({svc: sessionService.key, cmd: clientCommands.transform, param: sess});
+    socketRef.value.send({channel: sessionService.key, cmd: clientCommands.transform, param: sess});
   }
 
   return undefined;

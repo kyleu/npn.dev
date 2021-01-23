@@ -17,7 +17,7 @@ export function setActiveImport(id: string): void {
   const req = (!r) || r.id !== id;
   if (req && socketRef.value) {
     if (setPendingRequests(pendingRequestsRef, "import", id)) {
-      socketRef.value.send({svc: systemService.key, cmd: clientCommands.getImport, param: id});
+      socketRef.value.send({channel: systemService.key, cmd: clientCommands.getImport, param: id});
     }
   }
 }

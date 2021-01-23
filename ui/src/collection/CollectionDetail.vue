@@ -82,7 +82,7 @@ export default class CollectionDetail extends Vue {
   deleteCollection(): void {
     if (confirm('Are you sure you want to delete the collection named [' + this.$route.params.coll + ']?')) {
       if (socketRef.value) {
-        socketRef.value.send({svc: collectionService.key, cmd: clientCommands.deleteCollection, param: this.$route.params.coll});
+        socketRef.value.send({channel: collectionService.key, cmd: clientCommands.deleteCollection, param: this.$route.params.coll});
       }
     }
   }
@@ -90,7 +90,7 @@ export default class CollectionDetail extends Vue {
   saveCollection(): void {
     if (socketRef.value) {
       socketRef.value.send({
-        svc: collectionService.key,
+        channel: collectionService.key,
         cmd: clientCommands.saveCollection,
         param: { originalKey: this.$route.params.coll, coll: this.collEdit }
       });

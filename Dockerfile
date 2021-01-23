@@ -1,7 +1,7 @@
 # Build image
 FROM golang:alpine AS builder
 
-# ENV GOFLAGS="-mod=readonly"
+ENV GOFLAGS="-mod=readonly"
 
 RUN apk add --update --no-cache bash ca-certificates make git curl build-base
 

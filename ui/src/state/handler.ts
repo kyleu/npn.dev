@@ -12,7 +12,7 @@ export const messageHandler = (msg: Message): void => {
     logDebug("IN: " + msg.cmd, jsonClone(msg.param));
   }
 
-  switch (msg.svc) {
+  switch (msg.channel) {
     case systemService.key:
       onSystemMessage(msg.cmd, msg.param);
       break;
@@ -26,6 +26,6 @@ export const messageHandler = (msg: Message): void => {
       onSessionMessage(msg.cmd, msg.param);
       break;
     default:
-      logWarn("unhandled service [" + msg.svc + "]", msg);
+      logWarn("unhandled channel [" + msg.channel + "]", msg);
   }
 };

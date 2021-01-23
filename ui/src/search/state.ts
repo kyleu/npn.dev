@@ -27,7 +27,7 @@ export function onSearchQuery(q: string, o: number): void {
     searchQueryRef.value.o = o;
 
     if (q.length > 0 && socketRef.value) {
-      socketRef.value.send({svc: systemService.key, cmd: clientCommands.search, param: {q, o}});
+      socketRef.value.send({channel: systemService.key, cmd: clientCommands.search, param: {q, o}});
     }
   }
 }

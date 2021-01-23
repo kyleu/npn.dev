@@ -1,0 +1,10 @@
+.git
+.idea
+.run
+build
+data
+doc
+gen
+projects
+tmp
+ui

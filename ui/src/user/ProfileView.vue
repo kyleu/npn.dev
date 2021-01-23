@@ -76,7 +76,7 @@ export default class ProfileView extends Vue {
     if (profileRef.value) {
       this.original = jsonClone(profileRef.value);
       if (socketRef.value) {
-        socketRef.value.send({svc: systemService.key, cmd: clientCommands.saveProfile, param: this.profile});
+        socketRef.value.send({channel: systemService.key, cmd: clientCommands.saveProfile, param: this.profile});
       }
     }
   }

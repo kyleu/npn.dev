@@ -35,7 +35,7 @@ export function setActiveSession(key: string): void {
 
   if (key.length > 0 && socketRef.value) {
     if (setPendingRequests(pendingRequestsRef, "session", key)) {
-      socketRef.value.send({svc: sessionService.key, cmd: clientCommands.getSession, param: activeSessionRef.value});
+      socketRef.value.send({channel: sessionService.key, cmd: clientCommands.getSession, param: activeSessionRef.value});
     }
   }
 }
