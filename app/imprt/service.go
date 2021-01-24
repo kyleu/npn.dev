@@ -22,7 +22,7 @@ func NewService(files npncore.FileLoader, logger logur.Logger) *Service {
 func (s *Service) Create(key string, files []File) error {
 	cfg := Config{Files: files, Status: "created"}
 	json := npncore.ToJSONBytes(cfg, s.logger, true)
-	p := path.Join("import", key, "_import.json")
+	p := path.Join(npncore.KeyImport, key, "_import.json")
 	err := s.files.WriteFile(p, json, false)
 	if err != nil {
 		return errors.Wrap(err, "cannot write import summary")
@@ -31,7 +31,7 @@ func (s *Service) Create(key string, files []File) error {
 }
 
 func (s *Service) Load(key string) (*Config, Outputs, error) {
-	p := path.Join("import", key, "_import.json")
+	p := path.Join(npncore.KeyImport, key, "_import.json")
 	content, err := s.files.ReadFile(p)
 	if err != nil {
 		return nil, nil, errors.Wrap(err, "cannot read import summary")
@@ -51,7 +51,7 @@ func (s *Service) Load(key string) (*Config, Outputs, error) {
 }
 
 func (s *Service) LoadFile(key string, filename string, contentType string) *Output {
-	p := path.Join("import", key, "files", filename)
+	p := path.Join(npncore.KeyImport, key, "files", filename)
 	content, err := s.files.ReadFile(p)
 	if err != nil {
 		return &Output{Filename: filename, Type: contentType, Value: len(content), Error: errors.Wrap(err, "cannot read import summary").Error()}
@@ -65,7 +65,7 @@ func (s *Service) LoadFile(key string, filename string, contentType string) *Out
 }
 
 func (s *Service) WriteFile(key string, filename string, f multipart.File) error {
-	p := path.Join("import", key, "files", filename)
+	p := path.Join(npncore.KeyImport, key, "files", filename)
 	content, err := ioutil.ReadAll(f)
 	if err != nil {
 		return errors.Wrap(err, "unable to read file ["+p+"]")

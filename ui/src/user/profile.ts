@@ -27,7 +27,7 @@ export const defaultSettings: UserSettings = {
   menuF: '#cccccc',
   menuL: '#91aa9d',
   bodyB: '#fcfff5',
-  bodyL: '#193441'
+  bodyL: '#2f657f'
 };
 
 export interface Profile {
@@ -41,18 +41,9 @@ export interface Profile {
 
 export const defaultProfile: Profile = {
   userID: "00000000-0000-0000-0000-000000000000",
-  name: "Kyle",
+  name: "npn",
   role: "",
-  settings: {
-    mode: 'light',
-    navB: '#193441',
-    navF: '#dddddd',
-    menuB: '#3e606f',
-    menuF: '#cccccc',
-    menuL: '#91aa9d',
-    bodyB: '#fcfff5',
-    bodyL: '#193441'
-  },
+  settings: defaultSettings,
   picture: "",
   locale: "en-US"
 };

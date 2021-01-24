@@ -5,27 +5,12 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/gorilla/mux"
 	"github.com/kyleu/libnpn/npncontroller"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnweb"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/imprt"
 )
-
-func ImportDetail(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		key := mux.Vars(r)[npncore.KeyKey]
-		svc := app.Svc(ctx.App)
-		cfg, out, err := svc.Import.Load(key)
-		if err != nil {
-			return npncontroller.EResp(err)
-		}
-		ctx.Title = "Import"
-		ret := map[string]interface{}{"cfg": cfg, "out": out}
-		return npncontroller.RespondJSON(w, "", ret, ctx.Logger)
-	})
-}
 
 func ImportUpload(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {

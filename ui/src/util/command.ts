@@ -60,5 +60,5 @@ export const serverCommands = {
   sessionTransform: "sessionTransform",
 
   // Imports
-  importDetail: "importDetail"
+  importResult: "importResult"
 };

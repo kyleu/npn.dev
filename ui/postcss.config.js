@@ -30,6 +30,7 @@ module.exports = {
           /uk-tab.*/,
           /uk-toggle.*/,
           /uk-visible.*/,
+          /uk-form-custom.*/,
           /-(leave|enter|appear)(|-(to|from|active))$/,
           /^(?!(|.*?:)cursor-move).+-move$/,
           /^router-link(|-exact)-active$/,

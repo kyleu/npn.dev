@@ -23,7 +23,7 @@ const Default = {
   menuF: "#cccccc",
   menuL: "#91aa9d",
   bodyB: "#fcfff5",
-  bodyL: "#193441"
+  bodyL: "#2f657f"
 };
 const Darkfault = {
   key: "Darkfault",

@@ -27,9 +27,9 @@ export class Socket {
   appUnloading = false;
   private connectTime: number | undefined;
 
-  private onOpen: (id: string) => void;
-  private onMessage: (m: Message) => void;
-  private onError: (channel: string, err: string) => void;
+  private readonly onOpen: (id: string) => void;
+  private readonly onMessage: (m: Message) => void;
+  private readonly onError: (channel: string, err: string) => void;
 
   private pauseSeconds = 0;
   private pendingMessages: Message[] = [];
@@ -79,7 +79,7 @@ export class Socket {
   send(msg: Message): void {
     if (this.connected) {
       if (isDebug()) {
-        logDebug("OUT: " + msg.cmd, jsonClone(msg.param));
+        logDebug(`OUT(${msg.channel}): ${msg.cmd}`, jsonClone(msg.param));
       }
       const m = jsonStr(msg);
       this.sock.send(m);

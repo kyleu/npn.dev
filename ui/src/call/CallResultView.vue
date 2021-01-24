@@ -1,7 +1,7 @@
 <template>
   <div class="uk-card uk-card-body uk-card-default mt">
     <div class="right">
-      <router-link :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req"><Icon icon="close" /></router-link>
+      <router-link :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req">(return to editor) <Icon icon="close" /></router-link>
     </div>
     <div v-for="(cycle, idx) in cycles" :key="idx">
       <hr v-if="idx > 0" />

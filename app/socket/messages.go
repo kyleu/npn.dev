@@ -26,10 +26,12 @@ const (
 	ClientMessageAddSession    = "addSession"
 	ClientMessageSaveSession   = "saveSession"
 	ClientMessageDeleteSession = "deleteSession"
+
+	// Imports
+	ClientMessageGetImport = "getImport"
 )
 
 const (
-	ServerMessageLog           = "log"
 	ServerMessageSearchResults = "searchResults"
 
 	// Collection
@@ -58,4 +60,7 @@ const (
 	ServerMessageSessionDeleted   = "sessionDeleted"
 	ServerMessageSessionNotFound  = "sessionNotFound"
 	ServerMessageSessionTransform = "sessionTransform"
+
+	// Imports
+	ServerMessageImportResult = "importResult"
 )

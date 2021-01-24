@@ -27,3 +27,9 @@ export const requestService: Service = {
   title: "Request",
   plural: "Requests"
 };
+
+export const importService: Service = {
+  key: "import",
+  title: "Import",
+  plural: "imports"
+};

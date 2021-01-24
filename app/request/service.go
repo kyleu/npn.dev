@@ -133,7 +133,11 @@ func (s *Service) requestPath(userID *uuid.UUID, coll string, key string) string
 
 func (s *Service) dirFor(userID *uuid.UUID, coll string) string {
 	if (s.multiuser) || userID == nil || *userID == npnuser.SystemUserID {
-		return path.Join("collections", coll, "requests")
+		ret := path.Join("collections", coll, "requests")
+		println("@@@@@@@@@@@@@@@@@")
+		println(ret)
+		println("@@@@@@@@@@@@@@@@@")
+		return ret
 	}
 	return path.Join("users", userID.String(), "collections", coll, "requests")
 }

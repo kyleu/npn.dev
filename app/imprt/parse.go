@@ -103,7 +103,7 @@ func parseYAML(content []byte) *phase {
 		}
 		return &phase{Key: "request", Value: coll, Final: true}
 	}
-	return errorPhase(errors.New("unhandled YAML"), c)
+	return errorPhase(errors.New("unhandled-yaml"), c)
 }
 
 func parseJSONObject(obj map[string]interface{}, content []byte) *phase {
@@ -111,16 +111,27 @@ func parseJSONObject(obj map[string]interface{}, content []byte) *phase {
 	_, mok := obj["method"]
 	_, dok := obj["domain"]
 	if pok || (mok && dok) {
-		ret, err := request.FromString("import", string(content))
-		if err == nil {
-			return &phase{Key: "full", Value: ret, Final: true}
+		ret, err := request.FromString(npncore.KeyImport, string(content))
+		if err != nil {
+			return errorPhase(errors.Wrap(err, "parse-error"), obj)
 		}
+		return &phase{Key: "full", Value: ret, Final: true}
 	}
-	return &phase{Key: "unhandled JSON object", Value: obj, Final: true}
+
+	_, ook := obj["openapi"]
+	if ook {
+		ret, err := request.FromString(npncore.KeyImport, string(content))
+		if err != nil {
+			return errorPhase(errors.Wrap(err, "parse-error"), obj)
+		}
+		return &phase{Key: "openapi", Value: ret, Final: true}
+	}
+
+	return errorPhase(errors.New("unhandled-json"), obj)
 }
 
 func parseString(s string) *phase {
-	ret, err := request.FromString("import", s)
+	ret, err := request.FromString(npncore.KeyImport, s)
 	if err == nil {
 		return &phase{Key: "request", Value: ret, Final: true}
 	}

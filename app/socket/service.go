@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"github.com/kyleu/npn/app/imprt"
 
 	"github.com/kyleu/npn/app/search"
 
@@ -26,6 +27,7 @@ type Dependencies struct {
 	Request    *request.Service
 	Caller     *call.Service
 	Search     *search.Service
+	Import     *imprt.Service
 }
 
 func NewService(deps *Dependencies, logger logur.Logger) *npnconnection.Service {
@@ -43,6 +45,8 @@ func handler(s *npnconnection.Service, c *npnconnection.Connection, svc string, 
 		err = handleRequestMessage(s, c, cmd, param)
 	case npncore.KeySession:
 		err = handleSessionMessage(s, c, cmd, param)
+	case npncore.KeyImport:
+		err = handleImportMessage(s, c, cmd, param)
 	default:
 		err = errors.New(npncore.IDErrorString(npncore.KeyService, svc))
 	}

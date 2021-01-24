@@ -44,8 +44,8 @@ func NewService(debug bool, public bool, secret string, files npncore.FileLoader
 	reqSvc := request.NewService(multiuser, files, logger)
 	callSvc := call.NewService(sessSvc, logger)
 	searchSvc := search.NewService(collSvc, reqSvc, logger)
-
-	socketDeps := &socket.Dependencies{User: us, Session: sessSvc, Collection: collSvc, Request: reqSvc, Caller: callSvc, Search: searchSvc}
+	importSvc := imprt.NewService(files, logger)
+	socketDeps := &socket.Dependencies{User: us, Session: sessSvc, Collection: collSvc, Request: reqSvc, Caller: callSvc, Search: searchSvc, Import: importSvc}
 
 	return &Service{
 		debug:      debug,
@@ -57,7 +57,7 @@ func NewService(debug bool, public bool, secret string, files npncore.FileLoader
 		logger:     logger,
 		Session:    sessSvc,
 		Collection: collSvc,
-		Import:     imprt.NewService(files, logger),
+		Import:     importSvc,
 		Caller:     callSvc,
 		Socket:     socket.NewService(socketDeps, logger),
 	}

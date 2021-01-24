@@ -21,7 +21,7 @@ func handleSystemMessage(s *npnconnection.Service, c *npnconnection.Connection, 
 	case ClientMessageSaveProfile:
 		return saveProfile(s, c, param)
 	default:
-		return errors.New("unhandled app command [" + cmd + "]")
+		return errors.New("unhandled system command [" + cmd + "]")
 	}
 }
 

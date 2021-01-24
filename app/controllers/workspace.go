@@ -60,12 +60,6 @@ func Socket(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ss.OnOpen(connID)
-	if err != nil {
-		ctx.Logger.Error(fmt.Sprintf("error processing socket open event: %+v", err))
-		return
-	}
-
 	err = ss.ReadLoop(connID)
 	if err != nil {
 		ctx.Logger.Error(fmt.Sprintf("error processing socket read loop: %+v", err))
