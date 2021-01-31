@@ -18,8 +18,6 @@ import (
 	"logur.dev/logur"
 )
 
-const multiuser = false
-
 type Service struct {
 	debug      bool
 	public     bool
@@ -37,7 +35,7 @@ type Service struct {
 
 var _ npnweb.AppInfo = (*Service)(nil)
 
-func NewService(debug bool, public bool, secret string, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
+func NewService(debug bool, public bool, multiuser bool, secret string, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
 	sessSvc := session.NewService(multiuser, files, logger)
 	collSvc := collection.NewService(multiuser, files, logger)

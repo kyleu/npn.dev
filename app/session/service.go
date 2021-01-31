@@ -140,7 +140,7 @@ func (s *Service) Save(userID *uuid.UUID, originalKey string, sess *Session) err
 }
 
 func (s *Service) dirFor(userID *uuid.UUID) string {
-	if (s.multiuser) || userID == nil || *userID == npnuser.SystemUserID {
+	if (!s.multiuser) || userID == nil || *userID == npnuser.SystemUserID {
 		return "sessions"
 	}
 	return path.Join("users", userID.String(), "sessions")

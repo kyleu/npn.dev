@@ -4,6 +4,7 @@
       <router-link :to="'/c/' + this.$route.params.coll + '/' + this.$route.params.req">(return to editor) <Icon icon="close" /></router-link>
     </div>
     <div v-for="(cycle, idx) in cycles" :key="idx">
+      <div style="clear:both"></div>
       <hr v-if="idx > 0" />
       <ResponsePanel :cycle="cycle" />
     </div>

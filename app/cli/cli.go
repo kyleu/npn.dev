@@ -8,6 +8,7 @@ import (
 
 var verbose bool
 var public bool
+var multiuser bool
 var secret string
 var redir string
 var addr string
@@ -35,6 +36,7 @@ func Configure() cobra.Command {
 	flags.StringVarP(&addr, "address", "a", "127.0.0.1", "interface address to listen on")
 	flags.Uint16VarP(&port, "port", "p", 10101, "port for http server to listen on")
 	flags.BoolVarP(&verbose, "verbose", "v", false, "when set, displays verbose output")
+	flags.BoolVarP(&multiuser, "multiuser", "m", false, "when set, allows multiple users to access the server")
 	flags.BoolVar(&public, "public", false, "if set, renders as public server")
 	flags.StringVarP(&secret, "secret", "s", "", "protect the site with this super-secret password")
 
