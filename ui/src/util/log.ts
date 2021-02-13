@@ -46,10 +46,14 @@ function elementFor(level: string, s: string, ...params: unknown[]): HTMLElement
   cEl.innerText = s;
   el.appendChild(cEl);
 
-  for (const p of params) {
-    const pEl = document.createElement("div");
-    pEl.innerText = JSON.stringify(p, null, 2);
-    el.appendChild(pEl);
+  if (params !== undefined && params.length > 0) {
+    for (const p of params) {
+      if (p !== undefined) {
+        const pEl = document.createElement("div");
+        pEl.innerText = JSON.stringify(p, null, 2);
+        el.appendChild(pEl);
+      }
+    }
   }
 
   return el;
