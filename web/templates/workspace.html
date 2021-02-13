@@ -23,6 +23,6 @@
   <script src="/assets/vendor/vendor.js"></script>
   <script src="/assets/vendor/<%= npncore.AppKey %>.js"></script>
   <script src="/assets/vendor/editor/editor.js" defer="defer"></script>
-  <% if !(public && index) { %><script>init(<%=v ctx.App.Debug() %>, <%=v public %>);</script>><% } %>
+  <% if !(public && index) { %><script>init(<%=v ctx.App.Debug() %>, <%=v public %>);</script><% } %>
 </body>
 </html>

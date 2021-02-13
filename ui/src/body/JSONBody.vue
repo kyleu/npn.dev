@@ -9,18 +9,13 @@
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {JSONConfig} from "@/body/model";
 import {jsonStr} from "@/util/json";
-
-// @ts-ignore
-// eslint-disable-next-line
-declare const CodeMirror: any;
+import {Editor, editorFor} from "@/util/editor";
 
 @Component
 export default class JSONBody extends Vue {
   @Prop() config!: JSONConfig
 
-  // @ts-ignore
-  // eslint-disable-next-line
-  editor: any
+  editor?: Editor
 
   refresh(): void {
     const e = this.editor;
@@ -40,12 +35,7 @@ export default class JSONBody extends Vue {
 
   mounted(): void {
     const el = this.$refs["content"] as HTMLElement;
-    this.editor = CodeMirror(el, {
-      lineNumbers: true,
-      mode: "javascript",
-      value: jsonStr(this.config.msg),
-      readOnly: "nocursor"
-    });
+    this.editor = editorFor(el, true, "javascript", jsonStr(this.config.msg), true);
     this.editor.setSize('100%', '100%');
   }
 }

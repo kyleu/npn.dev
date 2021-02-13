@@ -49,9 +49,7 @@ export default class NavBar extends Vue {
     const i = this.$refs["searchInput"] as HTMLInputElement;
     i.blur();
     const c = this.$refs["searchContainer"] as HTMLElement;
-    // @ts-ignore
-    // eslint-disable-next-line
-    const f = UIkit.drop(c) as any;
+    const f = UIkit.drop(c) as { hide: (b: boolean) => void };
     f.hide(false);
     const params = {q: i.value};
     this.$router.push({name: "SearchResults", params});

@@ -5,9 +5,7 @@ import {ref} from "@vue/composition-api";
 export interface Message {
   readonly channel: string;
   readonly cmd: string;
-  // @ts-ignore
-  // eslint-disable-next-line
-  readonly param: any;
+  readonly param: unknown;
 }
 
 function socketUrl(): string {

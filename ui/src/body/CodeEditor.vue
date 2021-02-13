@@ -7,19 +7,14 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import FormEditor from "@/body/FormEditor.vue";
-
-// @ts-ignore
-// eslint-disable-next-line
-declare const CodeMirror: any;
+import {Editor, editorFor} from "@/util/editor";
 
 @Component({ components: { FormEditor } })
 export default class CodeEditor extends Vue {
   @Prop() language!: string
   @Prop() value!: string
 
-  // @ts-ignore
-  // eslint-disable-next-line
-  editor: any
+  editor?: Editor
 
   refresh(): void {
     const e = this.editor;
@@ -40,11 +35,7 @@ export default class CodeEditor extends Vue {
   }
 
   mounted(): void {
-    this.editor = CodeMirror(this.$el as HTMLElement, {
-      lineNumbers: true,
-      mode: this.language,
-      value: this.value
-    });
+    this.editor = editorFor(this.$el as HTMLElement, true, this.language, this.value, false);
     this.editor.setSize('100%', '100%');
     this.editor.on("change", () => {
       const v = this.editor?.getValue();

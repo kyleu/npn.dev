@@ -9,7 +9,7 @@ let logList: HTMLElement | null;
 export interface LogMessage {
   level: string;
   message: string;
-  context: {[key: string]: string};
+  context: {[key: string]: unknown};
 }
 
 function colorForLevel(l: string): string {
@@ -28,9 +28,7 @@ function colorForLevel(l: string): string {
   }
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-function elementFor(level: string, s: string, ...params: any[]): HTMLElement {
+function elementFor(level: string, s: string, ...params: unknown[]): HTMLElement {
   const el = document.createElement("li");
   el.style.color = colorForLevel(level);
 
@@ -48,12 +46,16 @@ function elementFor(level: string, s: string, ...params: any[]): HTMLElement {
   cEl.innerText = s;
   el.appendChild(cEl);
 
+  for (const p of params) {
+    const pEl = document.createElement("div");
+    pEl.innerText = JSON.stringify(p, null, 2);
+    el.appendChild(pEl);
+  }
+
   return el;
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-function log(level: string, msg: string, ...params: any[]): void {
+function log(level: string, msg: string, ...params: unknown[]): void {
   if (level !== "debug") {
     if (!logList) {
       logList = document.getElementById("log-list");
@@ -91,28 +93,20 @@ export function isPublic(): boolean {
   return pub;
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-export function logDebug(msg: string, ...params: any[]): void {
+export function logDebug(msg: string, ...params: unknown[]): void {
   if (debug) {
     log("debug", msg, ...params);
   }
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-export function logInfo(msg: string, ...params: any[]): void {
+export function logInfo(msg: string, ...params: unknown[]): void {
   log("info", msg, ...params);
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-export function logWarn(msg: string, ...params: any[]): void {
+export function logWarn(msg: string, ...params: unknown[]): void {
   log("warn", msg, ...params);
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-export function logError(msg: string, ...params: any[]): void {
+export function logError(msg: string, ...params: unknown[]): void {
   log("error", msg, ...params);
 }

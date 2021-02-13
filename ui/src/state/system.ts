@@ -1,16 +1,14 @@
-import {logWarn, onLog} from "@/util/log";
+import {LogMessage, logWarn, onLog} from "@/util/log";
 import {serverCommands} from "@/util/command";
-import {onSearchResults} from "@/search/state";
+import {onSearchResults, SearchResult} from "@/search/state";
 
-// @ts-ignore
-// eslint-disable-next-line
-export function onSystemMessage(cmd: string, param: any): void {
+export function onSystemMessage(cmd: string, param: unknown): void {
   switch (cmd) {
     case serverCommands.log:
-      onLog(param);
+      onLog(param as LogMessage);
       break;
     case serverCommands.searchResults:
-      onSearchResults(param);
+      onSearchResults(param as SearchResult[]);
       break;
     default:
       logWarn("unhandled system message [" + cmd + "]", param);

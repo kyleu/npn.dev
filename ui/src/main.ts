@@ -5,7 +5,6 @@ import {router} from "./state/router";
 import UIkit from "uikit";
 import "@/assets/styles/styles.scss";
 
-// @ts-ignore
 import {messageHandler} from "@/state/handler";
 
 import Vue from "vue";

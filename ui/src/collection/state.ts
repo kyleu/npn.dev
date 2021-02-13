@@ -8,7 +8,7 @@ import {pendingRequestsRef, setPendingRequests} from "@/socket/pending";
 import {globalRouter} from "@/util/vutils";
 import {requestDetailsRef} from "@/collection/requestDetails";
 
-interface CollectionData<T> {
+export interface CollectionData<T> {
   readonly key: string;
   requests: T[];
 }
@@ -29,9 +29,14 @@ export function onCollectionNotFound(key: string): void {
   globalRouter().push({name: "CollectionIndex"});
 }
 
-export function onCollectionAdded(active: string, colls: CollectionCount[]): void {
-  collectionsRef.value = colls;
-  globalRouter().push({name: "CollectionDetail", params: {coll: active}});
+export interface CollectionAddedParams {
+  active: string;
+  collections: CollectionCount[];
+}
+
+export function onCollectionAdded(p: CollectionAddedParams): void {
+  collectionsRef.value = p.collections;
+  globalRouter().push({name: "CollectionDetail", params: {coll: p.active}});
 }
 
 export function onCollectionUpdated(coll: Collection): void {
@@ -64,12 +69,12 @@ export function getCollectionRequestSummaries(key: string): Summary[] | undefine
   return undefined;
 }
 
-export function setCollectionRequestSummaries(key: string, reqs: Summary[]): void {
+export function setCollectionRequestSummaries(p: CollectionData<Summary>): void {
   for (const c of collectionSummariesRef.value) {
-    if (c.key === key) {
-      c.requests = reqs;
+    if (c.key === p.key) {
+      c.requests = p.requests;
       return;
     }
   }
-  collectionSummariesRef.value.push({key: key, requests: reqs});
+  collectionSummariesRef.value.push(p);
 }

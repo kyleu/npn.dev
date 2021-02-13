@@ -15,9 +15,7 @@ function debug(lpo: Session, rpo: Session, ret: Diff[]): void {
 
 export function diffSessions(l: Session | undefined, r: Session | undefined): Diff[] {
   const ret: Diff[] = [];
-  // @ts-ignore
-  // eslint-disable-next-line
-  const p = (k: string, lv: any, rv: any): void => ret.push({k: k, l: lv, r: rv});
+  const p = (k: string, lv: unknown, rv: unknown): number => ret.push({k: k, l: lv, r: rv});
 
   if ((!l || !r)) {
     checkNull("request", l, r, p);

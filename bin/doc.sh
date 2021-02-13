@@ -6,4 +6,4 @@ set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 
-godoc -http=:10102
+godoc -http=:10103

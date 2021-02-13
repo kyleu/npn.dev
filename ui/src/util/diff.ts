@@ -1,16 +1,10 @@
 export interface Diff {
   readonly k: string;
-  // @ts-ignore
-  // eslint-disable-next-line
-  readonly l: any;
-  // @ts-ignore
-  // eslint-disable-next-line
-  readonly r: any;
+  readonly l: unknown;
+  readonly r: unknown;
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-export function comp(k: string, lv: any, rv: any, p: (k: string, lv: any, rv: any) => void): boolean {
+export function comp(k: string, lv: unknown, rv: unknown, p: (k: string, lv: unknown, rv: unknown) => void): boolean {
   if (lv === undefined || lv === null) {
     lv = "";
   }
@@ -18,20 +12,18 @@ export function comp(k: string, lv: any, rv: any, p: (k: string, lv: any, rv: an
     rv = "";
   }
   if (typeof lv === "object" && typeof rv === "object") {
-    for (const f in lv) {
-      // @ts-ignore
-      // eslint-disable-next-line
-      if (lv.hasOwnProperty(f)) {
-        if (comp(k + "." + f, lv[f], rv[f], p)) {
+    const lvo = lv as { [name: string]: unknown };
+    const rvo = rv as { [name: string]: unknown };
+    for (const f in lvo) {
+      if (Object.prototype.hasOwnProperty.call(lvo, f)) {
+        if (comp(k + "." + f, lvo[f], rvo[f], p)) {
           return true;
         }
       }
     }
     for (const f in rv) {
-      // @ts-ignore
-      // eslint-disable-next-line
-      if (rv.hasOwnProperty(f) && !lv.hasOwnProperty(f)) {
-        if (comp(k + "." + f, lv[f], rv[f], p)) {
+      if (Object.prototype.hasOwnProperty.call(rv, f) && !Object.prototype.hasOwnProperty.call(lv, f)) {
+        if (comp(k + "." + f, lvo[f], rvo[f], p)) {
           return true;
         }
       }
@@ -45,9 +37,7 @@ export function comp(k: string, lv: any, rv: any, p: (k: string, lv: any, rv: an
   return false;
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-export function compArray(k: string, lv: any[] | undefined, rv: any[] | undefined, p: (k: string, lv: any, rv: any) => void): boolean {
+export function compArray(k: string, lv: unknown[] | undefined, rv: unknown[] | undefined, p: (k: string, lv: unknown, rv: unknown) => void): boolean {
   if (lv === undefined || lv === null) {
     lv = [];
   }
@@ -66,9 +56,7 @@ export function compArray(k: string, lv: any[] | undefined, rv: any[] | undefine
   return false;
 }
 
-// @ts-ignore
-// eslint-disable-next-line
-export function checkNull(k: string, lv: any, rv: any, p: (k: string, lv: any, rv: any) => void): boolean {
+export function checkNull(k: string, lv: unknown, rv: unknown, p: (k: string, lv: unknown, rv: unknown) => void): boolean {
   if (!lv) {
     if (rv) {
       p(k, null, "(defined)");

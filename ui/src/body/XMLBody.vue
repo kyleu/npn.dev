@@ -8,18 +8,13 @@
 <script lang="ts">
 import {Component, Prop, Vue} from "vue-property-decorator";
 import {XMLConfig} from "@/body/model";
-
-// @ts-ignore
-// eslint-disable-next-line
-declare const CodeMirror: any;
+import {Editor, editorFor} from "@/util/editor";
 
 @Component
 export default class XMLBody extends Vue {
   @Prop() config!: XMLConfig
 
-  // @ts-ignore
-  // eslint-disable-next-line
-  editor: any
+  editor?: Editor
 
   refresh(): void {
     const e = this.editor;
@@ -39,12 +34,7 @@ export default class XMLBody extends Vue {
 
   mounted(): void {
     const el = this.$refs["content"] as HTMLElement;
-    this.editor = CodeMirror(el, {
-      lineNumbers: true,
-      mode: "htmlmixed",
-      value: this.config.content,
-      readOnly: "nocursor"
-    });
+    this.editor = editorFor(el, true, "htmlmixed", this.config.content, true);
     this.editor.setSize('100%', '100%');
   }
 }

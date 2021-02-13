@@ -25,7 +25,6 @@ export function debugTheme(): void {
     }
     if (hexes.length === 5) {
       const content = `const ${key} = { key: "${key}", mode: "light", navB: "${hexes[1]}", navF: "${hexes[4]}", menuB: "${hexes[2]}", menuF: "${hexes[3]}", menuL: "${hexes[4]}", bodyB: "${hexes[0]}", bodyL: "${hexes[4]}" }`;
-      // @ts-ignore
       setTimeout(() => {
         if (socketRef.value) {
           socketRef.value.send({channel: systemService.key, cmd: clientCommands.testbed, param: {t: "theme", k: key, v: content}});

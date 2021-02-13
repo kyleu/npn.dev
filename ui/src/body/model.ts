@@ -35,9 +35,7 @@ export interface XMLConfig {
 }
 
 export interface JSONConfig {
-  // @ts-ignore
-  // eslint-disable-next-line
-  msg: any;
+  msg: unknown;
 }
 
 export interface ImageConfig {

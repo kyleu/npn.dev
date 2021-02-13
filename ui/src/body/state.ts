@@ -44,7 +44,7 @@ export function toBodyConfig(b: RBody | undefined): BodyConfig {
       return { type: b.type, formContent: [], htmlContent: "", xmlContent: (b.config as XMLConfig).content, jsonContent: "" };
     case "json":
       if(typeof (b.config as JSONConfig).msg === "string") {
-        return { type: b.type, formContent: [], htmlContent: "", xmlContent: "", jsonContent: (b.config as JSONConfig).msg };
+        return { type: b.type, formContent: [], htmlContent: "", xmlContent: "", jsonContent: (b.config as JSONConfig).msg as string };
       }
       return { type: b.type, formContent: [], htmlContent: "", xmlContent: "", jsonContent: jsonStr((b.config as JSONConfig).msg) };
     default:

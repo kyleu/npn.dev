@@ -7,4 +7,4 @@ set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $dir/..
 
-yarn serve
+yarn serve --port 10102

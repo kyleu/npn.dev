@@ -1,6 +1,4 @@
-// @ts-ignore
-// eslint-disable-next-line
-export function jsonStr(x: any): string {
+export function jsonStr(x: unknown): string {
   if (x === undefined) {
     return "null";
   }
