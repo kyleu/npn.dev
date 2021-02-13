@@ -25,10 +25,7 @@ func (s Service) Run(p *Params, userID *uuid.UUID, role string) (Results, error)
 
 	ret := make(Results, 0)
 
-	matchedColls, err := searchCollections(colls, p.Q)
-	if err != nil {
-		return nil, err
-	}
+	matchedColls := searchCollections(colls, p.Q)
 	ret = append(ret, matchedColls...)
 
 	matchedReqs, err := searchRequests(userID, colls, p.Q, s.req)
@@ -40,7 +37,7 @@ func (s Service) Run(p *Params, userID *uuid.UUID, role string) (Results, error)
 	return ret, nil
 }
 
-func searchCollections(colls collection.Collections, q string) (Results, error) {
+func searchCollections(colls collection.Collections, q string) Results {
 	ret := make(Results, 0, len(colls))
 	for _, coll := range colls {
 		matched, prelude, loc, postlude := coll.Matches(q)
@@ -54,7 +51,7 @@ func searchCollections(colls collection.Collections, q string) (Results, error) 
 			})
 		}
 	}
-	return ret, nil
+	return ret
 }
 
 func searchRequests(userID *uuid.UUID, colls collection.Collections, q string, reqSvc *request.Service) (Results, error) {

@@ -1,8 +1,9 @@
 package controllers
 
 import (
-	"github.com/kyleu/libnpn/npncore"
 	"net/http"
+
+	"github.com/kyleu/libnpn/npncore"
 
 	"github.com/gorilla/mux"
 	"github.com/kyleu/libnpn/npncontroller"

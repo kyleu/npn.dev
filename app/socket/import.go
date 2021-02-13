@@ -3,7 +3,6 @@ package socket
 import (
 	"encoding/json"
 
-
 	"github.com/kyleu/libnpn/npnconnection"
 	"github.com/kyleu/libnpn/npncore"
 
@@ -27,7 +26,7 @@ func getImport(s *npnconnection.Service, c *npnconnection.Connection, param json
 	}
 	cfg, results, err := ctx(s).Import.Load(key)
 	if err != nil {
-		return errors.Wrap(err, "can't load import [" + key + "]")
+		return errors.Wrap(err, "can't load import ["+key+"]")
 	}
 	ret := map[string]interface{}{"key": key, "cfg": cfg, "results": results}
 	msg := npnconnection.NewMessage(npncore.KeyImport, ServerMessageImportResult, ret)

@@ -65,8 +65,15 @@ func (p *Prototype) GetCookies() header.Cookies {
 	if cookieHeader == nil {
 		return header.Cookies{}
 	}
-	// TODO parse
-	return header.Cookies{}
+	h := http.Header{}
+	h.Add(cookieHeader.Key, cookieHeader.Value)
+	r := http.Request{Header: h}
+	cooks := r.Cookies()
+	ret := header.Cookies{}
+	for _, c := range cooks {
+		ret = append(ret, header.NewCookie(c))
+	}
+	return ret
 }
 
 func (p *Prototype) SetCookies(cookies header.Cookies) {
