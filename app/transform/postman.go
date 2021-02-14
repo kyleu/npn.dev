@@ -2,6 +2,7 @@ package transform
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"strings"
 
 	"github.com/kyleu/libnpn/npncore"
@@ -9,7 +10,6 @@ import (
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
 	"github.com/rbretecher/go-postman-collection"
-	"logur.dev/logur"
 )
 
 type Postman struct {
@@ -29,13 +29,13 @@ func (x *Postman) Description() string {
 	return "TODO: postman"
 }
 
-func (x *Postman) TransformRequest(proto *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error) {
+func (x *Postman) TransformRequest(proto *request.Prototype, sess *session.Session, logger *logrus.Logger) (*Result, error) {
 	pReq := toPostmanRequest(proto)
 	out := npncore.ToJSON(pReq, logger)
 	return &Result{Out: out}, nil
 }
 
-func (x *Postman) TransformCollection(c *collection.FullCollection, logger logur.Logger) (*Result, error) {
+func (x *Postman) TransformCollection(c *collection.FullCollection, logger *logrus.Logger) (*Result, error) {
 	pColl := postman.CreateCollection(c.Coll.TitleWithFallback(), c.Coll.Description)
 	for _, r := range c.Requests {
 		pColl.AddItem(postman.CreateItem(postman.Item{

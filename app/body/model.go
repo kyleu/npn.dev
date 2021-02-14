@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
 )
 
 type Config interface {
@@ -17,7 +17,7 @@ type Config interface {
 	Bytes() []byte
 	MimeType() string
 	String() string
-	Merge(data npncore.Data, logger logur.Logger) Config
+	Merge(data npncore.Data, logger *logrus.Logger) Config
 	Clone() *Body
 }
 
@@ -133,7 +133,7 @@ func (b *Body) ContentLength() int64 {
 	return b.Config.ContentLength()
 }
 
-func (b *Body) Merge(data npncore.Data, logger logur.Logger) *Body {
+func (b *Body) Merge(data npncore.Data, logger *logrus.Logger) *Body {
 	if b == nil || len(b.Type) == 0 {
 		return nil
 	}

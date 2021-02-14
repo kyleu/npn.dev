@@ -21,7 +21,7 @@ replace github.com/kyleu/libnpn/npnweb => ./libnpn/npnweb
 require (
 	emperror.dev/emperror v0.33.0
 	emperror.dev/errors v0.8.0
-	emperror.dev/handler/logur v0.4.0
+	emperror.dev/handler/logrus v0.3.1
 	github.com/andybalholm/brotli v1.0.1
 	github.com/getkin/kin-openapi v0.33.0
 	github.com/gofrs/uuid v3.3.0+incompatible
@@ -39,7 +39,7 @@ require (
 	github.com/rbretecher/go-postman-collection v0.3.0
 	github.com/sagikazarmark/ocmux v0.2.0
 	github.com/shiyanhui/hero v0.0.2
+	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v1.0.0
 	golang.org/x/text v0.3.3
-	logur.dev/logur v0.17.0
 )

@@ -1,9 +1,8 @@
 package request
 
 import (
+	"github.com/sirupsen/logrus"
 	"strings"
-
-	"logur.dev/logur"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/libnpn/npncore"
@@ -55,7 +54,7 @@ func (r *Request) Options() *Options {
 	return r.Prototype.Options
 }
 
-func (r *Request) Merge(data npncore.Data, logger logur.Logger) *Request {
+func (r *Request) Merge(data npncore.Data, logger *logrus.Logger) *Request {
 	return &Request{
 		Key:         r.Key,
 		Title:       npncore.MergeLog("title", r.Title, data, logger),

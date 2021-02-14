@@ -2,7 +2,7 @@ package body
 
 import (
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 const KeyXML = "xml"
@@ -37,7 +37,7 @@ func (h *XML) String() string {
 	return h.Content
 }
 
-func (h *XML) Merge(data npncore.Data, logger logur.Logger) Config {
+func (h *XML) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	return &XML{
 		Content: npncore.MergeLog("body.xml.content", h.Content, data, logger),
 	}

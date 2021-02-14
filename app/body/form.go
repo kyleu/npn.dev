@@ -1,11 +1,11 @@
 package body
 
 import (
+	"github.com/sirupsen/logrus"
 	"net/url"
 	"strings"
 
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
 )
 
 const KeyForm = "form"
@@ -71,7 +71,7 @@ func (f *Form) String() string {
 	return f.str
 }
 
-func (f *Form) Merge(data npncore.Data, logger logur.Logger) Config {
+func (f *Form) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	d := make(FormData, 0, len(f.Data))
 	for _, dt := range f.Data {
 		d = append(d, &FormEntry{

@@ -1,5 +1,6 @@
 <template>
   <div class="nav-list">
+    <div v-if="(!requests) || (requests.length === 0)" class="nav-link">No requests</div>
     <RequestListItem v-for="r in requests" :key="r.key" :req="r" />
   </div>
 </template>

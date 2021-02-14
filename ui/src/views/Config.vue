@@ -20,14 +20,12 @@
 import { Component, Vue } from "vue-property-decorator";
 import { setBC } from "@/util/vutils";
 import Icon from "@/util/Icon.vue";
+import {logToggle} from "@/util/log";
 
 @Component({ components: { Icon } })
 export default class Config extends Vue {
   toggleLog(): void {
-    const el = document.getElementById("log-container");
-    if (el) {
-      el.style.display = el.style.display === "block" ? "none" : "block";
-    }
+    logToggle();
   }
 
   mounted(): void {

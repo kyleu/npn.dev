@@ -114,3 +114,10 @@ export function logWarn(msg: string, ...params: unknown[]): void {
 export function logError(msg: string, ...params: unknown[]): void {
   log("error", msg, ...params);
 }
+
+export function logToggle(): void {
+  const el = document.getElementById("log-container");
+  if (el) {
+    el.style.display = el.style.display === "block" ? "none" : "block";
+  }
+}

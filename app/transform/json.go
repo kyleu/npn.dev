@@ -5,7 +5,7 @@ import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 type JSON struct {
@@ -25,12 +25,12 @@ func (x *JSON) Description() string {
 	return "TODO: json"
 }
 
-func (x *JSON) TransformRequest(proto *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error) {
+func (x *JSON) TransformRequest(proto *request.Prototype, sess *session.Session, logger *logrus.Logger) (*Result, error) {
 	out := npncore.ToJSON(proto, nil)
 	return &Result{Out: out}, nil
 }
 
-func (x *JSON) TransformCollection(c *collection.FullCollection, logger logur.Logger) (*Result, error) {
+func (x *JSON) TransformCollection(c *collection.FullCollection, logger *logrus.Logger) (*Result, error) {
 	src := map[string]interface{}{"coll": c.Coll, "requests": c.Requests}
 	out := npncore.ToJSON(src, nil)
 	return &Result{Out: out}, nil

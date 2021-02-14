@@ -1,5 +1,6 @@
 <template>
   <div class="nav-list">
+    <div v-if="(!collections) || (collections.length === 0)" class="nav-link">No collections</div>
     <CollectionListItem v-for="cc in collections" :key="cc.coll.key" :cc="cc" />
   </div>
 </template>

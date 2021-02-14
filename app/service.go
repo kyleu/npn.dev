@@ -15,7 +15,7 @@ import (
 	"github.com/kyleu/npn/app/search"
 	"github.com/kyleu/npn/app/session"
 	"github.com/kyleu/npn/app/socket"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 type Service struct {
@@ -25,7 +25,7 @@ type Service struct {
 	files      npncore.FileLoader
 	user       user.Service
 	auth       auth.Service
-	logger     logur.Logger
+	logger     *logrus.Logger
 	Session    *session.Service
 	Collection *collection.Service
 	Import     *imprt.Service
@@ -35,7 +35,7 @@ type Service struct {
 
 var _ npnweb.AppInfo = (*Service)(nil)
 
-func NewService(debug bool, public bool, multiuser bool, secret string, files npncore.FileLoader, redir string, logger logur.Logger) *Service {
+func NewService(debug bool, public bool, multiuser bool, secret string, files npncore.FileLoader, redir string, logger *logrus.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
 	sessSvc := session.NewService(multiuser, files, logger)
 	collSvc := collection.NewService(multiuser, files, logger)
@@ -77,7 +77,7 @@ func (s *Service) Auth() auth.Service {
 	return s.auth
 }
 
-func (s *Service) Logger() logur.Logger {
+func (s *Service) Logger() *logrus.Logger {
 	return s.logger
 }
 

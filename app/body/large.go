@@ -2,7 +2,7 @@ package body
 
 import (
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 const KeyLarge = "large"
@@ -35,7 +35,7 @@ func (l *Large) String() string {
 	return l.Filename
 }
 
-func (l *Large) Merge(data npncore.Data, logger logur.Logger) Config {
+func (l *Large) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	return &Large{
 		Filename:    npncore.MergeLog("body.large.filename", l.Filename, data, logger),
 		ContentType: npncore.MergeLog("body.large.content.type", l.ContentType, data, logger),

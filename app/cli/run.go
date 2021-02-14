@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
 
@@ -10,12 +11,11 @@ import (
 
 	"emperror.dev/emperror"
 	"emperror.dev/errors"
-	"emperror.dev/handler/logur"
+	logrushandler "emperror.dev/handler/logrus"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnweb"
 	"github.com/kyleu/npn/app"
 	"github.com/kyleu/npn/app/controllers"
-	log "logur.dev/logur"
 )
 
 // The global version for this application. Should probably be pulled from git
@@ -62,11 +62,12 @@ func InitApp(platform string, dir string) npnweb.AppInfo {
 
 	setIcon()
 
-	logger := npncore.InitLogging(verbose)
-	logger = log.WithFields(logger, map[string]interface{}{"debug": verbose, "version": Version})
-
-	errorHandler := logur.New(logger)
-	defer emperror.HandleRecover(errorHandler)
+	level := logrus.InfoLevel
+	if verbose {
+		level = logrus.DebugLevel
+	}
+	logger := npncore.NewLogger(level, false)
+	defer emperror.HandleRecover(logrushandler.New(logger))
 
 	dir = strings.TrimSpace(dir)
 	if len(dir) == 0 {

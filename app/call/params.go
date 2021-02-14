@@ -1,13 +1,13 @@
 package call
 
 import (
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"time"
 
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"logur.dev/logur"
 )
 
 type RequestStarted struct {
@@ -41,7 +41,7 @@ type Params struct {
 	Proto       *request.Prototype
 	Sess        *session.Session
 	SessSvc     *session.Service
-	Logger      logur.Logger
+	Logger      *logrus.Logger
 	OnStarted   func(started *RequestStarted)
 	OnCompleted func(completed *RequestCompleted)
 }

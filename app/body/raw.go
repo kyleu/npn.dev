@@ -2,10 +2,10 @@ package body
 
 import (
 	"encoding/base64"
+	"github.com/sirupsen/logrus"
 	"unicode/utf8"
 
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
 )
 
 const KeyRaw = "raw"
@@ -50,7 +50,7 @@ func (r *Raw) String() string {
 	return r.Content
 }
 
-func (r *Raw) Merge(data npncore.Data, logger logur.Logger) Config {
+func (r *Raw) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	return &Raw{
 		Type:    npncore.MergeLog("body.raw.type", r.Type, data, logger),
 		Content: npncore.MergeLog("body.raw.content", r.Content, data, logger),

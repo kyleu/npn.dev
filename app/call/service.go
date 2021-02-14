@@ -2,6 +2,7 @@ package call
 
 import (
 	"context"
+	"github.com/sirupsen/logrus"
 	"net"
 	"net/http"
 	"time"
@@ -12,16 +13,14 @@ import (
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"logur.dev/logur"
 )
 
 type Service struct {
-	logger  logur.Logger
+	logger  *logrus.Logger
 	sessSvc *session.Service
 }
 
-func NewService(sessSvc *session.Service, logger logur.Logger) *Service {
-	logger = logur.WithFields(logger, map[string]interface{}{npncore.KeyService: "call"})
+func NewService(sessSvc *session.Service, logger *logrus.Logger) *Service {
 	return &Service{sessSvc: sessSvc, logger: logger}
 }
 

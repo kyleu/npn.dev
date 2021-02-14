@@ -5,7 +5,7 @@ import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 type Result struct {
@@ -21,7 +21,7 @@ type Transformer interface {
 
 type RequestTransformer interface {
 	Transformer
-	TransformRequest(proto *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error)
+	TransformRequest(proto *request.Prototype, sess *session.Session, logger *logrus.Logger) (*Result, error)
 }
 
 type RequestTransformers []RequestTransformer
@@ -39,7 +39,7 @@ var AllRequestTransformers = RequestTransformers{txCURL, txHTTP, txJSON, txOpenA
 
 type CollectionTransformer interface {
 	Transformer
-	TransformCollection(x *collection.FullCollection, logger logur.Logger) (*Result, error)
+	TransformCollection(x *collection.FullCollection, logger *logrus.Logger) (*Result, error)
 }
 
 type CollectionTransformers []CollectionTransformer
@@ -55,6 +55,6 @@ func (t CollectionTransformers) Get(s string) CollectionTransformer {
 
 var AllCollectionTransformers = CollectionTransformers{txJSON, txOpenAPI, txPostman}
 
-func Session(sess *session.Session, logger logur.Logger) (*Result, error) {
+func Session(sess *session.Session, logger *logrus.Logger) (*Result, error) {
 	return &Result{Key: sess.Key, Out: npncore.ToJSON(sess, logger)}, nil
 }

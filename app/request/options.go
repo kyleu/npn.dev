@@ -2,7 +2,7 @@ package request
 
 import (
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 type Options struct {
@@ -52,7 +52,7 @@ func (o *Options) Empty() bool {
 	return true
 }
 
-func (o *Options) Merge(data npncore.Data, logger logur.Logger) *Options {
+func (o *Options) Merge(data npncore.Data, logger *logrus.Logger) *Options {
 	if o == nil {
 		return nil
 	}

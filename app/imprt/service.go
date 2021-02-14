@@ -1,21 +1,21 @@
 package imprt
 
 import (
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"mime/multipart"
 	"path"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
 )
 
 type Service struct {
 	files  npncore.FileLoader
-	logger logur.Logger
+	logger *logrus.Logger
 }
 
-func NewService(files npncore.FileLoader, logger logur.Logger) *Service {
+func NewService(files npncore.FileLoader, logger *logrus.Logger) *Service {
 	return &Service{files: files, logger: logger}
 }
 

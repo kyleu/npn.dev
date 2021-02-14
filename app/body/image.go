@@ -2,9 +2,9 @@ package body
 
 import (
 	"encoding/base64"
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
 )
 
 const KeyImage = "image"
@@ -42,7 +42,7 @@ func (r *Image) String() string {
 	return r.Content
 }
 
-func (r *Image) Merge(data npncore.Data, logger logur.Logger) Config {
+func (r *Image) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	return &Image{
 		Type:    npncore.MergeLog("body.image.type", r.Type, data, logger),
 		Content: npncore.MergeLog("body.image.content", r.Content, data, logger),

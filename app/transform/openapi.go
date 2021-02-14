@@ -4,7 +4,7 @@ import (
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 type OpenAPI struct {
@@ -29,12 +29,12 @@ func (x *OpenAPI) ApplyToMultiple() bool {
 	return true
 }
 
-func (x *OpenAPI) TransformRequest(p *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error) {
+func (x *OpenAPI) TransformRequest(p *request.Prototype, sess *session.Session, logger *logrus.Logger) (*Result, error) {
 	out := "OpenAPI"
 	return &Result{Out: out}, nil
 }
 
-func (x *OpenAPI) TransformCollection(f *collection.FullCollection, logger logur.Logger) (*Result, error) {
+func (x *OpenAPI) TransformCollection(f *collection.FullCollection, logger *logrus.Logger) (*Result, error) {
 	out := "OpenAPI: TODO!"
 	return &Result{Out: out}, nil
 }

@@ -2,7 +2,7 @@ package body
 
 import (
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 const KeyJSON = "json"
@@ -50,7 +50,7 @@ func (j *JSON) String() string {
 	return j.str
 }
 
-func (j *JSON) Merge(data npncore.Data, logger logur.Logger) Config {
+func (j *JSON) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	m := j.Msg
 	ms := npncore.ToJSONCompact(j.Msg, nil)
 	if len(ms) > 0 {

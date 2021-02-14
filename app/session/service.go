@@ -2,6 +2,7 @@ package session
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"os"
 	"path"
 
@@ -9,16 +10,15 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/libnpn/npnuser"
-	"logur.dev/logur"
 )
 
 type Service struct {
 	multiuser bool
 	files     npncore.FileLoader
-	logger    logur.Logger
+	logger    *logrus.Logger
 }
 
-func NewService(multiuser bool, f npncore.FileLoader, logger logur.Logger) *Service {
+func NewService(multiuser bool, f npncore.FileLoader, logger *logrus.Logger) *Service {
 	return &Service{
 		multiuser: multiuser,
 		files:     f,

@@ -3,11 +3,10 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
-
-	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 
 	"emperror.dev/errors"
+	"github.com/kyleu/libnpn/npncore"
 )
 
 type Config interface {
@@ -67,7 +66,7 @@ func (a *Auth) IsBasic() bool {
 	return a != nil && a.Type == KeyBasic
 }
 
-func (a *Auth) Merge(data npncore.Data, logger logur.Logger) *Auth {
+func (a *Auth) Merge(data npncore.Data, logger *logrus.Logger) *Auth {
 	if a == nil {
 		return nil
 	}

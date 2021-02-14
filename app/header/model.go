@@ -1,12 +1,12 @@
 package header
 
 import (
+	"github.com/sirupsen/logrus"
 	"net/http"
 	"sort"
 	"strings"
 
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
 )
 
 type Header struct {
@@ -15,7 +15,7 @@ type Header struct {
 	Description string `json:"desc,omitempty"`
 }
 
-func (h Header) Merge(data npncore.Data, logger logur.Logger) *Header {
+func (h Header) Merge(data npncore.Data, logger *logrus.Logger) *Header {
 	return &Header{
 		Key:         npncore.MergeLog("header."+h.Key+".key", h.Key, data, logger),
 		Value:       npncore.MergeLog("header."+h.Key+".value", h.Value, data, logger),
@@ -86,7 +86,7 @@ func (h Headers) Set(k string, v string) Headers {
 	return h
 }
 
-func (h Headers) Merge(data npncore.Data, logger logur.Logger) Headers {
+func (h Headers) Merge(data npncore.Data, logger *logrus.Logger) Headers {
 	ret := make(Headers, 0, len(h))
 	for _, x := range h {
 		ret = append(ret, x.Merge(data, logger))

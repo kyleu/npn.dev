@@ -2,7 +2,7 @@ package body
 
 import (
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 const KeyError = "error"
@@ -33,7 +33,7 @@ func (e *Error) String() string {
 	return e.Message
 }
 
-func (e *Error) Merge(data npncore.Data, logger logur.Logger) Config {
+func (e *Error) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	return &Error{Message: npncore.MergeLog("body.error.message", e.Message, data, logger)}
 }
 

@@ -2,12 +2,11 @@ package transform
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"strings"
 
-	"github.com/kyleu/npn/app/session"
-	"logur.dev/logur"
-
 	"github.com/kyleu/npn/app/request"
+	"github.com/kyleu/npn/app/session"
 )
 
 type HTTP struct {
@@ -31,7 +30,7 @@ func (x *HTTP) ApplyToMultiple() bool {
 	return false
 }
 
-func (x *HTTP) TransformRequest(p *request.Prototype, sess *session.Session, logger logur.Logger) (*Result, error) {
+func (x *HTTP) TransformRequest(p *request.Prototype, sess *session.Session, logger *logrus.Logger) (*Result, error) {
 	out := []string{}
 
 	var app = func(s string) {

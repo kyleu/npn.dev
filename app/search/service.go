@@ -4,16 +4,16 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 type Service struct {
 	coll   *collection.Service
 	req    *request.Service
-	logger logur.Logger
+	logger *logrus.Logger
 }
 
-func NewService(coll *collection.Service, req *request.Service, logger logur.Logger) *Service {
+func NewService(coll *collection.Service, req *request.Service, logger *logrus.Logger) *Service {
 	return &Service{coll: coll, req: req, logger: logger}
 }
 

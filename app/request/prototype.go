@@ -2,11 +2,10 @@ package request
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"net/http"
 
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
-
 	"github.com/kyleu/npn/app/session"
 
 	"github.com/kyleu/libnpn/npncontroller"
@@ -83,7 +82,7 @@ func (p *Prototype) SetCookies(cookies header.Cookies) {
 	}
 }
 
-func (p *Prototype) Merge(data npncore.Data, logger logur.Logger) *Prototype {
+func (p *Prototype) Merge(data npncore.Data, logger *logrus.Logger) *Prototype {
 	meth := p.Method
 	if npncore.MergeNeeded(meth.Key) {
 		meth = Method{Key: npncore.MergeLog("proto.method", meth.Key, data, logger)}

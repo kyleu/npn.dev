@@ -2,7 +2,7 @@ package body
 
 import (
 	"github.com/kyleu/libnpn/npncore"
-	"logur.dev/logur"
+	"github.com/sirupsen/logrus"
 )
 
 const KeyHTML = "html"
@@ -37,7 +37,7 @@ func (h *HTML) String() string {
 	return h.Content
 }
 
-func (h *HTML) Merge(data npncore.Data, logger logur.Logger) Config {
+func (h *HTML) Merge(data npncore.Data, logger *logrus.Logger) Config {
 	return &HTML{
 		Content: npncore.MergeLog("body.html.content", h.Content, data, logger),
 	}

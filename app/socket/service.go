@@ -2,6 +2,7 @@ package socket
 
 import (
 	"encoding/json"
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/npn/app/imprt"
 
@@ -18,7 +19,6 @@ import (
 	"github.com/kyleu/libnpn/npnconnection"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/collection"
-	"logur.dev/logur"
 )
 
 type Dependencies struct {
@@ -31,7 +31,7 @@ type Dependencies struct {
 	Import     *imprt.Service
 }
 
-func NewService(deps *Dependencies, logger logur.Logger) *npnconnection.Service {
+func NewService(deps *Dependencies, logger *logrus.Logger) *npnconnection.Service {
 	return npnconnection.NewService(logger, onOpen, handler, onClose, deps)
 }
 
