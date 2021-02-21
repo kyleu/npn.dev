@@ -33,6 +33,7 @@ pkg () {
 
 # macOS
 pkg darwin amd64 npn macos
+pkg darwin arm64 npn macos
 
 echo "macOS app..."
 cd ../darwin

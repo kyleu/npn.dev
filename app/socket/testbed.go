@@ -81,7 +81,6 @@ func onTheme(k string, v json.RawMessage) error {
 
 	println(fmt.Sprintf("saving themes with [%v] bytes", len(newContent)))
 
-	// println(newContent)
 	err = ioutil.WriteFile(fn, []byte(newContent), 0)
 
 	return err

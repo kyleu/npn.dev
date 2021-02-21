@@ -16,8 +16,8 @@ type Summaries []*Summary
 type Session struct {
 	Key       string         `json:"key"`
 	Title     string         `json:"title,omitempty"`
-	Cookies   header.Cookies `json:"cookies"`
-	Variables Variables      `json:"variables"`
+	Cookies   header.Cookies `json:"cookies,omitempty"`
+	Variables Variables      `json:"variables,omitempty"`
 }
 
 var defaultSession = &Session{

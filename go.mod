@@ -1,6 +1,6 @@
 module github.com/kyleu/npn
 
-go 1.15
+go 1.16
 
 replace github.com/kyleu/libnpn/npnconnection => ./libnpn/npnconnection
 
@@ -24,6 +24,7 @@ require (
 	emperror.dev/handler/logrus v0.3.1
 	github.com/andybalholm/brotli v1.0.1
 	github.com/getkin/kin-openapi v0.33.0
+	github.com/ghodss/yaml v1.0.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/websocket v1.4.2
@@ -41,5 +42,7 @@ require (
 	github.com/shiyanhui/hero v0.0.2
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v1.0.0
+	golang.org/x/net v0.0.0-20201021035429-f5854403a974 // indirect
+	golang.org/x/sys v0.0.0-20210217105451-b926d437f341 // indirect
 	golang.org/x/text v0.3.3
 )

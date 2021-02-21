@@ -5,14 +5,27 @@ import (
 
 	"emperror.dev/errors"
 
+	"github.com/getkin/kin-openapi/openapi2"
+	"github.com/getkin/kin-openapi/openapi2conv"
 	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/ghodss/yaml"
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/collection"
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"
 )
 
-func OpenAPIImport(data []byte) (*openapi3.Swagger, error) {
+func OpenAPI2Import(data []byte) (*openapi3.Swagger, error) {
+	x := &openapi2.Swagger{}
+	err := yaml.Unmarshal(data, x)
+	if err != nil {
+		return nil, err
+	}
+	swag, err := openapi2conv.ToV3Swagger(x)
+	return swag, err
+}
+
+func OpenAPI3Import(data []byte) (*openapi3.Swagger, error) {
 	swag, err := openapi3.NewSwaggerLoader().LoadSwaggerFromData(data)
 	return swag, err
 }
