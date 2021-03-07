@@ -100,7 +100,7 @@ func setIcon() {
 
 	if public {
 		npnweb.NavbarContent = func(color string) string {
-			return `<li><a class="nav-f" href="/">About</a></li><li><a class="nav-f" href="/download"><div class="download-link">Download</div></a></li>`
+			return `<li><a class="nav-f" href="/">About</a></li><li><a class="nav-f" href="https://github.com/kyleu/npn">Source Code</a></li><li><a class="nav-f" href="/download"><div class="download-link">Download</div></a></li>`
 		}
 	}
 }

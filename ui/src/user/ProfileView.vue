@@ -25,11 +25,6 @@
           <button v-style-button class="uk-button uk-button-default ml" @click="resetSettings()">Reset</button>
         </div>
       </div>
-
-      <div class="uk-card uk-card-body uk-card-default mt">
-        <h3 class="uk-card-title">Gallery</h3>
-        <Mockup v-for="t in themes" :key="t.key" :theme="t" />
-      </div>
     </div>
   </div>
 </template>
@@ -37,8 +32,7 @@
 <script lang="ts">
 import {Component, Vue} from "vue-property-decorator";
 import {setBC} from "@/util/vutils";
-import {Profile, profileRef, tempThemeRef, UserSettings} from "@/user/profile";
-import Mockup from "@/user/Mockup.vue";
+import {Profile, profileRef, UserSettings} from "@/user/profile";
 import {jsonClone} from "@/util/json";
 import {allThemes, ThemeColors} from "@/user/themes";
 import Theme from "@/user/Theme.vue";
@@ -46,16 +40,12 @@ import {socketRef} from "@/socket/socket";
 import {systemService} from "@/util/services";
 import {clientCommands} from "@/util/command";
 
-@Component({ components: {Theme, Mockup } })
+@Component({ components: { Theme } })
 export default class ProfileView extends Vue {
   original: Profile | undefined = jsonClone(profileRef.value)
 
   get themes(): ThemeColors[] {
     return allThemes;
-  }
-
-  get tempTheme(): string {
-    return tempThemeRef.value;
   }
 
   get profile(): Profile | undefined {

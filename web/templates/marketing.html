@@ -4,16 +4,29 @@
   .nav-f { color: <%= ctx.Profile.Settings.NavF %> !important; }
   .body-b { background-color: <%= ctx.Profile.Settings.BodyB %> !important; }
   .body-l { color: <%= ctx.Profile.Settings.BodyL %> !important; }
+  .body-i { stroke: <%= ctx.Profile.Settings.BodyL %> !important; fill: <%= ctx.Profile.Settings.BodyL %> !important; stroke-width: 1px; }
 </style>
 <% npntemplate.Navbar(ctx, buffer) %>
 <div data-uk-height-viewport="expand: true">
   <div class="uk-section uk-section-small">
     <div class="uk-container uk-container-expand uk-position-relative">
       <div class="uk-card uk-card-body uk-card-default">
-        <h3 class="uk-card-title"><a class="body-l" href="https://npn.dev">npn</a> helps you explore and test HTTP APIs, with a focus on speed and correctness</h3>
-        <p>Click "Get Started" below to use a demo installation of npn, or <a class="body-l" href="/download">download</a> the application and use it locally.</p>
-        <button class="mt uk-button uk-button-default" onclick="init(<%=v ctx.App.Debug() %>, true)">Get Started</button>
-        <a class="mt ml uk-button uk-button-default" href="/download">Download</a>
+        <h3 class="uk-card-title"><a class="body-l" href="https://npn.dev">npn</a> helps you explore and test HTTP apis, with a focus on speed and correctness</h3>
+        <p>Click "Get Started" below to use a demo installation of npn, or <a class="body-l" href="/download">download</a> the application and use it locally</p>
+        <button class="mt uk-button uk-button-default body-l" onclick="init(<%=v ctx.App.Debug() %>, true)">Get Started</button>
+        <a class="mt ml uk-button uk-button-default body-l" href="/download">Download</a>
+        <a class="mt ml uk-button uk-button-default body-l" href="https://github.com/kyleu/npn">Github</a>
+      </div>
+      <div class="uk-card uk-card-body uk-card-default mt">
+        <h3 class="uk-card-title">Features</h3>
+        <ul class="uk-list uk-list-divider">
+          <li>Allows you to exercise HTTP servers and APIs using a simple and fast modern UI</li>
+          <li>Supports all HTTP features, a novel preview system, and importing data from Postman, OpenAPI, and Paw</li>
+          <li>Available to <a class="body-l" href="/download">download</a> for a dozen platforms</li>
+          <li><a class="body-l" href="https://github.com/kyleu/npn">Open source</a>, completely free and unrestricted</li>
+          <li>Runs as an HTTP server, desktop application, or native mobile app</li>
+          <li>Written in the Go language, provides compact (~10MB) and performant native code</li>
+        </ul>
       </div>
     </div>
   </div>

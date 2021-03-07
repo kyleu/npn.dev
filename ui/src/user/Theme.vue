@@ -53,15 +53,12 @@
     </div>
 
     <div class="clear"></div>
-    <div v-if="tempTheme.length > 0" class="mt">
-      <button v-style-button class="uk-button uk-button-default" @click="saveTheme()">DEBUG / Save Theme</button>
-    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { profileRef, tempThemeRef, UserSettings } from "@/user/profile";
+import { profileRef, UserSettings } from "@/user/profile";
 
 import { socketRef } from "@/socket/socket";
 import { systemService } from "@/util/services";
@@ -71,10 +68,6 @@ import {logDebug} from "@/util/log";
 @Component
 export default class Theme extends Vue {
   src = "";
-
-  get tempTheme(): string {
-    return tempThemeRef.value;
-  }
 
   get settings(): UserSettings | undefined {
     return profileRef.value?.settings;
@@ -136,42 +129,6 @@ export default class Theme extends Vue {
         this.settings.menuL = c;
         break;
     }
-  }
-
-  swap(t: string): void {
-    if (this.src.length === 0) {
-      this.src = t;
-      return;
-    }
-    const s = this.src;
-    this.src = "";
-    console.debug(`SWAP: ${s} <-> ${t}`);
-    const src = this.getColor(s);
-    const tgt = this.getColor(t);
-    this.setColor(s, tgt);
-    this.setColor(t, src);
-  }
-
-  saveTheme(): void {
-    if (!this.settings) {
-      return;
-    }
-    const theme = `const ${this.tempTheme} = {
-  key: "${this.tempTheme}",
-  mode: "${this.settings.mode}",
-  bodyB: "${this.settings.bodyB}",
-  bodyL: "${this.settings.bodyL}",
-  navB: "${this.settings.navB}",
-  navF: "${this.settings.navF}",
-  menuB: "${this.settings.menuB}",
-  menuF: "${this.settings.menuF}",
-  menuL: "${this.settings.menuL}"
-}`;
-    if (socketRef.value) {
-      socketRef.value.send({channel: systemService.key, cmd: clientCommands.testbed, param: {t: "theme", k: this.tempTheme, v: theme}});
-    }
-
-    logDebug(theme);
   }
 }
 </script>

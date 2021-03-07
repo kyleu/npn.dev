@@ -65,7 +65,17 @@ const KeepTheChange = { key: "KeepTheChange", mode: "light", navB: "#d9042b", na
 const KnotJustNautical = { key: "KnotJustNautical", mode: "light", navB: "#fc4349", navF: "#ffffff", menuB: "#d7dadb", menuF: "#6dbcdb", menuL: "#ffffff", bodyB: "#2c3e50", bodyL: "#ffffff" };
 const LifeIsBeautiful = { key: "LifeIsBeautiful", mode: "light", navB: "#047878", navF: "#c22121", menuB: "#ffb733", menuF: "#f57336", menuL: "#c22121", bodyB: "#801637", bodyL: "#c22121" };
 const Lollapalooza = { key: "Lollapalooza", mode: "light", navB: "#013440", navF: "#efe7be", menuB: "#ab1a25", menuF: "#d97925", menuL: "#efe7be", bodyB: "#002635", bodyL: "#efe7be" };
-const MountainsOfBurma = { key: "MountainsOfBurma", mode: "light", navB: "#acebae", navF: "#7d9100", menuB: "#ffff9d", menuF: "#c9de55", menuL: "#7d9100", bodyB: "#354242", bodyL: "#7d9100" };
+const MountainsOfBurma = {
+  key: "MountainsOfBurma",
+  mode: "dark",
+  bodyB: "#354242",
+  bodyL: "#7d9100",
+  navB: "#acebae",
+  navF: "#7d9100",
+  menuB: "#ffff9d",
+  menuF: "#c9de55",
+  menuL: "#7d9100"
+};
 const NeutralBlue = { key: "NeutralBlue", mode: "light", navB: "#d1dbbd", navF: "#193441", menuB: "#91aa9d", menuF: "#3e606f", menuL: "#193441", bodyB: "#fcfff5", bodyL: "#193441" };
 const OceanSunset = { key: "OceanSunset", mode: "light", navB: "#9c9b7a", navF: "#f54f29", menuB: "#ffd393", menuF: "#ff974f", menuL: "#f54f29", bodyB: "#405952", bodyL: "#f54f29" };
 const Optimist = { key: "Optimist", mode: "light", navB: "#3e423a", navF: "#f4f7d9", menuB: "#417378", menuF: "#a4cfbe", menuL: "#f4f7d9", bodyB: "#6c6e58", bodyL: "#f4f7d9" };
@@ -77,7 +87,17 @@ const SalmonOnIce = { key: "SalmonOnIce", mode: "light", navB: "#2185c5", navF: 
 const SandyStoneBeach = { key: "SandyStoneBeach", mode: "light", navB: "#a7a37e", navF: "#002f2f", menuB: "#efecca", menuF: "#046380", menuL: "#002f2f", bodyB: "#e6e2af", bodyL: "#002f2f" };
 const SeaWolf = { key: "SeaWolf", mode: "light", navB: "#d9cb9e", navF: "#1e1e20", menuB: "#374140", menuF: "#2a2c2b", menuL: "#1e1e20", bodyB: "#dc3522", bodyL: "#1e1e20" };
 const SunshineOverGlacier = { key: "SunshineOverGlacier", mode: "light", navB: "#2c858d", navF: "#ffffcb", menuB: "#74ceb7", menuF: "#c9ffd5", menuL: "#ffffcb", bodyB: "#004056", bodyL: "#ffffcb" };
-const TimesChanging = { key: "TimesChanging", mode: "light", navB: "#644d52", navF: "#a49a87", menuB: "#f77a52", menuF: "#ff974f", menuL: "#a49a87", bodyB: "#332532", bodyL: "#a49a87" };
+const TimesChanging = {
+  key: "TimesChanging",
+  mode: "dark",
+  bodyB: "#332532",
+  bodyL: "#a49a87",
+  navB: "#644d52",
+  navF: "#a49a87",
+  menuB: "#f77a52",
+  menuF: "#ff974f",
+  menuL: "#a49a87"
+};
 const Unlike = { key: "Unlike", mode: "light", navB: "#35203b", navF: "#ed8c2b", menuB: "#911146", menuF: "#cf4a30", menuL: "#ed8c2b", bodyB: "#88a825", bodyL: "#ed8c2b" };
 const VentanaAzul = { key: "VentanaAzul", mode: "light", navB: "#f2385a", navF: "#36b1bf", menuB: "#e9f1df", menuF: "#4ad9d9", menuL: "#36b1bf", bodyB: "#f5a503", bodyL: "#36b1bf" };
 const ViewOverTheTown = { key: "ViewOverTheTown", mode: "light", navB: "#b39c85", navF: "#1d181f", menuB: "#306e73", menuF: "#3b424d", menuL: "#1d181f", bodyB: "#ff5335", bodyL: "#1d181f" };

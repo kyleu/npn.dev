@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.i("npn", "npn is starting")
         val path = getFilesDir().getAbsolutePath()
-        val port = lib.Lib.run("android", path)
+        val port = library.Library.run("android", path)
         Log.i("npn", "npn has started with path [" + path + "] on port [${port}]")
         setContentView(R.layout.activity_main)
 

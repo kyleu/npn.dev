@@ -49,7 +49,6 @@ export const defaultProfile: Profile = {
 };
 
 export const profileRef = ref<Profile>();
-export const tempThemeRef = ref<string>("");
 
 let stylesheet: CSSStyleSheet | undefined;
 

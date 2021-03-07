@@ -14,7 +14,7 @@ mkdir -p build/android/
 
 bin/asset-embed.sh
 echo "gomobile..."
-gomobile bind -o build/android/npn.aar -target=android github.com/kyleu/npn/lib
+gomobile bind -o build/android/npn.aar -target=android github.com/kyleu/npn/library
 bin/asset-reset.sh
 
 cd projects/android/npn/app/libs

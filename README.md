@@ -1,6 +1,6 @@
 # npn
 
-[npn](https://npn.dev) helps you explore and test HTTP APIs, with a focus on speed and correctness.
+[npn](https://npn.dev) helps you explore and test HTTP apis, with a focus on speed and correctness.
 
 It's basically Postman, but much smaller (8MB download) and faster. You can run npn as an HTTP server, or use a native desktop or mobile app.
 

@@ -14,6 +14,7 @@
               </div>
             </li>
             <li v-if="pub"><a v-style-nav-link href="/">About</a></li>
+            <li v-if="pub"><a v-style-nav-link href="https://github.com/kyleu/npn">Source Code</a></li>
             <li v-if="pub"><a v-style-nav-link href="/download"><div class="download-link">Download</div></a></li>
             <li class="mrs">
               <router-link v-if="(!profile.picture) || profile.picture.length === 0 || profile.picture === 'none'" v-style-nav-link to="/u" title="Profile"><Icon icon="user" /></router-link>

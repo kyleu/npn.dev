@@ -12,7 +12,7 @@ mkdir -p build/ios/
 
 bin/asset-embed.sh
 echo "gomobile..."
-gomobile bind -o build/ios/NpnServer.framework -target=ios github.com/kyleu/npn/lib
+gomobile bind -o build/ios/NpnServer.framework -target=ios github.com/kyleu/npn/library
 bin/asset-reset.sh
 
 echo "Building [ios] app..."
