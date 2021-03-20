@@ -35,7 +35,7 @@ type Service struct {
 
 var _ npnweb.AppInfo = (*Service)(nil)
 
-func NewService(debug bool, public bool, multiuser bool, secret string, files npncore.FileLoader, redir string, logger *logrus.Logger) *Service {
+func NewService(debug bool, public bool, multiuser bool, files npncore.FileLoader, redir string, logger *logrus.Logger) *Service {
 	us := userfs.NewServiceFilesystem(multiuser, files, logger)
 	sessSvc := session.NewService(multiuser, files, logger)
 	collSvc := collection.NewService(multiuser, files, logger)
@@ -48,7 +48,6 @@ func NewService(debug bool, public bool, multiuser bool, secret string, files np
 	return &Service{
 		debug:      debug,
 		public:     public,
-		secret:     secret,
 		files:      files,
 		user:       us,
 		auth:       authfs.NewServiceFS(multiuser, redir, files, logger, us),
@@ -87,10 +86,6 @@ func (s *Service) Valid() bool {
 
 func (s *Service) Public() bool {
 	return s.public
-}
-
-func (s *Service) Secret() string {
-	return s.secret
 }
 
 func Svc(a npnweb.AppInfo) *Service {

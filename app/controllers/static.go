@@ -20,9 +20,6 @@ const assetBase = "web/assets"
 func Download(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		ctx.Breadcrumbs = npnweb.BreadcrumbsSimple("", "download")
-		if !allow(ctx.App.Secret(), r) {
-			return npncontroller.T(templates.ComingSoon(ctx, w))
-		}
 		return npncontroller.T(templates.Downloads(ctx, w))
 	})
 }

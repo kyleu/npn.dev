@@ -86,7 +86,7 @@ func InitApp(platform string, dir string) npnweb.AppInfo {
 		}
 	}
 
-	return app.NewService(verbose, public, multiuser, secret, files, redir, logger)
+	return app.NewService(verbose, public, multiuser, files, redir, logger)
 }
 
 func setIcon() {

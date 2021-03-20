@@ -14,19 +14,12 @@ import (
 
 func WorkspaceIndex(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		if !allow(ctx.App.Secret(), r) {
-			return npncontroller.T(templates.ComingSoon(ctx, w))
-		}
-
 		return npncontroller.T(templates.WorkspaceUI(ctx.App.Public(), true, ctx, w))
 	})
 }
 
 func Workspace(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		if !allow(ctx.App.Secret(), r) {
-			return npncontroller.T(templates.ComingSoon(ctx, w))
-		}
 		return npncontroller.T(templates.WorkspaceUI(ctx.App.Public(), false, ctx, w))
 	})
 }
@@ -40,11 +33,6 @@ var upgrader = websocket.Upgrader{
 
 func Socket(w http.ResponseWriter, r *http.Request) {
 	ctx := npnweb.ExtractContext(w, r, true)
-
-	if !allow(ctx.App.Secret(), r) {
-		ctx.Logger.Warn("socket request while locked")
-		return
-	}
 
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {

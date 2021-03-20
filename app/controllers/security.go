@@ -14,23 +14,6 @@ import (
 	"github.com/kyleu/npn/app/transform"
 )
 
-func allow(secret string, r *http.Request) bool {
-	if len(secret) > 0 {
-		c, _ := r.Cookie("secret")
-		if c == nil || c.Value != secret {
-			return false
-		}
-	}
-	return true
-}
-
-func Enable(w http.ResponseWriter, r *http.Request) {
-	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
-		http.SetCookie(w, &http.Cookie{Name: "secret", Value: ctx.App.Secret()})
-		return ctx.Route("home"), nil
-	})
-}
-
 func Testbed(w http.ResponseWriter, r *http.Request) {
 	npncontroller.Act(w, r, func(ctx *npnweb.RequestContext) (string, error) {
 		out, err := writeTransformerScript()
