@@ -4,11 +4,11 @@
     <em>{{ cycle.rsp.method }} {{ cycle.rsp.url }}</em>
     <div class="mt">
       <ul data-uk-tab="">
-        <li><a href="#result" @click="setTab('result')">Result</a></li>
-        <li><a href="#request" @click="setTab('request')">Request</a></li>
-        <li><a href="#headers" @click="setTab('headers')">Headers</a></li>
-        <li><a href="#body" @click="setTab('body')">Body</a></li>
-        <li><a href="#timing" @click="setTab('timing')">Timing</a></li>
+        <li><a id="tab-response-result" href="#result" @click="setTab('result')">Result</a></li>
+        <li><a id="tab-response-request" href="#request" @click="setTab('request')">Request</a></li>
+        <li><a id="tab-response-headers" href="#headers" @click="setTab('headers')">Headers</a></li>
+        <li><a id="tab-response-body" href="#body" @click="setTab('body')">Body</a></li>
+        <li><a id="tab-response-timing" href="#timing" @click="setTab('timing')">Timing</a></li>
       </ul>
       <ul class="uk-switcher">
         <li><SummaryResponse :response="cycle.rsp" /></li>

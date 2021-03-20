@@ -12,3 +12,4 @@
 /ui/node_modules
 /ui/dist
 /web/assets/vendor/*.map
+/projects/screenshots/package-lock.json

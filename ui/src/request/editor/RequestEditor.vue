@@ -3,12 +3,12 @@
     <form action="" method="post" onsubmit="return false;">
       <div>
         <ul data-uk-tab="">
-          <li><a href="#details" @click="setTab('details')">Details</a></li>
-          <li><a href="#query" @click="setTab('query')">Query</a></li>
-          <li><a href="#auth" @click="setTab('auth')">Auth</a></li>
-          <li><a href="#headers" @click="setTab('headers')">Headers</a></li>
-          <li><a href="#body" @click="setTab('body')">Body</a></li>
-          <li><a href="#options" @click="setTab('options')">Options</a></li>
+          <li><a id="tab-request-details" href="#details" @click="setTab('details')">Details</a></li>
+          <li><a id="tab-request-query" href="#query" @click="setTab('query')">Query</a></li>
+          <li><a id="tab-request-auth" href="#auth" @click="setTab('auth')">Auth</a></li>
+          <li><a id="tab-request-headers" href="#headers" @click="setTab('headers')">Headers</a></li>
+          <li><a id="tab-request-body" href="#body" @click="setTab('body')">Body</a></li>
+          <li><a id="tab-request-options" href="#options" @click="setTab('options')">Options</a></li>
         </ul>
         <ul class="uk-switcher">
           <li><RequestEditorDetails /></li>
