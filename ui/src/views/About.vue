@@ -6,7 +6,7 @@
           <router-link to="/help"><Icon icon="close" /></router-link>
         </div>
         <h3 class="uk-card-title"><Icon icon="npn" class="nav-icon-h3" /> npn</h3>
-        <p>TODO</p>
+        <p>You're using <a href="https://npn.dev" target="_blank">npn</a>, an HTTP client that helps you document and test services</p>
       </div>
     </div>
   </div>

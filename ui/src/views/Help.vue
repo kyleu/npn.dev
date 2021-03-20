@@ -6,6 +6,8 @@
           <router-link to="/"><Icon icon="close" /></router-link>
         </div>
         <h3 class="uk-card-title"><Icon icon="question" class="nav-icon-h3" /> Help</h3>
+        <p><a href="https://npn.dev" target="_blank">npn</a> is <a href="https://github.com/kyleu/npn" target="_blank">open source</a></p>
+        <p>You can file issues <a href="https://github.com/KyleU/npn/issues" target="_blank">here</a></p>
         <ul class="uk-list uk-list-divider">
           <li><router-link to="/about">About</router-link></li>
         </ul>

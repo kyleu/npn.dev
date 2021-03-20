@@ -4,7 +4,7 @@
       <div class="uk-card uk-card-body uk-card-default">
         <div class="right"><router-link to="/about"><Icon title="about npn" icon="question" /></router-link></div>
         <h3 class="uk-card-title">npn</h3>
-        <p>You're using <a href="https://npn.dev">npn</a>, an HTTP client that helps you document and test apis</p>
+        <p>You're using <a href="https://npn.dev" target="_blank">npn</a>, an HTTP client that helps you document and test services</p>
 
         <div class="uk-inline mt" style="width: 100%;">
           <a class="uk-form-icon uk-form-icon-flip" title="Add a URL" href="" @click.prevent="runRequest()"><Icon icon="play" /></a>
