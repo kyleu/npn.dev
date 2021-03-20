@@ -4,7 +4,7 @@ struct ContentView: View {
     let u: URLRequest
     
     var body: some View {
-        WebView(url: self.u).edgesIgnoringSafeArea(.all)
+        WebView(url: self.u) //.edgesIgnoringSafeArea(.all)
     }
     
     init(url: URLRequest) {

@@ -1,11 +1,14 @@
 /.vscode
 /.idea
 /.scannerwork
-build
+
+/build
 /data
 /gen
+/projects/ios/npn/Gemfile.lock
+/projects/screenshots/node_modules
+/screenshots
 /tmp
-
 /ui/node_modules
 /ui/dist
 /web/assets/vendor/*.map

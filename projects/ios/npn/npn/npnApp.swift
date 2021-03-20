@@ -6,7 +6,7 @@ struct npnApp: App {
     init() {
         print("starting npn...")
         let path = NSSearchPathForDirectoriesInDomains(.libraryDirectory, .userDomainMask, true)
-        let port = NpnServer.LibRun("ios", path[0])
+        let port = NpnServer.LibraryRun("ios", path[0])
         print("npn started on port [\(port)]")
         let url = URL.init(string: "http://localhost:\(port)/")!
         self.cv = ContentView(url: URLRequest(url: url))

@@ -16,7 +16,7 @@
 
       <div class="uk-card uk-card-body uk-card-default mt">
         <ul data-uk-tab="">
-          <li><a href="#requests" @click="setTab('requests')">Recent Requests</a></li>
+          <li><a href="#requests" @click="setTab('requests')">Requests</a></li>
           <li><a href="#collections" @click="setTab('collections')">Collections</a></li>
           <li><a href="#sessions" @click="setTab('sessions')">Sessions</a></li>
         </ul>
