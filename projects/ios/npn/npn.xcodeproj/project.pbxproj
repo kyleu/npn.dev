@@ -283,6 +283,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = npn/npn.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 0.1.2;
 				DEVELOPMENT_ASSET_PATHS = "\"npn/Preview Content\"";
 				DEVELOPMENT_TEAM = C6S478FYLD;
 				ENABLE_PREVIEWS = YES;
@@ -296,6 +297,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = npn.dev.npn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;
@@ -311,6 +313,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = npn/npn.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 0.1.2;
 				DEVELOPMENT_ASSET_PATHS = "\"npn/Preview Content\"";
 				DEVELOPMENT_TEAM = C6S478FYLD;
 				ENABLE_PREVIEWS = YES;
@@ -324,6 +327,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = npn.dev.npn;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTS_MACCATALYST = NO;

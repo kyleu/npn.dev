@@ -54,17 +54,17 @@ async function ss(page, fn) {
   const page = await browser.newPage();
 
   await page.goto("http://localhost:10101");
-  // await ss(page, "00-marketing");
+  await ss(page, "00-marketing");
 
   await page.evaluate(() => init(true, true));
-  // await ss(page, "01-home");
+  await ss(page, "01-home");
 
   await page.goto("http://localhost:10101/c/personal/amazon/call");
   console.log("pausing for load...");
   await page.waitForTimeout(1500);
   console.log("pause complete");
   await page.click("#tab-response-headers");
-  // await ss(page, "02-call");
+  await ss(page, "02-call");
 
   await page.goto("http://localhost:10101/s/_");
   await ss(page, "03-session");

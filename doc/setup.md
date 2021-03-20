@@ -1,6 +1,6 @@
 # Setup
 
-To run npn, download a release from Github. There are no dependencies. 
+To run npn, download a release from GitHub. There are no dependencies. 
 This document is for configuring your computer to build the application
 
 ## macOS

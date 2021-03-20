@@ -22,7 +22,7 @@ They're designed for macOS, but should work on Linux or Windows (via WSL).
 - `dev.sh`: Watches the project directories, and runs the main application, restarting when changes are detected
 - `doc.sh`: Runs godoc for all projects, linking between projects and using custom logos and styling
 - `format.sh`: Runs `gofmt` on all projects
-- `package.sh`: Packages the build output for Github Releases
+- `package.sh`: Packages the build output for GitHub Releases
 - `run-docker.sh`: Runs the Docker image produced by `build-docker`, exposing an HTTP port
 - `run-release.sh`: Builds the project in release mode and runs it
 - `tag.sh`: Updates the go.mod version, deletes go.sum, tags the git repo

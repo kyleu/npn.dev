@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="nav-section mt">
+    <div class="nav-section">
       <router-link v-style-menu-section class="nav-header" tag="div" :to="{name: 'CollectionDetail', params: {coll: '_'}}">Requests</router-link>
       <RequestList />
     </div>

@@ -13,15 +13,17 @@
                 </form>
               </div>
             </li>
-            <li v-if="pub"><a v-style-nav-link href="/">About</a></li>
-            <li v-if="pub"><a v-style-nav-link href="https://github.com/kyleu/npn">Source Code</a></li>
-            <li v-if="pub"><a v-style-nav-link href="/download"><div class="download-link">Download</div></a></li>
+            <li v-if="pub" class="header-optional"><a v-style-nav-link href="/">About</a></li>
+            <li v-if="pub" class="header-optional"><a v-style-nav-link href="https://github.com/kyleu/npn">GitHub</a></li>
+            <li v-if="pub" class="header-optional"><a v-style-nav-link href="/download"><div class="download-link">Download</div></a></li>
             <li class="mrs">
               <router-link v-if="(!profile.picture) || profile.picture.length === 0 || profile.picture === 'none'" v-style-nav-link to="/u" title="Profile"><Icon icon="user" /></router-link>
               <router-link v-else to="/u" title="Profile"><img class="uk-border-circle" alt="user profile" :src="profile.picture" /></router-link>
             </li>
+            <li>
+              <a v-style-nav-link href="" data-uk-toggle="target: #nav-offcanvas;" class="uk-hidden@m mr"><Icon icon="toggle" /></a>
+            </li>
           </ul>
-          <a v-style-nav-link href="" data-uk-toggle="target: #nav-offcanvas;" class="uk-hidden@m mr"><Icon icon="toggle" /></a>
         </div>
       </nav>
     </div>

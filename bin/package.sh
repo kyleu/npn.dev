@@ -1,6 +1,6 @@
 #!/bin/bash
 
-## Packages the build output for Github Releases
+## Packages the build output for GitHub Releases
 
 set -euo pipefail
 dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"

@@ -21,7 +21,7 @@ https://github.com/kyleu/npn
 
 ## Installing
 
-- Download from [Github Releases](https://github.com/kyleu/npn/releases/latest), or see the [downloads page](doc/downloads.md) 
+- Download from [GitHub Releases](https://github.com/kyleu/npn/releases/latest), or see the [downloads page](doc/downloads.md) 
 
 ## Building
 
