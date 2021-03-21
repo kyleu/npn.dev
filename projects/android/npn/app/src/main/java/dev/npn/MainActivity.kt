@@ -5,6 +5,8 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
+import android.net.Uri
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +18,17 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val webView: WebView = findViewById(R.id.webview)
-        webView.setWebViewClient(WebViewClient())
+        val client = object : WebViewClient() {
+            override fun shouldOverrideUrlLoading(view: WebView, url: String): Boolean {
+                return if (url.startsWith("http://") || url.startsWith("https://")) {
+                    view.context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+        webView.setWebViewClient(client)
         val settings = webView.getSettings();
 
         settings.loadsImagesAutomatically = true;

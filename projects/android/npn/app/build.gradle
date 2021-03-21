@@ -10,8 +10,8 @@ android {
         applicationId "dev.npn"
         minSdkVersion 18
         targetSdkVersion 30
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "0.1.2"
     }
 
     buildTypes {

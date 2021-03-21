@@ -8,5 +8,6 @@
 /.idea
 /app/build
 /app/libs
+/app/release
 /build
 /captures
