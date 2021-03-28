@@ -40,8 +40,8 @@ func Static(w http.ResponseWriter, r *http.Request) {
 		if !strings.HasPrefix(path, "/") {
 			path = "/" + path
 		}
-		data, hash, contentType, err := assets.Asset(assetBase, path)
-		ZipResponse(w, r, data, hash, contentType, err)
+		data, hash, contentType, e := assets.Asset(assetBase, path)
+		ZipResponse(w, r, data, hash, contentType, e)
 	} else {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}

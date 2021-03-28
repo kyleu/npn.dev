@@ -21,7 +21,7 @@ type Cookie struct {
 }
 
 func NewCookie(c *http.Cookie) *Cookie {
-	ss := "default"
+	ss := ""
 	switch c.SameSite {
 	case http.SameSiteLaxMode:
 		ss = "lax"
@@ -29,6 +29,8 @@ func NewCookie(c *http.Cookie) *Cookie {
 		ss = "strict"
 	case http.SameSiteNoneMode:
 		ss = "none"
+	case http.SameSiteDefaultMode:
+		ss = "default"
 	}
 	return &Cookie{
 		Name:     c.Name,
@@ -114,11 +116,11 @@ func (c Cookies) Native() []*http.Cookie {
 	return ret
 }
 
-func (c Cookies) Qualifying(url *url.URL) Cookies {
+func (c Cookies) Qualifying(u *url.URL) Cookies {
 	x, _ := cookiejar.New(nil)
-	x.SetCookies(url, c.Native())
+	x.SetCookies(u, c.Native())
 
-	q := x.Cookies(url)
+	q := x.Cookies(u)
 
 	ret := make(Cookies, 0, len(q))
 	for _, cook := range q {

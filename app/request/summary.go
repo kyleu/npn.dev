@@ -11,7 +11,7 @@ type Summary struct {
 }
 
 func (r *Summary) TitleWithFallback() string {
-	if len(r.Title) == 0 {
+	if r.Title == "" {
 		return r.Key
 	}
 	return r.Title

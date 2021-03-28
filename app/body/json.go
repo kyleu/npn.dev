@@ -44,7 +44,7 @@ func (j *JSON) MimeType() string {
 }
 
 func (j *JSON) String() string {
-	if len(j.str) == 0 {
+	if j.str == "" {
 		j.str = npncore.ToJSON(j.Msg, nil)
 	}
 	return j.str

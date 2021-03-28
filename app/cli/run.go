@@ -1,9 +1,10 @@
 package cli
 
 import (
-	"github.com/sirupsen/logrus"
 	"os"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/gorilla/mux"
 	"github.com/kyleu/libnpn/npncontroller"
@@ -70,7 +71,7 @@ func InitApp(platform string, dir string) npnweb.AppInfo {
 	defer emperror.HandleRecover(logrushandler.New(logger))
 
 	dir = strings.TrimSpace(dir)
-	if len(dir) == 0 {
+	if dir == "" {
 		dir = defaultDirectory()
 	}
 

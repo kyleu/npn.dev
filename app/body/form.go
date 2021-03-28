@@ -1,9 +1,10 @@
 package body
 
 import (
-	"github.com/sirupsen/logrus"
 	"net/url"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/libnpn/npncore"
 )
@@ -65,7 +66,7 @@ func (f *Form) MimeType() string {
 }
 
 func (f *Form) String() string {
-	if len(f.str) == 0 {
+	if f.str == "" {
 		f.str = f.Data.String()
 	}
 	return f.str

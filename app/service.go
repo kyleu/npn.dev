@@ -21,7 +21,6 @@ import (
 type Service struct {
 	debug      bool
 	public     bool
-	secret     string
 	files      npncore.FileLoader
 	user       user.Service
 	auth       auth.Service

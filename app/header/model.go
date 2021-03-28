@@ -1,10 +1,11 @@
 package header
 
 import (
-	"github.com/sirupsen/logrus"
 	"net/http"
 	"sort"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/libnpn/npncore"
 )

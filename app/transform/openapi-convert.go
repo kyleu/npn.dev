@@ -72,13 +72,13 @@ func openAPIPathToRequests(pathKey string, pathItem *openapi3.PathItem, proto *r
 		p.Path = path.Join(proto.Path, pathKey)
 
 		rk := op.OperationID
-		if len(rk) == 0 {
+		if rk == "" {
 			rk = npncore.Slugify(op.Description)
 		}
-		if len(rk) == 0 {
+		if rk == "" {
 			rk = npncore.Slugify(p.Method.Key + "_" + p.Path)
 		}
-		if len(rk) == 0 {
+		if rk == "" {
 			return nil, errors.New("unable to determine action name")
 		}
 

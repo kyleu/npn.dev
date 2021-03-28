@@ -49,12 +49,12 @@ func ResponseFromHTTP(p *request.Prototype, r *http.Response, sess *session.Sess
 	ct, charset := parseCT(headers.GetValue("Content-Type"))
 	ce := headers.GetValue("Content-Encoding")
 	bod, err := body.Parse(r.Request.URL.Path, ce, ct, charset, r.ContentLength, r.Body)
-	var es *string = nil
+	var es *string
 	if err != nil {
 		ex := err.Error()
 		es = &ex
 	}
-	if len(ct) == 0 && bod != nil && bod.Config != nil {
+	if ct == "" && bod != nil && bod.Config != nil {
 		ct = bod.Config.MimeType()
 	}
 	return &Response{

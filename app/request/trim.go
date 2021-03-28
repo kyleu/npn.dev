@@ -10,10 +10,10 @@ func (r *Request) Normalize(key string) *Request {
 	if r == nil {
 		return nil
 	}
-	if len(key) > 0 {
+	if key != "" {
 		r.Key = key
 	}
-	if len(r.Key) == 0 {
+	if r.Key == "" {
 		r.Key = "untitled-" + npncore.RandomString(6)
 	}
 	if r.Prototype == nil {
@@ -32,10 +32,10 @@ func (r *Request) Minify() *Request {
 }
 
 func (p *Prototype) Normalize() *Prototype {
-	if len(p.Method.Key) == 0 {
+	if p.Method.Key == "" {
 		p.Method = MethodGet
 	}
-	if len(p.Protocol.Key) == 0 {
+	if p.Protocol.Key == "" {
 		p.Protocol = ProtocolHTTPS
 	}
 
@@ -57,7 +57,7 @@ func (p *Prototype) Minify() *Prototype {
 		p.Query = nil
 	}
 
-	if p.Body != nil && len(p.Body.Type) == 0 {
+	if p.Body != nil && p.Body.Type == "" {
 		p.Body = nil
 	}
 	if p.Options != nil && p.Options.Empty() {

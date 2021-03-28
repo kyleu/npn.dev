@@ -46,7 +46,7 @@ func PrototypeFromString(u string) *Prototype {
 	}
 	rest, query := npncore.SplitString(rest, '?', true)
 	proto, rest := npncore.SplitString(rest, ':', true)
-	if len(rest) == 0 {
+	if rest == "" {
 		rest = proto
 		proto = "http"
 	}

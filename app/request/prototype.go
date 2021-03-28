@@ -2,8 +2,9 @@ package request
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/libnpn/npncore"
 	"github.com/kyleu/npn/app/session"

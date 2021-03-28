@@ -2,8 +2,9 @@ package imprt
 
 import (
 	"encoding/json"
-	"github.com/ghodss/yaml"
 	"strings"
+
+	"github.com/ghodss/yaml"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/libnpn/npncore"

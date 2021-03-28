@@ -73,7 +73,7 @@ func onAddSession(c *npnconnection.Connection, param json.RawMessage, s *npnconn
 	if err != nil {
 		return errors.Wrap(err, "unable to parse session name")
 	}
-	if len(name) == 0 {
+	if name == "" {
 		name = "new"
 	}
 	key := npncore.Slugify(name)

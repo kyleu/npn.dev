@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/libnpn/npncore"
 )
@@ -134,7 +135,7 @@ func (b *Body) ContentLength() int64 {
 }
 
 func (b *Body) Merge(data npncore.Data, logger *logrus.Logger) *Body {
-	if b == nil || len(b.Type) == 0 {
+	if b == nil || b.Type == "" {
 		return nil
 	}
 	cfg := b.Config

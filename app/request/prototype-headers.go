@@ -45,10 +45,10 @@ func (p *Prototype) FinalHeaders(sess *session.Session) header.Headers {
 	})
 	check("User-Agent", func() string { return npncore.AppName })
 
-	//if npncore.AppPlatform == "wasm" {
-	//	check("js.fetch:mode", func() string { return "no-cors" })
-	//	check("js.fetch:redirect", func() string { return "manual" })
-	//}
+	// if npncore.AppPlatform == "wasm" {
+	// 	check("js.fetch:mode", func() string { return "no-cors" })
+	// 	check("js.fetch:redirect", func() string { return "manual" })
+	// }
 
 	cookies := p.GetCookies()
 	if len(cookies) > 0 || len(sess.Cookies) > 0 {

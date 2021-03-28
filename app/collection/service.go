@@ -1,8 +1,9 @@
 package collection
 
 import (
-	"github.com/sirupsen/logrus"
 	"path"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/libnpn/npnuser"
 

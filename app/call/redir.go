@@ -12,7 +12,7 @@ func getRedir(rsp *Response, p *request.Prototype) *request.Prototype {
 	if rsp != nil {
 		loc = rsp.Headers.GetValue("location")
 	}
-	if len(loc) == 0 {
+	if loc == "" {
 		return nil
 	}
 	if strings.HasPrefix(loc, "//") {

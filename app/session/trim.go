@@ -12,7 +12,7 @@ func (s *Session) Normalize(key string) *Session {
 	if len(key) > 0 {
 		s.Key = key
 	}
-	if len(s.Key) == 0 {
+	if s.Key == "" {
 		s.Key = "untitled-" + npncore.RandomString(6)
 	}
 

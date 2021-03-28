@@ -1,8 +1,9 @@
 package request
 
 import (
-	"github.com/sirupsen/logrus"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"emperror.dev/errors"
 	"github.com/kyleu/libnpn/npncore"
@@ -38,7 +39,7 @@ func FromString(key string, content string) (*Request, error) {
 }
 
 func (r *Request) TitleWithFallback() string {
-	if len(r.Title) == 0 {
+	if r.Title == "" {
 		return r.Key
 	}
 	return r.Title

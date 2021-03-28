@@ -49,7 +49,7 @@ func addCollection(s *npnconnection.Service, c *npnconnection.Connection, param 
 	if err != nil {
 		return errors.Wrap(err, "unable to parse input")
 	}
-	if len(name) == 0 {
+	if name == "" {
 		name = "new"
 	}
 	key := npncore.Slugify(name)

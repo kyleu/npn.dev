@@ -12,7 +12,7 @@ import (
 
 func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, title string, description string) error {
 	originalKey = npncore.Slugify(originalKey)
-	if len(newKey) == 0 {
+	if newKey == "" {
 		newKey = "new"
 	}
 	newKey = npncore.Slugify(newKey)
@@ -28,7 +28,7 @@ func (s *Service) Save(userID *uuid.UUID, originalKey string, newKey string, tit
 		if orig != nil && originalKey != newKey {
 			o := path.Join(s.files.Root(), s.dirFor(userID), originalKey)
 			n := path.Join(s.files.Root(), s.dirFor(userID), newKey)
-			err := os.Rename(o, n)
+			err = os.Rename(o, n)
 			if err != nil {
 				return errors.Wrap(err, "unable to rename original collection ["+originalKey+"] in path ["+o+"]")
 			}

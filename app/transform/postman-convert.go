@@ -49,10 +49,10 @@ func postmanItemToRequests(pi *postman.Items, s *session.Session) (request.Reque
 	if pi.Variables != nil {
 		for _, v := range pi.Variables {
 			key := v.Name
-			if len(key) == 0 {
+			if key == "" {
 				key = v.ID
 			}
-			if len(key) == 0 {
+			if key == "" {
 				key = v.Key
 			}
 			s.AddVariables(&session.Variable{Key: key, Value: v.Value})

@@ -2,10 +2,11 @@ package call
 
 import (
 	"context"
-	"github.com/sirupsen/logrus"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/sirupsen/logrus"
 
 	"emperror.dev/errors"
 	"github.com/gofrs/uuid"

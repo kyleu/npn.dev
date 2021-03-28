@@ -38,8 +38,8 @@ func process(x *tkv, connSvc *npnconnection.Service) error {
 	}
 }
 
-func onLog(level string, json json.RawMessage, svc *npnconnection.Service) error {
-	content, err := npncore.FromJSONString(json)
+func onLog(level string, js json.RawMessage, svc *npnconnection.Service) error {
+	content, err := npncore.FromJSONString(js)
 	if err != nil {
 		return errors.Wrap(err, "invalid content")
 	}

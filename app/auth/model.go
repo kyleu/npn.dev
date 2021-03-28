@@ -3,6 +3,7 @@ package auth
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/sirupsen/logrus"
 
 	"emperror.dev/errors"

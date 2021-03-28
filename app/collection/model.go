@@ -19,7 +19,7 @@ type Collection struct {
 var defaultCollection = &Collection{Key: "_", Title: "Default"}
 
 func (c *Collection) TitleWithFallback() string {
-	if len(c.Title) == 0 {
+	if c.Title == "" {
 		return c.Key
 	}
 	return c.Title

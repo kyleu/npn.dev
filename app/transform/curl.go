@@ -2,8 +2,9 @@ package transform
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/kyleu/npn/app/request"
 	"github.com/kyleu/npn/app/session"

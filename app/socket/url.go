@@ -56,7 +56,7 @@ func AddRequestFromURL(s *npnconnection.Service, c *npnconnection.Connection, co
 }
 
 func clean(req *request.Request) {
-	if len(req.Title) == 0 {
+	if req.Title == "" {
 		req.Title = req.Key
 	}
 	if req.Prototype != nil && len(req.Prototype.Path) > 0 {

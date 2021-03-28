@@ -2,9 +2,10 @@ package session
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
 	"path"
+
+	"github.com/sirupsen/logrus"
 
 	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
@@ -55,7 +56,7 @@ func (s *Service) List(userID *uuid.UUID) (Sessions, error) {
 }
 
 func (s *Service) Load(userID *uuid.UUID, key string) (*Session, error) {
-	if len(key) == 0 {
+	if key == "" {
 		key = "_"
 	}
 	p := path.Join(s.dirFor(userID), key+".json")
@@ -98,13 +99,13 @@ func (s *Service) Counts(userID *uuid.UUID) ([]*Summary, error) {
 
 func (s *Service) Save(userID *uuid.UUID, originalKey string, sess *Session) error {
 	originalKey = npncore.Slugify(originalKey)
-	if len(sess.Key) == 0 {
+	if sess.Key == "" {
 		sess.Key = "new"
 	}
 	slug := npncore.Slugify(sess.Key)
 	if slug != sess.Key {
 		s.logger.Debug(fmt.Sprintf("renaming session key from [%v] to [%v]", sess.Key, slug))
-		if len(sess.Title) == 0 {
+		if sess.Title == "" {
 			sess.Title = sess.Key
 		}
 		sess.Key = slug

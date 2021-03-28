@@ -2,10 +2,11 @@ package request
 
 import (
 	"fmt"
-	"github.com/sirupsen/logrus"
 	"os"
 	"path"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"emperror.dev/errors"
 	"github.com/gofrs/uuid"
@@ -75,13 +76,13 @@ func (s *Service) Load(userID *uuid.UUID, c string, f string) (*Request, error) 
 
 func (s *Service) Save(userID *uuid.UUID, coll string, originalKey string, req *Request) error {
 	originalKey = npncore.Slugify(originalKey)
-	if len(req.Key) == 0 {
+	if req.Key == "" {
 		req.Key = "new"
 	}
 	slug := npncore.Slugify(req.Key)
 	if slug != req.Key {
 		s.logger.Debug(fmt.Sprintf("renaming request key from [%v] to [%v]", req.Key, slug))
-		if len(req.Title) == 0 {
+		if req.Title == "" {
 			req.Title = req.Key
 		}
 		req.Key = slug
